@@ -18,22 +18,11 @@ public static class Recognize {
 	public static Scene CurrentScene {
 		get {
 			// 左上角蓝色返回按钮存在，说明处于出战界面
-			if (Approximately(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255), 10)) {
+			if (ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >= 0) {
 				return Scene.ARMY_SELECTING;
 			}
 			// 右下角一排按钮里的雷达按钮存在，说明处于世界界面
-			Color32 radarBtnColor = ScreenshotUtils.GetColorOnScreen(1850, 540);
-			if (Approximately(radarBtnColor, new Color32(69, 146, 221, 255), 10) ||	// 无界面覆盖
-					Approximately(radarBtnColor, new Color32(21, 44, 66, 255), 10) ||	// 联盟背包等窗口覆盖
-					Approximately(radarBtnColor, new Color32(6, 13, 20, 255), 10)) {	// 曙光活动主界面（或双层窗口）覆盖
-				// // 左上角蓝色小地图按钮（远）存在，说明处于世界界面（远）
-				// if (Approximately(ScreenshotUtils.GetColorOnScreen(170, 164), new Color32(17, 37, 61, 255), 10)) {
-				// 	return Scene.OUTSIDE_FAR;
-				// }
-				// // 左上角蓝色小地图按钮（近）存在，说明处于世界界面（近）
-				// else if (Approximately(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(17, 37, 61, 255), 10)) {
-				// 	return Scene.OUTSIDE_NEAR;
-				// }
+			if (ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0) {
 				return Scene.OUTSIDE;
 			}
 			return Scene.INSIDE;
@@ -42,52 +31,48 @@ public static class Recognize {
 
 	public static bool IsWindowCovered {
 		get {
-			// 右下角一排按钮颜色很暗
-			Color32 btnColor = ScreenshotUtils.GetColorOnScreen(1850, 620);
-			return Approximately(btnColor, new Color32(20, 43, 66, 255), 10) ||	// 联盟背包等窗口覆盖
-					Approximately(btnColor, new Color32(6, 13, 20, 255), 10);	// 曙光活动主界面（或双层窗口）（或双层窗口）覆盖
+			switch (CurrentScene) {
+				case Scene.ARMY_SELECTING:
+					// 左上角返回按钮颜色很暗
+					return ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) > 0;
+				case Scene.INSIDE:
+				case Scene.OUTSIDE:
+					// 右下角一排按钮颜色很暗
+					return ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255)) > 0;
+			}
+			return false;
 		}
 	}
 
 	public static bool IsWindowNoCovered {
 		get {
-			// 右下角一排按钮颜色很暗
-			Color32 btnColor = ScreenshotUtils.GetColorOnScreen(1850, 620);
-			return Approximately(btnColor, new Color32(69, 146, 221, 255), 10); // 无界面覆盖
+			switch (CurrentScene) {
+				case Scene.ARMY_SELECTING:
+					// 左上角返回按钮颜色不暗
+					return Approximately(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
+				case Scene.INSIDE:
+				case Scene.OUTSIDE:
+					// 右下角一排按钮颜色不暗
+					return Approximately(ScreenshotUtils.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
+			}
+			return false;
 		}
 	}
 
-	public static bool IsOutsideFaraway {
-		get {
-			Color32 minimapBtnColor = ScreenshotUtils.GetColorOnScreen(170, 164);
-			return Approximately(minimapBtnColor, new Color32(56, 124, 205, 255), 10) ||	// 无界面覆盖
-					Approximately(minimapBtnColor, new Color32(17, 37, 61, 255), 10) ||	// 联盟背包等窗口覆盖
-					Approximately(minimapBtnColor, new Color32(5, 11, 18, 255), 10);	// 曙光活动主界面（或双层窗口）覆盖
-		}
-	}
+	public static bool IsOutsideFaraway => ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0;
 
-	public static bool IsOutsideNearby {
-		get {
-			Color32 minimapBtnColor = ScreenshotUtils.GetColorOnScreen(170, 240);
-			return Approximately(minimapBtnColor, new Color32(56, 124, 205, 255), 10) ||	// 无界面覆盖
-					Approximately(minimapBtnColor, new Color32(17, 37, 61, 255), 10) ||	// 联盟背包等窗口覆盖
-					Approximately(minimapBtnColor, new Color32(5, 11, 18, 255), 10);	// 曙光活动主界面（或双层窗口）覆盖
-		}
-	}
+	public static bool IsOutsideNearby => ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0;
 
 	public static int BusyGroupCount {
 		get {
 			int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
 			if (deltaY >= 0) {
 				int groupCount = 0;
-				Color32 targetColor1 = new Color32(98, 135, 229, 255);	// 无界面覆盖
-				Color32 targetColor2 = new Color32(29, 40, 68, 255);	// 联盟背包等窗口覆盖
-				Color32 targetColor3 = new Color32(9, 12, 20, 255);	// 曙光活动主界面（或双层窗口）覆盖
+				// 返回加速等蓝色按钮
+				Color32 targetColor = new Color32(98, 135, 229, 255);
 				while (groupCount < 10) {
 					Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-					if (!Approximately(realColor, targetColor1, 10) &&
-							!Approximately(realColor, targetColor2, 10) &&
-							!Approximately(realColor, targetColor3, 10)) {
+					if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 						break;
 					}
 					groupCount++;
@@ -98,14 +83,8 @@ public static class Recognize {
 		}
 	}
 
-	public static bool IsSearching {
-		get {
-			// 当前是否处于搜索面板
-			Color32 targetColor = new Color32(119, 131, 184, 255);
-			Color32 realColor = ScreenshotUtils.GetColorOnScreen(960, 466);
-			return Approximately(realColor, targetColor, 10);
-		}
-	}
+	// 当前是否处于搜索面板
+	public static bool IsSearching => Approximately(ScreenshotUtils.GetColorOnScreen(960, 466), new Color32(119, 131, 184, 255));
 
 	public static bool IsEnergyAdding {
 		get {
@@ -116,9 +95,9 @@ public static class Recognize {
 			Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(960, 590);
 			Color32 targetColor3 = new Color32(254, 209, 51, 255);
 			Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(960, 702);
-			return Approximately(realColor1, targetColor1, 10) ||	// 小体图标
-					Approximately(realColor2, targetColor2, 10) ||	// 大体图标
-					Approximately(realColor3, targetColor3, 10);	// 使用按钮
+			return Approximately(realColor1, targetColor1) ||	// 小体图标
+					Approximately(realColor2, targetColor2) ||	// 大体图标
+					Approximately(realColor3, targetColor3);	// 使用按钮
 		}
 	}
 	
@@ -126,14 +105,11 @@ public static class Recognize {
 		int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
 		if (deltaY >= 0) {
 			int groupCount = 0;
-			Color32 targetColor1 = new Color32(98, 135, 229, 255);	// 无界面覆盖
-			Color32 targetColor2 = new Color32(29, 40, 68, 255);	// 联盟背包等窗口覆盖
-			Color32 targetColor3 = new Color32(9, 12, 20, 255);	// 曙光活动主界面（或双层窗口）覆盖
+			// 返回加速等蓝色按钮
+			Color32 targetColor = new Color32(98, 135, 229, 255);
 			while (groupCount < 10) {
 				Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-				if (!Approximately(realColor, targetColor1, 10) &&
-						!Approximately(realColor, targetColor2, 10) &&
-						!Approximately(realColor, targetColor3, 10)) {
+				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 					break;
 				}
 				Color32 frameColor = ScreenshotUtils.GetColorOnScreen(51, 419 + deltaY + groupCount * 50);
@@ -176,16 +152,14 @@ public static class Recognize {
 		}
 		if (deltaY >= 0 && heroAvatar != null) {
 			int groupCount = 0;
-			Color32 targetColor1 = new Color32(98, 135, 229, 255);	// 无界面覆盖
-			Color32 targetColor2 = new Color32(29, 40, 68, 255);	// 联盟背包等窗口覆盖
-			Color32 targetColor3 = new Color32(9, 12, 20, 255);	// 曙光活动主界面（或双层窗口）覆盖
+			// 返回加速等蓝色按钮
+			Color32 targetColor = new Color32(98, 135, 229, 255);
 			while (groupCount < 10) {
 				Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-				if (!Approximately(realColor, targetColor1, 10) &&
-						!Approximately(realColor, targetColor2, 10) &&
-						!Approximately(realColor, targetColor3, 10)) {
+				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 					break;
 				}
+
 				int approximatelyCount = 0;
 				int pointCount = AVATAR_SAMPLE_POINTS.Length;
 				for (int i = 0; i < pointCount; ++i) {
@@ -199,7 +173,8 @@ public static class Recognize {
 						b += c.b;
 					}
 					Color32 color = new Color32((byte) (r / 3), (byte) (g / 3), (byte) (b / 3), 255);
-					if (Approximately(color, heroAvatar[i], 20)) {
+					// Color32 color = ScreenshotUtils.GetColorOnScreen(finalPoint.x, finalPoint.y);
+					if (ApproximatelyCoveredCount(color, heroAvatar[i]) >= 0) {
 						++approximatelyCount;
 					}
 				}
@@ -221,9 +196,9 @@ public static class Recognize {
 			Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(965, 280);
 			Color32 targetColor3 = new Color32(197, 194, 192, 255);
 			Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(952, 297);
-			return Approximately(realColor1, targetColor1, 10) &&
-					Approximately(realColor2, targetColor2, 10) &&
-					Approximately(realColor3, targetColor3, 10);
+			return Approximately(realColor1, targetColor1) &&
+					Approximately(realColor2, targetColor2) &&
+					Approximately(realColor3, targetColor3);
 		}
 	}
 
@@ -233,17 +208,17 @@ public static class Recognize {
 			Color32 targetColor1 = new Color32(147, 199, 167, 255);
 			Color32 targetColor2 = new Color32(44, 89, 115, 255);
 			Color32 realColor = ScreenshotUtils.GetColorOnScreen(790, 325);
-			return Approximately(realColor, targetColor1, 10) ||
-					Approximately(realColor, targetColor2, 10);
+			return Approximately(realColor, targetColor1) ||
+					Approximately(realColor, targetColor2);
 		}
 	}
 
-	private static bool Approximately(Color32 c1, Color32 c2, int threshold) {
-		return Mathf.Abs(c1.r - c2.r) <= threshold &&
-				Mathf.Abs(c1.g - c2.g) <= threshold &&
-				Mathf.Abs(c1.b - c2.b) <= threshold;
+	private static bool Approximately(Color32 c1, Color32 c2, float threshold = 0.1F) {
+		float deltaR = Mathf.Abs(c1.r / c2.r - 1);
+		float deltaG = Mathf.Abs(c1.g / c2.g - 1);
+		float deltaB = Mathf.Abs(c1.b / c2.b - 1);
+		return deltaR < threshold && deltaG < threshold && deltaB < threshold;
 	}
-	
 	// {0.4F, 0.65F}: 出征界面有个特殊弹窗很浅
 	private static readonly Dictionary<float, float> COVER_COEFFICIENT_DICT = new() {
 		{0, 1},
@@ -251,19 +226,33 @@ public static class Recognize {
 		{1, 0.299F},
 		{2, 0.084F},
 	};
-	public static float ApproximatelyCoveredCount(Color32 realColor, Color32 targetColor, float threshold = 0.1F) {
+	public static float ApproximatelyCoveredCount(Color32 realColor, Color32 targetColor, float thresholdMulti = 1) {
 		foreach (var (coverCount, coefficient) in COVER_COEFFICIENT_DICT) {
 			float targetR = targetColor.r * coefficient;
 			float targetG = targetColor.g * coefficient;
 			float targetB = targetColor.b * coefficient;
-			float deltaR = Mathf.Abs(realColor.r / targetR - 1);
-			float deltaG = Mathf.Abs(realColor.g / targetG - 1);
-			float deltaB = Mathf.Abs(realColor.b / targetB - 1);
-			// Debug.LogError($"第{pair.Key}层：{deltaR}, {deltaG}, {deltaB}");
-			if (deltaR < threshold && deltaG < threshold && deltaB < threshold) {
+			// 当目标值为0，则1以内算相近，否则按比例
+			float deltaR = targetR == 0 ? realColor.r <= 1 ? 0 : 1 : Mathf.Abs(realColor.r / targetR - 1);
+			float deltaG = targetG == 0 ? realColor.g <= 1 ? 0 : 1 : Mathf.Abs(realColor.g / targetG - 1);
+			float deltaB = targetB == 0 ? realColor.b <= 1 ? 0 : 1 : Mathf.Abs(realColor.b / targetB - 1);
+			// Debug.LogError($"第{coverCount}层：{deltaR}, {deltaG}, {deltaB}");
+			if (deltaR < GetThreshold(targetR) * thresholdMulti &&
+					deltaG < GetThreshold(deltaG) * thresholdMulti &&
+					deltaB < GetThreshold(deltaB) * thresholdMulti) {
 				return coverCount;
 			}
 		}
 		return -1;
+	}
+	public static float GetThreshold(float value) {
+		return value switch {
+			// > 100 => ((value - 100) * 0.03333F + 10) / value,
+			> 100 => 0.03333F + 6.66667F / value,
+			// > 10 => ((value - 10) * 0.07778F + 3) / value,
+			> 10 => 0.07778F + 2.22222F / value,
+			// > 0 => (value * 0.2F + 1) / value
+			> 0 => 0.2F + 1 / value,
+			_ => 1
+		};
 	}
 }
