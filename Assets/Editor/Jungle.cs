@@ -161,38 +161,49 @@ public static class Jungle {
 						continue;
 					}
 				} else {
+					bool willContinue = false;
 					int i = 0;
 					while (Recognize.IsEnergyAdding) {
 						switch (useBottle) {
 							case 1:
-								if (i >= 3) {
+								if (i < 3) {
+									Debug.Log("嗑小体");
+									Click(830, 590);	// 选中小体
+									yield return new EditorWaitForSeconds(0.1F);
+									Click(960, 702);	// 使用按钮
+								} else {
 									Debug.LogError("连续嗑了3瓶小体还是体力不足！");
-									yield break;
+									willContinue = true;
 								}
-								Debug.Log("嗑小体");
-								Click(830, 590);	// 选中小体
-								yield return new EditorWaitForSeconds(0.1F);
-								Click(960, 702);	// 使用按钮
 								break;
 							case 2:
-								if (i >= 1) {
+								if (i < 1) {
+									Debug.Log("嗑大体");
+									Click(960, 590);	// 选中大体
+									yield return new EditorWaitForSeconds(0.1F);
+									Click(960, 702);	// 使用按钮
+								} else {
 									Debug.LogError("嗑了大体还是体力不足！");
-									yield break;
+									willContinue = true;
 								}
-								Debug.Log("嗑大体");
-								Click(960, 590);	// 选中大体
-								yield return new EditorWaitForSeconds(0.1F);
-								Click(960, 702);	// 使用按钮
 								break;
 						}
 						yield return new EditorWaitForSeconds(0.1F);
 						Click(1170, 384);	// 关闭按钮
+						if (willContinue) {
+							break;
+						}
 						yield return new EditorWaitForSeconds(0.3F);
 						Click(960, 580);	// 选中目标
 						yield return new EditorWaitForSeconds(0.1F);
 						Click(870, 430);	// 攻击5次按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						i++;
+					}
+					if (willContinue) {
+						Debug.Log("等待5分钟后再尝试");
+						yield return new EditorWaitForSeconds(300);
+						continue;
 					}
 				}
 				Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
