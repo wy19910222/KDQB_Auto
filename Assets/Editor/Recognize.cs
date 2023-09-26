@@ -1,13 +1,11 @@
 ﻿/*
  * @Author: wangyun
- * @CreateTime: 2023-09-21 20:30:39 012
+ * @CreateTime: 2023-09-27 01:41:06 793
  * @LastEditor: wangyun
- * @EditTime: 2023-09-21 20:30:39 016
+ * @EditTime: 2023-09-27 01:41:06 799
  */
 
 using System.Collections.Generic;
-using System.Text;
-using UnityEditor;
 using UnityEngine;
 
 public static class Recognize {
@@ -246,18 +244,24 @@ public static class Recognize {
 				Mathf.Abs(c1.b - c2.b) <= threshold;
 	}
 	
-	private static readonly float[] COVER_COEFFICIENTS = {1, 0.299F, 0.084F};
-	public static int ApproximatelyColoredCount(Color32 realColor, Color32 targetColor, float threshold = 0.1F) {
-		for (int i = 0, length = COVER_COEFFICIENTS.Length; i < length; ++i) {
-			float targetR = targetColor.r * COVER_COEFFICIENTS[i];
-			float targetG = targetColor.g * COVER_COEFFICIENTS[i];
-			float targetB = targetColor.b * COVER_COEFFICIENTS[i];
+	// {0.4F, 0.65F}: 出征界面有个特殊弹窗很浅
+	private static readonly Dictionary<float, float> COVER_COEFFICIENT_DICT = new() {
+		{0, 1},
+		{0.4F, 0.65F},
+		{1, 0.299F},
+		{2, 0.084F},
+	};
+	public static float ApproximatelyColoredCount(Color32 realColor, Color32 targetColor, float threshold = 0.1F) {
+		foreach (var (coverCount, coefficient) in COVER_COEFFICIENT_DICT) {
+			float targetR = targetColor.r * coefficient;
+			float targetG = targetColor.g * coefficient;
+			float targetB = targetColor.b * coefficient;
 			float deltaR = Mathf.Abs(realColor.r / targetR - 1);
 			float deltaG = Mathf.Abs(realColor.g / targetG - 1);
 			float deltaB = Mathf.Abs(realColor.b / targetB - 1);
-			Debug.LogError($"第{i}层：{deltaR}, {deltaG}, {deltaB}");
+			// Debug.LogError($"第{pair.Key}层：{deltaR}, {deltaG}, {deltaB}");
 			if (deltaR < threshold && deltaG < threshold && deltaB < threshold) {
-				return i;
+				return coverCount;
 			}
 		}
 		return -1;
