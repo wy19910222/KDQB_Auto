@@ -251,7 +251,7 @@ public static class Recognize {
 		{1, 0.299F},
 		{2, 0.084F},
 	};
-	public static float ApproximatelyColoredCount(Color32 realColor, Color32 targetColor, float threshold = 0.1F) {
+	public static float ApproximatelyCoveredCount(Color32 realColor, Color32 targetColor, float threshold = 0.1F) {
 		foreach (var (coverCount, coefficient) in COVER_COEFFICIENT_DICT) {
 			float targetR = targetColor.r * coefficient;
 			float targetG = targetColor.g * coefficient;

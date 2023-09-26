@@ -277,10 +277,11 @@ public static class Test {
 	
 	[MenuItem("Assets/LogWindowCoveredCount", priority = -1)]
 	private static void LogWindowCoveredCount() {
-		Debug.LogError(Recognize.ApproximatelyColoredCount(ScreenshotUtils.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)));
-		Debug.LogError(Recognize.ApproximatelyColoredCount(ScreenshotUtils.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)));
-		Debug.LogError(Recognize.ApproximatelyColoredCount(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)));
-		Debug.LogError(Recognize.ApproximatelyColoredCount(ScreenshotUtils.GetColorOnScreen(145, 438), new Color32(98, 135, 229, 255)));
-		Debug.LogError(Recognize.ApproximatelyColoredCount(ScreenshotUtils.GetColorOnScreen(145, 438 + 76), new Color32(98, 135, 229, 255)));
+		Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)));
+		Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)));
+		Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 164 + 76), new Color32(56, 124, 205, 255)));
+		Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(145, 438), new Color32(98, 135, 229, 255)));
+		Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(145, 438 + 76), new Color32(98, 135, 229, 255)));
+		Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)));
 	}
 }
