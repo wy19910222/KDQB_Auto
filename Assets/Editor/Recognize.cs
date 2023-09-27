@@ -188,6 +188,24 @@ public static class Recognize {
 		return -1;
 	}
 
+	public static bool IsFollowOuterJoinBtnExist {
+		get {
+			if (CurrentScene == Scene.OUTSIDE) {
+				// 三个条件都满足才是绿色加入按钮
+				Color32 targetColor1 = new Color32(106, 212, 98, 255);
+				Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(1771, 700);
+				Color32 targetColor2 = new Color32(94, 203, 91, 255);
+				Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(1746, 710);
+				Color32 targetColor3 = new Color32(94, 203, 91, 255);
+				Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(1796, 710);
+				return Approximately(realColor1, targetColor1) &&
+						Approximately(realColor2, targetColor2) &&
+						Approximately(realColor3, targetColor3);
+			}
+			return false;
+		}
+	}
+
 	public static bool IsFollowJoinBtnExist {
 		get {
 			// 三个条件都满足才是灰色加号按钮
