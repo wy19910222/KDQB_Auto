@@ -287,8 +287,35 @@ public static class Test {
 	//
 	// [MenuItem("Assets/TestGetThreshold", priority = -1)]
 	// private static void TestGetThreshold() {
-	// 	Debug.LogError($"122: {Recognize.GetThreshold(122)}");
-	// 	Debug.LogError($"121: {Recognize.GetThreshold(121)}");
-	// 	Debug.LogError($"129: {Recognize.GetThreshold(129)}");
+	// 	Debug.LogError($"122: {Recognize.GetThreshold(29.302F)}");
+	// 	Debug.LogError($"121: {Recognize.GetThreshold(40.365F)}");
+	// 	Debug.LogError($"129: {Recognize.GetThreshold(68.471F)}");
 	// }
+	//
+	// [MenuItem("Assets/LogBusyGroupCount", priority = -1)]
+	// private static void LogBusyGroupCount() {
+	// 	Debug.LogError(Recognize.BusyGroupCount);
+	// }
+	//
+	// [MenuItem("Assets/LogIsSearching", priority = -1)]
+	// private static void LogIsSearching() {
+	// 	var a = ScreenshotUtils.GetColorOnScreen(960, 466);
+	// 	var b = new Color32(119, 131, 184, 255);
+	// 	Debug.LogError(a);
+	// 	Debug.LogError(b);
+	// 	Debug.LogError(Recognize.Approximately(a, b));
+	// }
+	
+	[MenuItem("Assets/LogFollowIcon", priority = -1)]
+	private static void LogIsSearching() {
+		Color32 targetColor = new Color32(77, 134, 159, 255);
+		const int realX = 1116;
+		const int realY = 273;
+		for (int y = -1; y < 2; y++) {
+			for (int x = -1; x < 2; x++) {
+				Color32 realColor = ScreenshotUtils.GetColorOnScreen(realX + x, realY + y);
+				Debug.LogError($"{x}, {y}: {Recognize.Approximately(realColor, targetColor)}");
+			}
+		}
+	}
 }
