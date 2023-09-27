@@ -15,9 +15,9 @@ using Debug = UnityEngine.Debug;
 
 public static class Follow {
 	private static bool INCLUDE_JD = true;	// 是否跟据点
-	private static bool INCLUDE_ZC = true;	// 是否跟战锤
+	private static bool INCLUDE_ZC = false;	// 是否跟战锤
 	private static bool INCLUDE_JW = true;	// 是否跟精卫
-	private static bool INCLUDE_NMY = false;	// 是否跟难民营
+	private static bool INCLUDE_NMY = true;	// 是否跟难民营
 	private static bool INCLUDE_AXPP = true;	// 是否跟爱心砰砰
 	private static bool INCLUDE_JX = false;	// 是否跟惧星
 	private static int GROUP_COUNT = 4;	// 拥有行军队列数
@@ -163,10 +163,10 @@ public static class Follow {
 			return true;
 		},
 		() => {
-			Color32 targetColor = new Color32(182, 75, 97, 255);
-			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1049, 321);
 			// 如果不跟爱心砰砰，则判断是否是爱心砰砰，不是才执行
 			if (!INCLUDE_AXPP) {
+				Color32 targetColor = new Color32(182, 75, 97, 255);
+				Color32 realColor = ScreenshotUtils.GetColorOnScreen(1049, 321);
 				return !Approximately(realColor, targetColor, 10);
 			}
 			return true;
