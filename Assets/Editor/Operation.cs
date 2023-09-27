@@ -21,6 +21,10 @@ public static class Operation {
 		MouseUtils.LeftUp();
 		MouseUtils.SetMousePos(oldPos.x, oldPos.y);
 	}
+	
+	public static void MouseMove(int x, int y) {
+		MouseUtils.SetMousePos(x, y);
+	}
 
 	public static IEnumerator Drag(int x1, int y1, int x2, int y2, float duration = 0.2F) {
 		Vector2Int oldPos = MouseUtils.GetMousePos();

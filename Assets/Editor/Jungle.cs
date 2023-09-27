@@ -5,7 +5,6 @@
  * @EditTime: 2023-09-07 20:18:29 842
  */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -19,7 +18,7 @@ public static class Jungle {
 	private static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
 	private static int SQUAD_NUMBER = 1;	// 使用编队号码
 	private static bool USE_RANDOM_BOTTLE = false;	// 随机使用大体或小体
-	private static bool USE_SMALL_BOTTLE = false;	// 是否使用小体（未开随机时生效）
+	private static bool USE_SMALL_BOTTLE = true;	// 是否使用小体（未开随机时生效）
 	private static bool USE_BIG_BOTTLE = false;	// 是否使用大体（未开随机时生效）
 	
 	private static EditorCoroutine s_CO;
@@ -54,10 +53,10 @@ public static class Jungle {
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.ARMY_SELECTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
-					Click(50, 130);	// 左上角返回按钮
+					Operation.Click(50, 130);	// 左上角返回按钮
 					break;
 				// case Recognize.Scene.INSIDE:
-				// 	Click(1170, 970);	// 右下角主城与世界切换按钮
+				// 	Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
 				// 	break;
 			}
 			Debug.Log("等待切换到世界界面且无窗口覆盖");
@@ -79,13 +78,13 @@ public static class Jungle {
 			}
 			if (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
-				Click(735, 128);	// 左上角返回按钮
+				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				Click(735, 128);	// 左上角返回按钮
+				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				Click(735, 128);	// 左上角返回按钮
+				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				Click(735, 128);	// 左上角返回按钮
+				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
@@ -94,51 +93,56 @@ public static class Jungle {
 			}
 			// 开始打野
 			while (!Recognize.IsSearching) {
-				Click(750, 970);	// 搜索按钮
+				// Debug.Log("搜索按钮");
+				Operation.Click(750, 970);	// 搜索按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
-			Click(770, 510);	// 敌军按钮
+			// Debug.Log("敌军按钮");
+			Operation.Click(770, 510);	// 敌军按钮
 			yield return new EditorWaitForSeconds(0.1F);
-			var ie = Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
+			// Debug.Log("列表往左拖动");
+			var ie = Operation.Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
 			while (ie.MoveNext()) {
 				yield return ie.Current;
 			}
 			yield return new EditorWaitForSeconds(0.3F);
-			Click(1120, 670);	// 选中最后一个（黑暗机甲）
+			// Debug.Log("选中最后一个（黑暗机甲）");
+			Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
 			yield return new EditorWaitForSeconds(0.1F);
-			Click(810 + 50 * JUNGLE_STAR, 880);	// 星级滑块
+			// Debug.Log("星级滑块");
+			Operation.Click(810 + 50 * JUNGLE_STAR, 880);	// 星级滑块
 			yield return new EditorWaitForSeconds(0.1F);
-			Click(960, 940);	// 搜索按钮
+			// Debug.Log("搜索按钮");
+			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			// 搜索面板消失，说明搜索到了
 			if (!Recognize.IsSearching) {
-				Click(960, 580);	// 选中目标
-				yield return new EditorWaitForSeconds(0.1F);
-				Click(870, 430);	// 攻击5次按钮
+				Operation.Click(960, 580);	// 选中目标
+				yield return new EditorWaitForSeconds(0.2F);
+				Operation.Click(870, 430);	// 攻击5次按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				// 打开背包嗑小体
 				if (Recognize.IsEnergyAdding) {
-					Click(1170, 384);	// 关闭按钮
+					Operation.Click(1170, 384);	// 关闭按钮
 					yield return new EditorWaitForSeconds(0.3F);
-					Click(1870, 870);	// 背包按钮
+					Operation.Click(1870, 870);	// 背包按钮
 					yield return new EditorWaitForSeconds(0.1F);
 					// 判断小体是否在第二格
 					Color32 targetColor1 = new Color32(129, 242, 25, 255);
 					Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(847, 305);
 					Color32 targetColor2 = new Color32(248, 210, 22, 255);
 					Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(866, 281);
-					if (Approximately(realColor1, targetColor1, 10) &&
-							Approximately(realColor2, targetColor2, 10)) {
-						Click(866, 281);	// 选中小体
+					if (Recognize.Approximately(realColor1, targetColor1) && Recognize.Approximately(realColor2, targetColor2)) {
+						Operation.Click(866, 281);	// 选中小体
 						yield return new EditorWaitForSeconds(0.1F);
-						Click(960, 960);	// 使用按钮
+						Operation.Click(960, 960);	// 使用按钮
 						yield return new EditorWaitForSeconds(0.1F);
 					}
-					Click(735, 128);	// 左上角返回按钮
+					Operation.Click(735, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.1F);
-					Click(960, 580);	// 选中目标
+					Operation.Click(960, 580);	// 选中目标
 					yield return new EditorWaitForSeconds(0.1F);
-					Click(870, 430);	// 攻击5次按钮
+					Operation.Click(870, 430);	// 攻击5次按钮
 					yield return new EditorWaitForSeconds(0.3F);
 				}
 				// 快捷嗑药
@@ -155,7 +159,7 @@ public static class Jungle {
 				if (useBottle == 0) {
 					if (Recognize.IsEnergyAdding) {
 						yield return new EditorWaitForSeconds(0.1F);
-						Click(1170, 384);	// 关闭按钮
+						Operation.Click(1170, 384);	// 关闭按钮
 						Debug.Log("体力不足，等待5分钟后再尝试");
 						yield return new EditorWaitForSeconds(300);
 						continue;
@@ -168,9 +172,9 @@ public static class Jungle {
 							case 1:
 								if (i < 3) {
 									Debug.Log("嗑小体");
-									Click(830, 590);	// 选中小体
+									Operation.Click(830, 590);	// 选中小体
 									yield return new EditorWaitForSeconds(0.1F);
-									Click(960, 702);	// 使用按钮
+									Operation.Click(960, 702);	// 使用按钮
 								} else {
 									Debug.LogError("连续嗑了3瓶小体还是体力不足！");
 									willContinue = true;
@@ -179,9 +183,9 @@ public static class Jungle {
 							case 2:
 								if (i < 1) {
 									Debug.Log("嗑大体");
-									Click(960, 590);	// 选中大体
+									Operation.Click(960, 590);	// 选中大体
 									yield return new EditorWaitForSeconds(0.1F);
-									Click(960, 702);	// 使用按钮
+									Operation.Click(960, 702);	// 使用按钮
 								} else {
 									Debug.LogError("嗑了大体还是体力不足！");
 									willContinue = true;
@@ -189,14 +193,14 @@ public static class Jungle {
 								break;
 						}
 						yield return new EditorWaitForSeconds(0.1F);
-						Click(1170, 384);	// 关闭按钮
+						Operation.Click(1170, 384);	// 关闭按钮
 						if (willContinue) {
 							break;
 						}
 						yield return new EditorWaitForSeconds(0.3F);
-						Click(960, 580);	// 选中目标
+						Operation.Click(960, 580);	// 选中目标
 						yield return new EditorWaitForSeconds(0.1F);
-						Click(870, 430);	// 攻击5次按钮
+						Operation.Click(870, 430);	// 攻击5次按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						i++;
 					}
@@ -206,9 +210,9 @@ public static class Jungle {
 						continue;
 					}
 				}
-				Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
-				Click(960, 470);	// 出战按钮
+				Operation.Click(960, 470);	// 出战按钮
 				Debug.Log("出发");
 			}
 			
@@ -217,40 +221,6 @@ public static class Jungle {
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
-
-	private static void Click(int x, int y) {
-		Vector2Int oldPos = MouseUtils.GetMousePos();
-		MouseUtils.SetMousePos(x, y);
-		MouseUtils.LeftDown();
-		MouseUtils.LeftUp();
-		MouseUtils.SetMousePos(oldPos.x, oldPos.y);
-	}
-
-	private static IEnumerator Drag(int x1, int y1, int x2, int y2, float duration) {
-		Vector2Int oldPos = MouseUtils.GetMousePos();
-		
-		MouseUtils.SetMousePos(x1, y1);
-		MouseUtils.LeftDown();
-		long startTime = DateTime.Now.Ticks;
-		while (true) {
-			yield return null;
-			float percent = (DateTime.Now.Ticks - startTime) / (duration * 10000000);
-			if (percent >= 1) {
-				break;
-			}
-			MouseUtils.SetMousePos(Mathf.RoundToInt(Mathf.Lerp(x1, x2, percent)), Mathf.RoundToInt(Mathf.Lerp(y1, y2, percent)));	// 加入按钮
-		}
-		MouseUtils.SetMousePos(x2, y2);
-		MouseUtils.LeftUp();
-		
-		MouseUtils.SetMousePos(oldPos.x, oldPos.y);
-	}
-
-	private static bool Approximately(Color32 c1, Color32 c2, int threshold) {
-		return Mathf.Abs(c1.r - c2.r) <= threshold &&
-				Mathf.Abs(c1.g - c2.g) <= threshold &&
-				Mathf.Abs(c1.b - c2.b) <= threshold;
-	}
 	
 	// [MenuItem("Assets/Jungle.Test", priority = -1)]
 	private static void Test() {
@@ -258,13 +228,13 @@ public static class Jungle {
 	}
 
 	private static IEnumerator IETest() {
-		Click(1870, 870);	// 背包按钮
+		Operation.Click(1870, 870);	// 背包按钮
 		yield return new EditorWaitForSeconds(1F);
-		Click(860, 290);	// 选中小体
+		Operation.Click(860, 290);	// 选中小体
 		yield return new EditorWaitForSeconds(1F);
-		// Click(960, 960);	// 使用按钮
-		MouseUtils.SetMousePos(960, 960);
+		// Operation.Click(960, 960);	// 使用按钮
+		Operation.MouseMove(960, 960);
 		yield return new EditorWaitForSeconds(1F);
-		Click(735, 128);	// 左上角返回按钮
+		Operation.Click(735, 128);	// 左上角返回按钮
 	}
 }
