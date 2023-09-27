@@ -72,6 +72,7 @@ public static class Recognize {
 				Color32 targetColor = new Color32(98, 135, 229, 255);
 				while (groupCount < 10) {
 					Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
+					// Debug.LogError($"groupCount: {groupCount}");
 					if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 						break;
 					}
@@ -187,7 +188,7 @@ public static class Recognize {
 		return -1;
 	}
 
-	public static bool JoinBtnExist {
+	public static bool IsFollowJoinBtnExist {
 		get {
 			// 三个条件都满足才是灰色加号按钮
 			Color32 targetColor1 = new Color32(148, 148, 155, 255);
@@ -202,7 +203,7 @@ public static class Recognize {
 		}
 	}
 
-	public static bool HasJoined {
+	public static bool HasFollowJoined {
 		get {
 			//绿色已加入箭头存在，说明已加入
 			Color32 targetColor1 = new Color32(147, 199, 167, 255);
@@ -213,11 +214,123 @@ public static class Recognize {
 		}
 	}
 
-	private static bool Approximately(Color32 c1, Color32 c2, float threshold = 0.1F) {
-		float deltaR = Mathf.Abs(c1.r / c2.r - 1);
-		float deltaG = Mathf.Abs(c1.g / c2.g - 1);
-		float deltaB = Mathf.Abs(c1.b / c2.b - 1);
-		return deltaR < threshold && deltaG < threshold && deltaB < threshold;
+	public static bool IsFollowIconExist {
+		get {
+			// 判断车界面图标是否已出现
+			Color32 targetColor = new Color32(118, 132, 169, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1107, 279);
+			return !Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsJDCanFollow {
+		get {
+			// 判断跟车界面图标是否是黑暗军团据点
+			Color32 targetColor = new Color32(41, 39, 48, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1104, 236);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsZCCanFollow {
+		get {
+			// 判断跟车界面图标是否是战锤
+			Color32 targetColor = new Color32(253, 109, 106, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1142, 310);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsNMYCanFollow {
+		get {
+			// 判断跟车界面图标是否是难民营
+			Color32 targetColor = new Color32(77, 134, 159, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1116, 273);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsAXPPCanFollow {
+		get {
+			// 判断跟车界面图标是否是爱心砰砰
+			Color32 targetColor = new Color32(182, 75, 97, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1049, 321);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsJWCanFollow {
+		get {
+			// 判断跟车界面图标是否是精卫
+			Color32 targetColor = new Color32(158, 85, 92, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1113, 215);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsJXCanFollow {
+		get {
+			// 判断跟车界面图标是否是惧星
+			Color32 targetColor = new Color32(41, 131, 221, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1089, 213);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool IsTooLateWindowExist {
+		get {
+			if (CurrentScene == Scene.ARMY_SELECTING) {
+				// 判断出征界面是否弹出赶不上弹框
+				// 暂时判断的是指定位置是否存在红色取消按钮
+				Color32 targetColor = new Color32(211, 78, 56, 255);
+				Color32 realColor = ScreenshotUtils.GetColorOnScreen(880, 700);
+				return Approximately(realColor, targetColor);
+			}
+			return false;
+		}
+	}
+
+	private static readonly RectInt s_OwnerAvatarRect = new RectInt(731, 190, 55, 54);	// 集结发起人头像范围
+	private const int OWNER_AVATAR_FEATURE_XY_COUNT = 5; // 集结发起人头像特征获取的阵列边长
+	public static Color32[] GetFollowOwnerAvatar() {
+		int xStepLength = s_OwnerAvatarRect.width / OWNER_AVATAR_FEATURE_XY_COUNT;
+		int offsetX = (s_OwnerAvatarRect.width - xStepLength * OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
+		int yStepLength = s_OwnerAvatarRect.height / OWNER_AVATAR_FEATURE_XY_COUNT;
+		int offsetY = (s_OwnerAvatarRect.height - yStepLength * OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
+		int startX = s_OwnerAvatarRect.x + offsetX;
+		int startY = s_OwnerAvatarRect.y + offsetY;
+		Color32[] ownerAvatarFeature = new Color32[OWNER_AVATAR_FEATURE_XY_COUNT * OWNER_AVATAR_FEATURE_XY_COUNT];
+		for (int y = 0; y < OWNER_AVATAR_FEATURE_XY_COUNT; ++y) {
+			for (int x = 0; x < OWNER_AVATAR_FEATURE_XY_COUNT; ++x) {
+				ownerAvatarFeature[y * OWNER_AVATAR_FEATURE_XY_COUNT + x] = ScreenshotUtils.GetColorOnScreen(startX + x, startY + y);
+			}
+		}
+		return ownerAvatarFeature;
+	}
+	public static bool ApproximatelyBigAvatar(IList<Color32> feature1, IList<Color32> feature2) {
+		if (feature1.Count != feature2.Count) {
+			return false;
+		}
+		for (int i = 0, length = feature1.Count; i < length; ++i) {
+			if (feature1[i].r != feature2[i].r || feature1[i].g != feature2[i].g || feature1[i].b != feature2[i].b) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+#region Base
+	public static bool Approximately(Color32 realColor, Color32 targetColor, float thresholdMulti = 1) {
+		float targetR = targetColor.r;
+		float targetG = targetColor.g;
+		float targetB = targetColor.b;
+		float deltaR = Mathf.Abs(realColor.r / targetR - 1);
+		float deltaG = Mathf.Abs(realColor.g / targetG - 1);
+		float deltaB = Mathf.Abs(realColor.b / targetB - 1);
+		// Debug.LogError($"{deltaR}, {deltaG}, {deltaB}");
+		return deltaR < GetThreshold(targetR) * thresholdMulti &&
+				deltaG < GetThreshold(targetG) * thresholdMulti &&
+				deltaB < GetThreshold(targetB) * thresholdMulti;
 	}
 	// {0.4F, 0.65F}: 出征界面有个特殊弹窗很浅
 	private static readonly Dictionary<float, float> COVER_COEFFICIENT_DICT = new() {
@@ -237,8 +350,8 @@ public static class Recognize {
 			float deltaB = targetB == 0 ? realColor.b <= 1 ? 0 : 1 : Mathf.Abs(realColor.b / targetB - 1);
 			// Debug.LogError($"第{coverCount}层：{deltaR}, {deltaG}, {deltaB}");
 			if (deltaR < GetThreshold(targetR) * thresholdMulti &&
-					deltaG < GetThreshold(deltaG) * thresholdMulti &&
-					deltaB < GetThreshold(deltaB) * thresholdMulti) {
+					deltaG < GetThreshold(targetG) * thresholdMulti &&
+					deltaB < GetThreshold(targetB) * thresholdMulti) {
 				return coverCount;
 			}
 		}
@@ -255,4 +368,5 @@ public static class Recognize {
 			_ => 1
 		};
 	}
+#endregion
 }
