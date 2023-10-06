@@ -46,9 +46,9 @@ public static class Follow2 {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	
 	public static bool INCLUDE_JD = true;	// 是否跟据点
-	public static bool INCLUDE_ZC = false;	// 是否跟战锤
-	public static bool INCLUDE_JW = false;	// 是否跟精卫
-	public static bool INCLUDE_NMY = false;	// 是否跟难民营
+	public static bool INCLUDE_ZC = true;	// 是否跟战锤
+	public static bool INCLUDE_JW = true;	// 是否跟精卫
+	public static bool INCLUDE_NMY = true;	// 是否跟难民营
 	public static bool INCLUDE_AXPP = true;	// 是否跟爱心砰砰
 	public static bool INCLUDE_JX = false;	// 是否跟惧星
 	
@@ -105,6 +105,10 @@ public static class Follow2 {
 				Operation.Click(1771, 714);	// 加入按钮
 				followWindowOpened = true;
 				yield return new EditorWaitForSeconds(0.1F);
+				// 是否有加入按钮(切后台可能导致动画阻塞，从而外面有按钮实际集结已结束)
+				if (!Recognize.IsFollowJoinBtnExist) {
+					goto EndOfFollow;
+				}
 			}
 			// 是否已加入
 			if (Recognize.HasFollowJoined) {
@@ -113,30 +117,37 @@ public static class Follow2 {
 			Debug.Log("未加入");
 			// 是否已显示Icon
 			if (!Recognize.IsFollowIconExist) {
+				Debug.Log("未显示Icon");
 				goto EndOfFollow;
 			}
 			// 如果不跟黑暗军团据点
 			if (!INCLUDE_JD && Recognize.IsJDCanFollow) {
+				Debug.Log("不跟黑暗军团据点");
 				goto EndOfFollow;
 			}
 			// 如果不跟战锤
 			if (!INCLUDE_ZC && Recognize.IsZCCanFollow) {
+				Debug.Log("不跟战锤");
 				goto EndOfFollow;
 			}
 			// 如果不跟爱心砰砰
 			if (!INCLUDE_AXPP && Recognize.IsAXPPCanFollow) {
+				Debug.Log("不跟爱心砰砰");
 				goto EndOfFollow;
 			}
 			// 如果不跟难民营
 			if (!INCLUDE_NMY && Recognize.IsNMYCanFollow) {
+				Debug.Log("不跟难民营");
 				goto EndOfFollow;
 			}
 			// 如果不跟精卫
 			if (!INCLUDE_JW && Recognize.IsJWCanFollow) {
+				Debug.Log("不跟精卫");
 				goto EndOfFollow;
 			}
 			// 如果不跟惧星
 			if (!INCLUDE_JX && Recognize.IsJXCanFollow) {
+				Debug.Log("不跟惧星");
 				goto EndOfFollow;
 			}
 			Debug.Log("可以跟车");
