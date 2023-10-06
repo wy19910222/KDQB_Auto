@@ -13,29 +13,70 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
+public class JungleConfig : EditorWindow {
+	[MenuItem("Window/Jungle")]
+	private static void Open() {
+		GetWindow<JungleConfig>("打野").Show();
+	}
+	
+	private void OnGUI() {
+		Jungle.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Jungle.GROUP_COUNT, 0, 7);
+		Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
+		Jungle.JUNGLE_LAND = EditorGUILayout.Toggle("攻击陆军残兵", Jungle.JUNGLE_LAND);
+		Jungle.JUNGLE_SEA = EditorGUILayout.Toggle("攻击海军残兵", Jungle.JUNGLE_SEA);
+		Jungle.JUNGLE_AIR = EditorGUILayout.Toggle("攻击空军残兵", Jungle.JUNGLE_AIR);
+		Jungle.JUNGLE_MECHA = EditorGUILayout.Toggle("攻击黑暗机甲", Jungle.JUNGLE_MECHA);
+		if (Jungle.JUNGLE_MECHA) {
+			Jungle.JUNGLE_STAR = EditorGUILayout.IntSlider("  黑暗机甲星级", Jungle.JUNGLE_STAR, 1, 5);
+		}
+		Jungle.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Jungle.SQUAD_NUMBER, 1, 8);
+		Jungle.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", Jungle.USE_SMALL_BOTTLE);
+		Jungle.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", Jungle.USE_BIG_BOTTLE);
+		GUILayout.Space(5F);
+		if (Jungle.IsRunning) {
+			if (GUILayout.Button("关闭")) {
+				EditorApplication.ExecuteMenuItem("Assets/StopJungle");
+			}
+		} else {
+			if (GUILayout.Button("开启")) {
+				EditorApplication.ExecuteMenuItem("Assets/StartJungle");
+			}
+		}
+	}
+}
+
 public static class Jungle {
-	private static int GROUP_COUNT = 4;	// 拥有行军队列数
-	private static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
-	private static int SQUAD_NUMBER = 1;	// 使用编队号码
-	private static bool USE_RANDOM_BOTTLE = false;	// 随机使用大体或小体
-	private static bool USE_SMALL_BOTTLE = true;	// 是否使用小体（未开随机时生效）
-	private static bool USE_BIG_BOTTLE = false;	// 是否使用大体（未开随机时生效）
+	public static int GROUP_COUNT = 4;	// 拥有行军队列数
+	public static int RESERVED_ENERGY = 40;	// 保留体力值
+	public static bool JUNGLE_LAND = true;	// 是否攻击陆军残兵
+	public static bool JUNGLE_SEA = true;	// 是否攻击海军残兵
+	public static bool JUNGLE_AIR = false;	// 是否攻击空军残兵
+	public static bool JUNGLE_MECHA = false;	// 是否攻击黑暗机甲
+	public static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
+	public static int SQUAD_NUMBER = 1;	// 使用编队号码
+	public static bool USE_SMALL_BOTTLE = false;	// 是否使用小体
+	public static bool USE_BIG_BOTTLE = false;	// 是否使用大体
 	
 	private static EditorCoroutine s_CO;
+	public static bool IsRunning => s_CO != null;
 
 	[MenuItem("Assets/StartJungle", priority = -1)]
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string>();
 		switches.Add($"拥有行军队列【{GROUP_COUNT}】");
-		switches.Add($"目标【黑暗机甲{JUNGLE_STAR}星】");
-		switches.Add($"使用编队【{SQUAD_NUMBER}】");
-		if (USE_RANDOM_BOTTLE) {
-			switches.Add("【随机使用大体或小体】");
-		} else {
-			if (USE_SMALL_BOTTLE) { switches.Add("【允许使用小体】"); }
-			if (USE_BIG_BOTTLE) { switches.Add("【允许使用大体】"); }
+		switches.Add($"保留体力值【{RESERVED_ENERGY}】");
+		{
+			List<string> targets = new List<string>();
+			if (JUNGLE_LAND) { targets.Add("陆军残兵"); }
+			if (JUNGLE_SEA) { targets.Add("海军残兵"); }
+			if (JUNGLE_AIR) { targets.Add("空军残兵"); }
+			if (JUNGLE_MECHA) { targets.Add($"黑暗机甲{JUNGLE_STAR}星"); }
+			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
+		switches.Add($"使用编队【{SQUAD_NUMBER}】");
+		if (USE_SMALL_BOTTLE) { switches.Add("【允许使用小体】"); }
+		if (USE_BIG_BOTTLE) { switches.Add("【允许使用大体】"); }
 		Debug.Log($"自动打野已开启，{string.Join("，", switches)}");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
@@ -44,6 +85,7 @@ public static class Jungle {
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
+			s_CO = null;
 			Debug.Log("自动打野已关闭");
 		}
 	}
@@ -66,9 +108,9 @@ public static class Jungle {
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
-				if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
+				if (Recognize.energy >= RESERVED_ENERGY + 15 && Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
+					if (Recognize.energy >= RESERVED_ENERGY + 15 && Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
 						Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 						break;
 					}
@@ -100,18 +142,56 @@ public static class Jungle {
 			// Debug.Log("敌军按钮");
 			Operation.Click(770, 510);	// 敌军按钮
 			yield return new EditorWaitForSeconds(0.1F);
-			// Debug.Log("列表往左拖动");
-			var ie = Operation.Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
-			while (ie.MoveNext()) {
-				yield return ie.Current;
+			// 确定攻击目标
+			{
+				List<int> list = new List<int>();
+				if (JUNGLE_LAND) {
+					list.Add(0);
+				}
+				if (JUNGLE_SEA) {
+					list.Add(1);
+				}
+				if (JUNGLE_AIR) {
+					list.Add(2);
+				}
+				if (JUNGLE_MECHA) {
+					list.Add(3);
+				}
+				int target = list[Random.Range(0, list.Count)];
+				Debug.Log("攻击目标: " + target);
+				switch (target) {
+					case 3: {
+						// Debug.Log("列表往左拖动");
+						var ie = Operation.Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
+						while (ie.MoveNext()) {
+							yield return ie.Current;
+						}
+						yield return new EditorWaitForSeconds(0.3F);
+						// Debug.Log("选中最后一个（黑暗机甲）");
+						Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
+						yield return new EditorWaitForSeconds(0.1F);
+						// Debug.Log("星级滑块");
+						Operation.Click(810 + 50 * JUNGLE_STAR, 880);	// 星级滑块
+						yield return new EditorWaitForSeconds(0.1F);
+						break;
+					}
+					default: {
+						// Debug.Log("列表往右拖动");
+						var ie = Operation.Drag(790, 670, 1120, 670, 0.2F);	// 列表往右拖动
+						while (ie.MoveNext()) {
+							yield return ie.Current;
+						}
+						yield return new EditorWaitForSeconds(0.3F);
+						// Debug.Log("选中目标");
+						Operation.Click(794 + 163 * target, 670);	// 选中目标
+						yield return new EditorWaitForSeconds(0.1F);
+						// Debug.Log("等级滑块");
+						Operation.Click(1062, 880);	// 等级滑块
+						yield return new EditorWaitForSeconds(0.1F);
+						break;
+					}
+				}
 			}
-			yield return new EditorWaitForSeconds(0.3F);
-			// Debug.Log("选中最后一个（黑暗机甲）");
-			Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
-			yield return new EditorWaitForSeconds(0.1F);
-			// Debug.Log("星级滑块");
-			Operation.Click(810 + 50 * JUNGLE_STAR, 880);	// 星级滑块
-			yield return new EditorWaitForSeconds(0.1F);
 			// Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -147,14 +227,25 @@ public static class Jungle {
 				}
 				// 快捷嗑药
 				int useBottle = 0;
-				if (USE_RANDOM_BOTTLE) {
-					int randomValue = Random.Range(0, 2);
-					Debug.Log("RandomValue: " + randomValue);
-					useBottle = Random.Range(0, 2) > 0 ? 1 : 2;
-				} else if (USE_BIG_BOTTLE) {
-					useBottle = 2;
-				} else if (USE_SMALL_BOTTLE) {
-					useBottle = 1;
+				{
+					// 确定使用大小体
+					List<int> list = new List<int>();
+					if (USE_SMALL_BOTTLE) {
+						list.Add(1);
+					}
+					if (USE_BIG_BOTTLE) {
+						list.Add(2);
+					}
+					int listCount = list.Count;
+					useBottle = listCount > 0 ? list[Random.Range(0, list.Count)] : 0;
+					switch (useBottle) {
+						case 1:
+							Debug.Log("使用小体");
+							break;
+						case 2:
+							Debug.Log("使用大体");
+							break;
+					}
 				}
 				if (useBottle == 0) {
 					if (Recognize.IsEnergyAdding) {
