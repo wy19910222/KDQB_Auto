@@ -84,6 +84,28 @@ public static class Recognize {
 		}
 	}
 
+	private const int ENERGY_EMPTY = 0;
+	private const int ENERGY_FULL = 75;
+	private const int ENERGY_EMPTY_X = 21;
+	private const int ENERGY_FULL_X = 116;
+	private const int ENERGY_Y = 127;
+	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
+	public static int energy {
+		get {
+			int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
+			if (deltaX >= 0) {
+				const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
+				Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
+				for (int x = width; x >= 0; --x) {
+					if (Approximately(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F)) {
+						return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+					}
+				}
+			}
+			return ENERGY_EMPTY;
+		}
+	}
+
 	// 当前是否处于搜索面板
 	public static bool IsSearching => Approximately(ScreenshotUtils.GetColorOnScreen(960, 466), new Color32(119, 131, 184, 255));
 
@@ -100,6 +122,18 @@ public static class Recognize {
 					Approximately(realColor2, targetColor2) ||	// 大体图标
 					Approximately(realColor3, targetColor3);	// 使用按钮
 		}
+	}
+	
+	public static bool IsBigEnergy(RectInt rect) {
+		Color32 targetColor1 = new Color32(255, 255, 108, 255);
+		Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(830, 590);
+		Color32 targetColor2 = new Color32(255, 255, 108, 255);
+		Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(960, 590);
+		Color32 targetColor3 = new Color32(254, 209, 51, 255);
+		Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(960, 702);
+		return Approximately(realColor1, targetColor1) ||	// 小体图标
+				Approximately(realColor2, targetColor2) ||	// 大体图标
+				Approximately(realColor3, targetColor3);	// 使用按钮
 	}
 	
 	public static bool IsOrangeHeroInGroup() {
@@ -198,9 +232,9 @@ public static class Recognize {
 				Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(1746, 710);
 				Color32 targetColor3 = new Color32(94, 203, 91, 255);
 				Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(1796, 710);
-				return Approximately(realColor1, targetColor1) &&
-						Approximately(realColor2, targetColor2) &&
-						Approximately(realColor3, targetColor3);
+				return ApproximatelyCoveredCount(realColor1, targetColor1) >= 0 &&
+						ApproximatelyCoveredCount(realColor2, targetColor2) >= 0 &&
+						ApproximatelyCoveredCount(realColor3, targetColor3) >= 0;
 			}
 			return false;
 		}
@@ -262,7 +296,7 @@ public static class Recognize {
 	public static bool IsNMYCanFollow {
 		get {
 			// 判断跟车界面图标是否是难民营
-			Color32 targetColor = new Color32(77, 134, 159, 255);
+			Color32 targetColor = new Color32(74, 133, 159, 255);
 			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1116, 273);
 			return Approximately(realColor, targetColor);
 		}
@@ -336,6 +370,13 @@ public static class Recognize {
 		}
 		return true;
 	}
+	
+	public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
+		new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),
+		new Vector2Int(20, 42), new Vector2Int(42, 42), new Vector2Int(65, 42),
+		new Vector2Int(20, 65),	// 右下角有数量显示，不能作为判断依据
+		new Vector2Int(12, 73), // 用于判断背景是什么颜色
+	};
 
 #region Base
 	public static bool Approximately(Color32 realColor, Color32 targetColor, float thresholdMulti = 1) {
