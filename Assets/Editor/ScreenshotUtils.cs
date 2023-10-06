@@ -35,4 +35,18 @@ public static class ScreenshotUtils {
 		System.Drawing.Color c = s_Bitmap.GetPixel(0, 0);
 		return new Color32(c.R, c.G, c.B, c.A);
 	}
+	
+	public static Color32[,] GetColorsOnScreen(int x, int y, int width, int height) {
+		using Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+		using Graphics graphics = Graphics.FromImage(bitmap);
+		graphics.CopyFromScreen(x, y, 0, 0, bitmap.Size);
+		Color32[,] colors = new Color32[width, height];
+		for (int _y = 0; _y < height; ++_y) {
+			for (int _x = 0; _x < width; ++_x) {
+				System.Drawing.Color c = bitmap.GetPixel(_x, _y);
+				colors[_x, _y] = new Color32(c.R, c.G, c.B, c.A);
+			}
+		}
+		return colors;
+	}
 }
