@@ -12,24 +12,24 @@ using UnityEngine;
 
 using Debug = UnityEngine.Debug;
 
-public class Follow2Config : PrefsEditorWindow<Follow2> {
-	[MenuItem("Window/Follow2")]
+public class FollowConfig : PrefsEditorWindow<Follow> {
+	[MenuItem("Window/Follow")]
 	private static void Open() {
-		GetWindow<Follow2Config>("跟车2.0").Show();
+		GetWindow<FollowConfig>("跟车").Show();
 	}
 	
 	private void OnGUI() {
-		Follow2.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow2.KEEP_NO_WINDOW);
-		Follow2.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow2.GROUP_COUNT, 0, 7);
+		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
+		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
 		GUILayout.Space(5F);
-		Follow2.INCLUDE_JD = EditorGUILayout.Toggle("跟据点", Follow2.INCLUDE_JD);
-		Follow2.INCLUDE_ZC = EditorGUILayout.Toggle("跟战锤", Follow2.INCLUDE_ZC);
-		Follow2.INCLUDE_NMY = EditorGUILayout.Toggle("跟难民营", Follow2.INCLUDE_NMY);
-		Follow2.INCLUDE_AXPP = EditorGUILayout.Toggle("跟砰砰", Follow2.INCLUDE_AXPP);
-		Follow2.INCLUDE_JX = EditorGUILayout.Toggle("跟惧星", Follow2.INCLUDE_JX);
-		Follow2.INCLUDE_JW = EditorGUILayout.Toggle("跟精卫", Follow2.INCLUDE_JW);
+		Follow.INCLUDE_JD = EditorGUILayout.Toggle("跟据点", Follow.INCLUDE_JD);
+		Follow.INCLUDE_ZC = EditorGUILayout.Toggle("跟战锤", Follow.INCLUDE_ZC);
+		Follow.INCLUDE_NMY = EditorGUILayout.Toggle("跟难民营", Follow.INCLUDE_NMY);
+		Follow.INCLUDE_AXPP = EditorGUILayout.Toggle("跟砰砰", Follow.INCLUDE_AXPP);
+		Follow.INCLUDE_JX = EditorGUILayout.Toggle("跟惧星", Follow.INCLUDE_JX);
+		Follow.INCLUDE_JW = EditorGUILayout.Toggle("跟精卫", Follow.INCLUDE_JW);
 		GUILayout.Space(5F);
-		if (Follow2.IsRunning) {
+		if (Follow.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				EditorApplication.ExecuteMenuItem("Assets/StopFollow_2.0");
 			}
@@ -41,7 +41,7 @@ public class Follow2Config : PrefsEditorWindow<Follow2> {
 	}
 }
 
-public class Follow2 {
+public class Follow {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	
