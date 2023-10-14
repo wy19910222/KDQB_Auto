@@ -34,11 +34,11 @@ public static class Recognize {
 			switch (CurrentScene) {
 				case Scene.ARMY_SELECTING:
 					// 左上角返回按钮颜色很暗
-					return ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) > 0;
+					return !Approximately(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
 				case Scene.INSIDE:
 				case Scene.OUTSIDE:
 					// 右下角一排按钮颜色很暗
-					return ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255)) > 0;
+					return !Approximately(ScreenshotUtils.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
 			}
 			return false;
 		}
