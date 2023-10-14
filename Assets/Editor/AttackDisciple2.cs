@@ -21,6 +21,7 @@ public class AttackDiscipleConfig : EditorWindow {
 	private void OnGUI() {
 		AttackDisciple2.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackDisciple2.GROUP_COUNT, 0, 7);
 		AttackDisciple2.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", AttackDisciple2.RESERVED_ENERGY);
+		AttackDisciple2.TARGET = EditorGUILayout.Popup("训练目标", AttackDisciple2.TARGET, new []{"第7使徒", "第8使徒", "腐坏机甲", "第10使徒"});
 		AttackDisciple2.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackDisciple2.SQUAD_NUMBER, 1, 8);
 		GUILayout.Space(5F);
 		if (AttackDisciple2.IsRunning) {
@@ -37,8 +38,9 @@ public class AttackDiscipleConfig : EditorWindow {
 
 public static class AttackDisciple2 {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
-	public static int SQUAD_NUMBER = 4;	// 使用编队号码
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
+	public static int SQUAD_NUMBER = 4;	// 使用编队号码
+	public static int TARGET;	// 攻打目标
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -58,6 +60,7 @@ public static class AttackDisciple2 {
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
+			s_CO = null;
 			Debug.Log("自动作战研究已关闭");
 		}
 	}
@@ -96,40 +99,25 @@ public static class AttackDisciple2 {
 				yield return new EditorWaitForSeconds(0.3F);
 			}
 
+			Debug.Log("准备打使徒");
 			Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.OUTSIDE ? 360 : 420);
 			yield return new EditorWaitForSeconds(0.1F);
 			Operation.Click(860, 860);	// 作战研究室按钮
 			yield return new EditorWaitForSeconds(0.1F);
-			Operation.Click(950, 425);	// 训练目标——第8使徒
+			Operation.Click(Mathf.Min(800 + TARGET * 154, 1190), 425);	// 训练目标
 			yield return new EditorWaitForSeconds(0.1F);
+			Debug.Log("攻击使徒");
 			Operation.Click(960, 950);	// 攻击使徒按钮
-			
-			// 开始打第七使徒
-			if (Recognize.IsOutsideFaraway) {	// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
-				Vector2Int oldPos = MouseUtils.GetMousePos();
-				MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
-				for (int i = 0; i < 40; ++i) {
-					MouseUtils.ScrollWheel(1);
-					yield return new EditorWaitForSeconds(0.01F);
-				}
-				MouseUtils.SetMousePos(oldPos.x, oldPos.y);
-				yield return new EditorWaitForSeconds(0.1F);
-			}
-			Operation.Click(1880, 440);	// 活动按钮
-			yield return new EditorWaitForSeconds(0.1F);
-			Operation.Click(960, 480);	// 第七使徒按钮
-			yield return new EditorWaitForSeconds(0.1F);
-			Operation.Click(960, 920);	// 攻击使徒按钮
-			yield return new EditorWaitForSeconds(0.1F);
-			Operation.Click(960, 730);	// 攻击按钮
 			yield return new EditorWaitForSeconds(0.3F);
 			if (Recognize.IsEnergyAdding) {
+				Debug.Log("体力不足");
 				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				Operation.Click(735, 128);	// 左上角返回按钮
 			} else {
+				Debug.Log("选择出征");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(960, 470);	// 出战按钮
