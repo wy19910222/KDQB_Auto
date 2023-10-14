@@ -12,7 +12,7 @@ using UnityEngine;
 
 using Debug = UnityEngine.Debug;
 
-public class Follow2Config : EditorWindow {
+public class Follow2Config : PrefsEditorWindow<Follow2> {
 	[MenuItem("Window/Follow2")]
 	private static void Open() {
 		GetWindow<Follow2Config>("跟车2.0").Show();
@@ -41,7 +41,7 @@ public class Follow2Config : EditorWindow {
 	}
 }
 
-public static class Follow2 {
+public class Follow2 {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	
@@ -188,13 +188,15 @@ public static class Follow2 {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			EndOfFollow:
-			// 如果还停留在跟车界面，则关闭
 			if (followWindowOpened) {
+				// 如果是从外面进来的，则关闭跟车界面
 				Debug.Log("左上角返回按钮");
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.2F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.2F);
+				while (Recognize.IsWindowCovered) {
+					Operation.Click(735, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
+				// 外面的按钮持续几秒钟才消失
+				yield return new EditorWaitForSeconds(1F);
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns

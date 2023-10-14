@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-public class JungleConfig : EditorWindow {
+public class JungleConfig : PrefsEditorWindow<Jungle> {
 	[MenuItem("Window/Jungle")]
 	private static void Open() {
 		GetWindow<JungleConfig>("打野").Show();
@@ -45,9 +45,9 @@ public class JungleConfig : EditorWindow {
 	}
 }
 
-public static class Jungle {
+public class Jungle {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
-	public static int RESERVED_ENERGY = 40;	// 保留体力值
+	public static int RESERVED_ENERGY = 59;	// 保留体力值
 	public static bool JUNGLE_LAND = true;	// 是否攻击陆军残兵
 	public static bool JUNGLE_SEA = true;	// 是否攻击海军残兵
 	public static bool JUNGLE_AIR = false;	// 是否攻击空军残兵
@@ -118,16 +118,10 @@ public static class Jungle {
 				// 等待有队列空闲出来且没有橙色英雄队伍（无法判断打野队伍，只能判断是否是橙色了）
 				yield return null;
 			}
-			if (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
+			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
 				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
+				yield return new EditorWaitForSeconds(0.2F);
 			}
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
 				Debug.Log("已不在世界界面，重新开始");
