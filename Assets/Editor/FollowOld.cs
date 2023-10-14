@@ -13,7 +13,7 @@ using UnityEngine;
 
 using Debug = UnityEngine.Debug;
 
-public static class Follow {
+public static class FollowOld {
 	private static bool INCLUDE_JD = true;	// 是否跟据点
 	private static bool INCLUDE_ZC = false;	// 是否跟战锤
 	private static bool INCLUDE_JW = true;	// 是否跟精卫
