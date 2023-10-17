@@ -10,7 +10,7 @@ using System.Reflection;
 using UnityEditor;
 
 public class PrefsEditorWindow<T> : EditorWindow {
-	protected void OnEnable() {
+	protected virtual void OnEnable() {
 		Type type = typeof(T);
 		FieldInfo[] fis = type.GetFields(BindingFlags.Static | BindingFlags.Public);
 		foreach (FieldInfo fi in fis) {
@@ -28,7 +28,7 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		}
 	}
 
-	protected void OnDisable() {
+	protected virtual void OnDisable() {
 		Type type = typeof(T);
 		FieldInfo[] fis = type.GetFields(BindingFlags.Static | BindingFlags.Public);
 		foreach (FieldInfo fi in fis) {
