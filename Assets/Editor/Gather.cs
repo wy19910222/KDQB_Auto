@@ -236,7 +236,7 @@ public class Gather {
 			Debug.Log("选择队列");
 			Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);
 			yield return new EditorWaitForSeconds(0.2F);
-			// Operation.Click(960, 470);	// 出战按钮
+			Operation.Click(960, 470);	// 出战按钮
 			Debug.Log("出发");
 			
 			// 休息5秒，避免出错时一直受控不能操作
