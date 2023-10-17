@@ -51,20 +51,11 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 	
 	protected override void OnEnable() {
 		base.OnEnable();
-		string key = $"{nameof(DeepSea)}.{nameof(DeepSea.TargetDT)}";
-		string defaultValueStr = (DateTime.Now + DeepSea.DEFAULT_COUNTDOWN).Ticks + "";
-		string targetDTStr = EditorPrefs.GetString(key, defaultValueStr);
-		DeepSea.TargetDT = new DateTime(Convert.ToInt64(targetDTStr));
-		
 		EditorApplication.update += Repaint;
 	}
 
 	protected override void OnDisable() {
 		base.OnDisable();
-		string key = $"{nameof(DeepSea)}.{nameof(DeepSea.TargetDT)}";
-		string targetDTStr = DeepSea.TargetDT.Ticks + "";
-		EditorPrefs.SetString(key, targetDTStr);
-		
 		EditorApplication.update -= Repaint;
 	}
 }
