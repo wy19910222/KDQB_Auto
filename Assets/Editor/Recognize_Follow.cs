@@ -129,19 +129,19 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly RectInt s_OwnerAvatarRect = new RectInt(731, 190, 55, 54);	// 集结发起人头像范围
-	private const int OWNER_AVATAR_FEATURE_XY_COUNT = 5; // 集结发起人头像特征获取的阵列边长
+	private static readonly RectInt FOLLOW_OWNER_AVATAR_RECT = new RectInt(731, 190, 55, 54);	// 集结发起人头像范围
+	private const int FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT = 5; // 集结发起人头像特征获取的阵列边长
 	public static Color32[] GetFollowOwnerAvatar() {
-		int xStepLength = s_OwnerAvatarRect.width / OWNER_AVATAR_FEATURE_XY_COUNT;
-		int offsetX = (s_OwnerAvatarRect.width - xStepLength * OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
-		int yStepLength = s_OwnerAvatarRect.height / OWNER_AVATAR_FEATURE_XY_COUNT;
-		int offsetY = (s_OwnerAvatarRect.height - yStepLength * OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
-		int startX = s_OwnerAvatarRect.x + offsetX;
-		int startY = s_OwnerAvatarRect.y + offsetY;
-		Color32[] ownerAvatarFeature = new Color32[OWNER_AVATAR_FEATURE_XY_COUNT * OWNER_AVATAR_FEATURE_XY_COUNT];
-		for (int y = 0; y < OWNER_AVATAR_FEATURE_XY_COUNT; ++y) {
-			for (int x = 0; x < OWNER_AVATAR_FEATURE_XY_COUNT; ++x) {
-				ownerAvatarFeature[y * OWNER_AVATAR_FEATURE_XY_COUNT + x] = ScreenshotUtils.GetColorOnScreen(startX + x, startY + y);
+		int xStepLength = FOLLOW_OWNER_AVATAR_RECT.width / FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT;
+		int offsetX = (FOLLOW_OWNER_AVATAR_RECT.width - xStepLength * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
+		int yStepLength = FOLLOW_OWNER_AVATAR_RECT.height / FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT;
+		int offsetY = (FOLLOW_OWNER_AVATAR_RECT.height - yStepLength * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
+		int startX = FOLLOW_OWNER_AVATAR_RECT.x + offsetX;
+		int startY = FOLLOW_OWNER_AVATAR_RECT.y + offsetY;
+		Color32[] ownerAvatarFeature = new Color32[FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT];
+		for (int y = 0; y < FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT; ++y) {
+			for (int x = 0; x < FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT; ++x) {
+				ownerAvatarFeature[y * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT + x] = ScreenshotUtils.GetColorOnScreen(startX + x, startY + y);
 			}
 		}
 		return ownerAvatarFeature;
