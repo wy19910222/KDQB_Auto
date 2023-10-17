@@ -221,18 +221,6 @@ public static partial class Recognize {
 		}
 		return -1;
 	}
-
-	public static bool ApproximatelyBigAvatar(IList<Color32> feature1, IList<Color32> feature2) {
-		if (feature1.Count != feature2.Count) {
-			return false;
-		}
-		for (int i = 0, length = feature1.Count; i < length; ++i) {
-			if (feature1[i].r != feature2[i].r || feature1[i].g != feature2[i].g || feature1[i].b != feature2[i].b) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 		new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),

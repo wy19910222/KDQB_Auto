@@ -161,7 +161,7 @@ public class Follow {
 			Color32[] ownerAvatarFeature = Recognize.GetFollowOwnerAvatar();
 			// 如果上次没失败，则s_CachedOwnerAvatarFeature为null
 			// 如果上次失败了且集结发起人头像没换，则不加入
-			if (s_CachedOwnerAvatarFeature != null && Recognize.ApproximatelyBigAvatar(ownerAvatarFeature, s_CachedOwnerAvatarFeature)) {
+			if (s_CachedOwnerAvatarFeature != null && Recognize.ColorsEquals(ownerAvatarFeature, s_CachedOwnerAvatarFeature)) {
 				goto EndOfFollow;
 			}
 			Debug.Log("决定跟车");
