@@ -198,7 +198,7 @@ public static class FollowOld {
 	
 	private static EditorCoroutine s_CO;
 
-	[MenuItem("Assets/StartFollow", priority = -1)]
+	[MenuItem("Assets/StartFollowOld", priority = -1)]
 	private static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
@@ -212,7 +212,7 @@ public static class FollowOld {
 		Debug.Log($"自动跟车已开启：{string.Join("、", switches)}");
 	}
 
-	[MenuItem("Assets/StopFollow", priority = -1)]
+	[MenuItem("Assets/StopFollowOld", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
