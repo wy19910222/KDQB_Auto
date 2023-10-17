@@ -22,12 +22,18 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
 		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
 		GUILayout.Space(5F);
-		Follow.INCLUDE_JD = EditorGUILayout.Toggle("跟据点", Follow.INCLUDE_JD);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.BeginVertical();
 		Follow.INCLUDE_ZC = EditorGUILayout.Toggle("跟战锤", Follow.INCLUDE_ZC);
 		Follow.INCLUDE_NMY = EditorGUILayout.Toggle("跟难民营", Follow.INCLUDE_NMY);
-		Follow.INCLUDE_AXPP = EditorGUILayout.Toggle("跟砰砰", Follow.INCLUDE_AXPP);
 		Follow.INCLUDE_JX = EditorGUILayout.Toggle("跟惧星", Follow.INCLUDE_JX);
+		EditorGUILayout.EndVertical();
+		EditorGUILayout.BeginVertical();
+		Follow.INCLUDE_JD = EditorGUILayout.Toggle("跟据点", Follow.INCLUDE_JD);
+		Follow.INCLUDE_AXPP = EditorGUILayout.Toggle("跟砰砰", Follow.INCLUDE_AXPP);
 		Follow.INCLUDE_JW = EditorGUILayout.Toggle("跟精卫", Follow.INCLUDE_JW);
+		EditorGUILayout.EndVertical();
+		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(5F);
 		if (Follow.IsRunning) {
 			if (GUILayout.Button("关闭")) {
