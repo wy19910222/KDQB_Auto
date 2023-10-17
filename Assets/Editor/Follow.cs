@@ -34,14 +34,40 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Follow.INCLUDE_JW = EditorGUILayout.Toggle("跟精卫", Follow.INCLUDE_JW);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.EndHorizontal();
+		if (Follow.INCLUDE_JX) {
+			GUILayout.Space(5F);
+			foreach (var ownerName in new List<string>(Follow.OwnerNameDict.Keys)) {
+				if (!Follow.OwnerEnabledDict.ContainsKey(ownerName)) {
+					Follow.OwnerEnabledDict.Add(ownerName, false);
+				}
+				EditorGUILayout.BeginHorizontal();
+				bool enabled = Follow.OwnerEnabledDict[ownerName];
+				bool newEnabled = EditorGUILayout.Toggle($"  {ownerName}的惧星", enabled);
+				if (newEnabled != enabled) {
+					Follow.OwnerEnabledDict[ownerName] = newEnabled;
+				}
+				if (m_Debug) {
+					if (GUILayout.Button("更新", GUILayout.Width(60F))) {
+						Follow.RecordFollowOwnerName(ownerName);
+					}
+					if (GUILayout.Button("判断", GUILayout.Width(60F))) {
+						Follow.LogFollowOwnerNameSimilarity(ownerName);;
+					}
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+		}
+		if (m_Debug && GUILayout.Button("测试")) {
+			Debug.LogError(Follow.IsFollowOwnerEnabled());
+		}
 		GUILayout.Space(5F);
 		if (Follow.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopFollow_2.0");
+				EditorApplication.ExecuteMenuItem("Assets/StopFollow");
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartFollow_2.0");
+				EditorApplication.ExecuteMenuItem("Assets/StartFollow");
 			}
 		}
 	}
@@ -57,12 +83,14 @@ public class Follow {
 	public static bool INCLUDE_NMY = true;	// 是否跟难民营
 	public static bool INCLUDE_AXPP = true;	// 是否跟爱心砰砰
 	public static bool INCLUDE_JX = false;	// 是否跟惧星
+	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
+	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
 	
 	private static Color32[] s_CachedOwnerAvatarFeature;	// 缓存的集结发起人头像特征
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartFollow_2.0", priority = -1)]
+	[MenuItem("Assets/StartFollow", priority = -1)]
 	private static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
@@ -76,7 +104,7 @@ public class Follow {
 		Debug.Log($"自动跟车已开启：{string.Join("、", switches)}");
 	}
 
-	[MenuItem("Assets/StopFollow_2.0", priority = -1)]
+	[MenuItem("Assets/StopFollow", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
@@ -151,10 +179,17 @@ public class Follow {
 				Debug.Log("不跟精卫");
 				goto EndOfFollow;
 			}
-			// 如果不跟惧星
-			if (!INCLUDE_JX && Recognize.IsJXCanFollow) {
-				Debug.Log("不跟惧星");
-				goto EndOfFollow;
+			if (Recognize.IsJXCanFollow) {
+				// 如果不跟惧星
+				if (!INCLUDE_JX) {
+					Debug.Log("不跟惧星");
+					goto EndOfFollow;
+				}
+				// 如果不跟该车主
+				if (!IsFollowOwnerEnabled()) {
+					Debug.Log("不跟该车主");
+					goto EndOfFollow;
+				}
 			}
 			Debug.Log("可以跟车");
 			
@@ -206,5 +241,41 @@ public class Follow {
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static readonly RectInt s_FollowOwnerNameRect = new RectInt(804, 193, 114, 24);	// 集结发起人昵称范围
+	public static void RecordFollowOwnerName(string ownerName) {
+		Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
+		OwnerNameDict[ownerName ?? ""] = colors;
+	}
+	public static void LogFollowOwnerNameSimilarity(string ownerName) {
+		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
+		Color32[,] targetColors = OwnerNameDict[ownerName ?? ""] ?? new Color32[0, 0];
+		Debug.LogError(Recognize.ApproximatelyRect(realColors, targetColors));
+	}
+	public static bool IsFollowOwnerEnabled() {
+		// 全部没打勾，表示可以跟任何人的车
+		bool everyOneEnabled = true;
+		foreach (var ownerName in OwnerNameDict.Keys) {
+			if (OwnerEnabledDict.TryGetValue(ownerName, out bool enabled) && enabled) {
+				everyOneEnabled = false;
+			}
+		}
+		if (everyOneEnabled) {
+			return true;
+		}
+		// 判断车主
+		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
+		foreach (var ownerName in OwnerNameDict.Keys) {
+			// 判断是否允许跟该车主
+			if (OwnerEnabledDict.TryGetValue(ownerName, out bool enabled) && enabled) {
+				// 判断是否是该车主
+				Color32[,] targetColors = OwnerNameDict[ownerName] ?? new Color32[0, 0];
+				if (Recognize.ApproximatelyRect(realColors, targetColors) > 0.9F) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
