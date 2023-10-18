@@ -63,27 +63,6 @@ public static partial class Recognize {
 
 	public static bool IsOutsideNearby => ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0;
 
-	public static int BusyGroupCount {
-		get {
-			int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-			if (deltaY >= 0) {
-				int groupCount = 0;
-				// 返回加速等蓝色按钮中间的白色
-				Color32 targetColor = new Color32(255, 255, 255, 255);
-				while (groupCount < 10) {
-					Color32 realColor = ScreenshotUtils.GetColorOnScreen(158, 434 + deltaY + groupCount * 50);
-					// Debug.LogError($"groupCount: {groupCount}");
-					if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
-						break;
-					}
-					groupCount++;
-				}
-				return groupCount;
-			}
-			return int.MaxValue;
-		}
-	}
-
 	private const int ENERGY_EMPTY = 0;
 	private const int ENERGY_FULL = 75;
 	private const int ENERGY_EMPTY_X = 21;
@@ -159,6 +138,28 @@ public static partial class Recognize {
 		for (int y = 0; y < realHeight; ++y) {
 			for (int x = 0; x < realWidth; ++x) {
 				if (Approximately(realColors[x, y], targetColors[x, y], thresholdMulti)) {
+					++approximatelyCount;
+				}
+			}
+		}
+		return (float) approximatelyCount / (realWidth * realHeight);
+	}
+	
+	public static float ApproximatelyRectIgnoreCovered(Color32[,] realColors, Color32[,] targetColors, float thresholdMulti = 1) {
+		int realWidth = realColors.GetLength(0);
+		int targetWidth = targetColors.GetLength(0);
+		if (realWidth != targetWidth) {
+			return 0;
+		}
+		int realHeight = realColors.GetLength(1);
+		int targetHeight = targetColors.GetLength(1);
+		if (realHeight != targetHeight) {
+			return 0;
+		}
+		int approximatelyCount = 0;
+		for (int y = 0; y < realHeight; ++y) {
+			for (int x = 0; x < realWidth; ++x) {
+				if (ApproximatelyCoveredCount(realColors[x, y], targetColors[x, y], thresholdMulti) >= 0) {
 					++approximatelyCount;
 				}
 			}
