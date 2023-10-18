@@ -68,10 +68,10 @@ public static partial class Recognize {
 			int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
 			if (deltaY >= 0) {
 				int groupCount = 0;
-				// 返回加速等蓝色按钮
-				Color32 targetColor = new Color32(98, 135, 229, 255);
+				// 返回加速等蓝色按钮中间的白色
+				Color32 targetColor = new Color32(255, 255, 255, 255);
 				while (groupCount < 10) {
-					Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
+					Color32 realColor = ScreenshotUtils.GetColorOnScreen(158, 434 + deltaY + groupCount * 50);
 					// Debug.LogError($"groupCount: {groupCount}");
 					if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 						break;
@@ -181,8 +181,8 @@ public static partial class Recognize {
 	private static readonly Dictionary<float, float> COVER_COEFFICIENT_DICT = new() {
 		{0, 1},
 		{0.4F, 0.65F},
-		{1, 0.299F},
-		{2, 0.084F},
+		{1, 0.298F},	// 76/255
+		{2, 0.09F},		// 23/255
 	};
 	public static float ApproximatelyCoveredCount(Color32 realColor, Color32 targetColor, float thresholdMulti = 1) {
 		foreach (var (coverCount, coefficient) in COVER_COEFFICIENT_DICT) {
