@@ -21,6 +21,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 	private void OnGUI() {
 		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
 		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
+		Follow.SINGLE_GROUP = EditorGUILayout.Toggle("单队列跟车", Follow.SINGLE_GROUP);
 		GUILayout.Space(5F);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
@@ -51,7 +52,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 						Follow.RecordFollowOwnerName(ownerName);
 					}
 					if (GUILayout.Button("判断", GUILayout.Width(60F))) {
-						Follow.LogFollowOwnerNameSimilarity(ownerName);;
+						Follow.LogFollowOwnerNameSimilarity(ownerName);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
@@ -76,13 +77,14 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 public class Follow {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
+	public static bool SINGLE_GROUP = true;	// 是否单队列跟车
 	
 	public static bool INCLUDE_JD = true;	// 是否跟据点
 	public static bool INCLUDE_ZC = true;	// 是否跟战锤
 	public static bool INCLUDE_JW = true;	// 是否跟精卫
 	public static bool INCLUDE_NMY = true;	// 是否跟难民营
 	public static bool INCLUDE_AXPP = true;	// 是否跟爱心砰砰
-	public static bool INCLUDE_JX = false;	// 是否跟惧星
+	public static bool INCLUDE_JX = true;	// 是否跟惧星
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
 	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
 	
@@ -117,8 +119,23 @@ public class Follow {
 		while (true) {
 			yield return null;
 			// 队列数量
-			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+			int busyGroupCount = Recognize.BusyGroupCount;
+			if (busyGroupCount >= GROUP_COUNT) {
 				continue;
+			}
+			// 如果单队列跟车
+			if (SINGLE_GROUP) {
+				bool gatherExist = false;
+				for (int i = 0; i < busyGroupCount; ++i) {
+					if (Recognize.GetGroupState(i) == Recognize.GROUP_STATE_GATHER) {
+						gatherExist = true;
+						break;
+					}
+				}
+				if (gatherExist) {
+					// 如果已经有队列在集结，则不跟车
+					continue;
+				}
 			}
 			bool followWindowOpened = false;
 			// 是否有加入按钮
@@ -251,7 +268,7 @@ public class Follow {
 	public static void LogFollowOwnerNameSimilarity(string ownerName) {
 		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
 		Color32[,] targetColors = OwnerNameDict[ownerName ?? ""] ?? new Color32[0, 0];
-		Debug.LogError(Recognize.ApproximatelyRect(realColors, targetColors));
+		Debug.Log(Recognize.ApproximatelyRect(realColors, targetColors));
 	}
 	public static bool IsFollowOwnerEnabled() {
 		// 全部没打勾，表示可以跟任何人的车
