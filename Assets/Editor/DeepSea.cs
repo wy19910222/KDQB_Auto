@@ -66,8 +66,7 @@ public class DeepSea {
 	public static TimeSpan DEFAULT_COUNTDOWN = new TimeSpan(8, 0, 0);	// 倒计时
 	public static int TRY_COUNT = 3;	// 倒计时结束时尝试3次
 	// public static int CLICK_INTERVAL = 120;	// 点击间隔
-
-	public static DateTime TargetDT { get; set; }
+	public static DateTime TargetDT;
 	public static TimeSpan Countdown {
 		get => TargetDT - DateTime.Now;
 		set => TargetDT = DateTime.Now + value;
@@ -119,7 +118,7 @@ public class DeepSea {
 				Debug.Log("拖动以显示活动标签页");
 				int orderOffsetX = (ACTIVITY_ORDER - 4) * 137;
 				while (orderOffsetX > 0) {
-					int dragDistance = 138 * 4;
+					const int dragDistance = 136 * 4;
 					// 往左上拖动
 					var ie = Operation.NoInertiaDrag(1190, 200, 1190 - dragDistance, 200, 0.5F);
 					while (ie.MoveNext()) {
