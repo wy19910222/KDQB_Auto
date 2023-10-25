@@ -21,7 +21,15 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 	
 	private void OnGUI() {
 		Jungle.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Jungle.GROUP_COUNT, 0, 7);
-		Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
+		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
+		if (!Jungle.USE_SMALL_BOTTLE && !Jungle.USE_BIG_BOTTLE) {
+			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
+		}
+		
+		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
+		EditorGUI.DrawRect(wireRect1, Color.gray);
+		
 		Jungle.JUNGLE_LAND = EditorGUILayout.Toggle("攻击陆军残兵", Jungle.JUNGLE_LAND);
 		Jungle.JUNGLE_SEA = EditorGUILayout.Toggle("攻击海军残兵", Jungle.JUNGLE_SEA);
 		Jungle.JUNGLE_AIR = EditorGUILayout.Toggle("攻击空军残兵", Jungle.JUNGLE_AIR);
@@ -29,6 +37,11 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		if (Jungle.JUNGLE_MECHA) {
 			Jungle.JUNGLE_STAR = EditorGUILayout.IntSlider("  黑暗机甲星级", Jungle.JUNGLE_STAR, 1, 5);
 		}
+		
+		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
+		EditorGUI.DrawRect(wireRect2, Color.gray);
+		
 		Jungle.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Jungle.SQUAD_NUMBER, 1, 8);
 		Jungle.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", Jungle.USE_SMALL_BOTTLE);
 		Jungle.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", Jungle.USE_BIG_BOTTLE);
@@ -48,6 +61,8 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 public class Jungle {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
+	public static float COOLDOWN = 5;	// 打野间隔
+	
 	public static bool JUNGLE_LAND = true;	// 是否攻击陆军残兵
 	public static bool JUNGLE_SEA = true;	// 是否攻击海军残兵
 	public static bool JUNGLE_AIR = false;	// 是否攻击空军残兵
@@ -95,7 +110,7 @@ public class Jungle {
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.ARMY_SELECTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
-					Operation.Click(50, 130);	// 左上角返回按钮
+					Operation.Click(30, 140);	// 左上角返回按钮
 					break;
 				// case Recognize.Scene.INSIDE:
 				// 	Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
@@ -108,11 +123,14 @@ public class Jungle {
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
-				if (Recognize.energy >= RESERVED_ENERGY + 15 && Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
-					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.energy >= RESERVED_ENERGY + 15 && Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
-						Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-						break;
+				bool energyEnough = USE_SMALL_BOTTLE | USE_BIG_BOTTLE | Recognize.energy >= RESERVED_ENERGY + 15;
+				if (energyEnough) {
+					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
+						yield return new EditorWaitForSeconds(0.2F);
+						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
+							Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
+							break;
+						}
 					}
 				}
 				// 等待有队列空闲出来且没有橙色英雄队伍（无法判断打野队伍，只能判断是否是橙色了）
@@ -129,11 +147,11 @@ public class Jungle {
 			}
 			// 开始打野
 			while (!Recognize.IsSearching) {
-				// Debug.Log("搜索按钮");
+				Debug.Log("搜索按钮");
 				Operation.Click(750, 970);	// 搜索按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
-			// Debug.Log("敌军按钮");
+			Debug.Log("敌军按钮");
 			Operation.Click(770, 510);	// 敌军按钮
 			yield return new EditorWaitForSeconds(0.1F);
 			// 确定攻击目标
@@ -195,93 +213,62 @@ public class Jungle {
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(870, 430);	// 攻击5次按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				// 打开背包嗑小体
+				// 出现体力不足面板
 				if (Recognize.IsEnergyAdding) {
-					Operation.Click(1170, 384);	// 关闭按钮
-					yield return new EditorWaitForSeconds(0.3F);
-					Operation.Click(1870, 870);	// 背包按钮
-					yield return new EditorWaitForSeconds(0.1F);
-					// 判断小体是否在第二格
-					Color32 targetColor1 = new Color32(129, 242, 25, 255);
-					Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(847, 305);
-					Color32 targetColor2 = new Color32(248, 210, 22, 255);
-					Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(866, 281);
-					if (Recognize.Approximately(realColor1, targetColor1) && Recognize.Approximately(realColor2, targetColor2)) {
-						Operation.Click(866, 281);	// 选中小体
-						yield return new EditorWaitForSeconds(0.1F);
-						Operation.Click(960, 960);	// 使用按钮
-						yield return new EditorWaitForSeconds(0.1F);
-					}
-					Operation.Click(735, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.1F);
-					Operation.Click(960, 580);	// 选中目标
-					yield return new EditorWaitForSeconds(0.1F);
-					Operation.Click(870, 430);	// 攻击5次按钮
-					yield return new EditorWaitForSeconds(0.3F);
-				}
-				// 快捷嗑药
-				int useBottle = 0;
-				{
-					// 确定使用大小体
-					List<int> list = new List<int>();
-					if (USE_SMALL_BOTTLE) {
-						list.Add(1);
-					}
-					if (USE_BIG_BOTTLE) {
-						list.Add(2);
-					}
-					int listCount = list.Count;
-					useBottle = listCount > 0 ? list[Random.Range(0, list.Count)] : 0;
+					// // 打开背包嗑小体
+					// Operation.Click(1170, 384);	// 关闭按钮
+					// yield return new EditorWaitForSeconds(0.3F);
+					// Operation.Click(1870, 870);	// 背包按钮
+					// yield return new EditorWaitForSeconds(0.1F);
+					// // 判断小体是否在第二格
+					// Color32 targetColor1 = new Color32(129, 242, 25, 255);
+					// Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(847, 305);
+					// Color32 targetColor2 = new Color32(248, 210, 22, 255);
+					// Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(866, 281);
+					// if (Recognize.Approximately(realColor1, targetColor1) && Recognize.Approximately(realColor2, targetColor2)) {
+					// 	Operation.Click(866, 281);	// 选中小体
+					// 	yield return new EditorWaitForSeconds(0.1F);
+					// 	Operation.Click(960, 960);	// 使用按钮
+					// 	yield return new EditorWaitForSeconds(0.1F);
+					// }
+					// Operation.Click(735, 128);	// 左上角返回按钮
+					// yield return new EditorWaitForSeconds(0.1F);
+					// Operation.Click(960, 580);	// 选中目标
+					// yield return new EditorWaitForSeconds(0.1F);
+					// Operation.Click(870, 430);	// 攻击5次按钮
+					// yield return new EditorWaitForSeconds(0.3F);
+					
+					// 快捷嗑药
+					int useBottle = RandomUseBottle();	// 随机使用大小体
+					int i = 0;
+					int iMax = 0;
 					switch (useBottle) {
 						case 1:
 							Debug.Log("使用小体");
+							iMax = 3;
 							break;
 						case 2:
 							Debug.Log("使用大体");
+							iMax = 1;
 							break;
 					}
-				}
-				if (useBottle == 0) {
-					if (Recognize.IsEnergyAdding) {
-						yield return new EditorWaitForSeconds(0.1F);
-						Operation.Click(1170, 384);	// 关闭按钮
-						Debug.Log("体力不足，等待5分钟后再尝试");
-						yield return new EditorWaitForSeconds(300);
-						continue;
-					}
-				} else {
-					bool willContinue = false;
-					int i = 0;
-					while (Recognize.IsEnergyAdding) {
+					while (Recognize.IsEnergyAdding && i < iMax) {
 						switch (useBottle) {
 							case 1:
-								if (i < 3) {
-									Debug.Log("嗑小体");
-									Operation.Click(830, 590);	// 选中小体
-									yield return new EditorWaitForSeconds(0.1F);
-									Operation.Click(960, 702);	// 使用按钮
-								} else {
-									Debug.LogError("连续嗑了3瓶小体还是体力不足！");
-									willContinue = true;
-								}
+								Debug.Log("嗑小体");
+								Operation.Click(830, 590);	// 选中小体
+								yield return new EditorWaitForSeconds(0.1F);
+								Operation.Click(960, 702);	// 使用按钮
 								break;
 							case 2:
-								if (i < 1) {
-									Debug.Log("嗑大体");
-									Operation.Click(960, 590);	// 选中大体
-									yield return new EditorWaitForSeconds(0.1F);
-									Operation.Click(960, 702);	// 使用按钮
-								} else {
-									Debug.LogError("嗑了大体还是体力不足！");
-									willContinue = true;
-								}
+								Debug.Log("嗑大体");
+								Operation.Click(960, 590);	// 选中大体
+								yield return new EditorWaitForSeconds(0.1F);
+								Operation.Click(960, 702);	// 使用按钮
 								break;
 						}
 						yield return new EditorWaitForSeconds(0.1F);
 						Operation.Click(1170, 384);	// 关闭按钮
-						if (willContinue) {
-							break;
-						}
 						yield return new EditorWaitForSeconds(0.3F);
 						Operation.Click(960, 580);	// 选中目标
 						yield return new EditorWaitForSeconds(0.1F);
@@ -289,22 +276,35 @@ public class Jungle {
 						yield return new EditorWaitForSeconds(0.3F);
 						i++;
 					}
-					if (willContinue) {
-						Debug.Log("等待5分钟后再尝试");
-						yield return new EditorWaitForSeconds(300);
-						continue;
+					if (Recognize.IsEnergyAdding) {
+						Operation.Click(1170, 384);	// 关闭按钮
+						Debug.Log("体力不足，等待稍后尝试");
+						yield return new EditorWaitForSeconds(0.1F);
 					}
 				}
-				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
-				yield return new EditorWaitForSeconds(0.2F);
-				Operation.Click(960, 470);	// 出战按钮
-				Debug.Log("出发");
+				if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+					yield return new EditorWaitForSeconds(0.2F);
+					Operation.Click(960, 470);	// 出战按钮
+					Debug.Log("出发");
+				}
+			} else {
+				while (Recognize.IsSearching) {
+					// 点击空白处退出搜索面板
+					Operation.Click(960, 580);	// 选中目标
+					yield return new EditorWaitForSeconds(0.3F);
+				}
 			}
-			
-			// 休息5秒，避免出错时一直受控不能操作
-			yield return new EditorWaitForSeconds(5);
+			yield return new EditorWaitForSeconds(COOLDOWN);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static int RandomUseBottle() {
+		List<int> list = new List<int>();
+		if (USE_SMALL_BOTTLE) { list.Add(1); }
+		if (USE_BIG_BOTTLE) { list.Add(2); }
+		return list.Count > 0 ? list[Random.Range(0, list.Count)] : 0;
 	}
 	
 	// [MenuItem("Assets/Jungle.Test", priority = -1)]
