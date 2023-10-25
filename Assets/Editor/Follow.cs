@@ -5,14 +5,18 @@
  * @EditTime: 2023-09-28 02:57:33 983
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 public class FollowConfig : PrefsEditorWindow<Follow> {
+	private string m_TempJXOwnerName;
+	
 	[MenuItem("Window/Follow")]
 	private static void Open() {
 		GetWindow<FollowConfig>("跟车").Show();
@@ -21,8 +25,24 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 	private void OnGUI() {
 		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
 		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
+		
+		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
+		EditorGUI.DrawRect(wireRect1, Color.gray);
+		
 		Follow.SINGLE_GROUP = EditorGUILayout.Toggle("单队列跟车", Follow.SINGLE_GROUP);
-		GUILayout.Space(5F);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("跟车延迟", GUILayout.Width(EditorGUIUtility.labelWidth));
+		Follow.FOLLOW_DELAY_MIN = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MIN, GUILayout.Width(60F));
+		EditorGUILayout.MinMaxSlider(ref Follow.FOLLOW_DELAY_MIN, ref Follow.FOLLOW_DELAY_MAX, 0, 10);
+		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
+		Follow.FOLLOW_COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN), 20F);
+		
+		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
+		EditorGUI.DrawRect(wireRect2, Color.gray);
+		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
 		Follow.INCLUDE_ZC = EditorGUILayout.Toggle("跟战锤", Follow.INCLUDE_ZC);
@@ -42,8 +62,9 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 					Follow.OwnerEnabledDict.Add(ownerName, false);
 				}
 				EditorGUILayout.BeginHorizontal();
+				GUILayout.Space(16F);
 				bool enabled = Follow.OwnerEnabledDict[ownerName];
-				bool newEnabled = EditorGUILayout.Toggle($"  {ownerName}的惧星", enabled);
+				bool newEnabled = EditorGUILayout.Toggle($"{ownerName}的惧星", enabled);
 				if (newEnabled != enabled) {
 					Follow.OwnerEnabledDict[ownerName] = newEnabled;
 				}
@@ -54,6 +75,19 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 					if (GUILayout.Button("判断", GUILayout.Width(60F))) {
 						Follow.LogFollowOwnerNameSimilarity(ownerName);
 					}
+					if (GUILayout.Button("删除", GUILayout.Width(60F))) {
+						Follow.RemoveFollowOwnerName(ownerName);
+					}
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+
+			if (m_Debug) {
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.Space(16F);
+				m_TempJXOwnerName = EditorGUILayout.TextField(m_TempJXOwnerName);
+				if (GUILayout.Button("添加", GUILayout.Width(60F))) {
+					Follow.RecordFollowOwnerName(m_TempJXOwnerName);
 				}
 				EditorGUILayout.EndHorizontal();
 			}
@@ -78,6 +112,9 @@ public class Follow {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static bool SINGLE_GROUP = true;	// 是否单队列跟车
+	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
+	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
+	public static float FOLLOW_COOLDOWN = 20F;	// 同一人跟车冷却
 	
 	public static bool INCLUDE_JD = true;	// 是否跟据点
 	public static bool INCLUDE_ZC = true;	// 是否跟战锤
@@ -88,7 +125,7 @@ public class Follow {
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
 	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
 	
-	private static Color32[] s_CachedOwnerAvatarFeature;	// 缓存的集结发起人头像特征
+	private static Color32[,] s_CachedOwnerName;	// 缓存的车主昵称
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
@@ -116,6 +153,7 @@ public class Follow {
 	}
 
 	private static IEnumerator Update() {
+		long cooldownTime = 0;
 		while (true) {
 			yield return null;
 			// 队列数量
@@ -161,6 +199,8 @@ public class Follow {
 					goto EndOfFollow;
 				}
 			}
+			// 有时候会误判图标，所以尝试等一会儿
+			yield return new EditorWaitForSeconds(0.1F);
 			// 是否已加入
 			if (Recognize.HasFollowJoined) {
 				goto EndOfFollow;
@@ -196,7 +236,8 @@ public class Follow {
 				Debug.Log("不跟精卫");
 				goto EndOfFollow;
 			}
-			if (Recognize.IsJXCanFollow) {
+			bool isJxCanFollow = Recognize.IsJXCanFollow;
+			if (isJxCanFollow) {
 				// 如果不跟惧星
 				if (!INCLUDE_JX) {
 					Debug.Log("不跟惧星");
@@ -207,24 +248,41 @@ public class Follow {
 					Debug.Log("不跟该车主");
 					goto EndOfFollow;
 				}
+				ScreenshotUtils.Screenshot(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height, $"{Application.dataPath}/{DateTime.Now.Ticks}.png");
 			}
-			Debug.Log("可以跟车");
+			if (Recognize.IsFollowIconExist &&
+					!Recognize.IsJDCanFollow &&
+					!Recognize.IsZCCanFollow &&
+					!Recognize.IsAXPPCanFollow &&
+					!Recognize.IsNMYCanFollow &&
+					!Recognize.IsJWCanFollow &&
+					!Recognize.IsJXCanFollow) {
+				ScreenshotUtils.Screenshot(988, 184, 214, 165, $"{Application.dataPath}/{DateTime.Now.Ticks}.png");
+			}
 			
-			Color32[] ownerAvatarFeature = Recognize.GetFollowOwnerAvatar();
-			// 如果上次没失败，则s_CachedOwnerAvatarFeature为null
-			// 如果上次失败了且集结发起人头像没换，则不加入
-			if (s_CachedOwnerAvatarFeature != null && Recognize.ColorsEquals(ownerAvatarFeature, s_CachedOwnerAvatarFeature)) {
+			Debug.Log("可以跟车");
+			// 如果车主换人了，则直接结束冷却
+			Color32[,] ownerName = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
+			if (s_CachedOwnerName == null || Recognize.ApproximatelyRect(ownerName, s_CachedOwnerName) < 0.9F) {
+				// 如果车主换人了，则直接结束冷却
+				cooldownTime = 0;
+			}
+			// 如果还在冷却中，则不加入
+			if (DateTime.Now.Ticks < cooldownTime) {
 				goto EndOfFollow;
 			}
 			Debug.Log("决定跟车");
 			// 清除失败的记录
-			s_CachedOwnerAvatarFeature = null;
+			s_CachedOwnerName = ownerName;
+			float delay = Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);
 			Debug.Log("加入按钮");
 			Operation.Click(968, 307);	// 加入按钮
 			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(delay * 0.5F);
 			Debug.Log("士兵卡片");
 			Operation.Click(1458, 962);	// 士兵卡片
 			yield return new EditorWaitForSeconds(0.1F);
+			yield return new EditorWaitForSeconds(delay * 0.5F);
 			Debug.Log("出征按钮");
 			Operation.Click(961, 476);	// 出征按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -232,17 +290,20 @@ public class Follow {
 			if (Recognize.IsTooLateWindowExist) {
 				Debug.Log("取消按钮");
 				Operation.Click(900, 657);	// 取消按钮
-				// 记录加入失败时的集结发起人头像特征
-				s_CachedOwnerAvatarFeature = ownerAvatarFeature;
-				yield return new EditorWaitForSeconds(0.2F);
+				// 车主变化前不再上车
+				cooldownTime = long.MaxValue;
+				yield return new EditorWaitForSeconds(0.5F);
+			} else {
+				// 跟车冷却
+				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
 			}
 			// 如果还停留在出征界面，则退出
 			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
 				Debug.Log("退出按钮");
-				Operation.Click(50, 130);	// 退出按钮
+				Operation.Click(30, 140);	// 退出按钮
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("确认退出按钮");
-				Operation.Click(1020, 657);	// 确认退出按钮
+				Operation.Click(1064, 634);	// 确认退出按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			EndOfFollow:
@@ -260,13 +321,18 @@ public class Follow {
 		// ReSharper disable once IteratorNeverReturns
 	}
 	
-	private static readonly RectInt s_FollowOwnerNameRect = new RectInt(804, 193, 114, 24);	// 集结发起人昵称范围
+	private static readonly RectInt OWNER_NAME_RECT = new RectInt(804, 193, 114, 24);	// 集结发起人昵称范围
 	public static void RecordFollowOwnerName(string ownerName) {
-		Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
+		Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 		OwnerNameDict[ownerName ?? ""] = colors;
 	}
+	public static void RemoveFollowOwnerName(string ownerName) {
+		if (ownerName != null) {
+			OwnerNameDict.Remove(ownerName);
+		}
+	}
 	public static void LogFollowOwnerNameSimilarity(string ownerName) {
-		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
+		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 		Color32[,] targetColors = OwnerNameDict[ownerName ?? ""] ?? new Color32[0, 0];
 		Debug.Log(Recognize.ApproximatelyRect(realColors, targetColors));
 	}
@@ -282,13 +348,14 @@ public class Follow {
 			return true;
 		}
 		// 判断车主
-		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(s_FollowOwnerNameRect.x, s_FollowOwnerNameRect.y, s_FollowOwnerNameRect.width, s_FollowOwnerNameRect.height);
+		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 		foreach (var ownerName in OwnerNameDict.Keys) {
 			// 判断是否允许跟该车主
 			if (OwnerEnabledDict.TryGetValue(ownerName, out bool enabled) && enabled) {
 				// 判断是否是该车主
 				Color32[,] targetColors = OwnerNameDict[ownerName] ?? new Color32[0, 0];
-				if (Recognize.ApproximatelyRect(realColors, targetColors) > 0.9F) {
+				if (Recognize.ApproximatelyRect(realColors, targetColors) > 0.99F) {
+					Debug.LogError($"车主为{ownerName}，可以跟车");
 					return true;
 				}
 			}
