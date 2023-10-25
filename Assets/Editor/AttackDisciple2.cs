@@ -70,7 +70,7 @@ public static class AttackDisciple2 {
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.ARMY_SELECTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
-					Operation.Click(50, 130);	// 左上角返回按钮
+					Operation.Click(30, 140);	// 左上角返回按钮
 					break;
 				// case Recognize.Scene.INSIDE:
 				// 	Operation.Click(1170, 970);	// 右下角主城与世界切换按钮

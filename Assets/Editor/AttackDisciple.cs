@@ -48,7 +48,7 @@ public static class AttackDisciple {
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.ARMY_SELECTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
-					Click(50, 130);	// 左上角返回按钮
+					Click(30, 140);	// 左上角返回按钮
 					break;
 				// case Recognize.Scene.INSIDE:
 				// 	Click(1170, 970);	// 右下角主城与世界切换按钮
@@ -192,7 +192,7 @@ public static class AttackDisciple {
 		// yield return new EditorWaitForSeconds(0.3F);
 		// Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 		// yield return new EditorWaitForSeconds(0.2F);
-		// Click(50, 130);	// 左上角返回按钮
+		// Click(30, 140);	// 左上角返回按钮
 		// yield return new EditorWaitForSeconds(0.1F);
 		// Click(735, 128);	// 左上角返回按钮
 		// yield return new EditorWaitForSeconds(0.1F);
