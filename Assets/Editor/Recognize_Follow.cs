@@ -92,8 +92,10 @@ public static partial class Recognize {
 	public static bool IsAXPPCanFollow {
 		get {
 			// 判断跟车界面图标是否是爱心砰砰
-			Color32 targetColor = new Color32(182, 75, 97, 255);
-			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1049, 321);
+			// Color32 targetColor = new Color32(182, 75, 97, 255);
+			// Color32 realColor = ScreenshotUtils.GetColorOnScreen(1049, 321);
+			Color32 targetColor = new Color32(225, 95, 97, 255);
+			Color32 realColor = ScreenshotUtils.GetColorOnScreen(1111, 242);
 			return Approximately(realColor, targetColor);
 		}
 	}
