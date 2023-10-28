@@ -291,7 +291,7 @@ public class Jungle {
 			} else {
 				while (Recognize.IsSearching) {
 					// 点击空白处退出搜索面板
-					Operation.Click(960, 580);	// 选中目标
+					Operation.Click(660, 970);	// 选中目标
 					yield return new EditorWaitForSeconds(0.3F);
 				}
 			}
