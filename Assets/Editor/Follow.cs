@@ -25,6 +25,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 	private void OnGUI() {
 		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
 		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
+		Follow.ENABLED_WITH_COVERED = EditorGUILayout.Toggle("有窗口覆盖时是否生效", Follow.ENABLED_WITH_COVERED);
 		
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
@@ -45,17 +46,17 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
-		Follow.INCLUDE_ZC = EditorGUILayout.Toggle("跟战锤", Follow.INCLUDE_ZC);
-		Follow.INCLUDE_NMY = EditorGUILayout.Toggle("跟难民营", Follow.INCLUDE_NMY);
-		Follow.INCLUDE_JX = EditorGUILayout.Toggle("跟惧星", Follow.INCLUDE_JX);
+		CustomField("跟战锤", ref Follow.INCLUDE_ZC, 50);
+		CustomField("跟难民营", ref Follow.INCLUDE_NMY, 10);
+		CustomField("跟惧星", ref Follow.INCLUDE_JX, 10);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.BeginVertical();
-		Follow.INCLUDE_JD = EditorGUILayout.Toggle("跟据点", Follow.INCLUDE_JD);
-		Follow.INCLUDE_AXPP = EditorGUILayout.Toggle("跟砰砰", Follow.INCLUDE_AXPP);
-		Follow.INCLUDE_JW = EditorGUILayout.Toggle("跟精卫", Follow.INCLUDE_JW);
+		CustomField("跟黑暗军团据点", ref Follow.INCLUDE_JD, 50);
+		CustomField("跟爱心砰砰", ref Follow.INCLUDE_AXPP, 50);
+		CustomField("跟黑暗精卫", ref Follow.INCLUDE_JW, 50);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.EndHorizontal();
-		if (Follow.INCLUDE_JX) {
+		if (Follow.INCLUDE_JX > 0) {
 			GUILayout.Space(5F);
 			foreach (var ownerName in new List<string>(Follow.OwnerNameDict.Keys)) {
 				if (!Follow.OwnerEnabledDict.ContainsKey(ownerName)) {
@@ -90,10 +91,13 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 					Follow.RecordFollowOwnerName(m_TempJXOwnerName);
 				}
 				EditorGUILayout.EndHorizontal();
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.Space(16F);
+				if (GUILayout.Button("测试")) {
+					Debug.LogError(Follow.IsFollowOwnerEnabled());
+				}
+				EditorGUILayout.EndHorizontal();
 			}
-		}
-		if (m_Debug && GUILayout.Button("测试")) {
-			Debug.LogError(Follow.IsFollowOwnerEnabled());
 		}
 		GUILayout.Space(5F);
 		if (Follow.IsRunning) {
@@ -106,22 +110,42 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 			}
 		}
 	}
+
+	private static void CustomField(string label, ref int count, int defaultValue) {
+		EditorGUILayout.BeginHorizontal();
+		EditorGUI.BeginChangeCheck();
+		int newCount = Math.Max(EditorGUILayout.IntField(label, Math.Abs(count)), 0);
+		if (EditorGUI.EndChangeCheck()) {
+			count = count < 0 ? -newCount : newCount;
+		}
+		EditorGUI.BeginChangeCheck();
+		bool isOpen = EditorGUILayout.Toggle(count > 0, GUILayout.Width(16F));
+		if (EditorGUI.EndChangeCheck()) {
+			if (isOpen && count == 0) {
+				count = defaultValue;
+			} else {
+				count = -count;
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+	}
 }
 
 public class Follow {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
+	public static bool ENABLED_WITH_COVERED = true;	// 有窗口覆盖时是否生效
 	public static bool SINGLE_GROUP = true;	// 是否单队列跟车
 	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
 	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
 	public static float FOLLOW_COOLDOWN = 20F;	// 同一人跟车冷却
 	
-	public static bool INCLUDE_JD = true;	// 是否跟据点
-	public static bool INCLUDE_ZC = true;	// 是否跟战锤
-	public static bool INCLUDE_JW = true;	// 是否跟精卫
-	public static bool INCLUDE_NMY = true;	// 是否跟难民营
-	public static bool INCLUDE_AXPP = true;	// 是否跟爱心砰砰
-	public static bool INCLUDE_JX = true;	// 是否跟惧星
+	public static int INCLUDE_JD = 50;	// 是否跟据点
+	public static int INCLUDE_ZC = 50;	// 是否跟战锤
+	public static int INCLUDE_JW = 0;	// 是否跟精卫
+	public static int INCLUDE_NMY = 10;	// 是否跟难民营
+	public static int INCLUDE_AXPP = 50;	// 是否跟爱心砰砰
+	public static int INCLUDE_JX = 10;	// 是否跟惧星
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
 	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
 	
@@ -134,12 +158,12 @@ public class Follow {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 		List<string> switches = new List<string>();
-		if (INCLUDE_ZC) { switches.Add("战锤"); }
-		if (INCLUDE_AXPP) { switches.Add("砰砰"); }
-		if (INCLUDE_NMY) { switches.Add("难民营"); }
-		if (INCLUDE_JW) { switches.Add("精卫"); }
-		if (INCLUDE_JD) { switches.Add("据点"); }
-		if (INCLUDE_JX) { switches.Add("惧星"); }
+		if (INCLUDE_ZC > 0) { switches.Add($"战锤{INCLUDE_ZC}次"); }
+		if (INCLUDE_NMY > 0) { switches.Add($"难民营{INCLUDE_NMY}次"); }
+		if (INCLUDE_JX > 0) { switches.Add($"惧星{INCLUDE_JX}次"); }
+		if (INCLUDE_JD > 0) { switches.Add($"据点{INCLUDE_JD}次"); }
+		if (INCLUDE_JW > 0) { switches.Add($"精卫{INCLUDE_JW}次"); }
+		if (INCLUDE_AXPP > 0) { switches.Add($"砰砰{INCLUDE_AXPP}次"); }
 		Debug.Log($"自动跟车已开启：{string.Join("、", switches)}");
 	}
 
@@ -183,12 +207,20 @@ public class Follow {
 					// 如果不在跟车界面，但要在跟车界面跟车，则不符合跟车条件
 					continue;
 				}
-				// 如果有界面覆盖，则说明正在操作别的
-				if (Recognize.IsWindowCovered && !Recognize.IsFollowJoinBtnExist) {
-					continue;
-				}
 				if (!Recognize.IsFollowOuterJoinBtnExist) {
 					continue;
+				}
+				// 如果有界面覆盖，则说明正在操作别的
+				if (ENABLED_WITH_COVERED) {
+					while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
+						Debug.Log("关闭窗口");
+						Operation.Click(735, 128);	// 左上角返回按钮
+						yield return new EditorWaitForSeconds(0.1F);
+					}
+				} else {
+					if (Recognize.IsWindowCovered) {
+						continue;
+					}
 				}
 				Debug.Log("外面加入按钮");
 				Operation.Click(1771, 714);	// 加入按钮
@@ -211,53 +243,91 @@ public class Follow {
 				Debug.Log("未显示Icon");
 				goto EndOfFollow;
 			}
-			// 如果不跟黑暗军团据点
-			if (!INCLUDE_JD && Recognize.IsJDCanFollow) {
-				Debug.Log("不跟黑暗军团据点");
-				goto EndOfFollow;
-			}
-			// 如果不跟战锤
-			if (!INCLUDE_ZC && Recognize.IsZCCanFollow) {
-				Debug.Log("不跟战锤");
-				goto EndOfFollow;
-			}
-			// 如果不跟爱心砰砰
-			if (!INCLUDE_AXPP && Recognize.IsAXPPCanFollow) {
-				Debug.Log("不跟爱心砰砰");
-				goto EndOfFollow;
-			}
-			// 如果不跟难民营
-			if (!INCLUDE_NMY && Recognize.IsNMYCanFollow) {
-				Debug.Log("不跟难民营");
-				goto EndOfFollow;
-			}
-			// 如果不跟精卫
-			if (!INCLUDE_JW && Recognize.IsJWCanFollow) {
-				Debug.Log("不跟精卫");
-				goto EndOfFollow;
-			}
-			bool isJxCanFollow = Recognize.IsJXCanFollow;
-			if (isJxCanFollow) {
-				// 如果不跟惧星
-				if (!INCLUDE_JX) {
+			bool willFollow = false;
+			if (Recognize.IsJDCanFollow) {
+				// 如果是黑暗军团据点
+				if (INCLUDE_JD > 0) {
+					willFollow = true;
+					--INCLUDE_JD;
+				} else {
+					Debug.Log("不跟黑暗军团据点");
+				}
+			} else if (Recognize.IsZCCanFollow) {
+				// 如果是战锤
+				if (INCLUDE_ZC > 0) {
+					willFollow = true;
+					--INCLUDE_ZC;
+				} else {
+					Debug.Log("不跟战锤");
+				}
+			} else if (Recognize.IsAXPPCanFollow) {
+				// 如果是爱心砰砰
+				if (INCLUDE_AXPP > 0) {
+					willFollow = true;
+					--INCLUDE_AXPP;
+				} else {
+					Debug.Log("不跟爱心砰砰");
+				}
+			} else if (Recognize.IsNMYCanFollow) {
+				// 如果是难民营
+				if (INCLUDE_NMY > 0) {
+					willFollow = true;
+					--INCLUDE_NMY;
+				} else {
+					Debug.Log("不跟难民营");
+				}
+			} else if (Recognize.IsJWCanFollow) {
+				// 如果是精卫
+				if (INCLUDE_JW > 0) {
+					willFollow = true;
+					--INCLUDE_JW;
+				} else {
+					Debug.Log("不跟精卫");
+				}
+			} else if (Recognize.IsJXCanFollow) {
+				// 如果是惧星
+				if (INCLUDE_JX > 0) {
+					// 如果不跟该车主
+					if (IsFollowOwnerEnabled()) {
+						willFollow = true;
+						--INCLUDE_JX;
+						string filePath = $"{Application.dataPath}/{DateTime.Now:MM-dd_HH.mm.ss.fff}.png";
+						Debug.LogError(filePath);
+						ScreenshotUtils.Screenshot(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height, filePath);
+					} else {
+						Debug.Log("不跟该车主");
+					}
+				} else {
 					Debug.Log("不跟惧星");
-					goto EndOfFollow;
 				}
-				// 如果不跟该车主
-				if (!IsFollowOwnerEnabled()) {
-					Debug.Log("不跟该车主");
-					goto EndOfFollow;
-				}
-				ScreenshotUtils.Screenshot(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height, $"{Application.dataPath}/{DateTime.Now.Ticks}.png");
 			}
-			if (Recognize.IsFollowIconExist &&
-					!Recognize.IsJDCanFollow &&
-					!Recognize.IsZCCanFollow &&
-					!Recognize.IsAXPPCanFollow &&
-					!Recognize.IsNMYCanFollow &&
-					!Recognize.IsJWCanFollow &&
-					!Recognize.IsJXCanFollow) {
-				ScreenshotUtils.Screenshot(988, 184, 214, 165, $"{Application.dataPath}/{DateTime.Now.Ticks}.png");
+			if (!willFollow) {
+				goto EndOfFollow;
+			}
+			bool isFollowIconExist = Recognize.IsFollowIconExist;
+			bool isJDCanFollow = Recognize.IsJDCanFollow;
+			bool isZCCanFollow = Recognize.IsZCCanFollow;
+			bool isAXPPCanFollow = Recognize.IsAXPPCanFollow;
+			bool isNMYCanFollow = Recognize.IsNMYCanFollow;
+			bool isJWCanFollow = Recognize.IsJWCanFollow;
+			bool isJXCanFollow = Recognize.IsJXCanFollow;
+			Debug.LogWarning($"isFollowIconExist:{isFollowIconExist}\n" +
+					$"isJDCanFollow:{isJDCanFollow}\n" +
+					$"isZCCanFollow:{isZCCanFollow}\n" +
+					$"isAXPPCanFollow:{isAXPPCanFollow}\n" +
+					$"isNMYCanFollow:{isNMYCanFollow}\n" +
+					$"isJWCanFollow:{isJWCanFollow}\n" +
+					$"isJXCanFollow:{isJXCanFollow}");
+			if (isFollowIconExist &&
+					!isJDCanFollow &&
+					!isZCCanFollow &&
+					!isAXPPCanFollow &&
+					!isNMYCanFollow &&
+					!isJWCanFollow &&
+					!isJXCanFollow) {
+				string filePath = $"{Application.dataPath}/{DateTime.Now:MM-dd_HH.mm.ss.fff}.png";
+				Debug.LogError(filePath);
+				ScreenshotUtils.Screenshot(988, 184, 214, 165, filePath);
 			}
 			
 			Debug.Log("可以跟车");
