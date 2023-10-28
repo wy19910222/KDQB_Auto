@@ -64,12 +64,13 @@ public class Gather {
 			List<string> targets = new List<string>();
 			if (GATHER_ZC) { targets.Add("战锤"); }
 			if (GATHER_JX) { targets.Add("惧星"); }
+			if (GATHER_JW) { targets.Add("精卫/砰砰"); }
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
 		switches.Add($"使用编队【{SQUAD_NUMBER}】");
 		if (USE_SMALL_BOTTLE) { switches.Add("【允许使用小体】"); }
 		if (USE_BIG_BOTTLE) { switches.Add("【允许使用大体】"); }
-		Debug.Log($"自动打野已开启，{string.Join("，", switches)}");
+		Debug.Log($"自动集结已开启，{string.Join("，", switches)}");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
@@ -78,7 +79,7 @@ public class Gather {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
 			s_CO = null;
-			Debug.Log("自动打野已关闭");
+			Debug.Log("自动集结已关闭");
 		}
 	}
 
@@ -86,7 +87,7 @@ public class Gather {
 		while (true) {
 			yield return null;
 			// 体力值
-			if (Recognize.energy < RESERVED_ENERGY + 15) {
+			if (Recognize.energy < RESERVED_ENERGY + 8) {
 				continue;
 			}
 			// 队列数量
