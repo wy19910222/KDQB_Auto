@@ -102,6 +102,27 @@ public static partial class Recognize {
 					Approximately(realColor3, targetColor3);	// 使用按钮
 		}
 	}
+
+	public static bool IsMarshalExist {
+		get {
+			// 当前是否存在元帅
+			Color32 targetColor1 = new Color32(140, 17, 15, 255);
+			Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(792, 785);
+			Color32 targetColor2 = new Color32(243, 215, 16, 255);
+			Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(795, 790);
+			Color32 targetColor3 = new Color32(243, 210, 155, 255);
+			Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(790, 810);
+			Color32 targetColor4 = new Color32(79, 118, 174, 255);
+			Color32 realColor4 = ScreenshotUtils.GetColorOnScreen(800, 820);
+			Color32 targetColor5 = new Color32(212, 31, 28, 255);
+			Color32 realColor5 = ScreenshotUtils.GetColorOnScreen(810, 815);
+			return Approximately(realColor1, targetColor1) ||
+					Approximately(realColor2, targetColor2) ||
+					Approximately(realColor3, targetColor3) ||
+					Approximately(realColor4, targetColor4) ||
+					Approximately(realColor5, targetColor5);
+		}
+	}
 	
 	public static bool IsBigEnergy(RectInt rect) {
 		Color32 targetColor1 = new Color32(255, 255, 108, 255);
@@ -184,6 +205,7 @@ public static partial class Recognize {
 		{0.4F, 0.65F},
 		{1, 0.298F},	// 76/255
 		{2, 0.09F},		// 23/255
+		{3, 0.02745F},		// 7/255
 	};
 	public static float ApproximatelyCoveredCount(Color32 realColor, Color32 targetColor, float thresholdMulti = 1) {
 		foreach (var (coverCount, coefficient) in COVER_COEFFICIENT_DICT) {
