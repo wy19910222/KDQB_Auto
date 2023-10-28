@@ -5,6 +5,7 @@
  * @EditTime: 2023-10-24 04:22:33 346
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -37,6 +38,7 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 public class AttackMarshal {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
+	public static int ATTACK_TIMES = 5;	// 攻击次数
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -48,7 +50,7 @@ public class AttackMarshal {
 			$"拥有行军队列【{GROUP_COUNT}】",
 			$"使用编队【{SQUAD_NUMBER}】"
 		};
-		Debug.Log($"自动打野已开启，{string.Join("，", switches)}");
+		Debug.Log($"自动打元帅已开启，{string.Join("，", switches)}");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
@@ -57,33 +59,49 @@ public class AttackMarshal {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
 			s_CO = null;
-			Debug.Log("自动打野已关闭");
+			Debug.Log("自动打元帅已关闭");
 		}
 	}
 
 	private static IEnumerator Update() {
+		// bool prevIsMarshalTime = false;
 		while (true) {
-			Debug.Log("等待切换到世界界面且无窗口覆盖");
-			// 等待切换到世界界面
-			while (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				yield return null;
+			yield return null;
+			
+			int hour = DateTime.Now.Hour;
+			bool isMarshalTime = hour is 4 or 12 or 20;
+			if (!isMarshalTime) {
+				continue;
 			}
-			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-			while (true) {
-				if (Recognize.BusyGroupCount < GROUP_COUNT) {
-					Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-					break;
+			Debug.Log($"当前时间：{hour}点");
+
+			if (Recognize.IsWindowCovered) {	// 如果有窗口覆盖，说明用户正在操作
+				continue;
+			}
+			Debug.Log($"无窗口覆盖");
+			
+			if (ATTACK_TIMES <= 0) {
+				continue;
+			}
+			Debug.Log($"剩余攻击次数：{ATTACK_TIMES}");
+			
+			if (!Recognize.IsMarshalExist) {
+				Debug.Log($"未检测到元帅按钮，尝试切换场景");
+				Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+				yield return new EditorWaitForSeconds(1F);
+				if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
+					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+					yield return new EditorWaitForSeconds(1F);
 				}
-				// 等待有队列空闲出来
-				yield return null;
+				if (!Recognize.IsMarshalExist) {
+					Debug.Log($"切换场景后还是没有元帅");
+					yield return new EditorWaitForSeconds(300F);	// 5分钟后再重新尝试
+					continue;
+				}
 			}
-			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
-				Debug.Log("关闭窗口");
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.2F);
-			}
-			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				Debug.Log("已不在世界界面，重新开始");
+			
+			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
+			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
 				continue;
 			}
 			
@@ -99,12 +117,15 @@ public class AttackMarshal {
 			Debug.Log("攻击按钮");
 			Operation.Click(1050, 840);	// 攻击按钮
 			yield return new EditorWaitForSeconds(0.2F);
-			Debug.Log($"选择队列{SQUAD_NUMBER}");
-			Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
-			yield return new EditorWaitForSeconds(0.2F);
-			Debug.Log("出战按钮");
-			Operation.Click(960, 470);	// 出战按钮
-			Debug.Log("出发");
+			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+				Debug.Log($"选择队列{SQUAD_NUMBER}");
+				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("出战按钮");
+				Operation.Click(960, 470);	// 出战按钮
+				Debug.Log("出发");
+				--ATTACK_TIMES;
+			}
 			
 			yield return new EditorWaitForSeconds(5);
 		}
