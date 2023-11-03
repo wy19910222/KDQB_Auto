@@ -123,7 +123,15 @@ public static partial class Recognize {
 					Approximately(realColor5, targetColor5);
 		}
 	}
-	
+
+	private static readonly Color32[,] LEAGUE_MECHA_DONATE_ENABLED = ScreenshotUtils.GetFromFile("PersistentData/Textures/LeagueMechaDonateEnabled.png");
+	public static bool IsLeagueMechaDonateEnabled {
+		get {
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(1067, 929, 16, 16);
+			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_ENABLED) > 0.99F;
+		}
+	}
+
 	public static bool IsBigEnergy(RectInt rect) {
 		Color32 targetColor1 = new Color32(255, 255, 108, 255);
 		Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(830, 590);
