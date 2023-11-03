@@ -18,9 +18,19 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 	private static void Open() {
 		GetWindow<AttackMarshalConfig>("攻击元帅").Show();
 	}
-	
+
+	private readonly GUIStyle m_Style = new GUIStyle();
 	private void OnGUI() {
+		EditorGUILayout.BeginHorizontal();
+		GUIContent content = new GUIContent($"{AttackMarshal.AttackTimes} /");
+		float width = m_Style.CalcSize(content).x + 3;
+		GUILayout.Space(EditorGUIUtility.labelWidth + 2);
+		EditorGUILayout.LabelField(content, "RightLabel", GUILayout.Width(width));
+		EditorGUIUtility.labelWidth += width;
+		GUILayout.Space(-EditorGUIUtility.labelWidth - 2);
 		AttackMarshal.ATTACK_TIMES = EditorGUILayout.IntField("攻击次数", AttackMarshal.ATTACK_TIMES);
+		EditorGUIUtility.labelWidth -= width;
+		EditorGUILayout.EndHorizontal();
 		AttackMarshal.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackMarshal.GROUP_COUNT, 0, 7);
 		AttackMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackMarshal.SQUAD_NUMBER, 1, 8);
 		GUILayout.Space(5F);
@@ -39,7 +49,24 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 public class AttackMarshal {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
-	public static int ATTACK_TIMES = 5;	// 攻击次数
+	public static int ATTACK_TIMES = 5;	// 攻击总次数
+	
+	public static readonly List<DateTime> s_AttackTimeList = new List<DateTime>();	// 攻击次数
+	public static int AttackTimes {	// 攻击次数
+		get {
+			int times = 0;
+			DateTime date = DateTime.Now.Date;
+			for (int i = s_AttackTimeList.Count - 1; i >= 0; --i) {
+				DateTime dt = s_AttackTimeList[i];
+				if (dt > date) {
+					++times;
+				} else {
+					break;
+				}
+			}
+			return times;
+		}
+	}
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -85,11 +112,12 @@ public class AttackMarshal {
 				continue;
 			}
 			Debug.Log($"无窗口覆盖");
-			
-			if (ATTACK_TIMES <= 0) {
+
+			int attackTimes = AttackTimes;
+			if (attackTimes >= ATTACK_TIMES) {
 				continue;
 			}
-			Debug.Log($"剩余攻击次数：{ATTACK_TIMES}");
+			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
 			
 			if (!Recognize.IsMarshalExist) {
 				Debug.Log($"未检测到元帅按钮，尝试切换场景");
@@ -130,7 +158,17 @@ public class AttackMarshal {
 				Debug.Log("出战按钮");
 				Operation.Click(960, 470);	// 出战按钮
 				Debug.Log("出发");
-				--ATTACK_TIMES;
+				s_AttackTimeList.Add(DateTime.Now);
+			}
+			yield return new EditorWaitForSeconds(0.5F);
+			// 如果还停留在出征界面(比如点出战按钮前一瞬间元帅没了)，则退出
+			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+				Debug.Log("退出按钮");
+				Operation.Click(30, 140);	// 退出按钮
+				yield return new EditorWaitForSeconds(0.3F);
+				Debug.Log("确认退出按钮");
+				Operation.Click(1064, 634);	// 确认退出按钮
+				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
 			yield return new EditorWaitForSeconds(5);
