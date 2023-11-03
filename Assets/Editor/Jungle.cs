@@ -48,11 +48,11 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		GUILayout.Space(5F);
 		if (Jungle.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopJungle");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartJungle");
+				IsRunning = true;
 			}
 		}
 	}

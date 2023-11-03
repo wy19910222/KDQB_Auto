@@ -102,11 +102,11 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		GUILayout.Space(5F);
 		if (Follow.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopFollow");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartFollow");
+				IsRunning = true;
 			}
 		}
 	}

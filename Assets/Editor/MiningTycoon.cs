@@ -22,11 +22,11 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopMiningTycoon");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartMiningTycoon");
+				IsRunning = true;
 			}
 		}
 	}

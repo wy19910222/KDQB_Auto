@@ -40,11 +40,11 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 		GUILayout.Space(5F);
 		if (DeepSea.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopDeepSea");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartDeepSea");
+				IsRunning = true;
 			}
 		}
 	}

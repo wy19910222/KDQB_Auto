@@ -22,11 +22,11 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 		GUILayout.Space(5F);
 		if (LeagueMechaDonate.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopLeagueMechaDonate");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartLeagueMechaDonate");
+				IsRunning = true;
 			}
 		}
 	}

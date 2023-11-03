@@ -31,11 +31,11 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		GUILayout.Space(5F);
 		if (Gather.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopGather");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartGather");
+				IsRunning = true;
 			}
 		}
 	}

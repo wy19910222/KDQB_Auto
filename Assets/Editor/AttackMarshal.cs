@@ -26,11 +26,11 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 		GUILayout.Space(5F);
 		if (AttackMarshal.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopAttackMarshal");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartAttackMarshal");
+				IsRunning = true;
 			}
 		}
 	}
