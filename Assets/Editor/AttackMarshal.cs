@@ -1,8 +1,8 @@
 ﻿/*
  * @Author: wangyun
- * @CreateTime: 2023-10-24 04:22:33 341
+ * @CreateTime: 2023-10-31 07:02:42 199
  * @LastEditor: wangyun
- * @EditTime: 2023-10-24 04:22:33 346
+ * @EditTime: 2023-10-31 07:02:42 204
  */
 
 using System;
@@ -20,6 +20,7 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 	}
 	
 	private void OnGUI() {
+		AttackMarshal.ATTACK_TIMES = EditorGUILayout.IntField("攻击次数", AttackMarshal.ATTACK_TIMES);
 		AttackMarshal.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackMarshal.GROUP_COUNT, 0, 7);
 		AttackMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackMarshal.SQUAD_NUMBER, 1, 8);
 		GUILayout.Space(5F);
@@ -74,6 +75,11 @@ public class AttackMarshal {
 				continue;
 			}
 			Debug.Log($"当前时间：{hour}点");
+			
+			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+				continue;
+			}
+			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 
 			if (Recognize.IsWindowCovered) {	// 如果有窗口覆盖，说明用户正在操作
 				continue;
