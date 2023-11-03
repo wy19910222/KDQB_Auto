@@ -5,6 +5,7 @@
  * @EditTime: 2023-11-03 14:55:53 065
  */
 
+using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -18,7 +19,23 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
 		MiningTycoon.TRAMCAR_NUMBER = EditorGUILayout.IntSlider("收取矿车编号", MiningTycoon.TRAMCAR_NUMBER, 1, 4);
+		
+		GUILayout.Space(5F);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUI.BeginChangeCheck();
+		TimeSpan ts = MiningTycoon.NEAREST_DT - DateTime.Now;
+		int hours = EditorGUILayout.IntField("倒计时", ts.Hours);
+		float prevLabelWidth = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 8F;
+		int minutes = EditorGUILayout.IntField(":", ts.Minutes);
+		int seconds = EditorGUILayout.IntField(":", ts.Seconds);
+		EditorGUIUtility.labelWidth = prevLabelWidth;
+		if (EditorGUI.EndChangeCheck()) {
+			MiningTycoon.NEAREST_DT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
+		}
+		EditorGUILayout.EndHorizontal();
 		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
+		
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -45,6 +62,7 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 public class MiningTycoon {
 	public static int ACTIVITY_ORDER = 7;	// 活动排序
 	public static int TRAMCAR_NUMBER = 3;	// 收取矿车编号
+	public static DateTime NEAREST_DT = DateTime.Now;
 	public static int CLICK_INTERVAL = 120;	// 点击间隔
 	
 	private static EditorCoroutine s_CO;
@@ -69,6 +87,10 @@ public class MiningTycoon {
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
+			if (DateTime.Now < NEAREST_DT) {
+				continue;
+			}
+			
 			// 有窗口打开着
 			if (Recognize.IsWindowCovered) {
 				continue;
@@ -125,7 +147,7 @@ public class MiningTycoon {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
-			yield return new EditorWaitForSeconds(CLICK_INTERVAL);
+			NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, CLICK_INTERVAL);
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
