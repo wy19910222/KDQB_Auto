@@ -16,15 +16,28 @@ using UnityEditor;
 public class PrefsEditorWindow<T> : EditorWindow {
 	protected bool m_Debug;
 	protected bool m_AutoBackupComplexData = true;
-	
+
 	protected virtual void OnEnable() {
 		LoadOptions();
+		IsRunning = EditorPrefs.GetBool($"{typeof(T).Name}Window.IsRunning");
 	}
 
 	protected virtual void OnDisable() {
 		SaveOptions();
 		if (m_AutoBackupComplexData) {
 			BackupComplexData();
+		}
+		EditorPrefs.SetBool($"{typeof(T).Name}Window.IsRunning", IsRunning);
+	}
+
+	protected string StartMenuName => $"Assets/Start{typeof(T).Name}";
+	protected string StopMenuName => $"Assets/Stop{typeof(T).Name}";
+	protected bool m_IsRunning;
+	protected bool IsRunning {
+		get => m_IsRunning;
+		set {
+			m_IsRunning = value;
+			EditorApplication.ExecuteMenuItem(value ? StartMenuName : StopMenuName);
 		}
 	}
 
