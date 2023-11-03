@@ -49,4 +49,18 @@ public static class ScreenshotUtils {
 		}
 		return colors;
 	}
+	
+	public static Color32[,] GetFromFile(string filePath) {
+		using Bitmap bitmap = new Bitmap(Application.dataPath + "/" + filePath);
+		int width = bitmap.Width;
+		int height = bitmap.Height;
+		Color32[,] colors = new Color32[width, height];
+		for (int _y = 0; _y < height; ++_y) {
+			for (int _x = 0; _x < width; ++_x) {
+				System.Drawing.Color c = bitmap.GetPixel(_x, _y);
+				colors[_x, _y] = new Color32(c.R, c.G, c.B, c.A);
+			}
+		}
+		return colors;
+	}
 }
