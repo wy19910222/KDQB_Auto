@@ -18,7 +18,7 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 	}
 	
 	private void OnGUI() {
-		LeagueMechaDonate.INTERVAL = EditorGUILayout.Slider("尝试捐献间隔", LeagueMechaDonate.INTERVAL, 120F, 1200F);
+		LeagueMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", LeagueMechaDonate.INTERVAL, 120, 1800);
 		GUILayout.Space(5F);
 		if (LeagueMechaDonate.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -33,7 +33,7 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 }
 
 public class LeagueMechaDonate {
-	public static float INTERVAL = 0.1F;	// 点击间隔
+	public static int INTERVAL = 300;	// 点击间隔
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;

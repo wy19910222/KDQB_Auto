@@ -18,7 +18,7 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
 		MiningTycoon.TRAMCAR_NUMBER = EditorGUILayout.IntSlider("收取矿车编号", MiningTycoon.TRAMCAR_NUMBER, 1, 4);
-		MiningTycoon.CLICK_INTERVAL = Mathf.Clamp(EditorGUILayout.IntField("点击间隔时间（秒）", MiningTycoon.CLICK_INTERVAL), 60, 1200);
+		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -102,11 +102,6 @@ public class MiningTycoon {
 			Debug.Log("活动标签页");
 			Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
 			yield return new EditorWaitForSeconds(0.1F);
-
-			for (int i = 0; i < 100; ++i) {
-				Operation.Click(1060, 970);	// 点击窗口外关闭
-				yield return new EditorWaitForSeconds(0.05F);
-			}
 			
 			Debug.Log($"点击第{TRAMCAR_NUMBER}个矿车");
 			Operation.Click(660 + 120 * TRAMCAR_NUMBER, 850);	// 点击矿车
@@ -117,6 +112,12 @@ public class MiningTycoon {
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(660, 850);	// 点击窗口外关闭
 			yield return new EditorWaitForSeconds(0.2F);
+
+			Debug.Log("挖矿");
+			for (int i = 0; i < 20; ++i) {
+				Operation.Click(1060, 970);	// 挖矿按钮
+				yield return new EditorWaitForSeconds(0.2F);
+			}
 			
 			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
