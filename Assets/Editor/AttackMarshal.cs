@@ -159,6 +159,9 @@ public class AttackMarshal {
 				Operation.Click(960, 470);	// 出战按钮
 				Debug.Log("出发");
 				s_AttackTimeList.Add(DateTime.Now);
+				while (s_AttackTimeList.Count > ATTACK_TIMES) {
+					s_AttackTimeList.RemoveAt(0);
+				}
 			}
 			yield return new EditorWaitForSeconds(0.5F);
 			// 如果还停留在出征界面(比如点出战按钮前一瞬间元帅没了)，则退出
