@@ -18,8 +18,9 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
-		MiningTycoon.TRAMCAR_NUMBER = EditorGUILayout.IntSlider("收取矿车编号", MiningTycoon.TRAMCAR_NUMBER, 1, 4);
-		
+		MiningTycoon.TRAMCAR_AWARD_NUMBER = EditorGUILayout.IntSlider("领奖矿车编号", MiningTycoon.TRAMCAR_AWARD_NUMBER, 1, 4);
+		MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER = EditorGUILayout.IntSlider("收取矿车编号", MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER, 1, 4);
+
 		GUILayout.Space(5F);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
@@ -61,7 +62,8 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 
 public class MiningTycoon {
 	public static int ACTIVITY_ORDER = 7;	// 活动排序
-	public static int TRAMCAR_NUMBER = 3;	// 收取矿车编号
+	public static int TRAMCAR_COUNTDOWN_NUMBER = 3;	// 收取矿车编号
+	public static int TRAMCAR_AWARD_NUMBER = 3;	// 领奖矿车编号
 	public static DateTime NEAREST_DT = DateTime.Now;
 	public static int CLICK_INTERVAL = 120;	// 点击间隔
 	
@@ -125,8 +127,8 @@ public class MiningTycoon {
 			Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
 			yield return new EditorWaitForSeconds(0.1F);
 			
-			Debug.Log($"点击第{TRAMCAR_NUMBER}个矿车");
-			Operation.Click(660 + 120 * TRAMCAR_NUMBER, 850);	// 点击矿车
+			Debug.Log($"尝试领取第{TRAMCAR_AWARD_NUMBER}个矿车");
+			Operation.Click(660 + 120 * TRAMCAR_AWARD_NUMBER, 850);	// 点击矿车
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(830, 730);	// 开始收取按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -140,6 +142,16 @@ public class MiningTycoon {
 				Operation.Click(1060, 970);	// 挖矿按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+			
+			Debug.Log($"开始获取第{TRAMCAR_COUNTDOWN_NUMBER}个矿车");
+			Operation.Click(660 + 120 * TRAMCAR_COUNTDOWN_NUMBER, 850);	// 点击矿车
+			yield return new EditorWaitForSeconds(0.2F);
+			Operation.Click(830, 730);	// 开始收取按钮
+			yield return new EditorWaitForSeconds(0.2F);
+			Operation.Click(960, 730);	// 领取奖励按钮
+			yield return new EditorWaitForSeconds(0.2F);
+			Operation.Click(660, 850);	// 点击窗口外关闭
+			yield return new EditorWaitForSeconds(0.2F);
 			
 			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
