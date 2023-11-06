@@ -119,7 +119,7 @@ public static class AttackDisciple {
 			// Click(960, 730);	// 攻击按钮
 			
 			yield return new EditorWaitForSeconds(0.3F);
-			if (Recognize.IsEnergyAdding) {
+			if (Recognize.IsEnergyShortcutAdding) {
 				if (USE_SMALL_BOTTLE) {
 					Debug.Log("嗑小体");
 					Click(830, 590);	// 选中小体

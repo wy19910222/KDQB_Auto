@@ -30,6 +30,14 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] ENERGY_SHORTCUT_ADDING = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyShortcutAdding.png");
+	public static bool IsEnergyShortcutAdding {
+		get {
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(910, 370, 100, 26);
+			return ApproximatelyRect(realColors, ENERGY_SHORTCUT_ADDING) > 0.99F;
+		}
+	}
+
 	public static bool IsEnergyAdding {
 		get {
 			// 当前是否处于嗑药面板

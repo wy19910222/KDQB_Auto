@@ -109,7 +109,7 @@ public static class AttackDisciple2 {
 			Debug.Log("攻击使徒");
 			Operation.Click(960, 950);	// 攻击使徒按钮
 			yield return new EditorWaitForSeconds(0.3F);
-			if (Recognize.IsEnergyAdding) {
+			if (Recognize.IsEnergyShortcutAdding) {
 				Debug.Log("体力不足");
 				Operation.Click(735, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);

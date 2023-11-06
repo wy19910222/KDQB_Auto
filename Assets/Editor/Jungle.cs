@@ -214,7 +214,7 @@ public class Jungle {
 				Operation.Click(870, 430);	// 攻击5次按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				// 出现体力不足面板
-				if (Recognize.IsEnergyAdding) {
+				if (Recognize.IsEnergyShortcutAdding) {
 					// // 打开背包嗑小体
 					// Operation.Click(1170, 384);	// 关闭按钮
 					// yield return new EditorWaitForSeconds(0.3F);
@@ -252,7 +252,7 @@ public class Jungle {
 							iMax = 1;
 							break;
 					}
-					while (Recognize.IsEnergyAdding && i < iMax) {
+					while (Recognize.IsEnergyShortcutAdding && i < iMax) {
 						switch (useBottle) {
 							case 1:
 								Debug.Log("嗑小体");
@@ -276,7 +276,7 @@ public class Jungle {
 						yield return new EditorWaitForSeconds(0.3F);
 						i++;
 					}
-					if (Recognize.IsEnergyAdding) {
+					if (Recognize.IsEnergyShortcutAdding) {
 						Operation.Click(1170, 384);	// 关闭按钮
 						Debug.Log("体力不足，等待稍后尝试");
 						yield return new EditorWaitForSeconds(0.1F);

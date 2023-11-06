@@ -181,7 +181,7 @@ public class Gather {
 			}
 			Debug.Log($"确定使用: {new []{"小体", "大体"}[useBottle]}");
 			if (useBottle == 0) {
-				if (Recognize.IsEnergyAdding) {
+				if (Recognize.IsEnergyShortcutAdding) {
 					yield return new EditorWaitForSeconds(0.1F);
 					Operation.Click(1170, 384);	// 关闭按钮
 					Debug.Log("体力不足，等待5分钟后再尝试");
@@ -191,7 +191,7 @@ public class Gather {
 			} else {
 				bool willContinue = false;
 				int i = 0;
-				while (Recognize.IsEnergyAdding) {
+				while (Recognize.IsEnergyShortcutAdding) {
 					switch (useBottle) {
 						case 1:
 							if (i < 2) {
