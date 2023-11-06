@@ -5,9 +5,17 @@
  * @EditTime: 2023-11-07 02:59:53 222
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public static partial class Recognize {
+	public enum EnergyShortcutAddingType {
+		NONE,
+		BIG_BOTTLE,
+		SMALL_BOTTLE,
+		DIAMOND_BUY,
+	}
+	
 	private const int ENERGY_EMPTY = 0;
 	private const int ENERGY_FULL = 75;
 	private const int ENERGY_EMPTY_X = 21;
@@ -63,5 +71,28 @@ public static partial class Recognize {
 		return Approximately(realColor1, targetColor1) ||	// 小体图标
 				Approximately(realColor2, targetColor2) ||	// 大体图标
 				Approximately(realColor3, targetColor3);	// 使用按钮
+	}
+
+	private static readonly Color32[,] ENERGY_BOTTLE_BIG = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyBottleBig.png");
+	private static readonly Color32[,] ENERGY_BOTTLE_SMALL = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyBottleSmall.png");
+	private static readonly Color32[,] ENERGY_DIAMOND_BUY = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyDiamondBuy.png");
+	public static EnergyShortcutAddingType GetShortcutType(int shortcutIndex) {
+		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(801 + shortcutIndex * 130, 556, 54, 54);
+		if (ApproximatelyRect(realColors, ENERGY_BOTTLE_BIG) > 0.99F) {
+			return EnergyShortcutAddingType.BIG_BOTTLE;
+		} else if (ApproximatelyRect(realColors, ENERGY_BOTTLE_SMALL) > 0.99F) {
+			return EnergyShortcutAddingType.SMALL_BOTTLE;
+		} else if (ApproximatelyRect(realColors, ENERGY_DIAMOND_BUY) > 0.99F) {
+			return EnergyShortcutAddingType.DIAMOND_BUY;
+		} else {
+			return EnergyShortcutAddingType.NONE;
+		}
+	}
+	public static List<EnergyShortcutAddingType> GetShortcutTypes() {
+		List<EnergyShortcutAddingType> list = new List<EnergyShortcutAddingType>();
+		for (int i = 0; i < 3; ++i) {
+			list.Add(GetShortcutType(i));
+		}
+		return list;
 	}
 }

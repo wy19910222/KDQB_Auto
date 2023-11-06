@@ -239,35 +239,31 @@ public class Jungle {
 					// yield return new EditorWaitForSeconds(0.3F);
 					
 					// 快捷嗑药
-					int useBottle = RandomUseBottle();	// 随机使用大小体
+					Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
 					int i = 0;
 					int iMax = 0;
 					switch (useBottle) {
-						case 1:
+						case Recognize.EnergyShortcutAddingType.SMALL_BOTTLE:
 							Debug.Log("使用小体");
 							iMax = 3;
 							break;
-						case 2:
+						case Recognize.EnergyShortcutAddingType.BIG_BOTTLE:
 							Debug.Log("使用大体");
 							iMax = 1;
 							break;
 					}
 					while (Recognize.IsEnergyShortcutAdding && i < iMax) {
-						switch (useBottle) {
-							case 1:
-								Debug.Log("嗑小体");
-								Operation.Click(830, 590);	// 选中小体
-								yield return new EditorWaitForSeconds(0.1F);
-								Operation.Click(960, 702);	// 使用按钮
-								break;
-							case 2:
-								Debug.Log("嗑大体");
-								Operation.Click(960, 590);	// 选中大体
-								yield return new EditorWaitForSeconds(0.1F);
-								Operation.Click(960, 702);	// 使用按钮
-								break;
+						List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
+						int index = types.IndexOf(useBottle);
+						if (index != -1) {
+							Debug.Log($"嗑{index + 1}号位");
+							Operation.Click(828 + index * 130, 590);	// 选中图标
+							yield return new EditorWaitForSeconds(0.1F);
+							Operation.Click(960, 702);	// 使用按钮
+							yield return new EditorWaitForSeconds(0.1F);
+						} else {
+							Debug.LogError("体力药剂数量不足！");
 						}
-						yield return new EditorWaitForSeconds(0.1F);
 						Operation.Click(1170, 384);	// 关闭按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						Operation.Click(960, 580);	// 选中目标
@@ -279,7 +275,7 @@ public class Jungle {
 					if (Recognize.IsEnergyShortcutAdding) {
 						Operation.Click(1170, 384);	// 关闭按钮
 						Debug.Log("体力不足，等待稍后尝试");
-						yield return new EditorWaitForSeconds(0.1F);
+						yield return new EditorWaitForSeconds(300);
 					}
 				}
 				if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
@@ -300,11 +296,11 @@ public class Jungle {
 		// ReSharper disable once IteratorNeverReturns
 	}
 	
-	private static int RandomUseBottle() {
-		List<int> list = new List<int>();
-		if (USE_SMALL_BOTTLE) { list.Add(1); }
-		if (USE_BIG_BOTTLE) { list.Add(2); }
-		return list.Count > 0 ? list[Random.Range(0, list.Count)] : 0;
+	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {
+		List<Recognize.EnergyShortcutAddingType> list = new List<Recognize.EnergyShortcutAddingType>();
+		if (USE_SMALL_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE); }
+		if (USE_BIG_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.BIG_BOTTLE); }
+		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
 	}
 	
 	// [MenuItem("Assets/Jungle.Test", priority = -1)]

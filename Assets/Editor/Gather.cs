@@ -158,28 +158,18 @@ public class Gather {
 				yield return new EditorWaitForSeconds(0.3F);
 			}
 			// 快捷嗑药
-			int useBottle = 0;
-			{
-				Debug.Log("确定使用大小体");
-				List<int> list = new List<int>();
-				if (USE_SMALL_BOTTLE) {
-					list.Add(1);
-				}
-				if (USE_BIG_BOTTLE) {
-					list.Add(2);
-				}
-				int listCount = list.Count;
-				useBottle = listCount > 0 ? list[Random.Range(0, list.Count)] : 0;
-				switch (useBottle) {
-					case 1:
-						Debug.Log("使用小体");
-						break;
-					case 2:
-						Debug.Log("使用大体");
-						break;
-				}
+			Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
+			int iMax = 0;
+			switch (useBottle) {
+				case Recognize.EnergyShortcutAddingType.SMALL_BOTTLE:
+					Debug.Log("使用小体");
+					iMax = 3;
+					break;
+				case Recognize.EnergyShortcutAddingType.BIG_BOTTLE:
+					Debug.Log("使用大体");
+					iMax = 1;
+					break;
 			}
-			Debug.Log($"确定使用: {new []{"小体", "大体"}[useBottle]}");
 			if (useBottle == 0) {
 				if (Recognize.IsEnergyShortcutAdding) {
 					yield return new EditorWaitForSeconds(0.1F);
@@ -189,38 +179,20 @@ public class Gather {
 					continue;
 				}
 			} else {
-				bool willContinue = false;
 				int i = 0;
-				while (Recognize.IsEnergyShortcutAdding) {
-					switch (useBottle) {
-						case 1:
-							if (i < 2) {
-								Debug.Log("嗑小体");
-								Operation.Click(830, 590);	// 选中小体
-								yield return new EditorWaitForSeconds(0.1F);
-								Operation.Click(960, 702);	// 使用按钮
-							} else {
-								Debug.LogError("连续嗑了3瓶小体还是体力不足！");
-								willContinue = true;
-							}
-							break;
-						case 2:
-							if (i < 1) {
-								Debug.Log("嗑大体");
-								Operation.Click(960, 590);	// 选中大体
-								yield return new EditorWaitForSeconds(0.1F);
-								Operation.Click(960, 702);	// 使用按钮
-							} else {
-								Debug.LogError("嗑了大体还是体力不足！");
-								willContinue = true;
-							}
-							break;
+				while (Recognize.IsEnergyShortcutAdding && i < iMax) {
+					List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
+					int index = types.IndexOf(useBottle);
+					if (index != -1) {
+						Debug.Log($"嗑{index + 1}号位");
+						Operation.Click(828 + index * 130, 590);	// 选中图标
+						yield return new EditorWaitForSeconds(0.1F);
+						Operation.Click(960, 702);	// 使用按钮
+						yield return new EditorWaitForSeconds(0.1F);
+					} else {
+						Debug.LogError("体力药剂数量不足！");
 					}
-					yield return new EditorWaitForSeconds(0.1F);
 					Operation.Click(1170, 384);	// 关闭按钮
-					if (willContinue) {
-						break;
-					}
 					yield return new EditorWaitForSeconds(0.3F);
 					Operation.Click(960, 580);	// 选中目标
 					yield return new EditorWaitForSeconds(0.1F);
@@ -228,21 +200,29 @@ public class Gather {
 					yield return new EditorWaitForSeconds(0.3F);
 					i++;
 				}
-				if (willContinue) {
-					Debug.Log("等待5分钟后再尝试");
+				if (Recognize.IsEnergyShortcutAdding) {
+					Operation.Click(1170, 384);	// 关闭按钮
+					Debug.Log("体力不足，等待稍后尝试");
 					yield return new EditorWaitForSeconds(300);
-					continue;
 				}
 			}
-			Debug.Log("选择队列");
-			Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);
-			yield return new EditorWaitForSeconds(0.2F);
-			Operation.Click(960, 470);	// 出战按钮
-			Debug.Log("出发");
+			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+				yield return new EditorWaitForSeconds(0.2F);
+				Operation.Click(960, 470);	// 出战按钮
+				Debug.Log("出发");
+			}
 			
 			// 休息5秒，避免出错时一直受控不能操作
 			yield return new EditorWaitForSeconds(5);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {
+		List<Recognize.EnergyShortcutAddingType> list = new List<Recognize.EnergyShortcutAddingType>();
+		if (USE_SMALL_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE); }
+		if (USE_BIG_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.BIG_BOTTLE); }
+		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
 	}
 }
