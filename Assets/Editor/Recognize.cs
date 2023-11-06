@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static partial class Recognize {
+	public static Rect GAME_RECT = new Rect(0, 101, 1920, 915);
+	
 	public enum Scene {
 		INSIDE,
 		OUTSIDE,
@@ -26,6 +28,14 @@ public static partial class Recognize {
 				return Scene.OUTSIDE;
 			}
 			return Scene.INSIDE;
+		}
+	}
+
+	private static readonly Color32[,] NETWORK_DISCONNECTED = ScreenshotUtils.GetFromFile("PersistentData/Textures/NetworkDisconnected.png");
+	public static bool IsNetworkDisconnected {
+		get {
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(910, 440, 100, 26);
+			return ApproximatelyRect(realColors, NETWORK_DISCONNECTED) > 0.99F;
 		}
 	}
 
