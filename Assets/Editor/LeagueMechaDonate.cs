@@ -74,9 +74,15 @@ public class LeagueMechaDonate {
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(960, 300);	// 联盟机甲
 			yield return new EditorWaitForSeconds(0.2F);
-			if (Recognize.IsLeagueMechaDonateEnabled) {
-				Operation.Click(960, 960);	// 免费捐献按钮
+			Operation.Click(1170, 200);	// 排行奖励按钮
+			yield return new EditorWaitForSeconds(0.5F);
+			bool isInRank = Recognize.IsLeagueMechaDonateInRank;
+			Operation.Click(735, 128);	// 点击窗口外关闭窗口
+			yield return new EditorWaitForSeconds(0.1F);
+			if (!isInRank) {
+				Operation.Click(960, 960);	// 捐献按钮
 				yield return new EditorWaitForSeconds(0.3F);
+				//TODO: 如果不是免费捐献，会弹出捐献数量窗口
 			}
 			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
