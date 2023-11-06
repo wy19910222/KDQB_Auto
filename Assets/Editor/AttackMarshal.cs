@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEngine;
 
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 	[MenuItem("Window/AttackMarshal")]
@@ -33,6 +34,8 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 		EditorGUILayout.EndHorizontal();
 		AttackMarshal.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackMarshal.GROUP_COUNT, 0, 7);
 		AttackMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackMarshal.SQUAD_NUMBER, 1, 8);
+		AttackMarshal.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", AttackMarshal.USE_SMALL_BOTTLE);
+		AttackMarshal.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", AttackMarshal.USE_BIG_BOTTLE);
 		GUILayout.Space(5F);
 		if (AttackMarshal.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -50,6 +53,8 @@ public class AttackMarshal {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	public static int ATTACK_TIMES = 5;	// 攻击总次数
+	public static bool USE_SMALL_BOTTLE = false;	// 是否使用小体
+	public static bool USE_BIG_BOTTLE = false;	// 是否使用大体
 	
 	public static readonly List<DateTime> s_AttackTimeList = new List<DateTime>();	// 攻击次数
 	public static int AttackTimes {	// 攻击次数
@@ -78,6 +83,8 @@ public class AttackMarshal {
 			$"拥有行军队列【{GROUP_COUNT}】",
 			$"使用编队【{SQUAD_NUMBER}】"
 		};
+		if (USE_SMALL_BOTTLE) { switches.Add("【允许使用小体】"); }
+		if (USE_BIG_BOTTLE) { switches.Add("【允许使用大体】"); }
 		Debug.Log($"自动打元帅已开启，{string.Join("，", switches)}");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
@@ -150,7 +157,49 @@ public class AttackMarshal {
 			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("攻击按钮");
 			Operation.Click(1050, 840);	// 攻击按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
+			// 出现体力不足面板
+			if (Recognize.IsEnergyShortcutAdding) {
+				// 快捷嗑药
+				Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
+				int i = 0;
+				int iMax = 0;
+				switch (useBottle) {
+					case Recognize.EnergyShortcutAddingType.SMALL_BOTTLE:
+						Debug.Log("使用小体");
+						iMax = 3;
+						break;
+					case Recognize.EnergyShortcutAddingType.BIG_BOTTLE:
+						Debug.Log("使用大体");
+						iMax = 1;
+						break;
+				}
+				while (Recognize.IsEnergyShortcutAdding && i < iMax) {
+					List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
+					int index = types.IndexOf(useBottle);
+					if (index != -1) {
+						Debug.Log($"嗑{index + 1}号位");
+						Operation.Click(828 + index * 130, 590);	// 选中图标
+						yield return new EditorWaitForSeconds(0.1F);
+						Operation.Click(960, 702);	// 使用按钮
+						yield return new EditorWaitForSeconds(0.1F);
+					} else {
+						Debug.LogError("体力药剂数量不足！");
+					}
+					Operation.Click(1170, 384);	// 关闭按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					Operation.Click(960, 580);	// 选中目标
+					yield return new EditorWaitForSeconds(0.1F);
+					Operation.Click(870, 430);	// 攻击5次按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					i++;
+				}
+				if (Recognize.IsEnergyShortcutAdding) {
+					Operation.Click(1170, 384);	// 关闭按钮
+					Debug.Log("体力不足，等待稍后尝试");
+					yield return new EditorWaitForSeconds(300);
+				}
+			}
 			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
 				Debug.Log($"选择队列{SQUAD_NUMBER}");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
@@ -177,5 +226,12 @@ public class AttackMarshal {
 			yield return new EditorWaitForSeconds(5);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {
+		List<Recognize.EnergyShortcutAddingType> list = new List<Recognize.EnergyShortcutAddingType>();
+		if (USE_SMALL_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE); }
+		if (USE_BIG_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.BIG_BOTTLE); }
+		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
 	}
 }
