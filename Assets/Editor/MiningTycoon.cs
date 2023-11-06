@@ -112,9 +112,10 @@ public class MiningTycoon {
 			Operation.Click(1880, 290);	// 活动按钮
 			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("拖动以显示活动标签页");
-			int orderOffsetX = (ACTIVITY_ORDER - 4) * 137;
+			const int TAB_WIDTH = 137;
+			int orderOffsetX = (ACTIVITY_ORDER - 4) * TAB_WIDTH;
 			while (orderOffsetX > 0) {
-				const int dragDistance = 136 * 4;
+				const int dragDistance = TAB_WIDTH * 4;
 				// 往左上拖动
 				var ie = Operation.NoInertiaDrag(1190, 200, 1190 - dragDistance, 200, 0.5F);
 				while (ie.MoveNext()) {
