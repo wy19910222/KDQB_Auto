@@ -291,9 +291,6 @@ public class Follow {
 					if (IsFollowOwnerEnabled()) {
 						willFollow = true;
 						--INCLUDE_JX;
-						string filePath = $"{Application.dataPath}/{DateTime.Now:MM-dd_HH.mm.ss.fff}.png";
-						Debug.LogError(filePath);
-						ScreenshotUtils.Screenshot(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height, filePath);
 					} else {
 						Debug.Log("不跟该车主");
 					}
@@ -303,31 +300,6 @@ public class Follow {
 			}
 			if (!willFollow) {
 				goto EndOfFollow;
-			}
-			bool isFollowIconExist = Recognize.IsFollowIconExist;
-			bool isJDCanFollow = Recognize.IsJDCanFollow;
-			bool isZCCanFollow = Recognize.IsZCCanFollow;
-			bool isAXPPCanFollow = Recognize.IsAXPPCanFollow;
-			bool isNMYCanFollow = Recognize.IsNMYCanFollow;
-			bool isJWCanFollow = Recognize.IsJWCanFollow;
-			bool isJXCanFollow = Recognize.IsJXCanFollow;
-			Debug.LogWarning($"isFollowIconExist:{isFollowIconExist}\n" +
-					$"isJDCanFollow:{isJDCanFollow}\n" +
-					$"isZCCanFollow:{isZCCanFollow}\n" +
-					$"isAXPPCanFollow:{isAXPPCanFollow}\n" +
-					$"isNMYCanFollow:{isNMYCanFollow}\n" +
-					$"isJWCanFollow:{isJWCanFollow}\n" +
-					$"isJXCanFollow:{isJXCanFollow}");
-			if (isFollowIconExist &&
-					!isJDCanFollow &&
-					!isZCCanFollow &&
-					!isAXPPCanFollow &&
-					!isNMYCanFollow &&
-					!isJWCanFollow &&
-					!isJXCanFollow) {
-				string filePath = $"{Application.dataPath}/{DateTime.Now:MM-dd_HH.mm.ss.fff}.png";
-				Debug.LogError(filePath);
-				ScreenshotUtils.Screenshot(988, 184, 214, 165, filePath);
 			}
 			
 			Debug.Log("可以跟车");
