@@ -156,7 +156,8 @@ public class AttackMarshal {
 			Operation.Click(960, 520);	// 选中目标
 			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("攻击按钮");
-			Operation.Click(1050, 840);	// 攻击按钮
+			// Operation.Click(1050, 840);	// 攻击按钮
+			Operation.Click(1050, 670);	// 攻击按钮
 			yield return new EditorWaitForSeconds(0.3F);
 			// 出现体力不足面板
 			if (Recognize.IsEnergyShortcutAdding) {
