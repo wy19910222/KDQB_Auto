@@ -112,6 +112,14 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_IN_RANK) > 0.99F;
 		}
 	}
+
+	private static readonly Color32[,] LEAGUE_MECHA_DONATE_CONFIRM = ScreenshotUtils.GetFromFile("PersistentData/Textures/LeagueMechaDonateConfirm.png");
+	public static bool IsLeagueMechaDonateConfirming {
+		get {
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(860, 340, 200, 30);
+			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_CONFIRM) > 0.99F;
+		}
+	}
 	
 	public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 		new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),

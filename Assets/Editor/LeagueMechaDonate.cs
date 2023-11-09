@@ -82,7 +82,12 @@ public class LeagueMechaDonate {
 			if (!isInRank) {
 				Operation.Click(960, 960);	// 捐献按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				//TODO: 如果不是免费捐献，会弹出捐献数量窗口
+				if (Recognize.IsLeagueMechaDonateConfirming) {
+					Operation.Click(960, 686);	// 兑换按钮
+					yield return new EditorWaitForSeconds(0.2F);
+					Operation.Click(1167, 353);	// 关闭按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
 			}
 			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
