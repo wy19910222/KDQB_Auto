@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Reflection;
@@ -15,19 +16,30 @@ using UnityEditor;
 
 public class PrefsEditorWindow<T> : EditorWindow {
 	protected bool m_Debug;
-	protected bool m_AutoBackupComplexData = true;
 
 	protected virtual void OnEnable() {
-		LoadOptions();
+		DoLoadOptions();
 		IsRunning = EditorPrefs.GetBool($"{typeof(T).Name}Window.IsRunning");
 	}
-
 	protected virtual void OnDisable() {
+		DoSaveOptions();
+		EditorPrefs.SetBool($"{typeof(T).Name}Window.IsRunning", IsRunning);
+	}
+
+
+	protected bool m_LoadComplexDataFromBackup = false;
+	private void DoLoadOptions() {
+		LoadOptions();
+		if (m_LoadComplexDataFromBackup) {
+			RecoverComplexData();
+		}
+	}
+	protected bool m_AutoBackupComplexData = true;
+	private void DoSaveOptions() {
 		SaveOptions();
 		if (m_AutoBackupComplexData) {
 			BackupComplexData();
 		}
-		EditorPrefs.SetBool($"{typeof(T).Name}Window.IsRunning", IsRunning);
 	}
 
 	protected string StartMenuName => $"Assets/Start{typeof(T).Name}";
@@ -43,11 +55,12 @@ public class PrefsEditorWindow<T> : EditorWindow {
 
 	protected virtual void OnMenu(GenericMenu menu) {
 		menu.AddItem(new GUIContent("调试模式"), m_Debug, () => m_Debug = !m_Debug);
-		menu.AddItem(new GUIContent("重置选项"), false, LoadOptions);
-		menu.AddItem(new GUIContent("保存选项"), false, SaveOptions);
-		menu.AddItem(new GUIContent("自动备份复杂数据"), m_AutoBackupComplexData, () => m_AutoBackupComplexData = !m_AutoBackupComplexData);
+		menu.AddItem(new GUIContent("重置选项"), false, DoLoadOptions);
+		menu.AddItem(new GUIContent("保存选项"), false, DoSaveOptions);
 		menu.AddItem(new GUIContent("备份复杂数据"), false, BackupComplexData);
 		menu.AddItem(new GUIContent("恢复复杂数据"), false, RecoverComplexData);
+		menu.AddItem(new GUIContent("自动备份复杂数据"), m_AutoBackupComplexData, () => m_AutoBackupComplexData = !m_AutoBackupComplexData);
+		menu.AddItem(new GUIContent("自动恢复复杂数据"), m_LoadComplexDataFromBackup, () => m_LoadComplexDataFromBackup = !m_LoadComplexDataFromBackup);
 	}
 
 	private void ShowButton(Rect rect) {
@@ -148,6 +161,12 @@ public class PrefsEditorWindow<T> : EditorWindow {
 				EditorPrefs.SetString(key, (string) value);
 			} else {
 				string valueStr = JsonConvert.SerializeObject(value);
+				if (value is Dictionary<string, Color32[,]> OwnerNameDict) {
+					foreach (var key1 in OwnerNameDict.Keys) {
+						Debug.LogError(key1);
+					}
+				}
+				Debug.LogError(valueStr);
 				EditorPrefs.SetString(key, valueStr);
 			}
 		}
