@@ -5,6 +5,7 @@
  * @EditTime: 2023-09-07 20:18:29 842
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -22,7 +23,14 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 	private void OnGUI() {
 		Jungle.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Jungle.GROUP_COUNT, 0, 7);
 		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
-		if (!Jungle.USE_SMALL_BOTTLE && !Jungle.USE_BIG_BOTTLE) {
+		bool useBottle = false;
+		foreach (var count in Jungle.USE_BOTTLE_DICT.Values) {
+			if (count > 0) {
+				useBottle = true;
+				break;
+			}
+		}
+		if (!useBottle) {
 			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
 		}
 		
@@ -43,8 +51,32 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		EditorGUI.DrawRect(wireRect2, Color.gray);
 		
 		Jungle.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Jungle.SQUAD_NUMBER, 1, 8);
-		Jungle.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", Jungle.USE_SMALL_BOTTLE);
-		Jungle.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", Jungle.USE_BIG_BOTTLE);
+		foreach (Recognize.EnergyShortcutAddingType type in Enum.GetValues(typeof(Recognize.EnergyShortcutAddingType))) {
+			string title = type switch {
+				Recognize.EnergyShortcutAddingType.BIG_BOTTLE => "使用大体",
+				Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => "使用小体",
+				Recognize.EnergyShortcutAddingType.DIAMOND_BUY => "购买体力",
+				_ => null
+			};
+			Jungle.USE_BOTTLE_DICT.TryGetValue(type, out int count);
+
+			if (title != null) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUI.BeginChangeCheck();
+				int newCount = Math.Max(EditorGUILayout.IntField(title, Math.Abs(count)), 0);
+				if (EditorGUI.EndChangeCheck()) {
+					count = count < 0 ? -newCount : newCount;
+					Jungle.USE_BOTTLE_DICT[type] = count;
+				}
+				EditorGUI.BeginChangeCheck();
+				EditorGUILayout.Toggle(count > 0, GUILayout.Width(16F));
+				if (EditorGUI.EndChangeCheck()) {
+					count = -count;
+					Jungle.USE_BOTTLE_DICT[type] = count;
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+		}
 		GUILayout.Space(5F);
 		if (Jungle.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -69,8 +101,7 @@ public class Jungle {
 	public static bool JUNGLE_MECHA = false;	// 是否攻击黑暗机甲
 	public static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
-	public static bool USE_SMALL_BOTTLE = false;	// 是否使用小体
-	public static bool USE_BIG_BOTTLE = false;	// 是否使用大体
+	public static Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否使用大体
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -90,8 +121,15 @@ public class Jungle {
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
 		switches.Add($"使用编队【{SQUAD_NUMBER}】");
-		if (USE_SMALL_BOTTLE) { switches.Add("【允许使用小体】"); }
-		if (USE_BIG_BOTTLE) { switches.Add("【允许使用大体】"); }
+		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.BIG_BOTTLE, out int bigCount) && bigCount > 0) {
+			switches.Add("【允许使用大体】");
+		}
+		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE, out int smallCount) && smallCount > 0) {
+			switches.Add("【允许使用小体】");
+		}
+		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.DIAMOND_BUY, out int buyCount) && buyCount > 0) {
+			switches.Add("【允许购买体力】");
+		}
 		Debug.Log($"自动打野已开启，{string.Join("，", switches)}");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
@@ -123,7 +161,14 @@ public class Jungle {
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
-				bool energyEnough = USE_SMALL_BOTTLE | USE_BIG_BOTTLE | Recognize.energy >= RESERVED_ENERGY + 15;
+				bool useBottle = false;
+				foreach (var count in USE_BOTTLE_DICT.Values) {
+					if (count > 0) {
+						useBottle = true;
+						break;
+					}
+				}
+				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + 15;
 				if (energyEnough) {
 					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
 						yield return new EditorWaitForSeconds(0.2F);
@@ -260,6 +305,8 @@ public class Jungle {
 							Operation.Click(828 + index * 130, 590);	// 选中图标
 							yield return new EditorWaitForSeconds(0.1F);
 							Operation.Click(960, 702);	// 使用按钮
+							USE_BOTTLE_DICT.TryGetValue(useBottle, out int count);
+							USE_BOTTLE_DICT[useBottle] = count - 1;
 							yield return new EditorWaitForSeconds(0.1F);
 						} else {
 							Debug.LogError("体力药剂数量不足！");
@@ -298,8 +345,15 @@ public class Jungle {
 	
 	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {
 		List<Recognize.EnergyShortcutAddingType> list = new List<Recognize.EnergyShortcutAddingType>();
-		if (USE_SMALL_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE); }
-		if (USE_BIG_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.BIG_BOTTLE); }
+		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.BIG_BOTTLE, out int bigCount) && bigCount > 0) {
+			list.Add(Recognize.EnergyShortcutAddingType.BIG_BOTTLE);
+		}
+		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE, out int smallCount) && smallCount > 0) {
+			list.Add(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE);
+		}
+		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.DIAMOND_BUY, out int buyCount) && buyCount > 0) {
+			list.Add(Recognize.EnergyShortcutAddingType.DIAMOND_BUY);
+		}
 		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
 	}
 	
