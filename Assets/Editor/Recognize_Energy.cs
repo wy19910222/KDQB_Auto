@@ -78,13 +78,14 @@ public static partial class Recognize {
 	private static readonly Color32[,] ENERGY_DIAMOND_BUY = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyDiamondBuy.png");
 	public static EnergyShortcutAddingType GetShortcutType(int shortcutIndex) {
 		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(801 + shortcutIndex * 130, 556, 54, 54);
-		if (ApproximatelyRect(realColors, ENERGY_BOTTLE_BIG) > 0.99F) {
+		if (ApproximatelyRect(realColors, ENERGY_BOTTLE_BIG) > 0.6F) {
 			return EnergyShortcutAddingType.BIG_BOTTLE;
-		} else if (ApproximatelyRect(realColors, ENERGY_BOTTLE_SMALL) > 0.99F) {
+		} else if (ApproximatelyRect(realColors, ENERGY_BOTTLE_SMALL) > 0.6F) {
 			return EnergyShortcutAddingType.SMALL_BOTTLE;
-		} else if (ApproximatelyRect(realColors, ENERGY_DIAMOND_BUY) > 0.99F) {
+		} else if (ApproximatelyRect(realColors, ENERGY_DIAMOND_BUY) > 0.6F) {
 			return EnergyShortcutAddingType.DIAMOND_BUY;
 		} else {
+			// ScreenshotUtils.Screenshot(801 + shortcutIndex * 130, 556, 54, 54, Application.dataPath + $"/PersistentData/Textures/Test{shortcutIndex}.png");
 			return EnergyShortcutAddingType.NONE;
 		}
 	}
