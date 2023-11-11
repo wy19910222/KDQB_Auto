@@ -9,6 +9,51 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static partial class Recognize {
+	public static float ApproximatelyRectAverage(Color32[,] realColors, Color32[,] targetColors, int averageW, int averageH, float thresholdMulti = 1) {
+		int realWidth = realColors.GetLength(0);
+		int targetWidth = targetColors.GetLength(0);
+		if (realWidth != targetWidth) {
+			return 0;
+		}
+		int realHeight = realColors.GetLength(1);
+		int targetHeight = targetColors.GetLength(1);
+		if (realHeight != targetHeight) {
+			return 0;
+		}
+		Color32[,] realAverageColors = GetAverageColors(realColors, averageW, averageH);
+		Color32[,] targetAverageColors = GetAverageColors(targetColors, averageW, averageH);
+		return ApproximatelyRect(realAverageColors, targetAverageColors, thresholdMulti);
+	}
+	private static Color32[,] GetAverageColors(Color32[,] colors, int averageW, int averageH) {
+		int width = colors.GetLength(0);
+		int height = colors.GetLength(1);
+		Color32[,] averageColors = new Color32[width, height];
+		int countAverage = (averageW + averageW + 1) * (averageH + averageH + 1);
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				float r = 0, g = 0, b = 0;
+				for (int offsetY = -averageH; offsetY <= averageH; ++offsetY) {
+					for (int offsetX = -averageW; offsetX <= averageW; ++offsetX) {
+						Color32 c = colors[
+								Mathf.Clamp(x + offsetX, 0, width - 1),
+								Mathf.Clamp(y + offsetY, 0, height - 1)
+						];
+						r += c.r;
+						g += c.g;
+						b += c.b;
+					}
+				}
+				averageColors[x, y] = new Color32(
+						(byte) Mathf.RoundToInt(r / countAverage),
+						(byte) Mathf.RoundToInt(g / countAverage),
+						(byte) Mathf.RoundToInt(b / countAverage),
+						255
+				);
+			}
+		}
+		return averageColors;
+	}
+	
 	public static float ApproximatelyRect(Color32[,] realColors, Color32[,] targetColors, float thresholdMulti = 1) {
 		int realWidth = realColors.GetLength(0);
 		int targetWidth = targetColors.GetLength(0);
