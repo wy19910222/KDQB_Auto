@@ -10,9 +10,13 @@ using UnityEngine;
 
 public static partial class Recognize {
 	public enum EnergyShortcutAddingType {
+		[InspectorName("无")]
 		NONE,
+		[InspectorName("使用大体")]
 		BIG_BOTTLE,
+		[InspectorName("使用小体")]
 		SMALL_BOTTLE,
+		[InspectorName("购买体力")]
 		DIAMOND_BUY,
 	}
 	

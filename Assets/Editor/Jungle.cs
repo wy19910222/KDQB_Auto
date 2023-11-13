@@ -52,18 +52,11 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		
 		Jungle.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Jungle.SQUAD_NUMBER, 1, 8);
 		foreach (Recognize.EnergyShortcutAddingType type in Enum.GetValues(typeof(Recognize.EnergyShortcutAddingType))) {
-			string title = type switch {
-				Recognize.EnergyShortcutAddingType.BIG_BOTTLE => "使用大体",
-				Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => "使用小体",
-				Recognize.EnergyShortcutAddingType.DIAMOND_BUY => "购买体力",
-				_ => null
-			};
-			Jungle.USE_BOTTLE_DICT.TryGetValue(type, out int count);
-
-			if (title != null) {
+			if (type != Recognize.EnergyShortcutAddingType.NONE) {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUI.BeginChangeCheck();
-				int newCount = Math.Max(EditorGUILayout.IntField(title, Math.Abs(count)), 0);
+				Jungle.USE_BOTTLE_DICT.TryGetValue(type, out int count);
+				int newCount = Math.Max(EditorGUILayout.IntField(Utils.GetEnumInspectorName(type), Math.Abs(count)), 0);
 				if (EditorGUI.EndChangeCheck()) {
 					count = count < 0 ? -newCount : newCount;
 					Jungle.USE_BOTTLE_DICT[type] = count;
@@ -101,7 +94,7 @@ public class Jungle {
 	public static bool JUNGLE_MECHA = false;	// 是否攻击黑暗机甲
 	public static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
-	public static Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否使用大体
+	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否使用大体
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -121,14 +114,10 @@ public class Jungle {
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
 		switches.Add($"使用编队【{SQUAD_NUMBER}】");
-		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.BIG_BOTTLE, out int bigCount) && bigCount > 0) {
-			switches.Add("【允许使用大体】");
-		}
-		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE, out int smallCount) && smallCount > 0) {
-			switches.Add("【允许使用小体】");
-		}
-		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.DIAMOND_BUY, out int buyCount) && buyCount > 0) {
-			switches.Add("【允许购买体力】");
+		foreach (var (type, count) in USE_BOTTLE_DICT) {
+			if (count > 0) {
+				switches.Add($"【{Utils.GetEnumInspectorName(type)}{count}次】");
+			}
 		}
 		Debug.Log($"自动打野已开启，{string.Join("，", switches)}");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
@@ -285,23 +274,18 @@ public class Jungle {
 					
 					// 快捷嗑药
 					Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
+					Debug.Log(Utils.GetEnumInspectorName(useBottle));
 					int i = 0;
-					int iMax = 0;
-					switch (useBottle) {
-						case Recognize.EnergyShortcutAddingType.SMALL_BOTTLE:
-							Debug.Log("使用小体");
-							iMax = 3;
-							break;
-						case Recognize.EnergyShortcutAddingType.BIG_BOTTLE:
-							Debug.Log("使用大体");
-							iMax = 1;
-							break;
-					}
+					int iMax = useBottle switch {
+						Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => 3,
+						Recognize.EnergyShortcutAddingType.BIG_BOTTLE => 1,
+						_ => 0
+					};
 					while (Recognize.IsEnergyShortcutAdding && i < iMax) {
 						List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
 						int index = types.IndexOf(useBottle);
 						if (index != -1) {
-							Debug.Log($"嗑{index + 1}号位");
+							Debug.Log($"选择{index + 1}号位");
 							Operation.Click(828 + index * 130, 590);	// 选中图标
 							yield return new EditorWaitForSeconds(0.1F);
 							Operation.Click(960, 702);	// 使用按钮
