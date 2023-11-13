@@ -46,14 +46,20 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
-		CustomField("跟战锤", ref Follow.INCLUDE_ZC, 50);
-		CustomField("跟难民营", ref Follow.INCLUDE_NMY, 10);
-		CustomField("跟惧星", ref Follow.INCLUDE_JX, 10);
+		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.WAR_HAMMER, out int countHammer);
+		Follow.TypeCountDict[Recognize.FollowType.WAR_HAMMER] = CustomField("跟战锤", countHammer, 50);
+		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.REFUGEE_CAMP, out int countRefugee);
+		Follow.TypeCountDict[Recognize.FollowType.REFUGEE_CAMP] = CustomField("跟难民营", countRefugee, 10);
+		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.FEAR_STAR, out int countFearStar);
+		Follow.TypeCountDict[Recognize.FollowType.FEAR_STAR] = CustomField("跟惧星", countFearStar, 10);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.BeginVertical();
-		CustomField("跟黑暗军团据点", ref Follow.INCLUDE_JD, 50);
-		CustomField("跟爱心砰砰", ref Follow.INCLUDE_AXPP, 50);
-		CustomField("跟黑暗精卫", ref Follow.INCLUDE_JW, 50);
+		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.STRONGHOLD, out int countStronghold);
+		Follow.TypeCountDict[Recognize.FollowType.STRONGHOLD] = CustomField("跟黑暗军团据点", countStronghold, 50);
+		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.ELITE_GUARD, out int countGuard);
+		Follow.TypeCountDict[Recognize.FollowType.ELITE_GUARD] = CustomField("跟黑暗精卫", countGuard, 50);
+		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.HEART_PANG, out int countHeartPang);
+		Follow.TypeCountDict[Recognize.FollowType.HEART_PANG] = CustomField("跟爱心砰砰", countHeartPang, 50);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.EndHorizontal();
 		if (Follow.INCLUDE_JX > 0) {
@@ -89,6 +95,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 				m_TempJXOwnerName = EditorGUILayout.TextField(m_TempJXOwnerName);
 				if (GUILayout.Button("添加", GUILayout.Width(60F))) {
 					Follow.RecordFollowOwnerName(m_TempJXOwnerName);
+					m_TempJXOwnerName = string.Empty;
 				}
 				EditorGUILayout.EndHorizontal();
 				EditorGUILayout.BeginHorizontal();
@@ -111,7 +118,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 	}
 
-	private static void CustomField(string label, ref int count, int defaultValue) {
+	private static int CustomField(string label, int count, int defaultValue) {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
 		int newCount = Math.Max(EditorGUILayout.IntField(label, Math.Abs(count)), 0);
@@ -128,6 +135,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+		return count;
 	}
 }
 
@@ -146,6 +154,7 @@ public class Follow {
 	public static int INCLUDE_NMY = 10;	// 是否跟难民营
 	public static int INCLUDE_AXPP = 50;	// 是否跟爱心砰砰
 	public static int INCLUDE_JX = 10;	// 是否跟惧星
+	public static readonly Dictionary<Recognize.FollowType, int> TypeCountDict = new Dictionary<Recognize.FollowType, int>(); // 各类型次数
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
 	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
 	
@@ -238,68 +247,35 @@ public class Follow {
 				goto EndOfFollow;
 			}
 			Debug.Log("未加入");
-			// 是否已显示Icon
-			if (!Recognize.IsFollowIconExist) {
-				Debug.Log("未显示Icon");
-				goto EndOfFollow;
-			}
-			bool willFollow = false;
-			if (Recognize.IsJDCanFollow) {
-				// 如果是黑暗军团据点
-				if (INCLUDE_JD > 0) {
-					willFollow = true;
-					--INCLUDE_JD;
-				} else {
-					Debug.Log("不跟黑暗军团据点");
-				}
-			} else if (Recognize.IsZCCanFollow) {
-				// 如果是战锤
-				if (INCLUDE_ZC > 0) {
-					willFollow = true;
-					--INCLUDE_ZC;
-				} else {
-					Debug.Log("不跟战锤");
-				}
-			} else if (Recognize.IsAXPPCanFollow) {
-				// 如果是爱心砰砰
-				if (INCLUDE_AXPP > 0) {
-					willFollow = true;
-					--INCLUDE_AXPP;
-				} else {
-					Debug.Log("不跟爱心砰砰");
-				}
-			} else if (Recognize.IsNMYCanFollow) {
-				// 如果是难民营
-				if (INCLUDE_NMY > 0) {
-					willFollow = true;
-					--INCLUDE_NMY;
-				} else {
-					Debug.Log("不跟难民营");
-				}
-			} else if (Recognize.IsJWCanFollow) {
-				// 如果是精卫
-				if (INCLUDE_JW > 0) {
-					willFollow = true;
-					--INCLUDE_JW;
-				} else {
-					Debug.Log("不跟精卫");
-				}
-			} else if (Recognize.IsJXCanFollow) {
-				// 如果是惧星
-				if (INCLUDE_JX > 0) {
-					// 如果不跟该车主
-					if (IsFollowOwnerEnabled()) {
-						willFollow = true;
-						--INCLUDE_JX;
-					} else {
-						Debug.Log("不跟该车主");
+			Recognize.FollowType type = Recognize.GetFollowType();
+			int count = 0;
+			switch (type) {
+				case Recognize.FollowType.UNKNOWN:
+					Debug.Log("未知类型，不跟车");
+					goto EndOfFollow;
+				case Recognize.FollowType.NONE:
+					Debug.Log("未显示Icon，不跟车");
+					goto EndOfFollow;
+				case Recognize.FollowType.WAR_HAMMER:
+				case Recognize.FollowType.REFUGEE_CAMP:
+				case Recognize.FollowType.STRONGHOLD:
+				case Recognize.FollowType.ELITE_GUARD:
+				case Recognize.FollowType.HEART_PANG:
+					count = TypeCountDict[type];
+					if (count <= 0) {
+						Debug.Log($"不跟{type}");
+						goto EndOfFollow;
 					}
-				} else {
-					Debug.Log("不跟惧星");
-				}
-			}
-			if (!willFollow) {
-				goto EndOfFollow;
+					break;
+				case Recognize.FollowType.FEAR_STAR:
+					count = TypeCountDict[type];
+					if (count <= 0) {
+						Debug.Log($"不跟{type}");
+						goto EndOfFollow;
+					} else if (IsFollowOwnerEnabled()) {
+						Debug.Log($"不跟该车主的{type}");
+					}
+					break;
 			}
 			
 			Debug.Log("可以跟车");
@@ -336,6 +312,8 @@ public class Follow {
 				cooldownTime = long.MaxValue;
 				yield return new EditorWaitForSeconds(0.5F);
 			} else {
+				// 跟车次数减1
+				TypeCountDict[type] = count - 1;
 				// 跟车冷却
 				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
 			}
