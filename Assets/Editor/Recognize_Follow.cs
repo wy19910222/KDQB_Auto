@@ -9,6 +9,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static partial class Recognize {
+	public enum FollowType {
+		UNKNOWN = -1,
+		NONE,
+		WAR_HAMMER,
+		REFUGEE_CAMP,
+		FEAR_STAR,
+		STRONGHOLD,
+		ELITE_GUARD,
+		HEART_PANG
+	}
+	
 	public static bool IsFollowOuterJoinBtnExist {
 		get {
 			if (CurrentScene == Scene.OUTSIDE) {
@@ -53,6 +64,83 @@ public static partial class Recognize {
 		}
 	}
 
+	public static FollowType GetFollowType() {
+		Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(988, 182, 213, 167);
+		// 判断跟车界面图标是否已出现
+		if (Approximately(colors[119, 97], new Color32(118, 132, 169, 255))) {
+			return FollowType.NONE;
+		}
+		// 判断跟车界面图标是否是战锤
+		else if (Approximately(colors[154, 128], new Color32(253, 109, 106, 255))) {
+			return FollowType.WAR_HAMMER;
+		}
+		// 判断跟车界面图标是否是难民营
+		else if (Approximately(colors[128, 91], new Color32(74, 133, 159, 255))) {
+			return FollowType.REFUGEE_CAMP;
+		}
+		// 判断跟车界面图标是否是惧星
+		else if (Approximately(colors[101, 31], new Color32(41, 131, 221, 255))) {
+			return FollowType.FEAR_STAR;
+		}
+		// 判断跟车界面图标是否是黑暗军团据点
+		else if (Approximately(colors[116, 54], new Color32(41, 39, 48, 255))) {
+			return FollowType.STRONGHOLD;
+		}
+		// 判断跟车界面图标是否是精卫
+		else if (Approximately(colors[125, 33], new Color32(158, 85, 92, 255))) {
+			return FollowType.ELITE_GUARD;
+		}
+		// 判断跟车界面图标是否是爱心砰砰
+		else if (Approximately(colors[123, 60], new Color32(225, 95, 97, 255))) {
+			return FollowType.HEART_PANG;
+		}
+		return FollowType.UNKNOWN;
+	}
+
+	public static bool IsTooLateWindowExist {
+		get {
+			if (CurrentScene == Scene.ARMY_SELECTING) {
+				// 判断出征界面是否弹出赶不上弹框
+				// 暂时判断的是指定位置是否存在红色取消按钮
+				Color32 targetColor = new Color32(211, 78, 56, 255);
+				Color32 realColor = ScreenshotUtils.GetColorOnScreen(880, 700);
+				return Approximately(realColor, targetColor);
+			}
+			return false;
+		}
+	}
+
+	private static readonly RectInt FOLLOW_OWNER_AVATAR_RECT = new RectInt(731, 190, 55, 54);	// 集结发起人头像范围
+	private const int FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT = 5; // 集结发起人头像特征获取的阵列边长
+	public static Color32[] GetFollowOwnerAvatar() {
+		int xStepLength = FOLLOW_OWNER_AVATAR_RECT.width / FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT;
+		int offsetX = (FOLLOW_OWNER_AVATAR_RECT.width - xStepLength * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
+		int yStepLength = FOLLOW_OWNER_AVATAR_RECT.height / FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT;
+		int offsetY = (FOLLOW_OWNER_AVATAR_RECT.height - yStepLength * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
+		int startX = FOLLOW_OWNER_AVATAR_RECT.x + offsetX;
+		int startY = FOLLOW_OWNER_AVATAR_RECT.y + offsetY;
+		Color32[] ownerAvatarFeature = new Color32[FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT];
+		for (int y = 0; y < FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT; ++y) {
+			for (int x = 0; x < FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT; ++x) {
+				ownerAvatarFeature[y * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT + x] = ScreenshotUtils.GetColorOnScreen(startX + x, startY + y);
+			}
+		}
+		return ownerAvatarFeature;
+	}
+	
+	public static bool ColorsEquals(IList<Color32> feature1, IList<Color32> feature2) {
+		if (feature1.Count != feature2.Count) {
+			return false;
+		}
+		for (int i = 0, length = feature1.Count; i < length; ++i) {
+			if (feature1[i].r != feature2[i].r || feature1[i].g != feature2[i].g || feature1[i].b != feature2[i].b) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	#region 废弃
 	public static bool IsFollowIconExist {
 		get {
 			// 判断车界面图标是否已出现
@@ -117,47 +205,5 @@ public static partial class Recognize {
 			return Approximately(realColor, targetColor);
 		}
 	}
-
-	public static bool IsTooLateWindowExist {
-		get {
-			if (CurrentScene == Scene.ARMY_SELECTING) {
-				// 判断出征界面是否弹出赶不上弹框
-				// 暂时判断的是指定位置是否存在红色取消按钮
-				Color32 targetColor = new Color32(211, 78, 56, 255);
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(880, 700);
-				return Approximately(realColor, targetColor);
-			}
-			return false;
-		}
-	}
-
-	private static readonly RectInt FOLLOW_OWNER_AVATAR_RECT = new RectInt(731, 190, 55, 54);	// 集结发起人头像范围
-	private const int FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT = 5; // 集结发起人头像特征获取的阵列边长
-	public static Color32[] GetFollowOwnerAvatar() {
-		int xStepLength = FOLLOW_OWNER_AVATAR_RECT.width / FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT;
-		int offsetX = (FOLLOW_OWNER_AVATAR_RECT.width - xStepLength * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
-		int yStepLength = FOLLOW_OWNER_AVATAR_RECT.height / FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT;
-		int offsetY = (FOLLOW_OWNER_AVATAR_RECT.height - yStepLength * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT) >> 1;
-		int startX = FOLLOW_OWNER_AVATAR_RECT.x + offsetX;
-		int startY = FOLLOW_OWNER_AVATAR_RECT.y + offsetY;
-		Color32[] ownerAvatarFeature = new Color32[FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT];
-		for (int y = 0; y < FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT; ++y) {
-			for (int x = 0; x < FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT; ++x) {
-				ownerAvatarFeature[y * FOLLOW_OWNER_AVATAR_FEATURE_XY_COUNT + x] = ScreenshotUtils.GetColorOnScreen(startX + x, startY + y);
-			}
-		}
-		return ownerAvatarFeature;
-	}
-	
-	public static bool ColorsEquals(IList<Color32> feature1, IList<Color32> feature2) {
-		if (feature1.Count != feature2.Count) {
-			return false;
-		}
-		for (int i = 0, length = feature1.Count; i < length; ++i) {
-			if (feature1[i].r != feature2[i].r || feature1[i].g != feature2[i].g || feature1[i].b != feature2[i].b) {
-				return false;
-			}
-		}
-		return true;
-	}
+	#endregion
 }
