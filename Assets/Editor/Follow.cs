@@ -46,23 +46,17 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.BeginVertical();
-		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.WAR_HAMMER, out int countHammer);
-		Follow.TypeCountDict[Recognize.FollowType.WAR_HAMMER] = CustomField("跟战锤", countHammer, 50);
-		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.REFUGEE_CAMP, out int countRefugee);
-		Follow.TypeCountDict[Recognize.FollowType.REFUGEE_CAMP] = CustomField("跟难民营", countRefugee, 10);
-		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.FEAR_STAR, out int countFearStar);
-		Follow.TypeCountDict[Recognize.FollowType.FEAR_STAR] = CustomField("跟惧星", countFearStar, 10);
+		CustomField(Recognize.FollowType.WAR_HAMMER, 50);
+		CustomField(Recognize.FollowType.REFUGEE_CAMP, 10);
+		CustomField(Recognize.FollowType.FEAR_STAR, 10);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.BeginVertical();
-		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.STRONGHOLD, out int countStronghold);
-		Follow.TypeCountDict[Recognize.FollowType.STRONGHOLD] = CustomField("跟黑暗军团据点", countStronghold, 50);
-		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.ELITE_GUARD, out int countGuard);
-		Follow.TypeCountDict[Recognize.FollowType.ELITE_GUARD] = CustomField("跟黑暗精卫", countGuard, 50);
-		Follow.TypeCountDict.TryGetValue(Recognize.FollowType.HEART_PANG, out int countHeartPang);
-		Follow.TypeCountDict[Recognize.FollowType.HEART_PANG] = CustomField("跟爱心砰砰", countHeartPang, 50);
+		CustomField(Recognize.FollowType.STRONGHOLD, 50);
+		CustomField(Recognize.FollowType.ELITE_GUARD, 50);
+		CustomField(Recognize.FollowType.HEART_PANG, 50);
 		EditorGUILayout.EndVertical();
 		EditorGUILayout.EndHorizontal();
-		if (Follow.INCLUDE_JX > 0) {
+		if (Follow.TypeCountDict.TryGetValue(Recognize.FollowType.FEAR_STAR, out int count) && count > 0) {
 			GUILayout.Space(5F);
 			foreach (var ownerName in new List<string>(Follow.OwnerNameDict.Keys)) {
 				if (!Follow.OwnerEnabledDict.ContainsKey(ownerName)) {
@@ -118,6 +112,11 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 	}
 
+	private static void CustomField(Recognize.FollowType type, int defaultValue) {
+		Follow.TypeCountDict.TryGetValue(type, out int countHammer);
+		Follow.TypeCountDict[type] = CustomField($"跟{Utils.GetEnumInspectorName(type)}", countHammer, defaultValue);
+	}
+
 	private static int CustomField(string label, int count, int defaultValue) {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
@@ -148,12 +147,6 @@ public class Follow {
 	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
 	public static float FOLLOW_COOLDOWN = 20F;	// 同一人跟车冷却
 	
-	public static int INCLUDE_JD = 50;	// 是否跟据点
-	public static int INCLUDE_ZC = 50;	// 是否跟战锤
-	public static int INCLUDE_JW = 0;	// 是否跟精卫
-	public static int INCLUDE_NMY = 10;	// 是否跟难民营
-	public static int INCLUDE_AXPP = 50;	// 是否跟爱心砰砰
-	public static int INCLUDE_JX = 10;	// 是否跟惧星
 	public static readonly Dictionary<Recognize.FollowType, int> TypeCountDict = new Dictionary<Recognize.FollowType, int>(); // 各类型次数
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
 	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
@@ -167,12 +160,11 @@ public class Follow {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 		List<string> switches = new List<string>();
-		if (INCLUDE_ZC > 0) { switches.Add($"战锤{INCLUDE_ZC}次"); }
-		if (INCLUDE_NMY > 0) { switches.Add($"难民营{INCLUDE_NMY}次"); }
-		if (INCLUDE_JX > 0) { switches.Add($"惧星{INCLUDE_JX}次"); }
-		if (INCLUDE_JD > 0) { switches.Add($"据点{INCLUDE_JD}次"); }
-		if (INCLUDE_JW > 0) { switches.Add($"精卫{INCLUDE_JW}次"); }
-		if (INCLUDE_AXPP > 0) { switches.Add($"砰砰{INCLUDE_AXPP}次"); }
+		foreach (var (type, count) in TypeCountDict) {
+			if (count > 0) {
+				switches.Add($"{Utils.GetEnumInspectorName(type)}{count}次");
+			}
+		}
 		Debug.Log($"自动跟车已开启：{string.Join("、", switches)}");
 	}
 

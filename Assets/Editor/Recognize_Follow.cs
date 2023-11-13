@@ -10,13 +10,21 @@ using UnityEngine;
 
 public static partial class Recognize {
 	public enum FollowType {
+		[InspectorName("未知")]
 		UNKNOWN = -1,
+		[InspectorName("无")]
 		NONE,
+		[InspectorName("战锤")]
 		WAR_HAMMER,
+		[InspectorName("难民营")]
 		REFUGEE_CAMP,
+		[InspectorName("惧星")]
 		FEAR_STAR,
+		[InspectorName("据点")]
 		STRONGHOLD,
+		[InspectorName("精卫")]
 		ELITE_GUARD,
+		[InspectorName("砰砰")]
 		HEART_PANG
 	}
 	
