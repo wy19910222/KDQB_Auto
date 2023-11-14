@@ -33,6 +33,9 @@ public static partial class Recognize {
 	public static int GetYLKGroupNumber() {
 		return GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY);
 	}
+	public static int GetDANGroupNumber() {
+		return GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY);
+	}
 	public static readonly Vector2Int[] AVATAR_SAMPLE_POINTS = {
 		new Vector2Int(7, 7), new Vector2Int(15, 7), new Vector2Int(23, 7),
 		new Vector2Int(7, 15), new Vector2Int(15, 15), new Vector2Int(23, 15),
@@ -47,6 +50,16 @@ public static partial class Recognize {
 		new Color32(122, 121, 129, 255), new Color32(151, 148, 149, 255), new Color32(210, 212, 210, 255),
 		new Color32(113, 112, 118, 255), new Color32(167, 163, 160, 255), new Color32(159, 135, 134, 255),
 												new Color32(123, 113, 104, 255),
+	};
+	public static readonly Color32[] AVATAR_DAN_FARAWAY = {
+		new Color32(240, 190, 95, 255), new Color32(73, 74, 124, 255), new Color32(57, 65, 107, 255),
+		new Color32(182, 127, 74, 255), new Color32(233, 168, 148, 255), new Color32(228, 160, 145, 255),
+												new Color32(232, 164, 133, 255), 
+	};
+	public static readonly Color32[] AVATAR_DAN_NEARBY = {
+		new Color32(251, 193, 92, 255), new Color32(86, 80, 134, 255), new Color32(65, 57, 109, 255),
+		new Color32(172, 119, 76, 255), new Color32(231, 177, 156, 255), new Color32(222, 152, 134, 255),
+												new Color32(231, 134, 122, 255), 
 	};
 	public static int GetHeroGroupNumber(IReadOnlyList<Color32> heroAvatarFaraway, IReadOnlyList<Color32> heroAvatarNearby) {
 		int deltaY = -1;
