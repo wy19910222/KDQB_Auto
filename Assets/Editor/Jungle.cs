@@ -159,9 +159,9 @@ public class Jungle {
 				}
 				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + 15;
 				if (energyEnough) {
-					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
+					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetDANGroupNumber() < 0) {
 						yield return new EditorWaitForSeconds(0.2F);
-						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetYLKGroupNumber() < 0) {
+						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetDANGroupNumber() < 0) {
 							Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 							break;
 						}
@@ -217,7 +217,7 @@ public class Jungle {
 						Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
 						yield return new EditorWaitForSeconds(0.1F);
 						// Debug.Log("星级滑块");
-						Operation.Click(810 + 50 * JUNGLE_STAR, 880);	// 星级滑块
+						Operation.Click(844 + 44 * JUNGLE_STAR, 880);	// 星级滑块
 						yield return new EditorWaitForSeconds(0.1F);
 						break;
 					}
