@@ -137,10 +137,11 @@ public class PrefsEditorWindow<T> : EditorWindow {
 			} else if (fi.FieldType == typeof(string)) {
 				fi.SetValue(null, EditorPrefs.GetString(key, (string) defaultValue));
 			} else {
-				string defaultValueStr = JsonConvert.SerializeObject(defaultValue);
-				string valueStr = EditorPrefs.GetString(key, defaultValueStr);
-				object value = JsonConvert.DeserializeObject(valueStr, fi.FieldType);
-				fi.SetValue(null, value);
+				string valueStr = EditorPrefs.GetString(key);
+				if (!string.IsNullOrEmpty(valueStr)) {
+					object value = JsonConvert.DeserializeObject(valueStr, fi.FieldType);
+					fi.SetValue(null, value);
+				}
 			}
 		}
 	}
@@ -161,12 +162,6 @@ public class PrefsEditorWindow<T> : EditorWindow {
 				EditorPrefs.SetString(key, (string) value);
 			} else {
 				string valueStr = JsonConvert.SerializeObject(value);
-				if (value is Dictionary<string, Color32[,]> OwnerNameDict) {
-					foreach (var key1 in OwnerNameDict.Keys) {
-						Debug.LogError(key1);
-					}
-				}
-				Debug.LogError(valueStr);
 				EditorPrefs.SetString(key, valueStr);
 			}
 		}
