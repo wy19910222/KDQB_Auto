@@ -77,7 +77,7 @@ public class LeagueMechaDonate {
 			Operation.Click(1170, 200);	// 排行奖励按钮
 			yield return new EditorWaitForSeconds(0.5F);
 			bool isInRank = Recognize.IsLeagueMechaDonateInRank;
-			Operation.Click(735, 128);	// 点击窗口外关闭窗口
+			Operation.Click(720, 128);	// 点击窗口外关闭窗口
 			yield return new EditorWaitForSeconds(0.1F);
 			if (!isInRank) {
 				Operation.Click(960, 960);	// 捐献按钮
@@ -91,7 +91,7 @@ public class LeagueMechaDonate {
 			}
 			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
-				Operation.Click(735, 128);	// 左上角返回按钮
+				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.1F);
 			}
 			yield return new EditorWaitForSeconds(INTERVAL);

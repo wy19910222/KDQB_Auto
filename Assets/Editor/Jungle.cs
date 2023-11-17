@@ -172,7 +172,7 @@ public class Jungle {
 			}
 			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
-				Operation.Click(735, 128);	// 左上角返回按钮
+				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
@@ -265,7 +265,7 @@ public class Jungle {
 					// 	Operation.Click(960, 960);	// 使用按钮
 					// 	yield return new EditorWaitForSeconds(0.1F);
 					// }
-					// Operation.Click(735, 128);	// 左上角返回按钮
+					// Operation.Click(720, 128);	// 左上角返回按钮
 					// yield return new EditorWaitForSeconds(0.1F);
 					// Operation.Click(960, 580);	// 选中目标
 					// yield return new EditorWaitForSeconds(0.1F);
@@ -354,6 +354,6 @@ public class Jungle {
 		// Operation.Click(960, 960);	// 使用按钮
 		Operation.MouseMove(960, 960);
 		yield return new EditorWaitForSeconds(1F);
-		Operation.Click(735, 128);	// 左上角返回按钮
+		Operation.Click(720, 128);	// 左上角返回按钮
 	}
 }

@@ -67,15 +67,11 @@ public static class AttackDisciple {
 				yield return null;
 			}
 			if (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
-				Debug.Log("关闭窗口");
-				Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
+				Debug.Log("左上角返回按钮");
+				do {
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				} while (Recognize.IsWindowCovered);
 			}
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
 				Debug.Log("已不在世界界面，重新开始");
@@ -145,9 +141,10 @@ public static class AttackDisciple {
 			attackCount++;
 			Debug.Log("出发");
 			yield return new EditorWaitForSeconds(0.1F);
-			Click(735, 128);	// 左上角返回按钮
-			yield return new EditorWaitForSeconds(0.1F);
-			Click(735, 128);	// 左上角返回按钮
+			while (Recognize.IsWindowCovered) {
+				Operation.Click(720, 128);	// 左上角返回按钮
+				yield return new EditorWaitForSeconds(0.2F);
+			}
 			if (attackCount >= ATTACK_COUNT) {
 				Debug.Log($"已攻击{attackCount}次，自动攻击已结束");
 				yield break;
@@ -194,8 +191,8 @@ public static class AttackDisciple {
 		// yield return new EditorWaitForSeconds(0.2F);
 		// Click(30, 140);	// 左上角返回按钮
 		// yield return new EditorWaitForSeconds(0.1F);
-		// Click(735, 128);	// 左上角返回按钮
+		// Click(720, 128);	// 左上角返回按钮
 		// yield return new EditorWaitForSeconds(0.1F);
-		// Click(735, 128);	// 左上角返回按钮
+		// Click(720, 128);	// 左上角返回按钮
 	}
 }

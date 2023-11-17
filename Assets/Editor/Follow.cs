@@ -215,7 +215,7 @@ public class Follow {
 				if (ENABLED_WITH_COVERED) {
 					while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
 						Debug.Log("关闭窗口");
-						Operation.Click(735, 128);	// 左上角返回按钮
+						Operation.Click(720, 128);	// 左上角返回按钮
 						yield return new EditorWaitForSeconds(0.1F);
 					}
 				} else {
@@ -324,7 +324,7 @@ public class Follow {
 				// 如果是从外面进来的，则关闭跟车界面
 				Debug.Log("左上角返回按钮");
 				while (Recognize.IsWindowCovered) {
-					Operation.Click(735, 128);	// 左上角返回按钮
+					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
 				// 外面的按钮持续几秒钟才消失

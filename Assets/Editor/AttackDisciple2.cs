@@ -88,15 +88,11 @@ public static class AttackDisciple2 {
 				yield return null;
 			}
 			if (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
-				Debug.Log("关闭窗口");
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
+				Debug.Log("左上角返回按钮");
+				do {
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				} while (Recognize.IsWindowCovered);
 			}
 
 			Debug.Log("准备打使徒");
@@ -111,11 +107,10 @@ public static class AttackDisciple2 {
 			yield return new EditorWaitForSeconds(0.3F);
 			if (Recognize.IsEnergyShortcutAdding) {
 				Debug.Log("体力不足");
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
+				while (Recognize.IsWindowCovered) {
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
 			} else {
 				Debug.Log("选择出征");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
@@ -126,9 +121,10 @@ public static class AttackDisciple2 {
 				yield return new EditorWaitForSeconds(5F);
 				Operation.Click(960, 910);	// 返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(735, 128);	// 左上角返回按钮
+				while (Recognize.IsWindowCovered) {
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
 			}
 			// 休息5秒，避免出错时一直受控不能操作
 			yield return new EditorWaitForSeconds(5);
