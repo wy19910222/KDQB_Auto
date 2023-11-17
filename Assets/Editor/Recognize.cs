@@ -72,6 +72,27 @@ public static partial class Recognize {
 
 	public static bool IsOutsideNearby => ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0;
 
+	private static readonly Color32[,] AREA_BUFF = ScreenshotUtils.GetFromFile("PersistentData/Textures/AreaBuff.png");
+	public static bool IsInEightArea {
+		get {
+			switch (CurrentScene) {
+				case Scene.OUTSIDE:
+					// 通过判断战区buff是否存在确定是否在八国地图
+					Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(226, 184, 12, 12);
+					return ApproximatelyRect(realColors, AREA_BUFF) > 0.99F;
+			}
+			return false;
+		}
+	}
+	private static readonly Color32[,] GOTO_EIGHT_AREA = ScreenshotUtils.GetFromFile("PersistentData/Textures/GotoEightArea.png");
+	public static bool CanGotoEightArea {
+		get {
+			// 通过在八国活动页面判断右下角是否有“前往”按钮，确定是否可以前往八国地图
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(1147, 976, 36, 18);
+			return ApproximatelyRect(realColors, GOTO_EIGHT_AREA) > 0.99F;
+		}
+	}
+	
 	// 当前是否处于搜索面板
 	public static bool IsSearching => Approximately(ScreenshotUtils.GetColorOnScreen(960, 466), new Color32(119, 131, 184, 255));
 
