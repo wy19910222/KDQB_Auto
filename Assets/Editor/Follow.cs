@@ -368,7 +368,6 @@ public class Follow {
 				// 判断是否是该车主
 				Color32[,] targetColors = OwnerNameDict[ownerName] ?? new Color32[0, 0];
 				if (Recognize.ApproximatelyRect(realColors, targetColors) > 0.99F) {
-					Debug.LogError(ownerName);
 					return true;
 				}
 			}
