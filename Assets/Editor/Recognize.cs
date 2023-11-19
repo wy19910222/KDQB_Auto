@@ -99,16 +99,17 @@ public static partial class Recognize {
 	public static bool IsMarshalExist {
 		get {
 			// 当前是否存在元帅
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(790, 780, 21, 41);
 			Color32 targetColor1 = new Color32(140, 17, 15, 255);
-			Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(792, 785);
+			Color32 realColor1 = realColors[2, 5];
 			Color32 targetColor2 = new Color32(243, 215, 16, 255);
-			Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(795, 790);
+			Color32 realColor2 = realColors[5, 10];
 			Color32 targetColor3 = new Color32(243, 210, 155, 255);
-			Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(790, 810);
+			Color32 realColor3 = realColors[0, 30];
 			Color32 targetColor4 = new Color32(79, 118, 174, 255);
-			Color32 realColor4 = ScreenshotUtils.GetColorOnScreen(800, 820);
+			Color32 realColor4 = realColors[10, 40];
 			Color32 targetColor5 = new Color32(212, 31, 28, 255);
-			Color32 realColor5 = ScreenshotUtils.GetColorOnScreen(810, 815);
+			Color32 realColor5 = realColors[20, 35];
 			return Approximately(realColor1, targetColor1) ||
 					Approximately(realColor2, targetColor2) ||
 					Approximately(realColor3, targetColor3) ||

@@ -11,27 +11,6 @@ using UnityEngine;
 using UnityEditor;
 
 public static partial class Recognize {
-	public static bool IsOrangeHeroInGroup() {
-		int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-		if (deltaY >= 0) {
-			int groupCount = 0;
-			// 返回加速等蓝色按钮
-			Color32 targetColor = new Color32(98, 135, 229, 255);
-			while (groupCount < 10) {
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
-					break;
-				}
-				Color32 frameColor = ScreenshotUtils.GetColorOnScreen(51, 419 + deltaY + groupCount * 50);
-				if (frameColor.r > frameColor.g && frameColor.g > frameColor.b) {
-					return true;
-				}
-				groupCount++;
-			}
-		}
-		return false;
-	}
-
 	public static int GetDANGroupNumber() {
 		return GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY);
 	}
@@ -110,7 +89,7 @@ public static partial class Recognize {
 						b += c.b;
 					}
 					Color32 color = new Color32((byte) (r / 3), (byte) (g / 3), (byte) (b / 3), 255);
-					// Color32 color = ScreenshotUtils.GetColorOnScreen(finalPoint.x, finalPoint.y);
+					// Color32 color = realColors[finalPoint.x, finalPoint.y];
 					if (ApproximatelyCoveredCount(color, heroAvatar[i], 1.4F) >= 0) {
 						++approximatelyCount;
 					}
@@ -129,24 +108,22 @@ public static partial class Recognize {
 		int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
 		if (deltaY >= 0) {
 			int groupCount = 0;
-			Color32 targetColor1 = new Color32(98, 135, 229, 255);	// 无界面覆盖
-			Color32 targetColor2 = new Color32(29, 40, 68, 255);	// 联盟背包等窗口覆盖
-			Color32 targetColor3 = new Color32(9, 12, 20, 255);	// 曙光活动主界面（或双层窗口）覆盖
+			Color32 targetColor = new Color32(98, 135, 229, 255);
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(0, 400 + deltaY, 160, 500);
 			while (groupCount < 10) {
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-				if (!Approximately(realColor, targetColor1, 10) &&
-						!Approximately(realColor, targetColor2, 10) &&
-						!Approximately(realColor, targetColor3, 10)) {
+				Color32 realColor = realColors[158, 34 + groupCount * 50];
+				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 					break;
 				}
+				
 				Debug.LogError($"----------------------{groupCount}----------------------");
 				List<Color32> list = new List<Color32>();
 				for (int i = 0, length = AVATAR_SAMPLE_POINTS.Length; i < length; ++i) {
 					Vector2Int point = AVATAR_SAMPLE_POINTS[i];
-					Vector2Int finalPoint = new Vector2Int(22 + point.x, 418 + deltaY + groupCount * 50 + point.y);
+					Vector2Int finalPoint = new Vector2Int(22 + point.x, 18 + groupCount * 50 + point.y);
 					int r = 0, g = 0, b = 0;
 					for (int y = -1; y < 2; ++y) {
-						Color32 c = ScreenshotUtils.GetColorOnScreen(finalPoint.x, finalPoint.y + y);
+						Color32 c = realColors[finalPoint.x, finalPoint.y + y];
 						r += c.r;
 						g += c.g;
 						b += c.b;

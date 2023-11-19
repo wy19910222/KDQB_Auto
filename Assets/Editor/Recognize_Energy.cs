@@ -50,33 +50,6 @@ public static partial class Recognize {
 		}
 	}
 
-	public static bool IsEnergyAdding {
-		get {
-			// 当前是否处于嗑药面板
-			Color32 targetColor1 = new Color32(255, 255, 108, 255);
-			Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(830, 590);
-			Color32 targetColor2 = new Color32(255, 255, 108, 255);
-			Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(960, 590);
-			Color32 targetColor3 = new Color32(254, 209, 51, 255);
-			Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(960, 702);
-			return Approximately(realColor1, targetColor1) ||	// 小体图标
-					Approximately(realColor2, targetColor2) ||	// 大体图标
-					Approximately(realColor3, targetColor3);	// 使用按钮
-		}
-	}
-
-	public static bool IsBigEnergy(RectInt rect) {
-		Color32 targetColor1 = new Color32(255, 255, 108, 255);
-		Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(830, 590);
-		Color32 targetColor2 = new Color32(255, 255, 108, 255);
-		Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(960, 590);
-		Color32 targetColor3 = new Color32(254, 209, 51, 255);
-		Color32 realColor3 = ScreenshotUtils.GetColorOnScreen(960, 702);
-		return Approximately(realColor1, targetColor1) ||	// 小体图标
-				Approximately(realColor2, targetColor2) ||	// 大体图标
-				Approximately(realColor3, targetColor3);	// 使用按钮
-	}
-
 	private static readonly Color32[,] ENERGY_BOTTLE_BIG = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyBottleBig.png");
 	private static readonly Color32[,] ENERGY_BOTTLE_SMALL = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyBottleSmall.png");
 	private static readonly Color32[,] ENERGY_DIAMOND_BUY = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyDiamondBuy.png");
