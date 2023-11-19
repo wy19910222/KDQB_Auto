@@ -21,8 +21,9 @@ public static partial class Recognize {
 				int groupCount = 0;
 				// 返回加速等蓝色按钮中间的白色
 				Color32 targetColor = new Color32(255, 255, 255, 255);
+				Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(158, 434 + deltaY, 1, 451);
 				while (groupCount < 10) {
-					Color32 realColor = ScreenshotUtils.GetColorOnScreen(158, 434 + deltaY + groupCount * 50);
+					Color32 realColor = realColors[0, groupCount * 50];
 					// Debug.LogError($"groupCount: {groupCount}");
 					if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 						break;

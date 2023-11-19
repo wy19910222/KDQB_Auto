@@ -90,8 +90,9 @@ public static partial class Recognize {
 			int groupCount = 0;
 			// 返回加速等蓝色按钮
 			Color32 targetColor = new Color32(98, 135, 229, 255);
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(0, 400 + deltaY, 160, 500);
 			while (groupCount < 10) {
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
+				Color32 realColor = realColors[158, 34 + groupCount * 50];
 				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 					break;
 				}
@@ -100,10 +101,10 @@ public static partial class Recognize {
 				int pointCount = AVATAR_SAMPLE_POINTS.Length;
 				for (int i = 0; i < pointCount; ++i) {
 					Vector2Int point = AVATAR_SAMPLE_POINTS[i];
-					Vector2Int finalPoint = new Vector2Int(22 + point.x, 418 + deltaY + groupCount * 50 + point.y);
+					Vector2Int finalPoint = new Vector2Int(22 + point.x, 18 + groupCount * 50 + point.y);
 					int r = 0, g = 0, b = 0;
 					for (int y = -1; y < 2; ++y) {
-						Color32 c = ScreenshotUtils.GetColorOnScreen(finalPoint.x, finalPoint.y + y);
+						Color32 c = realColors[finalPoint.x, finalPoint.y + y];
 						r += c.r;
 						g += c.g;
 						b += c.b;
