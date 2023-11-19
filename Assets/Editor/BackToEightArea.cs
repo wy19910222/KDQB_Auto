@@ -30,7 +30,7 @@ public class BackToEightAreaConfig : PrefsEditorWindow<BackToEightArea> {
 		if (EditorGUI.EndChangeCheck()) {
 			BackToEightArea.DAILY_TIME_START = new TimeSpan(startHours, startMinutes, 0);
 		}
-		EditorGUILayout.LabelField("——", "CenterLabel", GUILayout.Width(28));
+		EditorGUILayout.LabelField("——", "CenteredLabel", GUILayout.Width(28));
 		EditorGUI.BeginChangeCheck();
 		int stopHours = EditorGUILayout.IntField(BackToEightArea.DAILY_TIME_STOP.Hours, GUILayout.MinWidth(20));
 		EditorGUILayout.LabelField(":", GUILayout.Width(8));
@@ -141,6 +141,7 @@ public class BackToEightArea {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
+				SUCCESS_TIME = now;
 			}
 			yield return new EditorWaitForSeconds(INTERVAL);
 		}
