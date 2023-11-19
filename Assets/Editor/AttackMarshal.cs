@@ -31,6 +31,12 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 		GUILayout.Space(-EditorGUIUtility.labelWidth - 2);
 		AttackMarshal.ATTACK_TIMES = EditorGUILayout.IntField("攻击次数", AttackMarshal.ATTACK_TIMES);
 		EditorGUIUtility.labelWidth -= width;
+		if (GUILayout.Button("-")) {
+			AttackMarshal.s_AttackTimeList.RemoveAt(AttackMarshal.s_AttackTimeList.Count - 1);
+		}
+		if (GUILayout.Button("+")) {
+			AttackMarshal.s_AttackTimeList.Add(DateTime.Now);
+		}
 		EditorGUILayout.EndHorizontal();
 		AttackMarshal.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackMarshal.GROUP_COUNT, 0, 7);
 		AttackMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackMarshal.SQUAD_NUMBER, 1, 8);
