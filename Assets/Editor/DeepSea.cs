@@ -116,9 +116,10 @@ public class DeepSea {
 				Operation.Click(1880, 290);	// 活动按钮
 				yield return new EditorWaitForSeconds(0.5F);
 				Debug.Log("拖动以显示活动标签页");
-				int orderOffsetX = (ACTIVITY_ORDER - 4) * 137;
+				const int TAB_WIDTH = 137;
+				int orderOffsetX = (ACTIVITY_ORDER - 4) * TAB_WIDTH;
 				while (orderOffsetX > 0) {
-					const int dragDistance = 136 * 4;
+					const int dragDistance = TAB_WIDTH * 4;
 					// 往左上拖动
 					var ie = Operation.NoInertiaDrag(1190, 200, 1190 - dragDistance, 200, 0.5F);
 					while (ie.MoveNext()) {
@@ -130,6 +131,7 @@ public class DeepSea {
 				Debug.Log("活动标签页");
 				Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
 				yield return new EditorWaitForSeconds(0.1F);
+				
 				Debug.Log("点击探测器");
 				for (int i = 0; i < DETECTOR_COUNT; ++i) {
 					Debug.Log($"点击探测器{i + 1}");
