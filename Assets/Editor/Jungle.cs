@@ -21,6 +21,26 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 	}
 	
 	private void OnGUI() {
+		if (m_Debug) {
+			EditorGUILayout.BeginHorizontal();
+			if (GUILayout.Button("打印头像特征")) {
+				Recognize.LogGroupHeroAvatar();
+			}
+			if (GUILayout.Button("打印戴安娜位置")) {
+				Debug.LogError($"戴安娜：{Recognize.GetDANGroupNumber()}");
+			}
+			if (GUILayout.Button("打印尤里卡位置")) {
+				Debug.LogError($"尤里卡：{Recognize.GetYLKGroupNumber()}");
+			}
+			if (GUILayout.Button("打印明日香位置")) {
+				Debug.LogError($"明日香：{Recognize.GetMRXGroupNumber()}");
+			}
+			EditorGUILayout.EndHorizontal();
+			Rect rect0 = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect0 = new Rect(rect0.x, rect0.y + 4.5F, rect0.width, 1);
+			EditorGUI.DrawRect(wireRect0, Color.gray);
+		}
+		
 		Jungle.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Jungle.GROUP_COUNT, 0, 7);
 		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
 		bool useBottle = false;
