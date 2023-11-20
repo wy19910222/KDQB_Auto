@@ -153,6 +153,7 @@ public class Jungle {
 	}
 
 	private static IEnumerator Update() {
+		int starOffset = 0;
 		while (true) {
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.ARMY_SELECTING:
@@ -209,60 +210,63 @@ public class Jungle {
 			Operation.Click(770, 510);	// 敌军按钮
 			yield return new EditorWaitForSeconds(0.1F);
 			// 确定攻击目标
-			{
-				List<int> list = new List<int>();
-				if (JUNGLE_LAND) {
-					list.Add(0);
-				}
-				if (JUNGLE_SEA) {
-					list.Add(1);
-				}
-				if (JUNGLE_AIR) {
-					list.Add(2);
-				}
-				if (JUNGLE_MECHA) {
-					list.Add(3);
-				}
-				int target = list[Random.Range(0, list.Count)];
-				Debug.Log("攻击目标: " + target);
-				switch (target) {
-					case 3: {
-						// Debug.Log("列表往左拖动");
-						var ie = Operation.Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
-						while (ie.MoveNext()) {
-							yield return ie.Current;
-						}
-						yield return new EditorWaitForSeconds(0.3F);
-						// Debug.Log("选中最后一个（黑暗机甲）");
-						Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
-						yield return new EditorWaitForSeconds(0.1F);
-						// Debug.Log("星级滑块");
-						Operation.Click(844 + 44 * JUNGLE_STAR, 880);	// 星级滑块
-						yield return new EditorWaitForSeconds(0.1F);
-						break;
+			List<int> list = new List<int>();
+			if (JUNGLE_LAND) {
+				list.Add(0);
+			}
+			if (JUNGLE_SEA) {
+				list.Add(1);
+			}
+			if (JUNGLE_AIR) {
+				list.Add(2);
+			}
+			if (JUNGLE_MECHA) {
+				list.Add(3);
+			}
+			int target = list[Random.Range(0, list.Count)];
+			Debug.Log("攻击目标: " + target);
+			switch (target) {
+				case 3: {
+					// Debug.Log("列表往左拖动");
+					var ie = Operation.Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
+					while (ie.MoveNext()) {
+						yield return ie.Current;
 					}
-					default: {
-						// Debug.Log("列表往右拖动");
-						var ie = Operation.Drag(790, 670, 1120, 670, 0.2F);	// 列表往右拖动
-						while (ie.MoveNext()) {
-							yield return ie.Current;
-						}
-						yield return new EditorWaitForSeconds(0.3F);
-						// Debug.Log("选中目标");
-						Operation.Click(794 + 163 * target, 670);	// 选中目标
-						yield return new EditorWaitForSeconds(0.1F);
-						// Debug.Log("等级滑块");
-						Operation.Click(1062, 880);	// 等级滑块
-						yield return new EditorWaitForSeconds(0.1F);
-						break;
+					yield return new EditorWaitForSeconds(0.3F);
+					// Debug.Log("选中最后一个（黑暗机甲）");
+					Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
+					yield return new EditorWaitForSeconds(0.1F);
+					// Debug.Log("星级滑块");
+					Operation.Click(844 + 44 * (JUNGLE_STAR + starOffset), 880);	// 星级滑块
+					yield return new EditorWaitForSeconds(0.1F);
+					break;
+				}
+				default: {
+					// Debug.Log("列表往右拖动");
+					var ie = Operation.Drag(790, 670, 1120, 670, 0.2F);	// 列表往右拖动
+					while (ie.MoveNext()) {
+						yield return ie.Current;
 					}
+					yield return new EditorWaitForSeconds(0.3F);
+					// Debug.Log("选中目标");
+					Operation.Click(794 + 163 * target, 670);	// 选中目标
+					yield return new EditorWaitForSeconds(0.1F);
+					// Debug.Log("等级滑块");
+					Operation.Click(1062, 880);	// 等级滑块
+					yield return new EditorWaitForSeconds(0.1F);
+					break;
 				}
 			}
+				
 			// Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
-			// 搜索面板消失，说明搜索到了
 			if (!Recognize.IsSearching) {
+				// 搜索面板消失，说明搜索到了
+				if (target == 3) {
+					// 下次重新尝试搜索期望星级
+					starOffset = 0;
+				}
 				Operation.Click(960, 580);	// 选中目标
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(870, 430);	// 攻击5次按钮
@@ -336,6 +340,11 @@ public class Jungle {
 					Debug.Log("出发");
 				}
 			} else {
+				// 搜索面板未消失，说明未搜索到
+				if (target == 3) {
+					// 下次尝试搜索低星级
+					starOffset = Mathf.Max(starOffset - 1, -JUNGLE_STAR + 1);
+				}
 				while (Recognize.IsSearching) {
 					// 点击空白处退出搜索面板
 					Operation.Click(660, 970);	// 选中目标
@@ -359,21 +368,5 @@ public class Jungle {
 			list.Add(Recognize.EnergyShortcutAddingType.DIAMOND_BUY);
 		}
 		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
-	}
-	
-	// [MenuItem("Assets/Jungle.Test", priority = -1)]
-	private static void Test() {
-		EditorCoroutineManager.StartCoroutine(IETest());
-	}
-
-	private static IEnumerator IETest() {
-		Operation.Click(1870, 870);	// 背包按钮
-		yield return new EditorWaitForSeconds(1F);
-		Operation.Click(860, 290);	// 选中小体
-		yield return new EditorWaitForSeconds(1F);
-		// Operation.Click(960, 960);	// 使用按钮
-		Operation.MouseMove(960, 960);
-		yield return new EditorWaitForSeconds(1F);
-		Operation.Click(720, 128);	// 左上角返回按钮
 	}
 }
