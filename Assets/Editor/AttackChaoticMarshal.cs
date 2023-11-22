@@ -109,12 +109,12 @@ public class AttackChaoticMarshal {
 		while (true) {
 			yield return null;
 			
-			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
 				continue;
 			}
 			yield return new EditorWaitForSeconds(0.3F);
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
 				continue;
 			}
 

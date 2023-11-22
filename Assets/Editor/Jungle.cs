@@ -27,13 +27,13 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 				Recognize.LogGroupHeroAvatar();
 			}
 			if (GUILayout.Button("打印戴安娜位置")) {
-				Debug.LogError($"戴安娜：{Recognize.GetDANGroupNumber()}");
+				Debug.LogError($"戴安娜：{Recognize.GetHeroGroupNumber(Recognize.HeroType.DAN)}");
 			}
 			if (GUILayout.Button("打印尤里卡位置")) {
-				Debug.LogError($"尤里卡：{Recognize.GetYLKGroupNumber()}");
+				Debug.LogError($"尤里卡：{Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK)}");
 			}
 			if (GUILayout.Button("打印明日香位置")) {
-				Debug.LogError($"明日香：{Recognize.GetMRXGroupNumber()}");
+				Debug.LogError($"明日香：{Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX)}");
 			}
 			EditorGUILayout.EndHorizontal();
 			Rect rect0 = GUILayoutUtility.GetRect(0, 10);
@@ -180,9 +180,9 @@ public class Jungle {
 				}
 				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + 15;
 				if (energyEnough) {
-					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetDANGroupNumber() < 0) {
+					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) < 0) {
 						yield return new EditorWaitForSeconds(0.2F);
-						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetDANGroupNumber() < 0) {
+						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) < 0) {
 							Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 							break;
 						}

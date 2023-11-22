@@ -11,14 +11,22 @@ using UnityEngine;
 using UnityEditor;
 
 public static partial class Recognize {
-	public static int GetDANGroupNumber() {
-		return GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY);
+	public enum HeroType {
+		[InspectorName("戴安娜")]
+		DAN,
+		[InspectorName("尤里卡")]
+		YLK,
+		[InspectorName("明日香")]
+		MRX,
 	}
-	public static int GetYLKGroupNumber() {
-		return GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY);
-	}
-	public static int GetMRXGroupNumber() {
-		return GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY);
+	
+	public static int GetHeroGroupNumber(HeroType type) {
+		return type switch {
+			HeroType.DAN => GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY),
+			HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_DAN_NEARBY),
+			HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_DAN_NEARBY),
+			_ => -1
+		};
 	}
 	public static readonly Vector2Int[] AVATAR_SAMPLE_POINTS = {
 		new Vector2Int(7, 7), new Vector2Int(15, 7), new Vector2Int(23, 7),

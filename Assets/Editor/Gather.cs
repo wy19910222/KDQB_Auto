@@ -95,7 +95,7 @@ public class Gather {
 				continue;
 			}
 			// 尤里卡在任务中
-			if (Recognize.GetYLKGroupNumber() >= 0) {
+			if (Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;
 			}
 			// 有窗口打开着
