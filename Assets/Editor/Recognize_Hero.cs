@@ -23,8 +23,8 @@ public static partial class Recognize {
 	public static int GetHeroGroupNumber(HeroType type) {
 		return type switch {
 			HeroType.DAN => GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY),
-			HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_DAN_NEARBY),
-			HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_DAN_NEARBY),
+			HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
+			HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
 			_ => -1
 		};
 	}
