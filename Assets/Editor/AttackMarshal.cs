@@ -115,8 +115,8 @@ public class AttackMarshal {
 				continue;
 			}
 			Debug.Log($"当前时间：{hour}点");
-			
-			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+
+			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
 				continue;
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
@@ -148,7 +148,7 @@ public class AttackMarshal {
 			}
 			
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
 				continue;
 			}
 			
