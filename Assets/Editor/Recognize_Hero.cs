@@ -19,14 +19,24 @@ public static partial class Recognize {
 		[InspectorName("明日香")]
 		MRX,
 	}
-	
+
 	public static int GetHeroGroupNumber(HeroType type) {
-		return type switch {
+		int ret = type switch {
 			HeroType.DAN => GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY),
 			HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
 			HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
 			_ => -1
 		};
+		if (ret == -1) {
+			// 如果结果是-1，也可能是UI正在变动，重新判断一次
+			ret = type switch {
+				HeroType.DAN => GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY),
+				HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
+				HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
+				_ => -1
+			};
+		}
+		return ret;
 	}
 	public static readonly Vector2Int[] AVATAR_SAMPLE_POINTS = {
 		new Vector2Int(7, 7), new Vector2Int(15, 7), new Vector2Int(23, 7),
@@ -107,8 +117,9 @@ public static partial class Recognize {
 				}
 				groupCount++;
 			}
+			return -1;
 		}
-		return -1;
+		return int.MaxValue;
 	}
 	
 	[MenuItem("Assets/LogGroupHeroAvatar", priority = -1)]
