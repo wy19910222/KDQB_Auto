@@ -71,6 +71,20 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		EditorGUI.DrawRect(wireRect2, Color.gray);
 		
 		Jungle.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Jungle.SQUAD_NUMBER, 1, 8);
+		EditorGUILayout.BeginHorizontal();
+		foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
+			bool isSelected = type == Jungle.HERO_AVATAR;
+			bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
+			if (newIsSelected && !isSelected) {
+				Jungle.HERO_AVATAR = type;
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+		
+		Rect rect3 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect3 = new Rect(rect3.x, rect3.y + 4.5F, rect3.width, 1);
+		EditorGUI.DrawRect(wireRect3, Color.gray);
+		
 		foreach (Recognize.EnergyShortcutAddingType type in Enum.GetValues(typeof(Recognize.EnergyShortcutAddingType))) {
 			if (type != Recognize.EnergyShortcutAddingType.NONE) {
 				EditorGUILayout.BeginHorizontal();
@@ -114,6 +128,7 @@ public class Jungle {
 	public static bool JUNGLE_MECHA = false;	// 是否攻击黑暗机甲
 	public static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
+	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 打野英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否使用大体
 	
 	private static EditorCoroutine s_CO;
@@ -180,9 +195,9 @@ public class Jungle {
 				}
 				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + 15;
 				if (energyEnough) {
-					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) < 0) {
+					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(HERO_AVATAR) < 0) {
 						yield return new EditorWaitForSeconds(0.2F);
-						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) < 0) {
+						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(HERO_AVATAR) < 0) {
 							Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 							break;
 						}
@@ -260,7 +275,7 @@ public class Jungle {
 				
 			// Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
 			if (!Recognize.IsSearching) {
 				// 搜索面板消失，说明搜索到了
 				if (target == 3) {
