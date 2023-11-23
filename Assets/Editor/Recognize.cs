@@ -118,6 +118,17 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] QUICK_FIX = ScreenshotUtils.GetFromFile("PersistentData/Textures/QuickFix.png");
+	public static int IsQuickFixExist() {
+		if (ApproximatelyRect(ScreenshotUtils.GetColorsOnScreen(774, 786, 37, 37), QUICK_FIX) > 0.99F) {
+			return 1;
+		} else if (ApproximatelyRect(ScreenshotUtils.GetColorsOnScreen(832, 786, 37, 37), QUICK_FIX) > 0.99F) {
+			return 2;
+		} else {
+			return 0;
+		}
+	}
+
 	private static readonly Color32[,] LEAGUE_MECHA_DONATE_ENABLED = ScreenshotUtils.GetFromFile("PersistentData/Textures/LeagueMechaDonateEnabled.png");
 	public static bool IsLeagueMechaDonateEnabled {
 		get {
