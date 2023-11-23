@@ -59,7 +59,7 @@ public class LeagueMechaDonate {
 		while (true) {
 			yield return null;
 			
-			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Debug.Log("处于出战界面，不执行操作");
 				continue;
 			}

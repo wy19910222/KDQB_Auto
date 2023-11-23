@@ -208,7 +208,7 @@ public class Gather {
 					yield return new EditorWaitForSeconds(300);
 				}
 			}
-			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(960, 470);	// 出战按钮

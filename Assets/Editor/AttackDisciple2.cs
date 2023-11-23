@@ -68,7 +68,7 @@ public static class AttackDisciple2 {
 	private static IEnumerator Update() {
 		while (true) {
 			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.ARMY_SELECTING:
+				case Recognize.Scene.FIGHTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
 					Operation.Click(30, 140);	// 左上角返回按钮
 					break;

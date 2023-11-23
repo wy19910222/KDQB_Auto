@@ -46,7 +46,7 @@ public static class AttackDisciple {
 		int attackCount = 0;
 		while (true) {
 			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.ARMY_SELECTING:
+				case Recognize.Scene.FIGHTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
 					Click(30, 140);	// 左上角返回按钮
 					break;

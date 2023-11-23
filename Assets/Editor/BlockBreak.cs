@@ -58,7 +58,7 @@ public class BlockBreak {
 		DateTime dt = DateTime.Now;
 		while (true) {
 			yield return null;
-			if (Recognize.CurrentScene != Recognize.Scene.ARMY_SELECTING || Recognize.IsFightingPlayback) {
+			if (Recognize.CurrentScene != Recognize.Scene.FIGHTING || Recognize.IsFightingPlayback) {
 				dt = DateTime.Now;
 			} else if ((DateTime.Now - dt).TotalSeconds > SECONDS) {
 				Debug.Log("退出按钮");

@@ -13,17 +13,17 @@ public static partial class Recognize {
 	public enum Scene {
 		INSIDE,
 		OUTSIDE,
-		ARMY_SELECTING,
+		FIGHTING,
 	}
 
 	public static Scene CurrentScene {
 		get {
 			// 左上角蓝色返回按钮存在，说明处于出战界面
 			if (ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >= 0) {
-				return Scene.ARMY_SELECTING;
+				return Scene.FIGHTING;
 			}
 			// 右下角一排按钮里的雷达按钮存在，说明处于世界界面
-			if (ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0) {
+			else if (ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0) {
 				return Scene.OUTSIDE;
 			}
 			return Scene.INSIDE;
@@ -41,7 +41,7 @@ public static partial class Recognize {
 	public static bool IsWindowCovered {
 		get {
 			switch (CurrentScene) {
-				case Scene.ARMY_SELECTING:
+				case Scene.FIGHTING:
 					// 左上角返回按钮颜色很暗
 					return !Approximately(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
 				case Scene.INSIDE:
@@ -56,7 +56,7 @@ public static partial class Recognize {
 	public static bool IsWindowNoCovered {
 		get {
 			switch (CurrentScene) {
-				case Scene.ARMY_SELECTING:
+				case Scene.FIGHTING:
 					// 左上角返回按钮颜色不暗
 					return Approximately(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
 				case Scene.INSIDE:

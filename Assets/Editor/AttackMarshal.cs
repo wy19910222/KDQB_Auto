@@ -207,7 +207,7 @@ public class AttackMarshal {
 					yield return new EditorWaitForSeconds(300);
 				}
 			}
-			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Debug.Log($"选择队列{SQUAD_NUMBER}");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
@@ -221,7 +221,7 @@ public class AttackMarshal {
 			}
 			yield return new EditorWaitForSeconds(0.5F);
 			// 如果还停留在出征界面(比如点出战按钮前一瞬间元帅没了)，则退出
-			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Debug.Log("退出按钮");
 				Operation.Click(30, 140);	// 退出按钮
 				yield return new EditorWaitForSeconds(0.3F);

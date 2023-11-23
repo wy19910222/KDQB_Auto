@@ -171,7 +171,7 @@ public class Jungle {
 		int starOffset = 0;
 		while (true) {
 			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.ARMY_SELECTING:
+				case Recognize.Scene.FIGHTING:
 					Debug.Log("可能是卡在出战界面了，执行返回");
 					Operation.Click(30, 140);	// 左上角返回按钮
 					break;
@@ -350,7 +350,7 @@ public class Jungle {
 						yield return new EditorWaitForSeconds(300);
 					}
 				}
-				if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+				if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 					yield return new EditorWaitForSeconds(0.2F);
 					Operation.Click(960, 470);	// 出战按钮

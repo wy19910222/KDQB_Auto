@@ -311,7 +311,7 @@ public class Follow {
 				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
 			}
 			// 如果还停留在出征界面，则退出
-			if (Recognize.CurrentScene == Recognize.Scene.ARMY_SELECTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Debug.Log("退出按钮");
 				Operation.Click(30, 140);	// 退出按钮
 				yield return new EditorWaitForSeconds(0.2F);
