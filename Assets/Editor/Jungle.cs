@@ -275,13 +275,15 @@ public class Jungle {
 				
 			// Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
-			yield return new EditorWaitForSeconds(0.3F);
+			yield return new EditorWaitForSeconds(0.2F);
 			if (!Recognize.IsSearching) {
 				// 搜索面板消失，说明搜索到了
 				if (target == 3) {
 					// 下次重新尝试搜索期望星级
 					starOffset = 0;
 				}
+				// 避免没刷出来，先等一会儿
+				yield return new EditorWaitForSeconds(0.3F);
 				Operation.Click(960, 580);	// 选中目标
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(870, 430);	// 攻击5次按钮

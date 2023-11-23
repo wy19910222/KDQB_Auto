@@ -146,6 +146,8 @@ public class Gather {
 
 			// 搜索面板消失，说明搜索到了
 			Debug.Log("已搜到，选中目标");
+			// 避免没刷出来，先等一会儿
+			yield return new EditorWaitForSeconds(0.3F);
 			Operation.Click(960, 560);	// 选中目标
 			yield return new EditorWaitForSeconds(0.2F);
 			if (target == 1) {
