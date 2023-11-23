@@ -98,7 +98,7 @@ public static partial class Recognize {
 					}
 					Color32 color = new Color32((byte) (r / 3), (byte) (g / 3), (byte) (b / 3), 255);
 					// Color32 color = realColors[finalPoint.x, finalPoint.y];
-					if (ApproximatelyCoveredCount(color, heroAvatar[i], 1.4F) >= 0) {
+					if (ApproximatelyCoveredCount(color, heroAvatar[i], 1.5F) >= 0) {
 						++approximatelyCount;
 					}
 				}
