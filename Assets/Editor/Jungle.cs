@@ -171,7 +171,7 @@ public class Jungle {
 		int starOffset = 0;
 		while (true) {
 			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.FIGHTING:
+				case Recognize.Scene.FIGHTING when !Recognize.IsFightingPlayback:
 					Debug.Log("可能是卡在出战界面了，执行返回");
 					Operation.Click(30, 140);	// 左上角返回按钮
 					break;
