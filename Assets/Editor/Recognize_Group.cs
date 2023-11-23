@@ -21,10 +21,11 @@ public static partial class Recognize {
 				int groupCount = 0;
 				// 返回加速等蓝色按钮中间的白色
 				Color32 targetColor = new Color32(255, 255, 255, 255);
+				// 434的位置需要将小地图保持展开状态
 				Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(158, 434 + deltaY, 1, 451);
 				while (groupCount < 10) {
 					Color32 realColor = realColors[0, groupCount * 50];
-					// Debug.LogError($"groupCount: {groupCount}");
+					// Debug.LogError($"{groupCount}: [158, {434 + deltaY + groupCount * 50}]: {realColor}");
 					if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 						break;
 					}

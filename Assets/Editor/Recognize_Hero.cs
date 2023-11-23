@@ -112,6 +112,7 @@ public static partial class Recognize {
 						++approximatelyCount;
 					}
 				}
+				// Debug.LogError($"------------{groupCount}: {approximatelyCount}--------------");
 				if (approximatelyCount > pointCount * 0.5F) {
 					return groupCount;
 				}
