@@ -112,7 +112,7 @@ public static partial class Recognize {
 						++approximatelyCount;
 					}
 				}
-				if (approximatelyCount > pointCount * 0.7F) {
+				if (approximatelyCount > pointCount * 0.5F) {
 					return groupCount;
 				}
 				groupCount++;
