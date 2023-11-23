@@ -72,6 +72,8 @@ public static partial class Recognize {
 
 	public static bool IsOutsideNearby => ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0;
 
+	public static bool IsFightingPlayback => Approximately(ScreenshotUtils.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255));
+
 	private static readonly Color32[,] AREA_BUFF = ScreenshotUtils.GetFromFile("PersistentData/Textures/AreaBuff.png");
 	public static bool IsInEightArea {
 		get {
