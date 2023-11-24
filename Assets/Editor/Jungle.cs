@@ -353,8 +353,17 @@ public class Jungle {
 				if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 					yield return new EditorWaitForSeconds(0.2F);
-					Operation.Click(960, 470);	// 出战按钮
-					Debug.Log("出发");
+					if (Recognize.SoldierCountPercent > 0.99F) {
+						Operation.Click(960, 470);	// 出战按钮
+						Debug.Log("出发");
+					} else {
+						Debug.Log("退出按钮");
+						Operation.Click(30, 140);	// 退出按钮
+						yield return new EditorWaitForSeconds(0.2F);
+						Debug.Log("确认退出按钮");
+						Operation.Click(1064, 634);	// 确认退出按钮
+						yield return new EditorWaitForSeconds(2);
+					}
 				}
 			} else {
 				// 搜索面板未消失，说明未搜索到

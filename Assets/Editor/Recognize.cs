@@ -162,4 +162,21 @@ public static partial class Recognize {
 		new Vector2Int(20, 65),	// 右下角有数量显示，不能作为判断依据
 		new Vector2Int(12, 73), // 用于判断背景是什么颜色
 	};
+	
+	private const int SOLDIER_EMPTY_X = 48;
+	private const int SOLDIER_FULL_X = 156;
+	private const int SOLDIER_Y = 468;
+	public static float SoldierCountPercent {
+		get {
+			const int width = SOLDIER_FULL_X - SOLDIER_EMPTY_X;
+			Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(SOLDIER_EMPTY_X, SOLDIER_Y, width + 1, 1);
+			for (int x = width; x >= 0; --x) {
+				Color32 color = colors[x, 0];
+				if (color.g > color.r && color.g > color.b) {
+					return (float) x / width;
+				}
+			}
+			return 0;
+		}
+	}
 }
