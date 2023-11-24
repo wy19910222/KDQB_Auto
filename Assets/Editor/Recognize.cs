@@ -131,6 +131,14 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] FRIENDLY_HINT = ScreenshotUtils.GetFromFile("PersistentData/Textures/FriendlyHint.png");
+	public static bool IsFriendlyHinting {
+		get {
+			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(905, 395, 110, 28);
+			return ApproximatelyRect(realColors, FRIENDLY_HINT) > 0.99F;
+		}
+	}
+
 	private static readonly Color32[,] LEAGUE_MECHA_DONATE_ENABLED = ScreenshotUtils.GetFromFile("PersistentData/Textures/LeagueMechaDonateEnabled.png");
 	public static bool IsLeagueMechaDonateEnabled {
 		get {
