@@ -31,8 +31,8 @@ public static partial class Recognize {
 			int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
 			if (deltaX >= 0) {
 				const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
-				Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
-				for (int x = width; x >= 0; --x) {
+				Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
+				for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
 					if (Approximately(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F)) {
 						return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
 					}
@@ -42,19 +42,19 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly Color32[,] ENERGY_SHORTCUT_ADDING = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyShortcutAdding.png");
+	private static readonly Color32[,] ENERGY_SHORTCUT_ADDING = Operation.GetFromFile("PersistentData/Textures/EnergyShortcutAdding.png");
 	public static bool IsEnergyShortcutAdding {
 		get {
-			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(910, 370, 100, 26);
+			Color32[,] realColors = Operation.GetColorsOnScreen(910, 370, 100, 26);
 			return ApproximatelyRect(realColors, ENERGY_SHORTCUT_ADDING) > 0.99F;
 		}
 	}
 
-	private static readonly Color32[,] ENERGY_BOTTLE_BIG = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyBottleBig.png");
-	private static readonly Color32[,] ENERGY_BOTTLE_SMALL = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyBottleSmall.png");
-	private static readonly Color32[,] ENERGY_DIAMOND_BUY = ScreenshotUtils.GetFromFile("PersistentData/Textures/EnergyDiamondBuy.png");
+	private static readonly Color32[,] ENERGY_BOTTLE_BIG = Operation.GetFromFile("PersistentData/Textures/EnergyBottleBig.png");
+	private static readonly Color32[,] ENERGY_BOTTLE_SMALL = Operation.GetFromFile("PersistentData/Textures/EnergyBottleSmall.png");
+	private static readonly Color32[,] ENERGY_DIAMOND_BUY = Operation.GetFromFile("PersistentData/Textures/EnergyDiamondBuy.png");
 	public static EnergyShortcutAddingType GetShortcutType(int shortcutIndex) {
-		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(801 + shortcutIndex * 130, 556, 54, 54);
+		Color32[,] realColors = Operation.GetColorsOnScreen(801 + shortcutIndex * 130, 556, 54, 54);
 		if (ApproximatelyRect(realColors, ENERGY_BOTTLE_BIG) > 0.6F) {
 			return EnergyShortcutAddingType.BIG_BOTTLE;
 		} else if (ApproximatelyRect(realColors, ENERGY_BOTTLE_SMALL) > 0.6F) {

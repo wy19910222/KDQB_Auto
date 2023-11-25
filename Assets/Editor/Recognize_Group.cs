@@ -22,7 +22,7 @@ public static partial class Recognize {
 				// 返回加速等蓝色按钮中间的白色
 				Color32 targetColor = new Color32(255, 255, 255, 255);
 				// 434的位置需要将小地图保持展开状态
-				Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(158, 434 + deltaY, 1, 451);
+				Color32[,] realColors = Operation.GetColorsOnScreen(158, 434 + deltaY, 1, 451);
 				while (groupCount < 10) {
 					Color32 realColor = realColors[0, groupCount * 50];
 					// Debug.LogError($"{groupCount}: [158, {434 + deltaY + groupCount * 50}]: {realColor}");
@@ -53,7 +53,7 @@ public static partial class Recognize {
 		}
 		if (deltaY >= 0 && stateDict != null) {
 			const int width = 11, height = 9;
-			Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(47, 441 + deltaY + groupIndex * 50, width, height);
+			Color32[,] colors = Operation.GetColorsOnScreen(47, 441 + deltaY + groupIndex * 50, width, height);
 			Color32[,] averageColors = new Color32[width, height];
 			for (int y = 0; y < height; ++y) {
 				for (int x = 0; x < width; ++x) {
@@ -131,7 +131,7 @@ public static partial class Recognize {
 	[MenuItem("Assets/AddGroupStateNearby", priority = -1)]
 	private static void AddGroupStateNearby() {
 		const int width = 11, height = 9;
-		Color32[,] colorsNearby = ScreenshotUtils.GetColorsOnScreen(47, 617, width, height);
+		Color32[,] colorsNearby = Operation.GetColorsOnScreen(47, 617, width, height);
 		Color32[,] averageColorsNearby = new Color32[width, height];
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {
@@ -154,7 +154,7 @@ public static partial class Recognize {
 	[MenuItem("Assets/AddGroupStateFaraway", priority = -1)]
 	private static void AddGroupStateFaraway() {
 		const int width = 11, height = 9;
-		Color32[,] colorsFaraway = ScreenshotUtils.GetColorsOnScreen(47, 541, width, height);
+		Color32[,] colorsFaraway = Operation.GetColorsOnScreen(47, 541, width, height);
 		Color32[,] averageColorsFaraway = new Color32[width, height];
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {

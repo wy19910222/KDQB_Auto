@@ -31,7 +31,7 @@ public static partial class Recognize {
 		get {
 			if (CurrentScene == Scene.OUTSIDE) {
 				// 三个条件都满足才是绿色加入按钮
-				Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(1740, 700, 60, 11);
+				Color32[,] realColors = Operation.GetColorsOnScreen(1740, 700, 60, 11);
 				Color32 targetColor1 = new Color32(106, 212, 98, 255);
 				Color32 realColor1 = realColors[31, 0];
 				Color32 targetColor2 = new Color32(94, 203, 91, 255);
@@ -49,7 +49,7 @@ public static partial class Recognize {
 	public static bool IsFollowJoinBtnExist {
 		get {
 			// 三个条件都满足才是灰色加号按钮
-			Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(950, 280, 20, 30);
+			Color32[,] realColors = Operation.GetColorsOnScreen(950, 280, 20, 30);
 			Color32 targetColor1 = new Color32(148, 148, 155, 255);
 			Color32 realColor1 = realColors[15, 25];
 			Color32 targetColor2 = new Color32(170, 169, 171, 255);
@@ -67,14 +67,14 @@ public static partial class Recognize {
 			//绿色已加入箭头存在，说明已加入
 			Color32 targetColor1 = new Color32(147, 199, 167, 255);
 			Color32 targetColor2 = new Color32(44, 89, 115, 255);
-			Color32 realColor = ScreenshotUtils.GetColorOnScreen(790, 325);
+			Color32 realColor = Operation.GetColorOnScreen(790, 325);
 			return Approximately(realColor, targetColor1) ||
 					Approximately(realColor, targetColor2);
 		}
 	}
 
 	public static FollowType GetFollowType() {
-		Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(988, 182, 213, 167);
+		Color32[,] colors = Operation.GetColorsOnScreen(988, 182, 213, 167);
 		// 判断跟车界面图标是否已出现
 		if (Approximately(colors[119, 97], new Color32(118, 132, 169, 255))) {
 			return FollowType.NONE;
@@ -112,7 +112,7 @@ public static partial class Recognize {
 				// 判断出征界面是否弹出赶不上弹框
 				// 暂时判断的是指定位置是否存在红色取消按钮
 				Color32 targetColor = new Color32(211, 78, 56, 255);
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(880, 700);
+				Color32 realColor = Operation.GetColorOnScreen(880, 700);
 				return Approximately(realColor, targetColor);
 			}
 			return false;

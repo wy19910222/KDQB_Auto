@@ -273,7 +273,7 @@ public class Follow {
 			
 			Debug.Log("可以跟车");
 			// 如果车主换人了，则直接结束冷却
-			Color32[,] ownerName = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
+			Color32[,] ownerName = Operation.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 			if (s_CachedOwnerName == null || Recognize.ApproximatelyRect(ownerName, s_CachedOwnerName) < 0.9F) {
 				// 如果车主换人了，则直接结束冷却
 				cooldownTime = 0;
@@ -336,7 +336,7 @@ public class Follow {
 	
 	private static readonly RectInt OWNER_NAME_RECT = new RectInt(804, 193, 114, 24);	// 集结发起人昵称范围
 	public static void RecordFollowOwnerName(string ownerName) {
-		Color32[,] colors = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
+		Color32[,] colors = Operation.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 		OwnerNameDict[ownerName ?? ""] = colors;
 	}
 	public static void RemoveFollowOwnerName(string ownerName) {
@@ -345,7 +345,7 @@ public class Follow {
 		}
 	}
 	public static void LogFollowOwnerNameSimilarity(string ownerName) {
-		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
+		Color32[,] realColors = Operation.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 		Color32[,] targetColors = OwnerNameDict[ownerName ?? ""] ?? new Color32[0, 0];
 		Debug.Log(Recognize.ApproximatelyRect(realColors, targetColors));
 	}
@@ -361,7 +361,7 @@ public class Follow {
 			return true;
 		}
 		// 判断车主
-		Color32[,] realColors = ScreenshotUtils.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
+		Color32[,] realColors = Operation.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 		foreach (var ownerName in OwnerNameDict.Keys) {
 			// 判断是否允许跟该车主
 			if (OwnerEnabledDict.TryGetValue(ownerName, out bool enabled) && enabled) {
