@@ -7,18 +7,10 @@
 
 using System.Drawing;
 using System.Drawing.Imaging;
-using UnityEditor;
 using UnityEngine;
-
 using Graphics = System.Drawing.Graphics;
 
 public static class ScreenshotUtils {
-	[MenuItem("Assets/Screenshot", priority = -1)]
-	private static void Screenshot() {
-		string filename = Application.dataPath + "/screenshot.png";
-		Screenshot(222, 207, 1, 1, filename);
-	}
-	
 	public static void Screenshot(int x, int y, int width, int height, string filePath) {
 		Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 		using (Graphics graphics = Graphics.FromImage(bitmap)) {
@@ -29,38 +21,67 @@ public static class ScreenshotUtils {
 	
 	private static readonly Bitmap s_Bitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
 	public static Color32 GetColorOnScreen(int x, int y) {
-		using (Graphics graphics = Graphics.FromImage(s_Bitmap)) {
-			graphics.CopyFromScreen(x, y, 0, 0, s_Bitmap.Size);
-		}
+		using Graphics graphics = Graphics.FromImage(s_Bitmap);
+		graphics.CopyFromScreen(x, y, 0, 0, s_Bitmap.Size);
 		System.Drawing.Color c = s_Bitmap.GetPixel(0, 0);
 		return new Color32(c.R, c.G, c.B, c.A);
 	}
 	
-	public static Color32[,] GetColorsOnScreen(int x, int y, int width, int height) {
+	public static Color32[,] GetColorsOnScreen(int x, int y, int width, int height, int stride = 1) {
 		using Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 		using Graphics graphics = Graphics.FromImage(bitmap);
 		graphics.CopyFromScreen(x, y, 0, 0, bitmap.Size);
-		Color32[,] colors = new Color32[width, height];
-		for (int _y = 0; _y < height; ++_y) {
-			for (int _x = 0; _x < width; ++_x) {
-				System.Drawing.Color c = bitmap.GetPixel(_x, _y);
-				colors[_x, _y] = new Color32(c.R, c.G, c.B, c.A);
+		byte[] pixelsData = GetPixelsDataFromBitmap(bitmap);
+		int finalWidth = width / stride;
+		int finalHeight = height / stride;
+		Color32[,] colors = new Color32[finalWidth, finalHeight];
+		int bytesPerPixel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
+		for (int _y = 0; _y < finalHeight; ++_y) {
+			for (int _x = 0; _x < finalWidth; ++_x) {
+				int offset = (_y * stride * width + _x * stride) * bytesPerPixel;
+				byte b = pixelsData[offset];
+				byte g = pixelsData[offset + 1];
+				byte r = pixelsData[offset + 2];
+				colors[_x, _y] = new Color32(r, g, b, 255);
 			}
 		}
 		return colors;
 	}
 	
+	public static byte[] GetPixelsDataOnScreen(int x, int y, int width, int height) {
+		using Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+		using Graphics graphics = Graphics.FromImage(bitmap);
+		graphics.CopyFromScreen(x, y, 0, 0, bitmap.Size);
+		return GetPixelsDataFromBitmap(bitmap);
+	}
+	
 	public static Color32[,] GetFromFile(string filePath) {
 		using Bitmap bitmap = new Bitmap(Application.dataPath + "/" + filePath);
+		byte[] pixelData = GetPixelsDataFromBitmap(bitmap);
 		int width = bitmap.Width;
 		int height = bitmap.Height;
 		Color32[,] colors = new Color32[width, height];
+		int bytesPerPixel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
 		for (int _y = 0; _y < height; ++_y) {
 			for (int _x = 0; _x < width; ++_x) {
-				System.Drawing.Color c = bitmap.GetPixel(_x, _y);
-				colors[_x, _y] = new Color32(c.R, c.G, c.B, c.A);
+				int offset = (_y * width + _x) * bytesPerPixel;
+				byte b = pixelData[offset];
+				byte g = pixelData[offset + 1];
+				byte r = pixelData[offset + 2];
+				colors[_x, _y] = new Color32(r, g, b, 255);
 			}
 		}
 		return colors;
+	}
+	
+	private static byte[] GetPixelsDataFromBitmap(Bitmap bitmap) {
+		int width = bitmap.Width;
+		int height = bitmap.Height;
+		Rectangle rect = new Rectangle(0, 0, width, height);
+		BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, bitmap.PixelFormat);
+		byte[] pixelsData = new byte[bitmap.Height * bmpData.Stride];
+		System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixelsData, 0, pixelsData.Length);
+		bitmap.UnlockBits(bmpData);
+		return pixelsData;
 	}
 }
