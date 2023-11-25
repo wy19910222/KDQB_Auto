@@ -320,6 +320,7 @@ public class Jungle {
 					int iMax = useBottle switch {
 						Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => 3,
 						Recognize.EnergyShortcutAddingType.BIG_BOTTLE => 1,
+						Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
 						_ => 0
 					};
 					while (Recognize.IsEnergyShortcutAdding && i < iMax) {
