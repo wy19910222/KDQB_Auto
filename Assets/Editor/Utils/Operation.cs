@@ -11,7 +11,12 @@ using UnityEditor;
 using UnityEngine;
 
 public static class Operation {
+	public static Rect BASED_GAME_RECT { get; } = new Rect(0, 101, 1920, 915);
+	public static Rect CURRENT_GAME_RECT { get; } = new Rect(0, 101, 1920, 915);
+
 	public static void Click(int x, int y) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		if (MouseUtils.IsLeftDown()) {
 			// 确保鼠标不是在按下状态
 			MouseUtils.LeftUp();
@@ -24,10 +29,17 @@ public static class Operation {
 	}
 	
 	public static void MouseMove(int x, int y) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		MouseUtils.SetMousePos(x, y);
 	}
 
 	public static IEnumerator Drag(int x1, int y1, int x2, int y2, float duration = 0.2F) {
+		x1 = Mathf.RoundToInt((x1 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y1 = Mathf.RoundToInt((y1 - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		x2 = Mathf.RoundToInt((x2 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y2 = Mathf.RoundToInt((y2 - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		
 		Vector2Int oldPos = MouseUtils.GetMousePos();
 		
 		MouseUtils.SetMousePos(x1, y1);
@@ -48,6 +60,11 @@ public static class Operation {
 	}
 
 	public static IEnumerator NoInertiaDrag(int x1, int y1, int x2, int y2, float duration = 0.2F) {
+		x1 = Mathf.RoundToInt((x1 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y1 = Mathf.RoundToInt((y1 - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		x2 = Mathf.RoundToInt((x2 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y2 = Mathf.RoundToInt((y2 - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		
 		Vector2Int oldPos = MouseUtils.GetMousePos();
 		
 		MouseUtils.SetMousePos(x1, y1);
@@ -71,8 +88,11 @@ public static class Operation {
 	}
 
 	public static IEnumerator Zoom(int value) {
+		int centerX = Mathf.RoundToInt(CURRENT_GAME_RECT.x + CURRENT_GAME_RECT.width / 2);
+		int centerY = Mathf.RoundToInt(CURRENT_GAME_RECT.y + CURRENT_GAME_RECT.height / 2);
+		
 		Vector2Int oldPos = MouseUtils.GetMousePos();
-		MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
+		MouseUtils.SetMousePos(centerX, centerY);	// 鼠标移动到屏幕中央
 		int absValue = Mathf.Abs(value);
 		int direction = value / absValue;
 		for (int i = 0; i < absValue; ++i) {
@@ -80,5 +100,31 @@ public static class Operation {
 			yield return new EditorWaitForSeconds(0.02F);
 		}
 		MouseUtils.SetMousePos(oldPos.x, oldPos.y);
+	}
+
+	public static Color32 GetColorOnScreen(int x, int y) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		return ScreenshotUtils.GetColorOnScreen(x, y);
+	}
+
+	public static Color32[,] GetColorsOnScreen(int x, int y, int width, int height, int stride = 1) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		width = Mathf.RoundToInt(width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
+		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
+		return ScreenshotUtils.GetColorsOnScreen(x, y, width, height, stride);
+	}
+
+	public static byte[] GetPixelsDataOnScreen(int x, int y, int width, int height) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		width = Mathf.RoundToInt(width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
+		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
+		return ScreenshotUtils.GetPixelsDataOnScreen(x, y, width, height);
+	}
+	
+	public static Color32[,] GetFromFile(string filePath) {
+		return ScreenshotUtils.GetFromFile(filePath);
 	}
 }
