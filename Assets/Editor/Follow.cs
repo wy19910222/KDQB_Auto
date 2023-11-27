@@ -38,7 +38,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		EditorGUILayout.MinMaxSlider(ref Follow.FOLLOW_DELAY_MIN, ref Follow.FOLLOW_DELAY_MAX, 0, 10);
 		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, GUILayout.Width(60F));
 		EditorGUILayout.EndHorizontal();
-		Follow.FOLLOW_COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN), 20F);
+		Follow.FOLLOW_COOLDOWN = EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN);
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
