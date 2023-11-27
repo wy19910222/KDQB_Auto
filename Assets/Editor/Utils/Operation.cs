@@ -12,7 +12,7 @@ using UnityEngine;
 
 public static class Operation {
 	public static Rect BASED_GAME_RECT { get; } = new Rect(0, 101, 1920, 915);
-	public static Rect CURRENT_GAME_RECT { get; } = new Rect(0, 101, 1920, 915);
+	public static Rect CURRENT_GAME_RECT { get; set; } = new Rect(0, 101, 1920, 915);
 
 	public static void Click(int x, int y) {
 		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
