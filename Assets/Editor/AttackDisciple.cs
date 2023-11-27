@@ -141,7 +141,7 @@ public static class AttackDisciple {
 			attackCount++;
 			Debug.Log("出发");
 			yield return new EditorWaitForSeconds(0.1F);
-			while (Recognize.IsWindowCovered) {
+			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}

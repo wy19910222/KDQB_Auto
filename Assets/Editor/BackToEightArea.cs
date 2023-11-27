@@ -126,7 +126,7 @@ public class BackToEightArea {
 				Operation.Click(1060, 700);	// 确定按钮
 				yield return new EditorWaitForSeconds(10);
 				Debug.Log("左上角返回按钮");
-				while (Recognize.IsWindowCovered) {
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
@@ -137,7 +137,7 @@ public class BackToEightArea {
 				SUCCESS_TIME = now;
 			} else {
 				Debug.Log("左上角返回按钮");
-				while (Recognize.IsWindowCovered) {
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}

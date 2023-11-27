@@ -107,7 +107,7 @@ public static class AttackDisciple2 {
 			yield return new EditorWaitForSeconds(0.3F);
 			if (Recognize.IsEnergyShortcutAdding) {
 				Debug.Log("体力不足");
-				while (Recognize.IsWindowCovered) {
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
@@ -121,7 +121,7 @@ public static class AttackDisciple2 {
 				yield return new EditorWaitForSeconds(5F);
 				Operation.Click(960, 910);	// 返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				while (Recognize.IsWindowCovered) {
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}

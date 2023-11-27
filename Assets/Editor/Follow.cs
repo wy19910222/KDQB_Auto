@@ -224,7 +224,7 @@ public class Follow {
 				}
 				// 如果有界面覆盖，则说明正在操作别的
 				if (ENABLED_WITH_COVERED) {
-					while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
+					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 						Debug.Log("关闭窗口");
 						Operation.Click(720, 128);	// 左上角返回按钮
 						yield return new EditorWaitForSeconds(0.1F);
@@ -334,7 +334,7 @@ public class Follow {
 			if (followWindowOpened) {
 				// 如果是从外面进来的，则关闭跟车界面
 				Debug.Log("左上角返回按钮");
-				while (Recognize.IsWindowCovered) {
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}

@@ -89,7 +89,7 @@ public class LeagueMechaDonate {
 					yield return new EditorWaitForSeconds(0.2F);
 				}
 			}
-			while (Recognize.IsWindowCovered) {	// 如果有窗口，多点几次返回按钮
+			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.1F);
