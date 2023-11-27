@@ -22,7 +22,9 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 	
 	private void OnGUI() {
 		if (m_Debug) {
-			EditorGUILayout.BeginHorizontal();
+			if (EditorGUIUtility.currentViewWidth > 400) {
+				EditorGUILayout.BeginHorizontal();
+			}
 			if (GUILayout.Button("打印头像特征")) {
 				Recognize.LogGroupHeroAvatar();
 			}
@@ -35,7 +37,9 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 			if (GUILayout.Button("打印明日香位置")) {
 				Debug.LogError($"明日香：{Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX)}");
 			}
-			EditorGUILayout.EndHorizontal();
+			if (EditorGUIUtility.currentViewWidth > 400) {
+				EditorGUILayout.EndHorizontal();
+			}
 			Rect rect0 = GUILayoutUtility.GetRect(0, 10);
 			Rect wireRect0 = new Rect(rect0.x, rect0.y + 4.5F, rect0.width, 1);
 			EditorGUI.DrawRect(wireRect0, Color.gray);

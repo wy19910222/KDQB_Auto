@@ -34,28 +34,39 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Follow.SINGLE_GROUP = EditorGUILayout.Toggle("单队列跟车", Follow.SINGLE_GROUP);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("跟车延迟", GUILayout.Width(EditorGUIUtility.labelWidth));
-		Follow.FOLLOW_DELAY_MIN = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MIN, GUILayout.Width(60F));
+		GUILayoutOption optionWidth = GUILayout.Width(Mathf.Clamp(EditorGUIUtility.currentViewWidth * 0.5F - 110, 26, 50));
+		Follow.FOLLOW_DELAY_MIN = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MIN, optionWidth);
 		EditorGUILayout.MinMaxSlider(ref Follow.FOLLOW_DELAY_MIN, ref Follow.FOLLOW_DELAY_MAX, 0, 10);
-		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, GUILayout.Width(60F));
+		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, optionWidth);
 		EditorGUILayout.EndHorizontal();
 		Follow.FOLLOW_COOLDOWN = EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN);
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
 		EditorGUI.DrawRect(wireRect2, Color.gray);
-		
-		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.BeginVertical();
-		CustomField(Recognize.FollowType.WAR_HAMMER, 50);
-		CustomField(Recognize.FollowType.REFUGEE_CAMP, 10);
-		CustomField(Recognize.FollowType.FEAR_STAR, 10);
-		EditorGUILayout.EndVertical();
-		EditorGUILayout.BeginVertical();
-		CustomField(Recognize.FollowType.STRONGHOLD, 50);
-		CustomField(Recognize.FollowType.ELITE_GUARD, 50);
-		CustomField(Recognize.FollowType.HEART_PANG, 50);
-		EditorGUILayout.EndVertical();
-		EditorGUILayout.EndHorizontal();
+
+		if (EditorGUIUtility.currentViewWidth > 460) {
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.BeginVertical();
+			CustomField(Recognize.FollowType.WAR_HAMMER, 50);
+			CustomField(Recognize.FollowType.REFUGEE_CAMP, 10);
+			CustomField(Recognize.FollowType.FEAR_STAR, 10);
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.BeginVertical();
+			CustomField(Recognize.FollowType.STRONGHOLD, 50);
+			CustomField(Recognize.FollowType.ELITE_GUARD, 50);
+			CustomField(Recognize.FollowType.HEART_PANG, 50);
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.EndHorizontal();
+		} else {
+			CustomField(Recognize.FollowType.STRONGHOLD, 50);
+			CustomField(Recognize.FollowType.ELITE_GUARD, 50);
+			CustomField(Recognize.FollowType.HEART_PANG, 50);
+			GUILayout.Space(5F);
+			CustomField(Recognize.FollowType.WAR_HAMMER, 50);
+			CustomField(Recognize.FollowType.REFUGEE_CAMP, 10);
+			CustomField(Recognize.FollowType.FEAR_STAR, 10);
+		}
 		if (Follow.TypeCountDict.TryGetValue(Recognize.FollowType.FEAR_STAR, out int count) && count > 0) {
 			GUILayout.Space(5F);
 			foreach (var ownerName in new List<string>(Follow.OwnerNameDict.Keys)) {
