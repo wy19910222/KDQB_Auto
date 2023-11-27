@@ -57,6 +57,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		if (!useBottle) {
 			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
 		}
+		Jungle.REPEAT_5 = EditorGUILayout.Toggle("是否5连", Jungle.REPEAT_5);
 		
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
@@ -125,6 +126,7 @@ public class Jungle {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
 	public static float COOLDOWN = 5;	// 打野间隔
+	public static bool REPEAT_5 = true;	// 是否五连
 	
 	public static bool JUNGLE_LAND = true;	// 是否攻击陆军残兵
 	public static bool JUNGLE_SEA = true;	// 是否攻击海军残兵
@@ -290,7 +292,7 @@ public class Jungle {
 				yield return new EditorWaitForSeconds(0.3F);
 				Operation.Click(960, 580);	// 选中目标
 				yield return new EditorWaitForSeconds(0.2F);
-				Operation.Click(870, 430);	// 攻击5次按钮
+				Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				// 出现体力不足面板
 				if (Recognize.IsEnergyShortcutAdding) {
@@ -314,7 +316,7 @@ public class Jungle {
 					// yield return new EditorWaitForSeconds(0.1F);
 					// Operation.Click(960, 580);	// 选中目标
 					// yield return new EditorWaitForSeconds(0.1F);
-					// Operation.Click(870, 430);	// 攻击5次按钮
+					// Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
 					// yield return new EditorWaitForSeconds(0.3F);
 					
 					// 快捷嗑药
@@ -345,7 +347,7 @@ public class Jungle {
 						yield return new EditorWaitForSeconds(0.3F);
 						Operation.Click(960, 580);	// 选中目标
 						yield return new EditorWaitForSeconds(0.1F);
-						Operation.Click(870, 430);	// 攻击5次按钮
+						Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						i++;
 					}
