@@ -31,18 +31,17 @@ public static class ScreenshotUtils {
 		using Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 		using Graphics graphics = Graphics.FromImage(bitmap);
 		graphics.CopyFromScreen(x, y, 0, 0, bitmap.Size);
+		
 		byte[] pixelsData = GetPixelsDataFromBitmap(bitmap);
+		
 		int finalWidth = width / stride;
 		int finalHeight = height / stride;
 		Color32[,] colors = new Color32[finalWidth, finalHeight];
-		int bytesPerPixel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
-		for (int _y = 0; _y < finalHeight; ++_y) {
-			for (int _x = 0; _x < finalWidth; ++_x) {
-				int offset = (_y * stride * width + _x * stride) * bytesPerPixel;
-				byte b = pixelsData[offset];
-				byte g = pixelsData[offset + 1];
-				byte r = pixelsData[offset + 2];
-				colors[_x, _y] = new Color32(r, g, b, 255);
+		int stride1 = stride * Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
+		int stride2 = width * stride1;
+		for (int _y = 0, offset0 = 0; _y < finalHeight; ++_y, offset0 += stride2) {
+			for (int _x = 0, offset = offset0; _x < finalWidth; ++_x, offset += stride1) {
+				colors[_x, _y] = new Color32(pixelsData[offset + 2], pixelsData[offset + 1], pixelsData[offset], 255);
 			}
 		}
 		return colors;
@@ -75,10 +74,7 @@ public static class ScreenshotUtils {
 	}
 	
 	private static byte[] GetPixelsDataFromBitmap(Bitmap bitmap) {
-		int width = bitmap.Width;
-		int height = bitmap.Height;
-		Rectangle rect = new Rectangle(0, 0, width, height);
-		BitmapData bmpData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, bitmap.PixelFormat);
+		BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 		byte[] pixelsData = new byte[bitmap.Height * bmpData.Stride];
 		System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixelsData, 0, pixelsData.Length);
 		bitmap.UnlockBits(bmpData);
