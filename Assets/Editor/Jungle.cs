@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -47,29 +48,32 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		
 		Jungle.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Jungle.GROUP_COUNT, 0, 7);
 		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
-		bool useBottle = false;
-		foreach (var count in Jungle.USE_BOTTLE_DICT.Values) {
-			if (count > 0) {
-				useBottle = true;
-				break;
-			}
-		}
+		bool useBottle = Jungle.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {
 			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
 		}
-		Jungle.REPEAT_5 = EditorGUILayout.Toggle("是否5连", Jungle.REPEAT_5);
 		
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
 		EditorGUI.DrawRect(wireRect1, Color.gray);
 		
-		Jungle.JUNGLE_LAND = EditorGUILayout.Toggle("攻击陆军残兵", Jungle.JUNGLE_LAND);
-		Jungle.JUNGLE_SEA = EditorGUILayout.Toggle("攻击海军残兵", Jungle.JUNGLE_SEA);
-		Jungle.JUNGLE_AIR = EditorGUILayout.Toggle("攻击空军残兵", Jungle.JUNGLE_AIR);
-		Jungle.JUNGLE_MECHA = EditorGUILayout.Toggle("攻击黑暗机甲", Jungle.JUNGLE_MECHA);
-		if (Jungle.JUNGLE_MECHA) {
-			Jungle.JUNGLE_STAR = EditorGUILayout.IntSlider("  黑暗机甲星级", Jungle.JUNGLE_STAR, 1, 5);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("攻击目标");
+		if (GUILayout.Button("-")) {
+			Jungle.TARGET_ATTACK_LIST.RemoveAt(Jungle.TARGET_ATTACK_LIST.Count - 1);
 		}
+		if (GUILayout.Button("+")) {
+			Jungle.TARGET_ATTACK_LIST.Add(false);
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.Space(5F);
+		for (int i = 0, length = Jungle.TARGET_ATTACK_LIST.Count; i < length; ++i) {
+			Jungle.TARGET_ATTACK_LIST[i] = GUILayout.Toggle(Jungle.TARGET_ATTACK_LIST[i], $"第{i + 1}个目标", "Button");
+		}
+		EditorGUILayout.EndHorizontal();
+		Jungle.JUNGLE_STAR = EditorGUILayout.IntSlider("星级（如果是黑暗机甲）", Jungle.JUNGLE_STAR, 1, 5);
+		Jungle.REPEAT_5 = EditorGUILayout.Toggle("是否5连（如果可以5连）", Jungle.REPEAT_5);
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
@@ -126,13 +130,11 @@ public class Jungle {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
 	public static float COOLDOWN = 5;	// 打野间隔
+	
+	public static readonly List<bool> TARGET_ATTACK_LIST = new List<bool>();	// 攻击目标随机范围
+	public static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
 	public static bool REPEAT_5 = true;	// 是否五连
 	
-	public static bool JUNGLE_LAND = true;	// 是否攻击陆军残兵
-	public static bool JUNGLE_SEA = true;	// 是否攻击海军残兵
-	public static bool JUNGLE_AIR = false;	// 是否攻击空军残兵
-	public static bool JUNGLE_MECHA = false;	// 是否攻击黑暗机甲
-	public static int JUNGLE_STAR = 4;	// 打的黑暗机甲星级
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 打野英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否使用大体
@@ -145,15 +147,21 @@ public class Jungle {
 		Disable();
 		List<string> switches = new List<string>();
 		switches.Add($"拥有行军队列【{GROUP_COUNT}】");
-		switches.Add($"保留体力值【{RESERVED_ENERGY}】");
+		switches.Add($"打野间隔【{COOLDOWN}】");
+		if (!USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0)) {
+			switches.Add($"保留体力值【{RESERVED_ENERGY}】");
+		}
 		{
 			List<string> targets = new List<string>();
-			if (JUNGLE_LAND) { targets.Add("陆军残兵"); }
-			if (JUNGLE_SEA) { targets.Add("海军残兵"); }
-			if (JUNGLE_AIR) { targets.Add("空军残兵"); }
-			if (JUNGLE_MECHA) { targets.Add($"黑暗机甲{JUNGLE_STAR}星"); }
+			for (int i = 0, length = TARGET_ATTACK_LIST.Count; i < length; ++i) {
+				if (TARGET_ATTACK_LIST[i]) {
+					targets.Add($"第{i + 1}个");
+				}
+			}
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
+		switches.Add($"星级（如果是黑暗机甲）【{JUNGLE_STAR}】");
+		switches.Add(REPEAT_5 ? "5连" : "单刷");
 		switches.Add($"使用编队【{SQUAD_NUMBER}】");
 		foreach (var (type, count) in USE_BOTTLE_DICT) {
 			if (count > 0) {
@@ -176,15 +184,6 @@ public class Jungle {
 	private static IEnumerator Update() {
 		int starOffset = 0;
 		while (true) {
-			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.FIGHTING when !Recognize.IsFightingPlayback:
-					Debug.Log("可能是卡在出战界面了，执行返回");
-					Operation.Click(30, 140);	// 左上角返回按钮
-					break;
-				// case Recognize.Scene.INSIDE:
-				// 	Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-				// 	break;
-			}
 			Debug.Log("等待切换到世界界面且无窗口覆盖");
 			// 等待切换到世界界面
 			while (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
@@ -199,7 +198,7 @@ public class Jungle {
 						break;
 					}
 				}
-				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + 15;
+				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + (REPEAT_5 ? 15 : 10);
 				if (energyEnough) {
 					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(HERO_AVATAR) < 0) {
 						yield return new EditorWaitForSeconds(0.2F);
@@ -209,18 +208,22 @@ public class Jungle {
 						}
 					}
 				}
-				// 等待有队列空闲出来且没有橙色英雄队伍（无法判断打野队伍，只能判断是否是橙色了）
 				yield return null;
 			}
-			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
-				Debug.Log("关闭窗口");
-				Operation.Click(720, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.2F);
-			}
-			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				Debug.Log("已不在世界界面，重新开始");
+			// for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
+			// 	Debug.Log("关闭窗口");
+			// 	Operation.Click(720, 128);	// 左上角返回按钮
+			// 	yield return new EditorWaitForSeconds(0.2F);
+			// }
+			if (Recognize.IsWindowCovered) {
+				Debug.Log("正在做其他操作");
 				continue;
 			}
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+				Debug.Log("已不在世界界面，取消操作");
+				continue;
+			}
+			
 			// 开始打野
 			while (!Recognize.IsSearching) {
 				Debug.Log("搜索按钮");
@@ -232,53 +235,55 @@ public class Jungle {
 			yield return new EditorWaitForSeconds(0.1F);
 			// 确定攻击目标
 			List<int> list = new List<int>();
-			if (JUNGLE_LAND) {
-				list.Add(0);
+			for (int i = 0, length = TARGET_ATTACK_LIST.Count; i < length; ++i) {
+				if (TARGET_ATTACK_LIST[i]) {
+					list.Add(i);
+				}
 			}
-			if (JUNGLE_SEA) {
-				list.Add(1);
+			if (list.Count <= 0) {
+				Debug.Log("未选择攻击目标，取消操作");
+				continue;
 			}
-			if (JUNGLE_AIR) {
-				list.Add(2);
-			}
-			if (JUNGLE_MECHA) {
-				list.Add(3);
-			}
+			
 			int target = list[Random.Range(0, list.Count)];
+			const int TARGET_WIDTH = 163;
 			Debug.Log("攻击目标: " + target);
-			switch (target) {
-				case 3: {
-					// Debug.Log("列表往左拖动");
-					var ie = Operation.Drag(1120, 670, 790, 670, 0.2F);	// 列表往左拖动
-					while (ie.MoveNext()) {
-						yield return ie.Current;
-					}
-					yield return new EditorWaitForSeconds(0.3F);
-					// Debug.Log("选中最后一个（黑暗机甲）");
-					Operation.Click(1120, 670);	// 选中最后一个（黑暗机甲）
-					yield return new EditorWaitForSeconds(0.1F);
-					// Debug.Log("星级滑块");
-					Operation.Click(844 + 44 * (JUNGLE_STAR + starOffset), 880);	// 星级滑块
-					yield return new EditorWaitForSeconds(0.1F);
-					break;
+			{
+				// 先拖动到列表最开头，以便计算
+				var ie = Operation.NoInertiaDrag(803, 672, 803 + TARGET_WIDTH * (TARGET_ATTACK_LIST.Count - 2), 672, 0.2F);
+				while (ie.MoveNext()) {
+					yield return ie.Current;
 				}
-				default: {
-					// Debug.Log("列表往右拖动");
-					var ie = Operation.Drag(790, 670, 1120, 670, 0.2F);	// 列表往右拖动
-					while (ie.MoveNext()) {
-						yield return ie.Current;
-					}
-					yield return new EditorWaitForSeconds(0.3F);
-					// Debug.Log("选中目标");
-					Operation.Click(794 + 163 * target, 670);	// 选中目标
-					yield return new EditorWaitForSeconds(0.1F);
-					// Debug.Log("等级滑块");
-					Operation.Click(1062, 880);	// 等级滑块
-					yield return new EditorWaitForSeconds(0.1F);
-					break;
-				}
+				yield return new EditorWaitForSeconds(1);
 			}
-				
+			Debug.Log("拖动以显示攻击目标");
+			int orderOffsetX = (target - 2) * TARGET_WIDTH;
+			while (orderOffsetX > 0) {
+				int dragDistance = Mathf.Min(TARGET_WIDTH * 3, orderOffsetX);
+				// 往左拖动
+				var ie = Operation.NoInertiaDrag(1129, 672, 1129 - dragDistance, 672, 0.2F);
+				while (ie.MoveNext()) {
+					yield return ie.Current;
+				}
+				yield return new EditorWaitForSeconds(0.2F);
+				orderOffsetX -= dragDistance;
+			}
+			Operation.Click(1129 + orderOffsetX, 672);	// 攻击目标
+			yield return new EditorWaitForSeconds(0.1F);
+			// 活动对象，没有滑块，不能5连
+			bool isNoSlider = Recognize.Approximately(Operation.GetColorOnScreen(960, 880), new Color32(199, 208, 210, 255));
+			// 黑暗机甲， 没有等级，滑块选择的是星级
+			bool isStarSlider = Recognize.Approximately(Operation.GetColorOnScreen(942, 851), new Color32(254, 216, 81, 255));
+			if (isStarSlider) {
+				Debug.Log("星级滑块");
+				Operation.Click(844 + 44 * (JUNGLE_STAR + starOffset), 880);	// 星级滑块
+				yield return new EditorWaitForSeconds(0.1F);
+			} else {
+				Debug.Log("等级滑块");
+				Operation.Click(1062, 880);	// 等级滑块
+				yield return new EditorWaitForSeconds(0.1F);
+			}
+			
 			// Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -290,9 +295,15 @@ public class Jungle {
 				}
 				// 避免没刷出来，先等一会儿
 				yield return new EditorWaitForSeconds(0.3F);
+				Debug.Log("选中目标");
 				Operation.Click(960, 580);	// 选中目标
 				yield return new EditorWaitForSeconds(0.2F);
-				Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+				Debug.Log("攻击按钮");
+				if (isNoSlider) {
+					Operation.Click(960, 895);	// 攻击按钮
+				} else {
+					Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+				}
 				yield return new EditorWaitForSeconds(0.3F);
 				// 出现体力不足面板
 				if (Recognize.IsEnergyShortcutAdding) {
@@ -316,7 +327,11 @@ public class Jungle {
 					// yield return new EditorWaitForSeconds(0.1F);
 					// Operation.Click(960, 580);	// 选中目标
 					// yield return new EditorWaitForSeconds(0.1F);
-					// Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+					// if (isNoSlider) {
+					// 	Operation.Click(960, 895);	// 攻击按钮
+					// } else {
+					// 	Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+					// }
 					// yield return new EditorWaitForSeconds(0.3F);
 					
 					// 快捷嗑药
@@ -347,7 +362,11 @@ public class Jungle {
 						yield return new EditorWaitForSeconds(0.3F);
 						Operation.Click(960, 580);	// 选中目标
 						yield return new EditorWaitForSeconds(0.1F);
-						Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+						if (isNoSlider) {
+							Operation.Click(960, 895);	// 攻击按钮
+						} else {
+							Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+						}
 						yield return new EditorWaitForSeconds(0.3F);
 						i++;
 					}
