@@ -114,7 +114,7 @@ public class AttackMarshal {
 			if (!isMarshalTime) {
 				continue;
 			}
-			Debug.Log($"当前时间：{hour}点");
+			// Debug.Log($"当前时间：{hour}点");
 
 			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
 				continue;
