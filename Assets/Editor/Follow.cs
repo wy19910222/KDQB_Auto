@@ -302,7 +302,7 @@ public class Follow {
 			yield return new EditorWaitForSeconds(0.2F);
 			yield return new EditorWaitForSeconds(delay * 0.5F);
 			Debug.Log("士兵卡片");
-			Operation.Click(1458, 962);	// 士兵卡片
+			Operation.Click(1160, 962);	// 士兵卡片
 			yield return new EditorWaitForSeconds(0.1F);
 			yield return new EditorWaitForSeconds(delay * 0.5F);
 			Debug.Log("出征按钮");
