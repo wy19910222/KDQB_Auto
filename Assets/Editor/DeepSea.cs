@@ -120,7 +120,7 @@ public class DeepSea {
 				int orderOffsetX = (ACTIVITY_ORDER - 4) * TAB_WIDTH;
 				while (orderOffsetX > 0) {
 					const int dragDistance = TAB_WIDTH * 4;
-					// 往左上拖动
+					// 往左拖动
 					var ie = Operation.NoInertiaDrag(1190, 200, 1190 - dragDistance, 200, 0.5F);
 					while (ie.MoveNext()) {
 						yield return ie.Current;
