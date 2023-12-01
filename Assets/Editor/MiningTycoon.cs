@@ -134,9 +134,10 @@ public class MiningTycoon {
 			yield return new EditorWaitForSeconds(0.1F);
 			
 			Debug.Log($"尝试领取矿车奖励");
-			for (int i = 1; i <= 4; i++) {
+			for (int i = 4; i > 0; --i) {
 				Operation.Click(660 + 120 * i, 850);	// 点击矿车
 				yield return new EditorWaitForSeconds(0.2F);
+				Operation.Click(960, 730);	// 领取奖励按钮
 				Operation.Click(660, 850);	// 点击窗口外关闭
 				yield return new EditorWaitForSeconds(0.2F);
 			}
@@ -151,8 +152,6 @@ public class MiningTycoon {
 			Operation.Click(660 + 120 * TRAMCAR_COUNTDOWN_NUMBER, 850);	// 点击矿车
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(830, 730);	// 开始收取按钮
-			yield return new EditorWaitForSeconds(0.2F);
-			Operation.Click(960, 730);	// 领取奖励按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(660, 850);	// 点击窗口外关闭
 			yield return new EditorWaitForSeconds(0.2F);
