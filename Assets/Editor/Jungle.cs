@@ -391,7 +391,7 @@ public class Jungle {
 					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 					yield return new EditorWaitForSeconds(0.2F);
 					if (Recognize.SoldierCountPercent > 0.99F) {
-						// Operation.Click(960, 470);	// 出战按钮
+						Operation.Click(960, 470);	// 出战按钮
 						Debug.Log("出发");
 					} else {
 						Debug.Log("退出按钮");
