@@ -271,9 +271,9 @@ public class Jungle {
 			Operation.Click(1129 + orderOffsetX, 672);	// 攻击目标
 			yield return new EditorWaitForSeconds(0.1F);
 			// 活动对象，没有滑块，不能5连
-			bool isNoSlider = Recognize.Approximately(Operation.GetColorOnScreen(960, 880), new Color32(199, 208, 210, 255));
+			bool isNoSlider = Recognize.ApproximatelyCoveredCount(Operation.GetColorOnScreen(960, 880), new Color32(199, 208, 210, 255), 1.1F) >= 0;
 			// 黑暗机甲， 没有等级，滑块选择的是星级
-			bool isStarSlider = Recognize.Approximately(Operation.GetColorOnScreen(942, 851), new Color32(254, 216, 81, 255));
+			bool isStarSlider = Recognize.ApproximatelyCoveredCount(Operation.GetColorOnScreen(942, 851), new Color32(254, 216, 81, 255), 1.1F) >= 0;
 			if (isStarSlider) {
 				Debug.Log("星级滑块");
 				Operation.Click(844 + 44 * (JUNGLE_STAR + starOffset), 880);	// 星级滑块
@@ -300,7 +300,12 @@ public class Jungle {
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("攻击按钮");
 				if (isNoSlider) {
-					Operation.Click(960, 895);	// 攻击按钮
+					Operation.Click(960, 880);	// 攻击按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+						// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
+						Operation.Click(960, 920);	// 攻击按钮
+					}
 				} else {
 					Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
 				}
@@ -362,8 +367,14 @@ public class Jungle {
 						yield return new EditorWaitForSeconds(0.3F);
 						Operation.Click(960, 580);	// 选中目标
 						yield return new EditorWaitForSeconds(0.1F);
+						Debug.Log("攻击按钮");
 						if (isNoSlider) {
-							Operation.Click(960, 895);	// 攻击按钮
+							Operation.Click(960, 880);	// 攻击按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+								// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
+								Operation.Click(960, 920);	// 攻击按钮
+							}
 						} else {
 							Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
 						}
@@ -380,7 +391,7 @@ public class Jungle {
 					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 					yield return new EditorWaitForSeconds(0.2F);
 					if (Recognize.SoldierCountPercent > 0.99F) {
-						Operation.Click(960, 470);	// 出战按钮
+						// Operation.Click(960, 470);	// 出战按钮
 						Debug.Log("出发");
 					} else {
 						Debug.Log("退出按钮");
