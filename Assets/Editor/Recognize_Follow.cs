@@ -83,6 +83,10 @@ public static partial class Recognize {
 		else if (Approximately(colors[154, 128], new Color32(253, 109, 106, 255))) {
 			return FollowType.WAR_HAMMER;
 		}
+		// 判断跟车界面图标是否是战锤(新)
+		else if (Approximately(colors[99, 110], new Color32(124, 253, 251, 255))) {
+			return FollowType.WAR_HAMMER;
+		}
 		// 判断跟车界面图标是否是难民营
 		else if (Approximately(colors[128, 91], new Color32(74, 133, 159, 255))) {
 			return FollowType.REFUGEE_CAMP;
