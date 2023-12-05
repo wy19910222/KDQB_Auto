@@ -28,17 +28,19 @@ public static partial class Recognize {
 	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
 	public static int energy {
 		get {
-			int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
-			if (deltaX >= 0) {
-				const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
-				Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
-				for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
-					if (Approximately(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F)) {
-						return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+			return GetCachedValueOrNew(nameof(energy), () => {
+				int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
+				if (deltaX >= 0) {
+					const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
+					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
+					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
+						if (Approximately(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F)) {
+							return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+						}
 					}
 				}
-			}
-			return ENERGY_EMPTY;
+				return ENERGY_EMPTY;
+			});
 		}
 	}
 

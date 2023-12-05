@@ -5,10 +5,23 @@
  * @EditTime: 2023-09-27 01:41:06 799
  */
 
+using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public static partial class Recognize {
+	private static readonly Dictionary<string, (int frameCount, object value)> s_ValueCache = new Dictionary<string, (int frameCount, object value)>();
+	private static T GetCachedValueOrNew<T>(string key, Func<T> newFunc) {
+		if (s_ValueCache.TryGetValue(key, out (int frameCount, object value) data) &&
+				data.frameCount == EditorCoroutineManager.FrameCount && data.value is T cachedValue) {
+			return cachedValue;
+		}
+		T value = newFunc.Invoke();
+		s_ValueCache[key] = (frameCount: EditorCoroutineManager.FrameCount, value);
+		return value;
+	}
+	
 	public static float ApproximatelyRectAverage(Color32[,] realColors, Color32[,] targetColors, int averageW, int averageH, float thresholdMulti = 1) {
 		int realWidth = realColors.GetLength(0);
 		int targetWidth = targetColors.GetLength(0);

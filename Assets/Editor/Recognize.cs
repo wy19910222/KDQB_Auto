@@ -16,15 +16,19 @@ public static partial class Recognize {
 
 	public static Scene CurrentScene {
 		get {
-			// 左上角蓝色返回按钮存在，说明处于出战界面
-			if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >= 0) {
-				return Scene.FIGHTING;
-			}
-			// 右下角一排按钮里的雷达按钮存在，说明处于世界界面
-			else if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0) {
-				return Scene.OUTSIDE;
-			}
-			return Scene.INSIDE;
+			return GetCachedValueOrNew(nameof(CurrentScene), () => {
+				// 左上角蓝色返回按钮存在，说明处于出战界面
+				if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >=
+						0) {
+					return Scene.FIGHTING;
+				}
+				// 右下角一排按钮里的雷达按钮存在，说明处于世界界面
+				else if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 540),
+								new Color32(69, 146, 221, 255)) >= 0) {
+					return Scene.OUTSIDE;
+				}
+				return Scene.INSIDE;
+			});
 		}
 	}
 
@@ -38,39 +42,46 @@ public static partial class Recognize {
 
 	public static bool IsWindowCovered {
 		get {
-			switch (CurrentScene) {
-				case Scene.FIGHTING:
-					// 左上角返回按钮颜色很暗
-					return !Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
-				case Scene.INSIDE:
-				case Scene.OUTSIDE:
-					// 右下角一排按钮颜色很暗
-					return !Approximately(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
-			}
-			return false;
+			return GetCachedValueOrNew(nameof(IsWindowCovered), () => {
+				switch (CurrentScene) {
+					case Scene.FIGHTING:
+						// 左上角返回按钮颜色很暗
+						return !Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
+					case Scene.INSIDE:
+					case Scene.OUTSIDE:
+						// 右下角一排按钮颜色很暗
+						return !Approximately(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
+				}
+				return false;
+			});
 		}
 	}
 
 	public static bool IsWindowNoCovered {
 		get {
-			switch (CurrentScene) {
-				case Scene.FIGHTING:
-					// 左上角返回按钮颜色不暗
-					return Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
-				case Scene.INSIDE:
-				case Scene.OUTSIDE:
-					// 右下角一排按钮颜色不暗
-					return Approximately(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
-			}
-			return false;
+			return GetCachedValueOrNew(nameof(IsWindowNoCovered), () => {
+				switch (CurrentScene) {
+					case Scene.FIGHTING:
+						// 左上角返回按钮颜色不暗
+						return Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
+					case Scene.INSIDE:
+					case Scene.OUTSIDE:
+						// 右下角一排按钮颜色不暗
+						return Approximately(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
+				}
+				return false;
+			});
 		}
 	}
 
-	public static bool IsOutsideFaraway => ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0;
+	public static bool IsOutsideFaraway => GetCachedValueOrNew(nameof(IsOutsideFaraway), () => 
+			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0);
 
-	public static bool IsOutsideNearby => ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0;
+	public static bool IsOutsideNearby => GetCachedValueOrNew(nameof(IsOutsideNearby), () => 
+			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0);
 
-	public static bool IsFightingPlayback => Approximately(Operation.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255));
+	public static bool IsFightingPlayback => GetCachedValueOrNew(nameof(IsFightingPlayback), () => 
+			Approximately(Operation.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255)));
 
 	private static readonly Color32[,] AREA_BUFF = Operation.GetFromFile("PersistentData/Textures/AreaBuff.png");
 	public static bool IsInEightArea {
