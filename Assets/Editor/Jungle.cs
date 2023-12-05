@@ -331,7 +331,7 @@ public class Jungle {
 					// Operation.Click(720, 128);	// 左上角返回按钮
 					// yield return new EditorWaitForSeconds(0.1F);
 					// Operation.Click(960, 580);	// 选中目标
-					// yield return new EditorWaitForSeconds(0.1F);
+					// yield return new EditorWaitForSeconds(0.2F);
 					// if (isNoSlider) {
 					// 	Operation.Click(960, 895);	// 攻击按钮
 					// } else {
@@ -366,7 +366,7 @@ public class Jungle {
 						Operation.Click(1170, 384);	// 关闭按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						Operation.Click(960, 580);	// 选中目标
-						yield return new EditorWaitForSeconds(0.1F);
+						yield return new EditorWaitForSeconds(0.2F);
 						Debug.Log("攻击按钮");
 						if (isNoSlider) {
 							Operation.Click(960, 880);	// 攻击按钮
@@ -410,7 +410,7 @@ public class Jungle {
 				}
 				while (Recognize.IsSearching) {
 					// 点击空白处退出搜索面板
-					Operation.Click(660, 970);	// 选中目标
+					Operation.Click(660, 970);	// 点击空白处
 					yield return new EditorWaitForSeconds(0.3F);
 				}
 			}
