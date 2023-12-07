@@ -233,6 +233,7 @@ public class Jungle {
 				continue;
 			}
 			
+			bool test = Test;
 			// 开始打野
 			while (!Recognize.IsSearching) {
 				Debug.Log("搜索按钮");
@@ -263,7 +264,7 @@ public class Jungle {
 				while (ie.MoveNext()) {
 					yield return ie.Current;
 				}
-				yield return new EditorWaitForSeconds(2);
+				yield return new EditorWaitForSeconds(1F);
 			}
 			Debug.Log("拖动以显示攻击目标");
 			int orderOffsetX = (target - 2) * TARGET_WIDTH;
@@ -365,7 +366,7 @@ public class Jungle {
 							Debug.Log($"选择{index + 1}号位");
 							Operation.Click(828 + index * 130, 590);	// 选中图标
 							yield return new EditorWaitForSeconds(0.1F);
-							if (!Test) {
+							if (!test) {
 								Operation.Click(960, 702);	// 使用按钮
 							}
 							USE_BOTTLE_DICT.TryGetValue(useBottle, out int count);
@@ -401,7 +402,7 @@ public class Jungle {
 				if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 					yield return new EditorWaitForSeconds(0.2F);
-					if (!Test && Recognize.SoldierCountPercent > 0.99F) {
+					if (!test && Recognize.SoldierCountPercent > 0.99F) {
 						Operation.Click(960, 470);	// 出战按钮
 						Debug.Log("出发");
 					} else {
