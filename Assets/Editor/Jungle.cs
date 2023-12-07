@@ -142,7 +142,7 @@ public class Jungle {
 	
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 打野英雄头像
-	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否使用大体
+	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
