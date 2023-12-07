@@ -5,6 +5,7 @@
  * @EditTime: 2023-10-24 04:22:33 346
  */
 
+using System;
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +19,19 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 	}
 	
 	private void OnGUI() {
+		EditorGUILayout.BeginHorizontal();
+		EditorGUI.BeginChangeCheck();
+		TimeSpan ts = LeagueMechaDonate.NEXT_TIME - DateTime.Now;
+		int hours = EditorGUILayout.IntField("下次尝试时间", ts.Hours);
+		float prevLabelWidth = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 8F;
+		int minutes = EditorGUILayout.IntField(":", ts.Minutes);
+		int seconds = EditorGUILayout.IntField(":", ts.Seconds);
+		EditorGUIUtility.labelWidth = prevLabelWidth;
+		if (EditorGUI.EndChangeCheck()) {
+			LeagueMechaDonate.NEXT_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds);
+		}
+		EditorGUILayout.EndHorizontal();
 		LeagueMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", LeagueMechaDonate.INTERVAL, 120, 1800);
 		GUILayout.Space(5F);
 		if (LeagueMechaDonate.IsRunning) {
@@ -34,6 +48,7 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 
 public class LeagueMechaDonate {
 	public static int INTERVAL = 300;	// 点击间隔
+	public static DateTime NEXT_TIME = DateTime.Now;
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -58,6 +73,9 @@ public class LeagueMechaDonate {
 		// bool prevIsMarshalTime = false;
 		while (true) {
 			yield return null;
+			if (DateTime.Now < NEXT_TIME) {
+				continue;
+			}
 			
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Debug.Log("处于出战界面，不执行操作");
@@ -94,7 +112,8 @@ public class LeagueMechaDonate {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.1F);
 			}
-			yield return new EditorWaitForSeconds(INTERVAL);
+			
+			NEXT_TIME = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
