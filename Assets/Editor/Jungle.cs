@@ -69,7 +69,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Space(5F);
 		for (int i = 0, length = Jungle.TARGET_ATTACK_LIST.Count; i < length; ++i) {
-			Jungle.TARGET_ATTACK_LIST[i] = GUILayout.Toggle(Jungle.TARGET_ATTACK_LIST[i], $"第{i + 1}个目标", "Button");
+			Jungle.TARGET_ATTACK_LIST[i] = GUILayout.Toggle(Jungle.TARGET_ATTACK_LIST[i], $"目标{i + 1}", "Button");
 		}
 		EditorGUILayout.EndHorizontal();
 		Jungle.JUNGLE_STAR = EditorGUILayout.IntSlider("星级（如果是黑暗机甲）", Jungle.JUNGLE_STAR, 1, 5);
@@ -114,6 +114,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 			}
 		}
 		GUILayout.Space(5F);
+		EditorGUILayout.BeginHorizontal();
 		if (Jungle.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -123,10 +124,14 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 				IsRunning = true;
 			}
 		}
+		Jungle.Test = GUILayout.Toggle(Jungle.Test, "测试", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
 	}
 }
 
 public class Jungle {
+	public static bool Test { get; set; } // 测试模式
+
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
 	public static float COOLDOWN = 5;	// 打野间隔
@@ -191,6 +196,10 @@ public class Jungle {
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
+				if (Test) {
+					Debug.Log("测试模式，忽略体力与队列数量");
+					break;
+				}
 				bool useBottle = false;
 				foreach (var count in USE_BOTTLE_DICT.Values) {
 					if (count > 0) {
@@ -254,7 +263,7 @@ public class Jungle {
 				while (ie.MoveNext()) {
 					yield return ie.Current;
 				}
-				yield return new EditorWaitForSeconds(1);
+				yield return new EditorWaitForSeconds(2);
 			}
 			Debug.Log("拖动以显示攻击目标");
 			int orderOffsetX = (target - 2) * TARGET_WIDTH;
@@ -356,7 +365,9 @@ public class Jungle {
 							Debug.Log($"选择{index + 1}号位");
 							Operation.Click(828 + index * 130, 590);	// 选中图标
 							yield return new EditorWaitForSeconds(0.1F);
-							Operation.Click(960, 702);	// 使用按钮
+							if (!Test) {
+								Operation.Click(960, 702);	// 使用按钮
+							}
 							USE_BOTTLE_DICT.TryGetValue(useBottle, out int count);
 							USE_BOTTLE_DICT[useBottle] = count - 1;
 							yield return new EditorWaitForSeconds(0.1F);
@@ -390,7 +401,7 @@ public class Jungle {
 				if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.SoldierCountPercent > 0.99F) {
+					if (!Test && Recognize.SoldierCountPercent > 0.99F) {
 						Operation.Click(960, 470);	// 出战按钮
 						Debug.Log("出发");
 					} else {
