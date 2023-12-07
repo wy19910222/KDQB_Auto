@@ -42,6 +42,13 @@ public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
 		AttackMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackMarshal.SQUAD_NUMBER, 1, 8);
 		AttackMarshal.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", AttackMarshal.USE_SMALL_BOTTLE);
 		AttackMarshal.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", AttackMarshal.USE_BIG_BOTTLE);
+		
+		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
+		EditorGUI.DrawRect(wireRect1, Color.gray);
+		
+		AttackMarshal.MARSHAL_WAIT_SECONDS = EditorGUILayout.IntSlider("发现元帅重试冷却(秒)", AttackMarshal.MARSHAL_WAIT_SECONDS, 60, 600);
+		AttackMarshal.ENERGY_WAIT_SECONDS = EditorGUILayout.IntSlider("体力不足重试冷却(秒)", AttackMarshal.ENERGY_WAIT_SECONDS, 60, 600);
 		GUILayout.Space(5F);
 		if (AttackMarshal.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -61,6 +68,8 @@ public class AttackMarshal {
 	public static int ATTACK_TIMES = 5;	// 攻击总次数
 	public static bool USE_SMALL_BOTTLE = false;	// 是否使用小体
 	public static bool USE_BIG_BOTTLE = false;	// 是否使用大体
+	public static int MARSHAL_WAIT_SECONDS = 300;	// 未发现元帅等待重新尝试时间
+	public static int ENERGY_WAIT_SECONDS = 300;	// 体力不足等待重新尝试时间
 	
 	public static readonly List<DateTime> s_AttackTimeList = new List<DateTime>();	// 攻击次数
 	public static int AttackTimes {	// 攻击次数
@@ -142,7 +151,7 @@ public class AttackMarshal {
 				}
 				if (!Recognize.IsMarshalExist) {
 					Debug.Log($"切换场景后还是没有元帅");
-					yield return new EditorWaitForSeconds(300F);	// 5分钟后再重新尝试
+					yield return new EditorWaitForSeconds(MARSHAL_WAIT_SECONDS);	// 5分钟后再重新尝试
 					continue;
 				}
 			}
@@ -204,7 +213,7 @@ public class AttackMarshal {
 				if (Recognize.IsEnergyShortcutAdding) {
 					Operation.Click(1170, 384);	// 关闭按钮
 					Debug.Log("体力不足，等待稍后尝试");
-					yield return new EditorWaitForSeconds(300);
+					yield return new EditorWaitForSeconds(ENERGY_WAIT_SECONDS);
 				}
 			}
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
