@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
-	[MenuItem("Window/FreeDiamond")]
+	[MenuItem("Window/Default/FreeDiamond", false, 20)]
 	private static void Open() {
 		GetWindow<FreeDiamondConfig>("周卡免费钻石").Show();
 	}

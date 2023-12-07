@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class AttackDiscipleConfig : EditorWindow {
-	[MenuItem("Window/AttackDisciple")]
+	[MenuItem("Window/Activity/AttackDisciple")]
 	private static void Open() {
 		GetWindow<AttackDiscipleConfig>("作战实验室").Show();
 	}

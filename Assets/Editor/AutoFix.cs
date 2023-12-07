@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class AutoFixConfig : PrefsEditorWindow<AutoFix> {
-	[MenuItem("Window/AutoFix")]
+	[MenuItem("Window/Default/AutoFix", false, 22)]
 	private static void Open() {
 		GetWindow<AutoFixConfig>("自动修理").Show();
 	}

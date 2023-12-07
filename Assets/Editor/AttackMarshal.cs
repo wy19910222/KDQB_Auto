@@ -15,7 +15,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class AttackMarshalConfig : PrefsEditorWindow<AttackMarshal> {
-	[MenuItem("Window/AttackMarshal")]
+	[MenuItem("Window/Default/AttackMarshal", false, 3)]
 	private static void Open() {
 		GetWindow<AttackMarshalConfig>("攻击元帅").Show();
 	}

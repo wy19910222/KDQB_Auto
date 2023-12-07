@@ -7,15 +7,13 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
 
 using Debug = UnityEngine.Debug;
-using Random = UnityEngine.Random;
 
 public class BackToEightAreaConfig : PrefsEditorWindow<BackToEightArea> {
-	[MenuItem("Window/BackToEightArea")]
+	[MenuItem("Window/War/BackToEightArea")]
 	private static void Open() {
 		GetWindow<BackToEightAreaConfig>("返回八国").Show();
 	}

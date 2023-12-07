@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
-	[MenuItem("Window/DeepSea")]
+	[MenuItem("Window/Activity/DeepSea")]
 	private static void Open() {
 		GetWindow<DeepSeaConfig>("深海寻宝").Show();
 	}

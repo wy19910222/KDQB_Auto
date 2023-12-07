@@ -16,7 +16,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class JungleConfig : PrefsEditorWindow<Jungle> {
-	[MenuItem("Window/Jungle")]
+	[MenuItem("Window/Default/Jungle", false, 1)]
 	private static void Open() {
 		GetWindow<JungleConfig>("打野").Show();
 	}

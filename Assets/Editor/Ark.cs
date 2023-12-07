@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class ArkConfig : PrefsEditorWindow<Ark> {
-	[MenuItem("Window/Ark")]
+	[MenuItem("Window/War/Ark")]
 	private static void Open() {
 		GetWindow<ArkConfig>("参战方舟").Show();
 	}

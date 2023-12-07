@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 
 public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
-	[MenuItem("Window/MiningTycoon")]
+	[MenuItem("Window/Activity/MiningTycoon")]
 	private static void Open() {
 		GetWindow<MiningTycoonConfig>("矿产大亨").Show();
 	}

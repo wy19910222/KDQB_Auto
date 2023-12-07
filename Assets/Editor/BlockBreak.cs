@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class BlockBreakConfig : PrefsEditorWindow<BlockBreak> {
-	[MenuItem("Window/BlockBreak")]
+	[MenuItem("Window/Default/BlockBreak", false, -99)]
 	private static void Open() {
 		GetWindow<BlockBreakConfig>("异常阻塞处理").Show();
 	}

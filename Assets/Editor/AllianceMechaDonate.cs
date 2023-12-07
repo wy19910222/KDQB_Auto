@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> {
-	[MenuItem("Window/AllianceMechaDonate", false, 21)]
+	[MenuItem("Window/Default/AllianceMechaDonate", false, 21)]
 	private static void Open() {
 		GetWindow<AllianceMechaDonateConfig>("联盟机甲捐献").Show();
 	}

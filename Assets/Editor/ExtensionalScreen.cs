@@ -11,7 +11,7 @@ using UnityEditor;
 using Debug = UnityEngine.Debug;
 
 public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
-	[MenuItem("Window/ExtensionalScreen")]
+	[MenuItem("Window/Default/ExtensionalScreen", false, -101)]
 	private static void Open() {
 		GetWindow<ExtensionalScreenConfig>("扩展屏幕").Show();
 	}

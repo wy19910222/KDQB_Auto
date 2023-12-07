@@ -12,7 +12,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class CutPriceConfig : PrefsEditorWindow<CutPrice> {
-	[MenuItem("Window/CutPrice")]
+	[MenuItem("Window/Activity/CutPrice")]
 	private static void Open() {
 		GetWindow<CutPriceConfig>("砍一刀").Show();
 	}

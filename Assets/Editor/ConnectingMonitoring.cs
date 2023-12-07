@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class ConnectingMonitoringConfig : PrefsEditorWindow<ConnectingMonitoring> {
-	[MenuItem("Window/ConnectingMonitoring")]
+	[MenuItem("Window/Default/ConnectingMonitoring", false, -100)]
 	private static void Open() {
 		GetWindow<ConnectingMonitoringConfig>("网络状态监测").Show();
 	}

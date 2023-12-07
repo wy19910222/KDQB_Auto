@@ -17,7 +17,7 @@ using Random = UnityEngine.Random;
 public class FollowConfig : PrefsEditorWindow<Follow> {
 	private string m_TempJXOwnerName;
 	
-	[MenuItem("Window/Follow")]
+	[MenuItem("Window/Default/Follow", false, 0)]
 	private static void Open() {
 		GetWindow<FollowConfig>("跟车").Show();
 	}

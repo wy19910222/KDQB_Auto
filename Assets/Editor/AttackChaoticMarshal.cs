@@ -15,7 +15,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class AttackChaoticMarshalConfig : PrefsEditorWindow<AttackChaoticMarshal> {
-	[MenuItem("Window/AttackChaoticMarshal")]
+	[MenuItem("Window/War/AttackChaoticMarshal")]
 	private static void Open() {
 		GetWindow<AttackChaoticMarshalConfig>("攻击混乱之源").Show();
 	}

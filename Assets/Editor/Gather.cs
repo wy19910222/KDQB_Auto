@@ -14,7 +14,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class GatherConfig : PrefsEditorWindow<Gather> {
-	[MenuItem("Window/Gather")]
+	[MenuItem("Window/Default/Gather", false, 2)]
 	private static void Open() {
 		GetWindow<GatherConfig>("集结").Show();
 	}
