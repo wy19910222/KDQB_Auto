@@ -69,19 +69,20 @@ public static class Operation {
 		
 		MouseUtils.SetMousePos(x1, y1);
 		MouseUtils.LeftDown();
-		float duration1 = Mathf.Max(duration - 0.1F, 0.1F);
 		long startTime = DateTime.Now.Ticks;
 		while (true) {
 			yield return null;
-			float percent = (DateTime.Now.Ticks - startTime) / (duration1 * 10000000);
+			float percent = (DateTime.Now.Ticks - startTime) / (duration * 10000000);
 			if (percent >= 1) {
 				break;
 			}
 			percent = 1 - Mathf.Pow(1 - percent, 2);
 			MouseUtils.SetMousePos(Mathf.RoundToInt(Mathf.Lerp(x1, x2, percent)), Mathf.RoundToInt(Mathf.Lerp(y1, y2, percent)));	// 加入按钮
 		}
-		MouseUtils.SetMousePos(x2, y2);
-		yield return new EditorWaitForSeconds(0.1F);
+		for (int i = 0; i < 5; ++i) {
+			MouseUtils.SetMousePos(x2, y2);
+			yield return null;
+		}
 		MouseUtils.LeftUp();
 		
 		MouseUtils.SetMousePos(oldPos.x, oldPos.y);
