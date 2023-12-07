@@ -157,7 +157,7 @@ public static partial class Recognize {
 	}
 
 	private static readonly Color32[,] LEAGUE_MECHA_DONATE_IN_RANK = Operation.GetFromFile("PersistentData/Textures/LeagueMechaDonateInRank.png");
-	public static bool IsLeagueMechaDonateInRank {
+	public static bool IsAllianceMechaDonateInRank {
 		get {
 			// 通过判断排行列表中最后一行的底色确定自己是否在排行中
 			Color32[,] realColors = Operation.GetColorsOnScreen(780, 850, 10, 10);
@@ -166,7 +166,7 @@ public static partial class Recognize {
 	}
 
 	private static readonly Color32[,] LEAGUE_MECHA_DONATE_CONFIRM = Operation.GetFromFile("PersistentData/Textures/LeagueMechaDonateConfirm.png");
-	public static bool IsLeagueMechaDonateConfirming {
+	public static bool IsAllianceMechaDonateConfirming {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(860, 340, 200, 30);
 			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_CONFIRM) > 0.99F;

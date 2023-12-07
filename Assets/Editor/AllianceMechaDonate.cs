@@ -12,16 +12,16 @@ using UnityEngine;
 
 using Debug = UnityEngine.Debug;
 
-public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
-	[MenuItem("Window/LeagueMechaDonate")]
+public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> {
+	[MenuItem("Window/AllianceMechaDonate", false, 21)]
 	private static void Open() {
-		GetWindow<LeagueMechaDonateConfig>("联盟机甲捐献").Show();
+		GetWindow<AllianceMechaDonateConfig>("联盟机甲捐献").Show();
 	}
 	
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
-		TimeSpan ts = LeagueMechaDonate.NEXT_TIME - DateTime.Now;
+		TimeSpan ts = AllianceMechaDonate.NEXT_TIME - DateTime.Now;
 		int hours = EditorGUILayout.IntField("下次尝试时间", ts.Hours);
 		float prevLabelWidth = EditorGUIUtility.labelWidth;
 		EditorGUIUtility.labelWidth = 8F;
@@ -29,12 +29,12 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 		int seconds = EditorGUILayout.IntField(":", ts.Seconds);
 		EditorGUIUtility.labelWidth = prevLabelWidth;
 		if (EditorGUI.EndChangeCheck()) {
-			LeagueMechaDonate.NEXT_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds);
+			AllianceMechaDonate.NEXT_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
 		EditorGUILayout.EndHorizontal();
-		LeagueMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", LeagueMechaDonate.INTERVAL, 120, 1800);
+		AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", AllianceMechaDonate.INTERVAL, 120, 1800);
 		GUILayout.Space(5F);
-		if (LeagueMechaDonate.IsRunning) {
+		if (AllianceMechaDonate.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
 			}
@@ -46,21 +46,21 @@ public class LeagueMechaDonateConfig : PrefsEditorWindow<LeagueMechaDonate> {
 	}
 }
 
-public class LeagueMechaDonate {
+public class AllianceMechaDonate {
 	public static int INTERVAL = 300;	// 点击间隔
 	public static DateTime NEXT_TIME = DateTime.Now;
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartLeagueMechaDonate", priority = -1)]
+	[MenuItem("Assets/StartAllianceMechaDonate", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"联盟机甲捐献尝试已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopLeagueMechaDonate", priority = -1)]
+	[MenuItem("Assets/StopAllianceMechaDonate", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
@@ -94,13 +94,13 @@ public class LeagueMechaDonate {
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(1170, 200);	// 排行奖励按钮
 			yield return new EditorWaitForSeconds(0.5F);
-			bool isInRank = Recognize.IsLeagueMechaDonateInRank;
+			bool isInRank = Recognize.IsAllianceMechaDonateInRank;
 			Operation.Click(720, 128);	// 点击窗口外关闭窗口
 			yield return new EditorWaitForSeconds(0.1F);
 			if (!isInRank) {
 				Operation.Click(960, 960);	// 捐献按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				if (Recognize.IsLeagueMechaDonateConfirming) {
+				if (Recognize.IsAllianceMechaDonateConfirming) {
 					Operation.Click(960, 686);	// 兑换按钮
 					yield return new EditorWaitForSeconds(0.2F);
 					Operation.Click(1167, 353);	// 关闭按钮
