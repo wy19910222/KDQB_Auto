@@ -74,6 +74,23 @@ public static partial class Recognize {
 		}
 	}
 
+	public static float WindowCoveredCount {
+		get {
+			return GetCachedValueOrNew(nameof(WindowCoveredCount), () => {
+				switch (CurrentScene) {
+					case Scene.FIGHTING:
+						// 左上角返回按钮颜色很暗
+						return ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
+					case Scene.INSIDE:
+					case Scene.OUTSIDE:
+						// 右下角一排按钮颜色很暗
+						return ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
+				}
+				return -1;
+			});
+		}
+	}
+
 	public static bool IsOutsideFaraway => GetCachedValueOrNew(nameof(IsOutsideFaraway), () => 
 			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0);
 
@@ -145,6 +162,14 @@ public static partial class Recognize {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(905, 395, 110, 28);
 			return ApproximatelyRect(realColors, FRIENDLY_HINT) > 0.99F;
+		}
+	}
+
+	private static readonly Color32[,] FIGHTING_ABORT = Operation.GetFromFile("PersistentData/Textures/FightingAbort.png");
+	public static bool IsFightingAborting {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(910, 440, 100, 26);
+			return ApproximatelyRect(realColors, FIGHTING_ABORT) > 0.99F;
 		}
 	}
 
