@@ -58,6 +58,10 @@ public class ConnectingMonitoring {
 				Operation.Click(960, 630);	// 确定按钮
 				yield return new EditorWaitForSeconds(0.5F);
 			}
+			while (Recognize.IsMigrateInviting) {
+				Operation.Click(1140, 408);	// 关闭按钮
+				yield return new EditorWaitForSeconds(0.5F);
+			}
 			yield return new EditorWaitForSeconds(INTERVAL);
 		}
 		// ReSharper disable once IteratorNeverReturns

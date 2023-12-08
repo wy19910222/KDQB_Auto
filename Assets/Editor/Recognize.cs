@@ -120,6 +120,14 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, GOTO_EIGHT_AREA) > 0.99F;
 		}
 	}
+
+	private static readonly Color32[,] INVITE_TO_MIGRATE = Operation.GetFromFile("PersistentData/Textures/InviteToMigrate.png");
+	public static bool IsMigrateInviting {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(905, 397, 100, 28);
+			return ApproximatelyRect(realColors, INVITE_TO_MIGRATE) > 0.99F;
+		}
+	}
 	
 	// 当前是否处于搜索面板
 	public static bool IsSearching => Approximately(Operation.GetColorOnScreen(960, 466), new Color32(119, 131, 184, 255));
