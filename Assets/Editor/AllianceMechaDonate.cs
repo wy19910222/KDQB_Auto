@@ -44,6 +44,16 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 			}
 		}
 	}
+	
+	protected override void OnEnable() {
+		base.OnEnable();
+		EditorApplication.update += Repaint;
+	}
+
+	protected override void OnDisable() {
+		base.OnDisable();
+		EditorApplication.update -= Repaint;
+	}
 }
 
 public class AllianceMechaDonate {
