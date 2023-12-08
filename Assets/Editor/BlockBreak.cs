@@ -56,18 +56,33 @@ public class BlockBreak {
 
 	private static IEnumerator Update() {
 		DateTime dt = DateTime.Now;
+		float windowCoveredCount = -1;
 		while (true) {
 			yield return null;
 			if (Recognize.CurrentScene != Recognize.Scene.FIGHTING || Recognize.IsFightingPlayback) {
 				dt = DateTime.Now;
-			} else if ((DateTime.Now - dt).TotalSeconds > SECONDS) {
-				Debug.Log("退出按钮");
-				Operation.Click(30, 140);	// 退出按钮
-				yield return new EditorWaitForSeconds(0.2F);
-				Debug.Log("确认退出按钮");
-				Operation.Click(1064, 634);	// 确认退出按钮
-				yield return new EditorWaitForSeconds(0.2F);
-				dt = DateTime.Now;
+			} else {
+				float newWindowCoveredCount = Recognize.WindowCoveredCount;
+				if (!Mathf.Approximately(newWindowCoveredCount, windowCoveredCount)) {
+					windowCoveredCount = newWindowCoveredCount;
+					dt = DateTime.Now;
+				}
+				if ((DateTime.Now - dt).TotalSeconds > SECONDS) {
+					for (int i = 0; i < 10 && Recognize.IsWindowCovered; ++i) {
+						Debug.Log("点外部关闭弹窗");
+						Operation.Click(30, 140);	// 点外部关闭弹窗
+						yield return new EditorWaitForSeconds(0.2F);
+					}
+					Debug.Log("退出按钮");
+					Operation.Click(30, 140);	// 退出按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					if (Recognize.IsFightingAborting) {
+						Debug.Log("确认退出按钮");
+						Operation.Click(1064, 634);	// 确认退出按钮
+						yield return new EditorWaitForSeconds(0.2F);
+					}
+					dt = DateTime.Now;
+				}
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
