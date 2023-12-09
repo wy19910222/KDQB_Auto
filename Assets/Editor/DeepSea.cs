@@ -48,14 +48,12 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 			}
 		}
 	}
-	
-	protected override void OnEnable() {
-		base.OnEnable();
+
+	private void OnBecameVisible() {
 		EditorApplication.update += Repaint;
 	}
 
-	protected override void OnDisable() {
-		base.OnDisable();
+	private void OnBecameInvisible() {
 		EditorApplication.update -= Repaint;
 	}
 }

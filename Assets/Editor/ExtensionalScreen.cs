@@ -45,12 +45,6 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 		m_CursorTex.SetPixels(colors);
 		m_CursorTex.Apply();
 		Operation.CURRENT_GAME_RECT = m_GameRect;
-		EditorApplication.update += Repaint;
-	}
-
-	protected override void OnDisable() {
-		base.OnDisable();
-		EditorApplication.update -= Repaint;
 	}
 
 	protected override void OnMenu(GenericMenu menu) {
@@ -123,6 +117,14 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 			EditorGUILayout.EndVertical();
 			// EditorGUILayout.EndScrollView();
 		}
+	}
+
+	private void OnBecameVisible() {
+		EditorApplication.update += Repaint;
+	}
+
+	private void OnBecameInvisible() {
+		EditorApplication.update -= Repaint;
 	}
 }
 
