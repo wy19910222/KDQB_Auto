@@ -124,7 +124,7 @@ public static partial class Recognize {
 	private static readonly Color32[,] INVITE_TO_MIGRATE = Operation.GetFromFile("PersistentData/Textures/InviteToMigrate.png");
 	public static bool IsMigrateInviting {
 		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(905, 397, 100, 28);
+			Color32[,] realColors = Operation.GetColorsOnScreen(905, 397, 110, 28);
 			return ApproximatelyRect(realColors, INVITE_TO_MIGRATE) > 0.99F;
 		}
 	}
