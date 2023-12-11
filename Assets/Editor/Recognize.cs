@@ -205,6 +205,14 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_CONFIRM) > 0.99F;
 		}
 	}
+
+	private static readonly Color32[,] GATHER_FEAR_STAR = Operation.GetFromFile("PersistentData/Textures/GatherFearStar.png");
+	public static bool IsGatherFearStar {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(901, 810, 51, 22);
+			return ApproximatelyRectIgnoreCovered(realColors, GATHER_FEAR_STAR, 1.05F) > 0.99F;
+		}
+	}
 	
 	public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 		new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),

@@ -29,9 +29,33 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
 		EditorGUI.DrawRect(wireRect1, Color.gray);
 		
-		Gather.GATHER_ZC = EditorGUILayout.Toggle("集结战锤", Gather.GATHER_ZC);
-		Gather.GATHER_JX = EditorGUILayout.Toggle("集结惧星", Gather.GATHER_JX);
-		Gather.GATHER_JW = EditorGUILayout.Toggle("集结精卫", Gather.GATHER_JW);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("攻击目标");
+		if (GUILayout.Button("-")) {
+			Gather.TARGET_ATTACK_COUNT_LIST.RemoveAt(Gather.TARGET_ATTACK_COUNT_LIST.Count - 1);
+		}
+		if (GUILayout.Button("+")) {
+			Gather.TARGET_ATTACK_COUNT_LIST.Add(0);
+		}
+		EditorGUILayout.EndHorizontal();
+		for (int i = 0, length = Gather.TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
+			EditorGUILayout.BeginHorizontal();
+			EditorGUI.BeginChangeCheck();
+			int count = Gather.TARGET_ATTACK_COUNT_LIST[i];
+			int newCount = Math.Max(EditorGUILayout.IntField($"    目标{i + 1}", Math.Abs(count)), 0);
+			if (EditorGUI.EndChangeCheck()) {
+				count = count < 0 ? -newCount : newCount;
+				Gather.TARGET_ATTACK_COUNT_LIST[i] = count;
+			}
+			EditorGUI.BeginChangeCheck();
+			EditorGUILayout.Toggle(count > 0, GUILayout.Width(16F));
+			if (EditorGUI.EndChangeCheck()) {
+				count = -count;
+				Gather.TARGET_ATTACK_COUNT_LIST[i] = count;
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+		Gather.FEAR_STAR_LEVEL = EditorGUILayout.IntSlider("等级（如果是惧星）", Gather.FEAR_STAR_LEVEL, 1, 5);
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
@@ -71,7 +95,10 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 				EditorGUILayout.EndHorizontal();
 			}
 		}
+		
 		GUILayout.Space(5F);
+		
+		EditorGUILayout.BeginHorizontal();
 		if (Gather.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -81,15 +108,19 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 				IsRunning = true;
 			}
 		}
+		Gather.Test = GUILayout.Toggle(Gather.Test, "测试", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
 	}
 }
 
 public class Gather {
+	public static bool Test { get; set; } // 测试模式
+	
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
-	public static bool GATHER_ZC = false;	// 是否集结战锤
-	public static bool GATHER_JX = true;	// 是否集结惧星
-	public static bool GATHER_JW = false;	// 是否集结精卫
+	
+	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
+	public static int FEAR_STAR_LEVEL = 4;	// 打的惧星等级
 	public static int SQUAD_NUMBER = 3;	// 使用编队号码
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 集结英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
@@ -107,9 +138,10 @@ public class Gather {
 		}
 		{
 			List<string> targets = new List<string>();
-			if (GATHER_ZC) { targets.Add("战锤"); }
-			if (GATHER_JX) { targets.Add("惧星"); }
-			if (GATHER_JW) { targets.Add("精卫/砰砰"); }
+			for (int i = 0, length = TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
+				int attackCount = TARGET_ATTACK_COUNT_LIST[i];
+				targets.Add(attackCount > 0 ? $"第{i + 1}个{attackCount}次" : $"第{i + 1}个不限次数");
+			}
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
 		switches.Add($"使用编队【{SQUAD_NUMBER}】");
@@ -134,57 +166,85 @@ public class Gather {
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
-			// 体力值
-			if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + 8) {
-				Debug.Log($"当前体力：{Recognize.energy}");
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+				Debug.Log("不在世界界面");
 				continue;
 			}
-			// 队列数量
-			if (Recognize.BusyGroupCount >= GROUP_COUNT) {
-				Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
-				continue;
-			}
-			// 存在打野英雄头像
-			if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
-				Debug.Log($"存在打野英雄头像");
-				continue;
-			}
-			// 有窗口打开着
 			if (Recognize.IsWindowCovered) {
-				Debug.Log($"有窗口打开着");
+				Debug.Log("有窗口打开着，正在做其他操作");
+				continue;
+			}
+			
+			bool test = Test;
+			if (test) {
+				Debug.Log("测试模式，忽略体力与队列数量");
+			} else {
+				// 体力值
+				if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + 8) {
+					Debug.Log($"当前体力：{Recognize.energy}");
+					continue;
+				}
+				// 队列数量
+				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+					Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
+					continue;
+				}
+				// 存在打野英雄头像
+				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+					Debug.Log($"存在打野英雄头像");
+					continue;
+				}
+			}
+			// 确定攻击目标
+			int target = RandomTarget();
+			if (target == -1) {
+				Debug.Log("未选择攻击目标，取消操作");
 				continue;
 			}
 			
 			// 开始集结
 			while (!Recognize.IsSearching) {
-				// Debug.Log("搜索按钮");
+				Debug.Log("搜索按钮");
 				Operation.Click(750, 970);	// 搜索按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
 			Debug.Log("集结按钮");
 			Operation.Click(1024, 512);	// 集结按钮
 			yield return new EditorWaitForSeconds(0.1F);
-			int target = 0;
+			const int TARGET_WIDTH = 163;
+			Debug.Log("攻击目标: " + target);
 			{
-				Debug.Log("确定攻击目标");
-				List<int> list = new List<int>();
-				if (GATHER_ZC) {
-					list.Add(0);
+				// 先拖动到列表最开头，以便计算
+				var ie = Operation.NoInertiaDrag(803, 672, 803 + TARGET_WIDTH * (TARGET_ATTACK_COUNT_LIST.Count - 2), 672, 0.2F);
+				while (ie.MoveNext()) {
+					yield return ie.Current;
 				}
-				if (GATHER_JX) {
-					list.Add(1);
-				}
-				if (GATHER_JW) {
-					list.Add(2);
-				}
-				target = list[Random.Range(0, list.Count)];
+				yield return new EditorWaitForSeconds(0.8F);
 			}
-			Debug.Log($"选中目标: {new []{"战锤", "惧星", "精卫"}[target]}");
-			Operation.Click(800 + 170 * target, 670);	// 选中惧星
+			Debug.Log("拖动以显示攻击目标");
+			int orderOffsetX = (target - 2) * TARGET_WIDTH;
+			while (orderOffsetX > 0) {
+				int dragDistance = Mathf.Min(TARGET_WIDTH * 3, orderOffsetX);
+				// 往左拖动
+				var ie = Operation.NoInertiaDrag(1129, 672, 1129 - dragDistance, 672, 0.2F);
+				while (ie.MoveNext()) {
+					yield return ie.Current;
+				}
+				yield return new EditorWaitForSeconds(0.2F);
+				orderOffsetX -= dragDistance;
+			}
+			Operation.Click(1129 + orderOffsetX, 672);	// 选中目标
 			yield return new EditorWaitForSeconds(0.1F);
-			Debug.Log("等级滑块");
-			Operation.Click(1062, 880);	// 等级滑块
+			bool isGatherFearStar = Recognize.IsGatherFearStar;
+			if (isGatherFearStar) {
+				Debug.LogError("惧星等级滑块: " + 844 + 44 * FEAR_STAR_LEVEL);
+				Operation.Click(844 + 44 * FEAR_STAR_LEVEL, 880);	// 惧星等级滑块
+			} else {
+				Debug.Log("其他等级滑块");
+				Operation.Click(1062, 880);	// 其他等级滑块
+			}
 			yield return new EditorWaitForSeconds(0.1F);
+			
 			Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -205,12 +265,12 @@ public class Gather {
 			yield return new EditorWaitForSeconds(0.3F);
 			Operation.Click(960, 560);	// 选中目标
 			yield return new EditorWaitForSeconds(0.2F);
-			if (target == 1) {
-				Debug.Log("集结");
+			if (isGatherFearStar) {
+				Debug.Log("气泡里的集结按钮");
 				Operation.Click(870, 830);	// 集结按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			} else {
-				Debug.Log("集结");
+				Debug.Log("气泡里的集结按钮");
 				Operation.Click(1050, 450);	// 集结按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
@@ -231,9 +291,10 @@ public class Gather {
 					Debug.Log($"嗑{index + 1}号位");
 					Operation.Click(828 + index * 130, 590);	// 选中图标
 					yield return new EditorWaitForSeconds(0.1F);
-					Operation.Click(960, 702);	// 使用按钮
-					USE_BOTTLE_DICT.TryGetValue(useBottle, out int count);
-					USE_BOTTLE_DICT[useBottle] = count - 1;
+					if (!test) {
+						Operation.Click(960, 702);	// 使用按钮
+					}
+					USE_BOTTLE_DICT[useBottle]--;
 					yield return new EditorWaitForSeconds(0.1F);
 				} else {
 					Debug.LogError("体力药剂数量不足！");
@@ -254,8 +315,9 @@ public class Gather {
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
-				if (Recognize.SoldierCountPercent > 0.99F) {
+				if (!test && Recognize.SoldierCountPercent > 0.99F) {
 					Operation.Click(960, 470);	// 出战按钮
+					TARGET_ATTACK_COUNT_LIST[target]--;
 					Debug.Log("出发");
 				} else {
 					Debug.Log("退出按钮");
@@ -271,6 +333,19 @@ public class Gather {
 			yield return new EditorWaitForSeconds(5);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static int RandomTarget() {
+		List<int> list = new List<int>();
+		for (int i = 0, length = TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
+			if (TARGET_ATTACK_COUNT_LIST[i] > 0) {
+				list.Add(i);
+			}
+		}
+		if (list.Count <= 0) {
+			return -1;
+		}
+		return list[Random.Range(0, list.Count)];
 	}
 	
 	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {
