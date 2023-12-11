@@ -113,7 +113,9 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 				EditorGUILayout.EndHorizontal();
 			}
 		}
+		
 		GUILayout.Space(5F);
+		
 		EditorGUILayout.BeginHorizontal();
 		if (Jungle.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -189,10 +191,47 @@ public class Jungle {
 	private static IEnumerator Update() {
 		int starOffset = 0;
 		while (true) {
-			Debug.Log("等待切换到世界界面且无窗口覆盖");
-			// 等待切换到世界界面
-			while (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				yield return null;
+			yield return null;
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+				Debug.Log("不在世界场景");
+				continue;
+			}
+			if (Recognize.IsWindowCovered) {
+				Debug.Log("有窗口打开着，正在做其他操作");
+				continue;
+			}
+			
+			bool test = Test;
+			if (test) {
+				Debug.Log("测试模式，忽略体力与队列数量");
+			} else {
+				// 体力值
+				if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + (REPEAT_5 ? 15 : 10)) {
+					Debug.Log($"当前体力：{Recognize.energy}");
+					continue;
+				}
+				// 队列数量
+				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+					Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
+					continue;
+				}
+				// 存在打野英雄头像
+				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+					Debug.Log($"存在打野英雄头像");
+					continue;
+				}
+				// 可能处于世界场景远近景切换的动画过程中，所以等待0.2秒再判断一次
+				yield return new EditorWaitForSeconds(0.2F);
+				// 队列数量
+				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+					Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
+					continue;
+				}
+				// 存在打野英雄头像
+				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+					Debug.Log($"存在打野英雄头像");
+					continue;
+				}
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
@@ -219,21 +258,13 @@ public class Jungle {
 				}
 				yield return null;
 			}
-			// for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
-			// 	Debug.Log("关闭窗口");
-			// 	Operation.Click(720, 128);	// 左上角返回按钮
-			// 	yield return new EditorWaitForSeconds(0.2F);
-			// }
-			if (Recognize.IsWindowCovered) {
-				Debug.Log("正在做其他操作");
-				continue;
-			}
-			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				Debug.Log("已不在世界界面，取消操作");
+			// 确定攻击目标
+			int target = RandomTarget();
+			if (target == -1) {
+				Debug.Log("未选择攻击目标，取消操作");
 				continue;
 			}
 			
-			bool test = Test;
 			// 开始打野
 			while (!Recognize.IsSearching) {
 				Debug.Log("搜索按钮");
@@ -243,19 +274,6 @@ public class Jungle {
 			Debug.Log("敌军按钮");
 			Operation.Click(770, 510);	// 敌军按钮
 			yield return new EditorWaitForSeconds(0.1F);
-			// 确定攻击目标
-			List<int> list = new List<int>();
-			for (int i = 0, length = TARGET_ATTACK_LIST.Count; i < length; ++i) {
-				if (TARGET_ATTACK_LIST[i]) {
-					list.Add(i);
-				}
-			}
-			if (list.Count <= 0) {
-				Debug.Log("未选择攻击目标，取消操作");
-				continue;
-			}
-			
-			int target = list[Random.Range(0, list.Count)];
 			const int TARGET_WIDTH = 163;
 			Debug.Log("攻击目标: " + target);
 			{
@@ -278,7 +296,7 @@ public class Jungle {
 				yield return new EditorWaitForSeconds(0.2F);
 				orderOffsetX -= dragDistance;
 			}
-			Operation.Click(1129 + orderOffsetX, 672);	// 攻击目标
+			Operation.Click(1129 + orderOffsetX, 672);	// 选中目标
 			yield return new EditorWaitForSeconds(0.1F);
 			// 活动对象，没有滑块，不能5连
 			bool isNoSlider = Recognize.ApproximatelyCoveredCount(Operation.GetColorOnScreen(960, 880), new Color32(199, 208, 210, 255), 1.1F) >= 0;
@@ -287,148 +305,163 @@ public class Jungle {
 			if (isStarSlider) {
 				Debug.Log("星级滑块");
 				Operation.Click(844 + 44 * (JUNGLE_STAR + starOffset), 880);	// 星级滑块
-				yield return new EditorWaitForSeconds(0.1F);
 			} else {
 				Debug.Log("等级滑块");
 				Operation.Click(1062, 880);	// 等级滑块
-				yield return new EditorWaitForSeconds(0.1F);
 			}
+			yield return new EditorWaitForSeconds(0.1F);
 			
-			// Debug.Log("搜索按钮");
+			Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
-			if (!Recognize.IsSearching) {
-				// 搜索面板消失，说明搜索到了
-				if (target == 3) {
-					// 下次重新尝试搜索期望星级
-					starOffset = 0;
-				}
-				// 避免没刷出来，先等一会儿
-				yield return new EditorWaitForSeconds(0.3F);
-				Debug.Log("选中目标");
-				Operation.Click(960, 580);	// 选中目标
-				yield return new EditorWaitForSeconds(0.2F);
-				Debug.Log("攻击按钮");
-				if (isNoSlider) {
-					Operation.Click(960, 880);	// 攻击按钮
-					yield return new EditorWaitForSeconds(0.3F);
-					if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
-						// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
-						Operation.Click(960, 920);	// 攻击按钮
-					}
-				} else {
-					Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
-				}
-				yield return new EditorWaitForSeconds(0.3F);
-				// 出现体力不足面板
-				if (Recognize.IsEnergyShortcutAdding) {
-					// // 打开背包嗑小体
-					// Operation.Click(1170, 384);	// 关闭按钮
-					// yield return new EditorWaitForSeconds(0.3F);
-					// Operation.Click(1870, 870);	// 背包按钮
-					// yield return new EditorWaitForSeconds(0.1F);
-					// // 判断小体是否在第二格
-					// Color32 targetColor1 = new Color32(129, 242, 25, 255);
-					// Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(847, 305);
-					// Color32 targetColor2 = new Color32(248, 210, 22, 255);
-					// Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(866, 281);
-					// if (Recognize.Approximately(realColor1, targetColor1) && Recognize.Approximately(realColor2, targetColor2)) {
-					// 	Operation.Click(866, 281);	// 选中小体
-					// 	yield return new EditorWaitForSeconds(0.1F);
-					// 	Operation.Click(960, 960);	// 使用按钮
-					// 	yield return new EditorWaitForSeconds(0.1F);
-					// }
-					// Operation.Click(720, 128);	// 左上角返回按钮
-					// yield return new EditorWaitForSeconds(0.1F);
-					// Operation.Click(960, 580);	// 选中目标
-					// yield return new EditorWaitForSeconds(0.2F);
-					// if (isNoSlider) {
-					// 	Operation.Click(960, 895);	// 攻击按钮
-					// } else {
-					// 	Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
-					// }
-					// yield return new EditorWaitForSeconds(0.3F);
-					
-					// 快捷嗑药
-					Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
-					Debug.Log(Utils.GetEnumInspectorName(useBottle));
-					int i = 0;
-					int iMax = useBottle switch {
-						Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => 3,
-						Recognize.EnergyShortcutAddingType.BIG_BOTTLE => 1,
-						Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
-						_ => 0
-					};
-					while (Recognize.IsEnergyShortcutAdding && i < iMax) {
-						List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
-						int index = types.IndexOf(useBottle);
-						if (index != -1) {
-							Debug.Log($"选择{index + 1}号位");
-							Operation.Click(828 + index * 130, 590);	// 选中图标
-							yield return new EditorWaitForSeconds(0.1F);
-							if (!test) {
-								Operation.Click(960, 702);	// 使用按钮
-							}
-							USE_BOTTLE_DICT.TryGetValue(useBottle, out int count);
-							USE_BOTTLE_DICT[useBottle] = count - 1;
-							yield return new EditorWaitForSeconds(0.1F);
-						} else {
-							Debug.LogError("体力药剂数量不足！");
-						}
-						Operation.Click(1170, 384);	// 关闭按钮
-						yield return new EditorWaitForSeconds(0.3F);
-						Operation.Click(960, 580);	// 选中目标
-						yield return new EditorWaitForSeconds(0.2F);
-						Debug.Log("攻击按钮");
-						if (isNoSlider) {
-							Operation.Click(960, 880);	// 攻击按钮
-							yield return new EditorWaitForSeconds(0.3F);
-							if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
-								// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
-								Operation.Click(960, 920);	// 攻击按钮
-							}
-						} else {
-							Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
-						}
-						yield return new EditorWaitForSeconds(0.3F);
-						i++;
-					}
-					if (Recognize.IsEnergyShortcutAdding) {
-						Operation.Click(1170, 384);	// 关闭按钮
-						Debug.Log("体力不足，等待稍后尝试");
-						yield return new EditorWaitForSeconds(300);
-					}
-				}
-				if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
-					Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
-					yield return new EditorWaitForSeconds(0.2F);
-					if (!test && Recognize.SoldierCountPercent > 0.99F) {
-						Operation.Click(960, 470);	// 出战按钮
-						Debug.Log("出发");
-					} else {
-						Debug.Log("退出按钮");
-						Operation.Click(30, 140);	// 退出按钮
-						yield return new EditorWaitForSeconds(0.2F);
-						Debug.Log("确认退出按钮");
-						Operation.Click(1064, 634);	// 确认退出按钮
-						yield return new EditorWaitForSeconds(2);
-					}
-				}
-			} else {
-				// 搜索面板未消失，说明未搜索到
-				if (target == 3) {
+			if (Recognize.IsSearching) {	// 搜索面板未消失，说明未搜索到
+				if (isStarSlider) {
 					// 下次尝试搜索低星级
 					starOffset = Mathf.Max(starOffset - 1, -JUNGLE_STAR + 1);
 				}
+				Debug.Log("未搜到，关闭搜索面板");
 				while (Recognize.IsSearching) {
 					// 点击空白处退出搜索面板
 					Operation.Click(660, 970);	// 点击空白处
 					yield return new EditorWaitForSeconds(0.3F);
 				}
+				continue;
+			}
+			
+			// 搜索面板消失，说明搜索到了
+			if (isStarSlider) {
+				// 下次重新尝试搜索期望星级
+				starOffset = 0;
+			}
+			// 避免没刷出来，先等一会儿
+			yield return new EditorWaitForSeconds(0.3F);
+			Debug.Log("已搜到，选中目标");
+			Operation.Click(960, 580);	// 选中目标
+			yield return new EditorWaitForSeconds(0.2F);
+			if (isNoSlider) {
+				Debug.Log("活动对象气泡里的攻击按钮");
+				Operation.Click(960, 880);	// 攻击按钮
+				yield return new EditorWaitForSeconds(0.3F);
+				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+					// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
+					Operation.Click(960, 920);	// 攻击按钮
+				}
+			} else {
+				Debug.Log("其他气泡里的攻击按钮");
+				Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+			}
+			yield return new EditorWaitForSeconds(0.3F);
+			
+			// 出现体力不足面板
+			if (Recognize.IsEnergyShortcutAdding) {
+				// // 打开背包嗑小体
+				// Operation.Click(1170, 384);	// 关闭按钮
+				// yield return new EditorWaitForSeconds(0.3F);
+				// Operation.Click(1870, 870);	// 背包按钮
+				// yield return new EditorWaitForSeconds(0.1F);
+				// // 判断小体是否在第二格
+				// Color32 targetColor1 = new Color32(129, 242, 25, 255);
+				// Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(847, 305);
+				// Color32 targetColor2 = new Color32(248, 210, 22, 255);
+				// Color32 realColor2 = ScreenshotUtils.GetColorOnScreen(866, 281);
+				// if (Recognize.Approximately(realColor1, targetColor1) && Recognize.Approximately(realColor2, targetColor2)) {
+				// 	Operation.Click(866, 281);	// 选中小体
+				// 	yield return new EditorWaitForSeconds(0.1F);
+				// 	Operation.Click(960, 960);	// 使用按钮
+				// 	yield return new EditorWaitForSeconds(0.1F);
+				// }
+				// Operation.Click(720, 128);	// 左上角返回按钮
+				// yield return new EditorWaitForSeconds(0.1F);
+				// Operation.Click(960, 580);	// 选中目标
+				// yield return new EditorWaitForSeconds(0.2F);
+				// if (isNoSlider) {
+				// 	Operation.Click(960, 895);	// 攻击按钮
+				// } else {
+				// 	Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+				// }
+				// yield return new EditorWaitForSeconds(0.3F);
+				
+				// 快捷嗑药
+				Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
+				Debug.Log(Utils.GetEnumInspectorName(useBottle));
+				int i = 0;
+				int iMax = useBottle switch {
+					Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => 3,
+					Recognize.EnergyShortcutAddingType.BIG_BOTTLE => 1,
+					Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
+					_ => 0
+				};
+				while (Recognize.IsEnergyShortcutAdding && i < iMax) {
+					List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
+					int index = types.IndexOf(useBottle);
+					if (index != -1) {
+						Debug.Log($"选择{index + 1}号位");
+						Operation.Click(828 + index * 130, 590);	// 选中图标
+						yield return new EditorWaitForSeconds(0.1F);
+						if (!test) {
+							Operation.Click(960, 702);	// 使用按钮
+						}
+						USE_BOTTLE_DICT[useBottle]--;
+						yield return new EditorWaitForSeconds(0.1F);
+					} else {
+						Debug.LogError("体力药剂数量不足！");
+					}
+					Operation.Click(1170, 384);	// 关闭按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					Operation.Click(960, 580);	// 选中目标
+					yield return new EditorWaitForSeconds(0.2F);
+					if (isNoSlider) {
+						Debug.Log("活动对象气泡里的攻击按钮");
+						Operation.Click(960, 880);	// 攻击按钮
+						yield return new EditorWaitForSeconds(0.3F);
+						if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+							// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
+							Operation.Click(960, 920);	// 攻击按钮
+						}
+					} else {
+						Debug.Log("其他气泡里的攻击按钮");
+						Operation.Click(REPEAT_5 ? 870 : 1050, 430);	// 攻击按钮/攻击5次按钮
+					}
+					yield return new EditorWaitForSeconds(0.3F);
+					i++;
+				}
+				if (Recognize.IsEnergyShortcutAdding) {
+					Operation.Click(1170, 384);	// 关闭按钮
+					Debug.Log("体力不足，等待稍后尝试");
+					yield return new EditorWaitForSeconds(300);
+				}
+			}
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+				yield return new EditorWaitForSeconds(0.2F);
+				if (!test && Recognize.SoldierCountPercent > 0.99F) {
+					Operation.Click(960, 470);	// 出战按钮
+					Debug.Log("出发");
+				} else {
+					Debug.Log("退出按钮");
+					Operation.Click(30, 140);	// 退出按钮
+					yield return new EditorWaitForSeconds(0.2F);
+					Debug.Log("确认退出按钮");
+					Operation.Click(1064, 634);	// 确认退出按钮
+					yield return new EditorWaitForSeconds(2);
+				}
 			}
 			yield return new EditorWaitForSeconds(COOLDOWN);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static int RandomTarget() {
+		List<int> list = new List<int>();
+		for (int i = 0, length = TARGET_ATTACK_LIST.Count; i < length; ++i) {
+			if (TARGET_ATTACK_LIST[i]) {
+				list.Add(i);
+			}
+		}
+		if (list.Count <= 0) {
+			return -1;
+		}
+		return list[Random.Range(0, list.Count)];
 	}
 	
 	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {

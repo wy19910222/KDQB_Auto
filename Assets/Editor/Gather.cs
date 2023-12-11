@@ -167,7 +167,7 @@ public class Gather {
 		while (true) {
 			yield return null;
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				Debug.Log("不在世界界面");
+				Debug.Log("不在世界场景");
 				continue;
 			}
 			if (Recognize.IsWindowCovered) {
@@ -260,7 +260,7 @@ public class Gather {
 			Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
 			yield return new EditorWaitForSeconds(0.2F);
-			// 搜索面板消失，说明搜索到了
+			// 搜索面板未消失，说明未搜索到
 			if (Recognize.IsSearching) {
 				Debug.Log("未搜到，关闭搜索面板");
 				while (Recognize.IsSearching) {
@@ -272,57 +272,61 @@ public class Gather {
 			}
 
 			// 搜索面板消失，说明搜索到了
-			Debug.Log("已搜到，选中目标");
 			// 避免没刷出来，先等一会儿
 			yield return new EditorWaitForSeconds(0.3F);
+			Debug.Log("已搜到，选中目标");
 			Operation.Click(960, 560);	// 选中目标
 			yield return new EditorWaitForSeconds(0.2F);
 			if (isGatherFearStar) {
-				Debug.Log("气泡里的集结按钮");
+				Debug.Log("惧星气泡里的集结按钮");
 				Operation.Click(870, 830);	// 集结按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			} else {
-				Debug.Log("气泡里的集结按钮");
+				Debug.Log("其他气泡里的集结按钮");
 				Operation.Click(1050, 450);	// 集结按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
-			// 快捷嗑药
-			Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
-			Debug.Log(Utils.GetEnumInspectorName(useBottle));
-			int i = 0;
-			int iMax = useBottle switch {
-				Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => 3,
-				Recognize.EnergyShortcutAddingType.BIG_BOTTLE => 1,
-				Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
-				_ => 0
-			};
-			while (Recognize.IsEnergyShortcutAdding && i < iMax) {
-				List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
-				int index = types.IndexOf(useBottle);
-				if (index != -1) {
-					Debug.Log($"嗑{index + 1}号位");
-					Operation.Click(828 + index * 130, 590);	// 选中图标
-					yield return new EditorWaitForSeconds(0.1F);
-					if (!test) {
-						Operation.Click(960, 702);	// 使用按钮
-					}
-					USE_BOTTLE_DICT[useBottle]--;
-					yield return new EditorWaitForSeconds(0.1F);
-				} else {
-					Debug.LogError("体力药剂数量不足！");
-				}
-				Operation.Click(1170, 384);	// 关闭按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(960, 580);	// 选中目标
-				yield return new EditorWaitForSeconds(0.1F);
-				Operation.Click(870, 430);	// 集结按钮
-				yield return new EditorWaitForSeconds(0.3F);
-				i++;
-			}
+			
+			// 出现体力不足面板
 			if (Recognize.IsEnergyShortcutAdding) {
-				Operation.Click(1170, 384);	// 关闭按钮
-				Debug.Log("体力不足，等待稍后尝试");
-				yield return new EditorWaitForSeconds(300);
+				// 快捷嗑药
+				Recognize.EnergyShortcutAddingType useBottle = RandomUseBottle();	// 随机使用大小体
+				Debug.Log(Utils.GetEnumInspectorName(useBottle));
+				int i = 0;
+				int iMax = useBottle switch {
+					Recognize.EnergyShortcutAddingType.SMALL_BOTTLE => 3,
+					Recognize.EnergyShortcutAddingType.BIG_BOTTLE => 1,
+					Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
+					_ => 0
+				};
+				while (Recognize.IsEnergyShortcutAdding && i < iMax) {
+					List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
+					int index = types.IndexOf(useBottle);
+					if (index != -1) {
+						Debug.Log($"选择{index + 1}号位");
+						Operation.Click(828 + index * 130, 590);	// 选中图标
+						yield return new EditorWaitForSeconds(0.1F);
+						if (!test) {
+							Operation.Click(960, 702);	// 使用按钮
+						}
+						USE_BOTTLE_DICT[useBottle]--;
+						yield return new EditorWaitForSeconds(0.1F);
+					} else {
+						Debug.LogError("体力药剂数量不足！");
+					}
+					Operation.Click(1170, 384);	// 关闭按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					Operation.Click(960, 580);	// 选中目标
+					yield return new EditorWaitForSeconds(0.1F);
+					Operation.Click(870, 430);	// 集结按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					i++;
+				}
+				if (Recognize.IsEnergyShortcutAdding) {
+					Operation.Click(1170, 384);	// 关闭按钮
+					Debug.Log("体力不足，等待稍后尝试");
+					yield return new EditorWaitForSeconds(300);
+				}
 			}
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
