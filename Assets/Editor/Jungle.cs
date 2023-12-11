@@ -207,29 +207,29 @@ public class Jungle {
 			} else {
 				// 体力值
 				if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + (REPEAT_5 ? 15 : 10)) {
-					Debug.Log($"当前体力：{Recognize.energy}");
+					// Debug.Log($"当前体力：{Recognize.energy}");
 					continue;
 				}
 				// 队列数量
 				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
-					Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
+					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
 				// 存在打野英雄头像
 				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
-					Debug.Log($"存在打野英雄头像");
+					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
 				// 可能处于世界场景远近景切换的动画过程中，所以等待0.2秒再判断一次
 				yield return new EditorWaitForSeconds(0.2F);
 				// 队列数量
 				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
-					Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
+					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
 				// 存在打野英雄头像
 				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
-					Debug.Log($"存在打野英雄头像");
+					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
 			}
