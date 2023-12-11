@@ -55,28 +55,22 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 	private void OnGUI() {
 		if (!m_HideOptions) {
 			Rect rect = EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.BeginVertical();
-					ExtensionalScreen.INTERVAL = EditorGUILayout.Slider("截图间隔（秒）", ExtensionalScreen.INTERVAL, 0, 0.5F);
-					ExtensionalScreen.STRIDE = EditorGUILayout.IntSlider("流畅度", ExtensionalScreen.STRIDE, 1, 4);
-				EditorGUILayout.EndVertical();
-				GUILayout.Space(50);
 				float labelWidth = EditorGUIUtility.labelWidth;
-				EditorGUILayout.BeginVertical();
-					EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.LabelField(new GUIContent("截图范围"), GUILayout.Width(labelWidth));
-						EditorGUIUtility.labelWidth = 14;
-						ExtensionalScreen.RANGE_X = EditorGUILayout.IntField("X", ExtensionalScreen.RANGE_X);
-						ExtensionalScreen.RANGE_Y = EditorGUILayout.IntField("Y", ExtensionalScreen.RANGE_Y);
-						EditorGUIUtility.labelWidth = labelWidth;
-					EditorGUILayout.EndHorizontal();
-					EditorGUILayout.BeginHorizontal();
-					EditorGUILayout.LabelField("", GUILayout.Width(labelWidth));
-						EditorGUIUtility.labelWidth = 14;
-						ExtensionalScreen.RANGE_W = EditorGUILayout.IntField("W", ExtensionalScreen.RANGE_W);
-						ExtensionalScreen.RANGE_H = EditorGUILayout.IntField("H", ExtensionalScreen.RANGE_H);
-						EditorGUIUtility.labelWidth = labelWidth;
-					EditorGUILayout.EndHorizontal();
-				EditorGUILayout.EndVertical();
+				EditorGUIUtility.labelWidth = 40;
+				ExtensionalScreen.STRIDE = EditorGUILayout.IntSlider("DPR", ExtensionalScreen.STRIDE, 1, 4);
+				EditorGUIUtility.labelWidth = labelWidth;
+				
+				Rect rect2 = GUILayoutUtility.GetRect(10F, rect.height, GUILayout.Width(10F));
+				Rect wireRect2 = new Rect(rect2.x + 4.5F, rect2.y, 1, rect.height + 6);
+				EditorGUI.DrawRect(wireRect2, Color.gray);
+				
+				EditorGUILayout.LabelField(new GUIContent("截图范围"), GUILayout.Width(60));
+				EditorGUIUtility.labelWidth = 14;
+				ExtensionalScreen.RANGE_X = EditorGUILayout.IntField("X", ExtensionalScreen.RANGE_X);
+				ExtensionalScreen.RANGE_Y = EditorGUILayout.IntField("Y", ExtensionalScreen.RANGE_Y);
+				ExtensionalScreen.RANGE_W = EditorGUILayout.IntField("W", ExtensionalScreen.RANGE_W);
+				ExtensionalScreen.RANGE_H = EditorGUILayout.IntField("H", ExtensionalScreen.RANGE_H);
+				EditorGUIUtility.labelWidth = labelWidth;
 			EditorGUILayout.EndHorizontal();
 			GUILayout.Space(5F);
 			EditorGUILayout.BeginHorizontal();
@@ -102,8 +96,8 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 			}
 			EditorGUILayout.EndHorizontal();
 		}
-		if (ExtensionalScreen.Tex) {
-			// m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
+		// m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
+		if (ExtensionalScreen.Tex && ExtensionalScreen.IsRunning) {
 			Rect rect = EditorGUILayout.BeginVertical();
 			rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
 			GUI.DrawTexture(rect, ExtensionalScreen.Tex);
@@ -115,8 +109,13 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 			GUI.DrawTexture(new Rect(x, y, m_CursorTex.width, m_CursorTex.height), m_CursorTex);
 			GUI.contentColor = prevColor;
 			EditorGUILayout.EndVertical();
-			// EditorGUILayout.EndScrollView();
+		} else {
+			Rect rect = EditorGUILayout.BeginVertical();
+			rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
+			EditorGUI.DrawRect(rect, Color.gray);
+			EditorGUILayout.EndVertical();
 		}
+		// EditorGUILayout.EndScrollView();
 	}
 
 	private void OnBecameVisible() {
@@ -129,7 +128,6 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 }
 
 public class ExtensionalScreen {
-	public static float INTERVAL = 0.1F;	// 截图间隔
 	public static int RANGE_X = 0;	// 截图范围
 	public static int RANGE_Y = 0;	// 截图范围
 	public static int RANGE_W = 1920;	// 截图范围
@@ -174,7 +172,7 @@ public class ExtensionalScreen {
 			}
 			Tex.SetPixels32(pixels);
 			Tex.Apply();
-			yield return new EditorWaitForSeconds(INTERVAL);
+			yield return null;
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
