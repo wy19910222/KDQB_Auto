@@ -68,7 +68,7 @@ public class BlockBreak {
 					dt = DateTime.Now;
 				}
 				if ((DateTime.Now - dt).TotalSeconds > SECONDS) {
-					for (int i = 0; i < 10 && Recognize.IsWindowCovered; ++i) {
+					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 						Debug.Log("点外部关闭弹窗");
 						Operation.Click(30, 140);	// 点外部关闭弹窗
 						yield return new EditorWaitForSeconds(0.2F);
