@@ -231,7 +231,7 @@ public class Gather {
 				while (ie.MoveNext()) {
 					yield return ie.Current;
 				}
-				yield return new EditorWaitForSeconds(0.8F);
+				yield return new EditorWaitForSeconds(1F);
 			}
 			Debug.Log("拖动以显示攻击目标");
 			int orderOffsetX = (target - 2) * TARGET_WIDTH;
@@ -342,6 +342,12 @@ public class Gather {
 					Debug.Log("确认退出按钮");
 					Operation.Click(1064, 634);	// 确认退出按钮
 					yield return new EditorWaitForSeconds(2);
+				}
+			} else {
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
+					Debug.Log("关闭窗口");
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}
 			
