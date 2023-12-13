@@ -101,7 +101,8 @@ public class DeepSea {
 
 			for (int tryCount = 0; tryCount < TRY_COUNT; ++tryCount) {
 				// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
-				if (Recognize.CurrentScene == Recognize.Scene.OUTSIDE && Recognize.IsOutsideFaraway) {
+				Recognize.Scene currentScene = Recognize.CurrentScene;
+				if (currentScene == Recognize.Scene.OUTSIDE && Recognize.IsOutsideFaraway) {
 					while (Recognize.IsOutsideFaraway) {
 						Vector2Int oldPos = MouseUtils.GetMousePos();
 						MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
@@ -111,7 +112,8 @@ public class DeepSea {
 					}
 				}
 				Debug.Log("活动按钮");
-				Operation.Click(1880, 290);	// 活动按钮
+				// Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 290 : 280);	// 活动按钮
+				Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 350 : 280);	// 活动按钮（被新世界图标挤到下一格了）
 				yield return new EditorWaitForSeconds(0.5F);
 				Debug.Log("拖动以显示活动标签页");
 				const int TAB_WIDTH = 137;
