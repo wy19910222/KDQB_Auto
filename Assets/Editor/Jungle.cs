@@ -193,11 +193,11 @@ public class Jungle {
 		while (true) {
 			yield return null;
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
-				Debug.Log("不在世界场景");
+				// Debug.Log("不在世界场景");
 				continue;
 			}
 			if (Recognize.IsWindowCovered) {
-				Debug.Log("有窗口打开着，正在做其他操作");
+				// Debug.Log("有窗口打开着，正在做其他操作");
 				continue;
 			}
 			
@@ -234,30 +234,6 @@ public class Jungle {
 				}
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-			while (true) {
-				if (Test) {
-					Debug.Log("测试模式，忽略体力与队列数量");
-					break;
-				}
-				bool useBottle = false;
-				foreach (var count in USE_BOTTLE_DICT.Values) {
-					if (count > 0) {
-						useBottle = true;
-						break;
-					}
-				}
-				bool energyEnough = useBottle | Recognize.energy >= RESERVED_ENERGY + (REPEAT_5 ? 15 : 10);
-				if (energyEnough) {
-					if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(HERO_AVATAR) < 0) {
-						yield return new EditorWaitForSeconds(0.2F);
-						if (Recognize.BusyGroupCount < GROUP_COUNT && Recognize.GetHeroGroupNumber(HERO_AVATAR) < 0) {
-							Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-							break;
-						}
-					}
-				}
-				yield return null;
-			}
 			// 确定攻击目标
 			int target = RandomTarget();
 			if (target == -1) {
