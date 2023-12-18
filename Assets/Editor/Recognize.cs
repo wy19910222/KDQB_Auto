@@ -181,31 +181,6 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly Color32[,] LEAGUE_MECHA_DONATE_ENABLED = Operation.GetFromFile("PersistentData/Textures/LeagueMechaDonateEnabled.png");
-	public static bool IsLeagueMechaDonateEnabled {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(1067, 929, 16, 16);
-			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_ENABLED) > 0.99F;
-		}
-	}
-
-	private static readonly Color32[,] LEAGUE_MECHA_DONATE_IN_RANK = Operation.GetFromFile("PersistentData/Textures/LeagueMechaDonateInRank.png");
-	public static bool IsAllianceMechaDonateInRank {
-		get {
-			// 通过判断排行列表中最后一行的底色确定自己是否在排行中
-			Color32[,] realColors = Operation.GetColorsOnScreen(780, 850, 10, 10);
-			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_IN_RANK) > 0.99F;
-		}
-	}
-
-	private static readonly Color32[,] LEAGUE_MECHA_DONATE_CONFIRM = Operation.GetFromFile("PersistentData/Textures/LeagueMechaDonateConfirm.png");
-	public static bool IsAllianceMechaDonateConfirming {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(860, 340, 200, 30);
-			return ApproximatelyRect(realColors, LEAGUE_MECHA_DONATE_CONFIRM) > 0.99F;
-		}
-	}
-
 	private static readonly Color32[,] GATHER_FEAR_STAR = Operation.GetFromFile("PersistentData/Textures/GatherFearStar.png");
 	public static bool IsGatherFearStar {
 		get {
