@@ -143,7 +143,7 @@ public class AttackFlowingLightRoad {
 			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("打架气泡");
 			Operation.Click(820, 540);	// 打架气泡
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
 			Debug.Log("攻击按钮");
 			Operation.Click(960, 700);	// 攻击按钮
 			yield return new EditorWaitForSeconds(0.3F);
@@ -175,16 +175,20 @@ public class AttackFlowingLightRoad {
 					} else {
 						Debug.LogError("体力药剂数量不足！");
 					}
+					Debug.Log("关闭按钮");
 					Operation.Click(1170, 384);	// 关闭按钮
 					yield return new EditorWaitForSeconds(0.3F);
-					Operation.Click(960, 580);	// 选中目标
-					yield return new EditorWaitForSeconds(0.1F);
-					Operation.Click(870, 430);	// 攻击5次按钮
+					Debug.Log("攻击按钮");
+					Operation.Click(960, 700);	// 攻击按钮
 					yield return new EditorWaitForSeconds(0.3F);
 					i++;
 				}
 				if (Recognize.IsEnergyShortcutAdding) {
+					Debug.Log("关闭按钮");
 					Operation.Click(1170, 384);	// 关闭按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					Debug.Log("点击空白处");
+					Operation.Click(660, 970);	// 点击空白处
 					Debug.Log("体力不足，等待稍后尝试");
 					yield return new EditorWaitForSeconds(ENERGY_WAIT_SECONDS);
 				}
