@@ -46,6 +46,15 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] ALLIANCE_MECHA_DONATE_RANK_LIST = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateRankList.png");
+	public static bool IsAllianceMechaDonateRankShowing {
+		get {
+			// 通过判断排行列表中最后一行的底色确定自己是否在排行中
+			Color32[,] realColors = Operation.GetColorsOnScreen(915, 185, 90, 24);
+			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_RANK_LIST) > 0.99F;
+		}
+	}
+
 	private static readonly Color32[,] ALLIANCE_MECHA_DONATE_IN_RANK = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateInRank.png");
 	public static bool IsAllianceMechaDonateInRank {
 		get {

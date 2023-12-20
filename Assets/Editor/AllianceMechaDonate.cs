@@ -107,19 +107,22 @@ public class AllianceMechaDonate {
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(1170, 200);	// 排行奖励按钮
 				yield return new EditorWaitForSeconds(0.5F);
-				bool isInRank = Recognize.IsAllianceMechaDonateInRank;
-				Operation.Click(720, 128);	// 点击窗口外关闭窗口
-				yield return new EditorWaitForSeconds(0.1F);
-				if (!isInRank) {
-					Operation.Click(960, 960);	// 捐献按钮
-					yield return new EditorWaitForSeconds(0.3F);
-					if (Recognize.IsAllianceMechaDonateConfirming) {
-						Operation.Click(960, 686);	// 兑换按钮
-						yield return new EditorWaitForSeconds(0.2F);
-						Operation.Click(1167, 353);	// 关闭按钮
-						yield return new EditorWaitForSeconds(0.2F);
+				if (Recognize.IsAllianceMechaDonateRankShowing) {
+					// 有弹出奖励排行窗口，说明已开启捐献
+					bool isInRank = Recognize.IsAllianceMechaDonateInRank;
+					Operation.Click(720, 128);	// 点击窗口外关闭窗口
+					yield return new EditorWaitForSeconds(0.1F);
+					if (!isInRank) {
+						Operation.Click(960, 960);	// 捐献按钮
+						yield return new EditorWaitForSeconds(0.3F);
+						if (Recognize.IsAllianceMechaDonateConfirming) {
+							Operation.Click(960, 686);	// 兑换按钮
+							yield return new EditorWaitForSeconds(0.2F);
+							Operation.Click(1167, 353);	// 关闭按钮
+							yield return new EditorWaitForSeconds(0.2F);
+						}
+						succeed = true;
 					}
-					succeed = true;
 				}
 			}
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
