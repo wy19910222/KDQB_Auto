@@ -16,6 +16,12 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 	}
 	
 	private void OnGUI() {
+		EditorGUILayout.BeginHorizontal();
+		FreeDiamond.LEFT_COUNT = EditorGUILayout.IntSlider("剩余次数", FreeDiamond.LEFT_COUNT, 1, 20);
+		if (GUILayout.Button("重置", GUILayout.Width(EditorGUIUtility.fieldWidth))) {
+			FreeDiamond.LEFT_COUNT = 20;
+		}
+		EditorGUILayout.EndHorizontal();
 		FreeDiamond.INTERVAL = EditorGUILayout.Slider("点击间隔", FreeDiamond.INTERVAL, 15.5F, 16.5F);
 		GUILayout.Space(5F);
 		if (FreeDiamond.IsRunning) {
@@ -31,6 +37,7 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 }
 
 public class FreeDiamond {
+	public static int LEFT_COUNT = 20;	// 剩余次数
 	public static float INTERVAL = 16;	// 监测间隔
 	
 	private static EditorCoroutine s_CO;
@@ -55,12 +62,16 @@ public class FreeDiamond {
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
+			if (LEFT_COUNT <= 0) {
+				continue;
+			}
+			
 			// 有窗口打开着
 			if (Recognize.IsWindowCovered) {
 				continue;
 			}
 
-			// 只有是世界界面近景，才执行
+			// 只有是世界界面近景或主城界面，才执行
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.FIGHTING:
 				case Recognize.Scene.OUTSIDE when Recognize.IsOutsideFaraway:
@@ -73,6 +84,7 @@ public class FreeDiamond {
 			Operation.Click(925, 195);	// 周卡标签
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(1125, 310);	// 领取按钮
+			LEFT_COUNT--;
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
