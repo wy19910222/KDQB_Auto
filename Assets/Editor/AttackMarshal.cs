@@ -117,15 +117,22 @@ public class AttackMarshal {
 		// bool prevIsMarshalTime = false;
 		while (true) {
 			yield return null;
-			
-			int hour = DateTime.Now.Hour;
-			bool isMarshalTime = hour is 4 or 12 or 20;
-			if (!isMarshalTime) {
+
+			int attackTimes = AttackTimes;
+			if (attackTimes >= ATTACK_TIMES) {
 				continue;
 			}
-			// Debug.Log($"当前时间：{hour}点");
+			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
+			
+			int hour = DateTime.Now.Hour;
+			if (hour is not (4 or 12 or 20)) {
+				continue;
+			}
+			Debug.Log($"当前时间：{hour}点");
 
-			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
+			if (Recognize.BusyGroupCount >= GROUP_COUNT ||
+					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
+					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
@@ -134,12 +141,6 @@ public class AttackMarshal {
 				continue;
 			}
 			Debug.Log($"无窗口覆盖");
-
-			int attackTimes = AttackTimes;
-			if (attackTimes >= ATTACK_TIMES) {
-				continue;
-			}
-			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
 			
 			if (!Recognize.IsMarshalExist) {
 				Debug.Log($"未检测到元帅按钮，尝试切换场景");
@@ -154,11 +155,12 @@ public class AttackMarshal {
 					yield return new EditorWaitForSeconds(MARSHAL_WAIT_SECONDS);	// 5分钟后再重新尝试
 					continue;
 				}
-			}
-			
-			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-			if (Recognize.BusyGroupCount >= GROUP_COUNT || Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0) {
-				continue;
+				Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
+				if (Recognize.BusyGroupCount >= GROUP_COUNT ||
+						Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
+						Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
+					continue;
+				}
 			}
 			
 			Debug.Log("元帅按钮");
