@@ -33,6 +33,7 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 		}
 		EditorGUILayout.EndHorizontal();
 		AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", AllianceMechaDonate.INTERVAL, 120, 1800);
+		AllianceMechaDonate.COOL_DOWN = EditorGUILayout.IntSlider("捐献成功后冷却（小时）", AllianceMechaDonate.COOL_DOWN, 6, 12);
 		GUILayout.Space(5F);
 		if (AllianceMechaDonate.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -56,6 +57,7 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 
 public class AllianceMechaDonate {
 	public static int INTERVAL = 300;	// 点击间隔
+	public static int COOL_DOWN = 6;	// 捐献冷却
 	public static DateTime NEXT_TIME = DateTime.Now;
 	
 	private static EditorCoroutine s_CO;
@@ -93,7 +95,8 @@ public class AllianceMechaDonate {
 				Debug.Log("有窗口覆盖，不执行操作");
 				continue;
 			}
-			
+
+			bool succeed = false;
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(830, 620);	// 联盟活动按钮
@@ -116,6 +119,7 @@ public class AllianceMechaDonate {
 						Operation.Click(1167, 353);	// 关闭按钮
 						yield return new EditorWaitForSeconds(0.2F);
 					}
+					succeed = true;
 				}
 			}
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
@@ -123,8 +127,12 @@ public class AllianceMechaDonate {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.1F);
 			}
-			
-			NEXT_TIME = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
+
+			if (succeed) {
+				NEXT_TIME = DateTime.Now + new TimeSpan(COOL_DOWN, 0, 0);
+			} else {
+				NEXT_TIME = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
+			}
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
