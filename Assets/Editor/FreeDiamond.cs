@@ -17,7 +17,7 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 	
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
-		FreeDiamond.LEFT_COUNT = EditorGUILayout.IntSlider("剩余次数", FreeDiamond.LEFT_COUNT, 1, 20);
+		FreeDiamond.LEFT_COUNT = EditorGUILayout.IntSlider("剩余次数", FreeDiamond.LEFT_COUNT, 0, 20);
 		if (GUILayout.Button("重置", GUILayout.Width(EditorGUIUtility.fieldWidth))) {
 			FreeDiamond.LEFT_COUNT = 20;
 		}
