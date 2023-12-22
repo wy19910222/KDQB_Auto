@@ -249,7 +249,7 @@ public class Gather {
 			yield return new EditorWaitForSeconds(0.1F);
 			bool isGatherFearStar = Recognize.IsGatherFearStar;
 			if (isGatherFearStar) {
-				Debug.LogError("惧星等级滑块: " + 844 + 44 * FEAR_STAR_LEVEL);
+				Debug.Log("惧星等级滑块");
 				Operation.Click(844 + 44 * FEAR_STAR_LEVEL, 880);	// 惧星等级滑块
 			} else {
 				Debug.Log("其他等级滑块");
