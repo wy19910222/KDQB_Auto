@@ -40,11 +40,13 @@ public static partial class Recognize {
 						}
 					}
 					// 10以下误差会比较大，最少只能判断到x=11
-					float threshold = 420 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
-					for (int x = colors.GetLength(0) - 1; x >= 11; --x) {
-						Color32 c = colors[x, 0];
-						if (c.r + c.g + c.b > threshold) {
-							return Mathf.RoundToInt((float) (x - 3) / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+					if (WindowCoveredCount >= 0) {
+						float threshold = 420 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
+						for (int x = colors.GetLength(0) - 1; x >= 11; --x) {
+							Color32 c = colors[x, 0];
+							if (c.r + c.g + c.b > threshold) {
+								return Mathf.RoundToInt((float) (x - 3) / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+							}
 						}
 					}
 				}
