@@ -117,18 +117,17 @@ public class AttackMarshal {
 		// bool prevIsMarshalTime = false;
 		while (true) {
 			yield return null;
+			
+			int hour = DateTime.Now.Hour;
+			if (hour is not (4 or 12 or 20)) {
+				continue;
+			}
 
 			int attackTimes = AttackTimes;
 			if (attackTimes >= ATTACK_TIMES) {
 				continue;
 			}
 			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
-			
-			int hour = DateTime.Now.Hour;
-			if (hour is not (4 or 12 or 20)) {
-				continue;
-			}
-			Debug.Log($"当前时间：{hour}点");
 
 			if (Recognize.BusyGroupCount >= GROUP_COUNT ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
@@ -150,6 +149,7 @@ public class AttackMarshal {
 					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
 					yield return new EditorWaitForSeconds(1F);
 				}
+				yield return new EditorWaitForSeconds(1F);
 				if (!Recognize.IsMarshalExist) {
 					Debug.Log($"切换场景后还是没有元帅");
 					yield return new EditorWaitForSeconds(MARSHAL_WAIT_SECONDS);	// 5分钟后再重新尝试
