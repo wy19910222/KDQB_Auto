@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class BlockBreakConfig : PrefsEditorWindow<BlockBreak> {
-	[MenuItem("Window/Default/BlockBreak", false, -99)]
+	[MenuItem("Tools_Window/Default/BlockBreak", false, -99)]
 	private static void Open() {
 		GetWindow<BlockBreakConfig>("异常阻塞处理").Show();
 	}
@@ -38,14 +38,14 @@ public class BlockBreak {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartBlockBreak", priority = -1)]
+	[MenuItem("Tools_Task/StartBlockBreak", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"异常阻塞处理已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopBlockBreak", priority = -1)]
+	[MenuItem("Tools_Task/StopBlockBreak", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

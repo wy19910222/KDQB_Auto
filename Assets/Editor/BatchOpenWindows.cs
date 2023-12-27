@@ -1,17 +1,17 @@
 ﻿using UnityEditor;
 
 public static class BatchOpenWindows {
-	[MenuItem("Window/Default/OpenAll")]
+	[MenuItem("Tools_Window/Default/OpenAll")]
 	private static void OpenDefaultWindows() {
-		EditorApplication.ExecuteMenuItem("Window/Default/Follow");
-		EditorApplication.ExecuteMenuItem("Window/Default/Jungle");
-		EditorApplication.ExecuteMenuItem("Window/Default/Gather");
-		EditorApplication.ExecuteMenuItem("Window/Default/AttackMarshal");
-		EditorApplication.ExecuteMenuItem("Window/Default/FreeDiamond");
-		EditorApplication.ExecuteMenuItem("Window/Default/AllianceMechaDonate");
-		EditorApplication.ExecuteMenuItem("Window/Default/ConnectingMonitoring");
-		EditorApplication.ExecuteMenuItem("Window/Default/BlockBreak");
-		EditorApplication.ExecuteMenuItem("Window/Default/AutoFix");
-		EditorApplication.ExecuteMenuItem("Window/Default/ExtensionalScreen");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/Follow");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/Jungle");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/Gather");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AttackMarshal");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/FreeDiamond");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AllianceMechaDonate");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/ConnectingMonitoring");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/BlockBreak");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AutoFix");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/ExtensionalScreen");
 	}
 }

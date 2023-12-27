@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
-	[MenuItem("Window/Default/FreeDiamond", false, 20)]
+	[MenuItem("Tools_Window/Default/FreeDiamond", false, 20)]
 	private static void Open() {
 		GetWindow<FreeDiamondConfig>("周卡免费钻石").Show();
 	}
@@ -43,14 +43,14 @@ public class FreeDiamond {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartFreeDiamond", priority = -1)]
+	[MenuItem("Tools_Task/StartFreeDiamond", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"周卡免费钻石自动点击已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopFreeDiamond", priority = -1)]
+	[MenuItem("Tools_Task/StopFreeDiamond", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

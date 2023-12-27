@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class AutoFixConfig : PrefsEditorWindow<AutoFix> {
-	[MenuItem("Window/Default/AutoFix", false, 22)]
+	[MenuItem("Tools_Window/Default/AutoFix", false, 22)]
 	private static void Open() {
 		GetWindow<AutoFixConfig>("自动修理").Show();
 	}
@@ -36,14 +36,14 @@ public class AutoFix {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartAutoFix", priority = -1)]
+	[MenuItem("Tools_Task/StartAutoFix", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"自动修理已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopAutoFix", priority = -1)]
+	[MenuItem("Tools_Task/StopAutoFix", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

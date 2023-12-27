@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
-	[MenuItem("Window/Activity/DeepSea")]
+	[MenuItem("Tools_Window/Activity/DeepSea")]
 	private static void Open() {
 		GetWindow<DeepSeaConfig>("深海寻宝").Show();
 	}
@@ -72,14 +72,14 @@ public class DeepSea {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartDeepSea", priority = -1)]
+	[MenuItem("Tools_Task/StartDeepSea", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"深海寻宝自动点击已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopDeepSea", priority = -1)]
+	[MenuItem("Tools_Task/StopDeepSea", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

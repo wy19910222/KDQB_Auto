@@ -12,7 +12,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class CutPriceConfig : PrefsEditorWindow<CutPrice> {
-	[MenuItem("Window/Activity/CutPrice")]
+	[MenuItem("Tools_Window/Activity/CutPrice")]
 	private static void Open() {
 		GetWindow<CutPriceConfig>("砍一刀").Show();
 	}
@@ -38,14 +38,14 @@ public class CutPrice {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartCutPrice", priority = -1)]
+	[MenuItem("Tools_Task/StartCutPrice", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"自动砍一刀已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopCutPrice", priority = -1)]
+	[MenuItem("Tools_Task/StopCutPrice", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

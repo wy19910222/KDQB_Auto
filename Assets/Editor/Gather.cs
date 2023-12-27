@@ -16,7 +16,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class GatherConfig : PrefsEditorWindow<Gather> {
-	[MenuItem("Window/Default/Gather", false, 2)]
+	[MenuItem("Tools_Window/Default/Gather", false, 2)]
 	private static void Open() {
 		GetWindow<GatherConfig>("集结").Show();
 	}
@@ -128,7 +128,7 @@ public class Gather {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartGather", priority = -1)]
+	[MenuItem("Tools_Task/StartGather", priority = -1)]
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string>();
@@ -154,7 +154,7 @@ public class Gather {
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopGather", priority = -1)]
+	[MenuItem("Tools_Task/StopGather", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

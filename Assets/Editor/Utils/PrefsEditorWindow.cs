@@ -42,8 +42,8 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		}
 	}
 
-	protected string StartMenuName => $"Assets/Start{typeof(T).Name}";
-	protected string StopMenuName => $"Assets/Stop{typeof(T).Name}";
+	protected string StartMenuName => $"Tools_Task/Start{typeof(T).Name}";
+	protected string StopMenuName => $"Tools_Task/Stop{typeof(T).Name}";
 	protected bool m_IsRunning;
 	protected bool IsRunning {
 		get => m_IsRunning;

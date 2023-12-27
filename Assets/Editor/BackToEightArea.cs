@@ -13,7 +13,7 @@ using UnityEditor;
 using Debug = UnityEngine.Debug;
 
 public class BackToEightAreaConfig : PrefsEditorWindow<BackToEightArea> {
-	[MenuItem("Window/War/BackToEightArea")]
+	[MenuItem("Tools_Window/War/BackToEightArea")]
 	private static void Open() {
 		GetWindow<BackToEightAreaConfig>("返回八国").Show();
 	}
@@ -69,13 +69,13 @@ public class BackToEightArea {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartBackToEightArea", priority = -1)]
+	[MenuItem("Tools_Task/StartBackToEightArea", priority = -1)]
 	private static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopBackToEightArea", priority = -1)]
+	[MenuItem("Tools_Task/StopBackToEightArea", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

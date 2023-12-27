@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class AttackDiscipleConfig : EditorWindow {
-	[MenuItem("Window/Activity/AttackDisciple")]
+	[MenuItem("Tools_Window/Activity/AttackDisciple")]
 	private static void Open() {
 		GetWindow<AttackDiscipleConfig>("作战实验室").Show();
 	}
@@ -26,11 +26,11 @@ public class AttackDiscipleConfig : EditorWindow {
 		GUILayout.Space(5F);
 		if (AttackDisciple2.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopAttackDisciple_2.0");
+				EditorApplication.ExecuteMenuItem("Tools_Task/StopAttackDisciple_2.0");
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartAttackDisciple_2.0");
+				EditorApplication.ExecuteMenuItem("Tools_Task/StartAttackDisciple_2.0");
 			}
 		}
 	}
@@ -45,7 +45,7 @@ public static class AttackDisciple2 {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartAttackDisciple_2.0", priority = -1)]
+	[MenuItem("Tools_Task/StartAttackDisciple_2.0", priority = -1)]
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string> {
@@ -56,7 +56,7 @@ public static class AttackDisciple2 {
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopAttackDisciple_2.0", priority = -1)]
+	[MenuItem("Tools_Task/StopAttackDisciple_2.0", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

@@ -16,7 +16,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class JungleConfig : PrefsEditorWindow<Jungle> {
-	[MenuItem("Window/Default/Jungle", false, 1)]
+	[MenuItem("Tools_Window/Default/Jungle", false, 1)]
 	private static void Open() {
 		GetWindow<JungleConfig>("打野").Show();
 	}
@@ -149,7 +149,7 @@ public class Jungle {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartJungle", priority = -1)]
+	[MenuItem("Tools_Task/StartJungle", priority = -1)]
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string>();
@@ -179,7 +179,7 @@ public class Jungle {
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopJungle", priority = -1)]
+	[MenuItem("Tools_Task/StopJungle", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

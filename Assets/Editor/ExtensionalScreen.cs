@@ -11,7 +11,7 @@ using UnityEditor;
 using Debug = UnityEngine.Debug;
 
 public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
-	[MenuItem("Window/Default/ExtensionalScreen", false, -101)]
+	[MenuItem("Tools_Window/Default/ExtensionalScreen", false, -101)]
 	private static void Open() {
 		GetWindow<ExtensionalScreenConfig>("扩展屏幕").Show();
 	}
@@ -139,14 +139,14 @@ public class ExtensionalScreen {
 
 	public static Texture2D Tex { get; } = new Texture2D(960, 540);
 
-	[MenuItem("Assets/StartExtensionalScreen", priority = -1)]
+	[MenuItem("Tools_Task/StartExtensionalScreen", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"查看第三屏已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopExtensionalScreen", priority = -1)]
+	[MenuItem("Tools_Task/StopExtensionalScreen", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

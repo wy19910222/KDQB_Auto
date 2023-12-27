@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class ConnectingMonitoringConfig : PrefsEditorWindow<ConnectingMonitoring> {
-	[MenuItem("Window/Default/ConnectingMonitoring", false, -100)]
+	[MenuItem("Tools_Window/Default/ConnectingMonitoring", false, -100)]
 	private static void Open() {
 		GetWindow<ConnectingMonitoringConfig>("网络状态监测").Show();
 	}
@@ -36,14 +36,14 @@ public class ConnectingMonitoring {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartConnectingMonitoring", priority = -1)]
+	[MenuItem("Tools_Task/StartConnectingMonitoring", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"网络状态监测已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopConnectingMonitoring", priority = -1)]
+	[MenuItem("Tools_Task/StopConnectingMonitoring", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

@@ -15,7 +15,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class AttackChaoticMarshalConfig : PrefsEditorWindow<AttackChaoticMarshal> {
-	[MenuItem("Window/War/AttackChaoticMarshal")]
+	[MenuItem("Tools_Window/War/AttackChaoticMarshal")]
 	private static void Open() {
 		GetWindow<AttackChaoticMarshalConfig>("攻击混乱之源").Show();
 	}
@@ -82,7 +82,7 @@ public class AttackChaoticMarshal {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartAttackChaoticMarshal", priority = -1)]
+	[MenuItem("Tools_Task/StartAttackChaoticMarshal", priority = -1)]
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string> {
@@ -95,7 +95,7 @@ public class AttackChaoticMarshal {
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopAttackChaoticMarshal", priority = -1)]
+	[MenuItem("Tools_Task/StopAttackChaoticMarshal", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

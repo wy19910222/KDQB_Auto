@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class CaptureRuinsConfig : EditorWindow {
-	[MenuItem("Window/Default/CaptureRuins", false, 23)]
+	[MenuItem("Tools_Window/Default/CaptureRuins", false, 23)]
 	private static void Open() {
 		GetWindow<CaptureRuinsConfig>("王者遗迹截图").Show();
 	}
@@ -19,11 +19,11 @@ public class CaptureRuinsConfig : EditorWindow {
 	private void OnGUI() {
 		if (CaptureRuins.IsRunning) {
 			if (GUILayout.Button("取消截图")) {
-				EditorApplication.ExecuteMenuItem("Assets/StopCaptureRuins");
+				EditorApplication.ExecuteMenuItem("Tools_Task/StopCaptureRuins");
 			}
 		} else {
 			if (GUILayout.Button("开始截图")) {
-				EditorApplication.ExecuteMenuItem("Assets/StartCaptureRuins");
+				EditorApplication.ExecuteMenuItem("Tools_Task/StartCaptureRuins");
 			}
 		}
 	}
@@ -33,14 +33,14 @@ public static class CaptureRuins {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 	
-	[MenuItem("Assets/StartCaptureRuins", priority = -1)]
+	[MenuItem("Tools_Task/StartCaptureRuins", priority = -1)]
 	private static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(IECapture());
 		Debug.Log("开始进行王者遗迹截图");
 	}
 
-	[MenuItem("Assets/StopCaptureRuins", priority = -1)]
+	[MenuItem("Tools_Task/StopCaptureRuins", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

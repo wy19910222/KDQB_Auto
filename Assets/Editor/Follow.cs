@@ -17,7 +17,7 @@ using Random = UnityEngine.Random;
 public class FollowConfig : PrefsEditorWindow<Follow> {
 	private string m_TempJXOwnerName;
 	
-	[MenuItem("Window/Default/Follow", false, 0)]
+	[MenuItem("Tools_Window/Default/Follow", false, 0)]
 	private static void Open() {
 		GetWindow<FollowConfig>("跟车").Show();
 	}
@@ -164,7 +164,7 @@ public class Follow {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartFollow", priority = -1)]
+	[MenuItem("Tools_Task/StartFollow", priority = -1)]
 	private static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
@@ -177,7 +177,7 @@ public class Follow {
 		Debug.Log($"自动跟车已开启：{string.Join("、", switches)}");
 	}
 
-	[MenuItem("Assets/StopFollow", priority = -1)]
+	[MenuItem("Tools_Task/StopFollow", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

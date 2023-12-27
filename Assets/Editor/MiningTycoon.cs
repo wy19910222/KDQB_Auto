@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 
 public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
-	[MenuItem("Window/Activity/MiningTycoon")]
+	[MenuItem("Tools_Window/Activity/MiningTycoon")]
 	private static void Open() {
 		GetWindow<MiningTycoonConfig>("矿产大亨").Show();
 	}
@@ -66,14 +66,14 @@ public class MiningTycoon {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartMiningTycoon", priority = -1)]
+	[MenuItem("Tools_Task/StartMiningTycoon", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"矿产大亨自动点击已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopMiningTycoon", priority = -1)]
+	[MenuItem("Tools_Task/StopMiningTycoon", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

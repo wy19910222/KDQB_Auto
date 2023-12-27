@@ -15,7 +15,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class AttackFlowingLightRoadConfig : PrefsEditorWindow<AttackFlowingLightRoad> {
-	[MenuItem("Window/Default/AttackFlowingLightRoad", false, 3)]
+	[MenuItem("Tools_Window/Default/AttackFlowingLightRoad", false, 3)]
 	private static void Open() {
 		GetWindow<AttackFlowingLightRoadConfig>("攻击流光之路").Show();
 	}
@@ -85,7 +85,7 @@ public class AttackFlowingLightRoad {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartAttackFlowingLightRoad", priority = -1)]
+	[MenuItem("Tools_Task/StartAttackFlowingLightRoad", priority = -1)]
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string> {
@@ -98,7 +98,7 @@ public class AttackFlowingLightRoad {
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopAttackFlowingLightRoad", priority = -1)]
+	[MenuItem("Tools_Task/StopAttackFlowingLightRoad", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

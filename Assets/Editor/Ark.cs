@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class ArkConfig : PrefsEditorWindow<Ark> {
-	[MenuItem("Window/War/Ark")]
+	[MenuItem("Tools_Window/War/Ark")]
 	private static void Open() {
 		GetWindow<ArkConfig>("参战方舟").Show();
 	}
@@ -60,13 +60,13 @@ public class Ark {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartArk", priority = -1)]
+	[MenuItem("Tools_Task/StartArk", priority = -1)]
 	private static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopArk", priority = -1)]
+	[MenuItem("Tools_Task/StopArk", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);

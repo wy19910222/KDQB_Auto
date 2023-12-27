@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> {
-	[MenuItem("Window/Default/AllianceMechaDonate", false, 21)]
+	[MenuItem("Tools_Window/Default/AllianceMechaDonate", false, 21)]
 	private static void Open() {
 		GetWindow<AllianceMechaDonateConfig>("联盟机甲捐献").Show();
 	}
@@ -63,14 +63,14 @@ public class AllianceMechaDonate {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Assets/StartAllianceMechaDonate", priority = -1)]
+	[MenuItem("Tools_Task/StartAllianceMechaDonate", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"联盟机甲捐献尝试已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Assets/StopAllianceMechaDonate", priority = -1)]
+	[MenuItem("Tools_Task/StopAllianceMechaDonate", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
