@@ -128,4 +128,12 @@ public static class Operation {
 	public static Color32[,] GetFromFile(string filePath) {
 		return ScreenshotUtils.GetFromFile(filePath);
 	}
+	
+	public static void Screenshot(int x, int y, int width, int height, string filePath) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		width = Mathf.RoundToInt(width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
+		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
+		ScreenshotUtils.Screenshot(x, y, width, height, filePath);
+	}
 }
