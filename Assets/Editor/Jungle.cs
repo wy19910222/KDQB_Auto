@@ -241,6 +241,11 @@ public class Jungle {
 				continue;
 			}
 			
+			if (Task.Type != Task.TaskType.IDLE) {
+				continue;
+			}
+			Task.Type = Task.TaskType.JUNGLE;
+			
 			// 开始打野
 			while (!Recognize.IsSearching) {
 				Debug.Log("搜索按钮");
@@ -428,6 +433,8 @@ public class Jungle {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}
+			Task.Type = Task.TaskType.IDLE;
+			
 			yield return new EditorWaitForSeconds(COOLDOWN);
 		}
 		// ReSharper disable once IteratorNeverReturns

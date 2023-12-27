@@ -25,7 +25,6 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 	private void OnGUI() {
 		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
 		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
-		Follow.ENABLED_WITH_COVERED = EditorGUILayout.Toggle("有窗口覆盖时是否生效", Follow.ENABLED_WITH_COVERED);
 		
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
@@ -152,7 +151,6 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 public class Follow {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
-	public static bool ENABLED_WITH_COVERED = true;	// 有窗口覆盖时是否生效
 	public static bool SINGLE_GROUP = true;	// 是否单队列跟车
 	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
 	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
@@ -223,20 +221,20 @@ public class Follow {
 					continue;
 				}
 				// 如果有界面覆盖，则说明正在操作别的
-				if (ENABLED_WITH_COVERED) {
-					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
-						Debug.Log("关闭窗口");
-						Operation.Click(720, 128);	// 左上角返回按钮
-						yield return new EditorWaitForSeconds(0.1F);
-					}
-				} else {
-					if (Recognize.IsWindowCovered) {
-						continue;
-					}
+				if (Recognize.IsWindowCovered) {
+					continue;
 				}
+				followWindowOpened = true;
+			}
+
+			if (Task.Type != Task.TaskType.IDLE) {
+				continue;
+			}
+			Task.Type = Task.TaskType.FOLLOW;
+			
+			if (followWindowOpened) {
 				Debug.Log("外面加入按钮");
 				Operation.Click(1771, 714);	// 加入按钮
-				followWindowOpened = true;
 				yield return new EditorWaitForSeconds(0.1F);
 				// 是否有加入按钮(切后台可能导致动画阻塞，从而外面有按钮实际集结已结束)
 				if (!Recognize.IsFollowJoinBtnExist) {
@@ -338,6 +336,9 @@ public class Follow {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
+			}
+			Task.Type = Task.TaskType.IDLE;
+			if (followWindowOpened) {
 				// 外面的按钮持续几秒钟才消失
 				yield return new EditorWaitForSeconds(1F);
 			}

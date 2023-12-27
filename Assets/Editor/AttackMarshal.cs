@@ -117,17 +117,28 @@ public class AttackMarshal {
 		// bool prevIsMarshalTime = false;
 		while (true) {
 			yield return null;
+			if (Task.Type != Task.TaskType.IDLE && Task.Type != Task.TaskType.ATTACK_MARSHAL) {
+				continue;
+			}
 			
 			int hour = DateTime.Now.Hour;
 			if (hour is not (4 or 12 or 20)) {
+				if (Task.Type == Task.TaskType.ATTACK_MARSHAL) {
+					Task.Type = Task.TaskType.IDLE;
+				}
 				continue;
 			}
 
 			int attackTimes = AttackTimes;
 			if (attackTimes >= ATTACK_TIMES) {
+				if (Task.Type == Task.TaskType.ATTACK_MARSHAL) {
+					Task.Type = Task.TaskType.IDLE;
+				}
 				continue;
 			}
 			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
+			
+			Task.Type = Task.TaskType.ATTACK_MARSHAL;
 
 			if (Recognize.BusyGroupCount >= GROUP_COUNT ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||

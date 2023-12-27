@@ -214,6 +214,11 @@ public class Gather {
 				continue;
 			}
 			
+			if (Task.Type != Task.TaskType.IDLE) {
+				continue;
+			}
+			Task.Type = Task.TaskType.GATHER;
+			
 			// 开始集结
 			while (!Recognize.IsSearching) {
 				Debug.Log("搜索按钮");
@@ -350,6 +355,7 @@ public class Gather {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}
+			Task.Type = Task.TaskType.IDLE;
 			
 			// 休息5秒，避免出错时一直受控不能操作
 			yield return new EditorWaitForSeconds(5);
