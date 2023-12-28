@@ -108,7 +108,7 @@ public static partial class Recognize {
 			return FollowType.HEART_PANG;
 		}
 		// 判断跟车界面图标是否是爱心砰砰(新)
-		else if (Approximately(colors[128, 36], new Color32(240, 104, 106, 255))) {
+		else if (Approximately(colors[127, 37], new Color32(240, 104, 106, 255))) {
 			return FollowType.HEART_PANG;
 		}
 		Operation.Screenshot(988, 182, 213, 167, Application.dataPath + $"/Follow/Test{System.DateTime.Now:yyyy-MM-dd_HH.mm.ss.fff}.png");
