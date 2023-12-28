@@ -18,13 +18,13 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(CurrentScene), () => {
 				// 左上角蓝色返回按钮存在，说明处于出战界面
-				if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >=
-						0) {
+				if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >= 0) {
 					return Scene.FIGHTING;
 				}
 				// 右下角一排按钮里的雷达按钮存在，说明处于世界界面
-				else if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 540),
-								new Color32(69, 146, 221, 255)) >= 0) {
+				// 处于搜索界面，是没有整排按钮的，但还是处于世界界面
+				else if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0 ||
+						ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 617), new Color32(69, 146, 221, 255)) < 0) {
 					return Scene.OUTSIDE;
 				}
 				return Scene.INSIDE;
