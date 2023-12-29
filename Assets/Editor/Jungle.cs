@@ -241,10 +241,10 @@ public class Jungle {
 				continue;
 			}
 			
-			if (Task.Type != Task.TaskType.IDLE) {
+			if (Task.CurrentTask != null) {
 				continue;
 			}
-			Task.Type = Task.TaskType.JUNGLE;
+			Task.CurrentTask = nameof(Jungle);
 			
 			// 开始打野
 			while (!Recognize.IsSearching) {
@@ -433,7 +433,8 @@ public class Jungle {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}
-			Task.Type = Task.TaskType.IDLE;
+			
+			Task.CurrentTask = null;
 			
 			yield return new EditorWaitForSeconds(COOLDOWN);
 		}

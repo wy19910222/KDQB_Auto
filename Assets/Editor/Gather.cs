@@ -214,10 +214,10 @@ public class Gather {
 				continue;
 			}
 			
-			if (Task.Type != Task.TaskType.IDLE) {
+			if (Task.CurrentTask != null) {
 				continue;
 			}
-			Task.Type = Task.TaskType.GATHER;
+			Task.CurrentTask = nameof(Gather);
 			
 			// 开始集结
 			while (!Recognize.IsSearching) {
@@ -355,7 +355,8 @@ public class Gather {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}
-			Task.Type = Task.TaskType.IDLE;
+			
+			Task.CurrentTask = null;
 			
 			// 休息5秒，避免出错时一直受控不能操作
 			yield return new EditorWaitForSeconds(5);

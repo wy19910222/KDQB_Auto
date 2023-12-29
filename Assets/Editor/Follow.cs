@@ -227,10 +227,10 @@ public class Follow {
 				followWindowOpened = true;
 			}
 
-			if (Task.Type != Task.TaskType.IDLE) {
+			if (Task.CurrentTask != null) {
 				continue;
 			}
-			Task.Type = Task.TaskType.FOLLOW;
+			Task.CurrentTask = nameof(Follow);
 			
 			if (followWindowOpened) {
 				Debug.Log("外面加入按钮");
@@ -337,7 +337,7 @@ public class Follow {
 					yield return new EditorWaitForSeconds(0.2F);
 				}
 			}
-			Task.Type = Task.TaskType.IDLE;
+			Task.CurrentTask = null;
 			if (followWindowOpened) {
 				// 外面的按钮持续几秒钟才消失
 				yield return new EditorWaitForSeconds(1F);

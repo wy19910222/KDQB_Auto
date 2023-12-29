@@ -9,18 +9,17 @@ using UnityEditor;
 using UnityEngine;
 
 public static class Task {
-	public enum TaskType {
-		IDLE,
-		FOLLOW,
-		JUNGLE,
-		GATHER,
-		ATTACK_MARSHAL,
-		OTHER,
+	public static string m_CurrentTask;
+	public static string CurrentTask {
+		get => m_CurrentTask;
+		set {
+			Debug.LogWarning(value);
+			m_CurrentTask = value;
+		}
 	}
-	public static TaskType Type { get; set; }
 
-	[MenuItem("Tools_Log/LogTaskType", priority = -1)]
-	private static void LogType() {
-		Debug.LogError(Type);
+	[MenuItem("Tools_Log/LogCurrentTask", priority = -1)]
+	private static void LogCurrentTask() {
+		Debug.LogError(CurrentTask);
 	}
 }
