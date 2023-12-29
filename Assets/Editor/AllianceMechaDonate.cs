@@ -35,6 +35,7 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 		AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", AllianceMechaDonate.INTERVAL, 120, 1800);
 		AllianceMechaDonate.COOL_DOWN = EditorGUILayout.IntSlider("捐献成功后冷却（小时）", AllianceMechaDonate.COOL_DOWN, 6, 12);
 		GUILayout.Space(5F);
+		EditorGUILayout.BeginHorizontal();
 		if (AllianceMechaDonate.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -44,6 +45,10 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 				IsRunning = true;
 			}
 		}
+		if (GUILayout.Button("单次执行", GUILayout.Width(60F))) {
+			EditorApplication.ExecuteMenuItem("Tools_Task/OnceAllianceMechaDonate");
+		}
+		EditorGUILayout.EndHorizontal();
 	}
 
 	private void OnBecameVisible() {
@@ -96,6 +101,11 @@ public class AllianceMechaDonate {
 				continue;
 			}
 
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(AllianceMechaDonate);
+			
 			bool succeed = false;
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -130,6 +140,8 @@ public class AllianceMechaDonate {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.1F);
 			}
+			
+			Task.CurrentTask = null;
 
 			if (succeed) {
 				NEXT_TIME = DateTime.Now + new TimeSpan(COOL_DOWN, 0, 0);
@@ -138,5 +150,23 @@ public class AllianceMechaDonate {
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+
+	[MenuItem("Tools_Task/OnceAllianceMechaDonate", priority = -1)]
+	private static void ExecuteOnce() {
+		Debug.Log($"单次执行联盟机甲捐献尝试");
+		EditorCoroutineManager.StartCoroutine(IEExecuteOnce());
+	}
+	private static IEnumerator IEExecuteOnce() {
+		if (Task.CurrentTask != null) {
+			Debug.LogError($"正在执行【{Task.CurrentTask}】, 请稍后！");
+			yield break;
+		}
+		DateTime prevNextTime = NEXT_TIME;
+		NEXT_TIME = DateTime.Now;
+		do {
+			yield return null;
+		} while (Task.CurrentTask != null);
+		NEXT_TIME = prevNextTime;
 	}
 }
