@@ -145,4 +145,12 @@ public static class Operation {
 		}
 		ScreenshotUtils.Screenshot(x, y, width, height, filePath);
 	}
+	
+	public static System.Drawing.Bitmap Screenshot(int x, int y, int width, int height) {
+		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+		width = Mathf.RoundToInt(width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
+		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
+		return ScreenshotUtils.Screenshot(x, y, width, height);
+	}
 }
