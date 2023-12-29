@@ -71,4 +71,44 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM) > 0.99F;
 		}
 	}
+
+	private static readonly Color32[,] ALLIANCE_HELP_AWARD_OUTER = Operation.GetFromFile("PersistentData/Textures/AllianceHelpAwardOuter.png");
+	public static bool IsAllianceHelpAwardOuter {
+		get {
+			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardOuter), () => {
+				Color32[,] realColors1 = Operation.GetColorsOnScreen(1869, 686, 30, 30);
+				return ApproximatelyRect(realColors1, ALLIANCE_HELP_AWARD_OUTER) > 0.99F;
+			});
+		}
+	}
+
+	private static readonly Color32[,] ALLIANCE_HELP_AWARD_INNER = Operation.GetFromFile("PersistentData/Textures/AllianceHelpAwardInner.png");
+	public static bool IsAllianceHelpAwardInner {
+		get {
+			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardInner), () => {
+				Color32[,] realColors = Operation.GetColorsOnScreen(1130, 590, 60, 60);
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_INNER) > 0.99F;
+			});
+		}
+	}
+
+	private static readonly Color32[,] ALLIANCE_HELP_AWARD_INTUITIVE = Operation.GetFromFile("PersistentData/Textures/AllianceHelpAwardIntuitive.png");
+	public static bool IsAllianceHelpAwardIntuitive {
+		get {
+			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardIntuitive), () => {
+				Color32[,] realColors = Operation.GetColorsOnScreen(1073, 885, 82, 23);
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_INTUITIVE) > 0.99F;
+			});
+		}
+	}
+	
+	private static readonly Color32[,] ALLIANCE_HELP_OTHERS = Operation.GetFromFile("PersistentData/Textures/AllianceHelpOthers.png");
+	public static bool CanAllianceHelpOthers {
+		get {
+			return GetCachedValueOrNew(nameof(CanAllianceHelpOthers), () => {
+				Color32[,] realColors = Operation.GetColorsOnScreen(926, 768, 69, 19);
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_OTHERS) > 0.99F;
+			});
+		}
+	}
 }
