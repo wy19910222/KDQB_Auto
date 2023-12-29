@@ -28,9 +28,9 @@ public static partial class Recognize {
 			}
 			AllianceActivityType[] types = new AllianceActivityType[ACTIVITY_COUNT_MAX];
 			for (int i = 0; i < ACTIVITY_COUNT_MAX; ++i) {
-				if (ApproximatelyRect(realColorsArray[i], ALLIANCE_ACTIVITY_MECHA) > 0.99F) {
+				if (ApproximatelyRect(realColorsArray[i], ALLIANCE_ACTIVITY_MECHA) > 0.9F) {
 					types[i] = AllianceActivityType.MECHA;
-				} else if (ApproximatelyRect(realColorsArray[i], ALLIANCE_ACTIVITY_DEFENCE) > 0.99F) {
+				} else if (ApproximatelyRect(realColorsArray[i], ALLIANCE_ACTIVITY_DEFENCE) > 0.9F) {
 					types[i] = AllianceActivityType.DEFENCE;
 				}
 			}
