@@ -18,8 +18,6 @@ public class CutPriceConfig : PrefsEditorWindow<CutPrice> {
 	}
 	
 	private void OnGUI() {
-		CutPrice.INTERVAL = EditorGUILayout.Slider("点击间隔", CutPrice.INTERVAL, 0.1F, 1F);
-		GUILayout.Space(5F);
 		if (CutPrice.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -33,8 +31,7 @@ public class CutPriceConfig : PrefsEditorWindow<CutPrice> {
 }
 
 public class CutPrice {
-	public static float INTERVAL = 0.1F;	// 点击间隔
-	
+	private static Color32[,] s_CachedSharerName;	// 缓存分享者的昵称
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
@@ -55,11 +52,17 @@ public class CutPrice {
 	}
 
 	private static IEnumerator Update() {
-		// bool prevIsMarshalTime = false;
 		while (true) {
 			yield return null;
-			Operation.Click(960, 880);	// 砍一刀按钮
-			yield return new EditorWaitForSeconds(0.1F);
+			if (Recognize.CanCutPrice) {
+				Color32[,] sharerName = Operation.GetColorsOnScreen(899, 737, 90, 20);
+				if (s_CachedSharerName == null || Recognize.ApproximatelyRect(sharerName, s_CachedSharerName) < 0.9F) {
+					Operation.Click(960, 880);	// 砍一刀按钮
+					s_CachedSharerName = sharerName;
+					yield return new EditorWaitForSeconds(0.5F);
+					Operation.Click(960, 880);	// 关闭恭喜获得界面
+				}
+			}
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
