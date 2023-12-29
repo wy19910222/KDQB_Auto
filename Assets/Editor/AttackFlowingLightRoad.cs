@@ -138,6 +138,12 @@ public class AttackFlowingLightRoad {
 				case Recognize.Scene.INSIDE:
 					continue;
 			}
+			
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(AttackFlowingLightRoad);
+			
 			Debug.Log("新世界图标");
 			Operation.Click(1880, 280);	// 新世界图标
 			yield return new EditorWaitForSeconds(0.5F);
@@ -215,6 +221,8 @@ public class AttackFlowingLightRoad {
 				Operation.Click(1064, 634);	// 确认退出按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+			
+			Task.CurrentTask = null;
 			
 			yield return new EditorWaitForSeconds(5);
 		}
