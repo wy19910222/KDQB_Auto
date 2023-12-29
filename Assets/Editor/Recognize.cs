@@ -40,6 +40,14 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] CUT_PRICE = Operation.GetFromFile("PersistentData/Textures/CutPrice.png");
+	public static bool CanCutPrice {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(930, 870, 60, 22);
+			return ApproximatelyRect(realColors, CUT_PRICE) > 0.99F;
+		}
+	}
+
 	public static bool IsWindowCovered {
 		get {
 			return GetCachedValueOrNew(nameof(IsWindowCovered), () => {
