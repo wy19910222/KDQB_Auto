@@ -13,10 +13,19 @@ public static class Task {
 	public static string CurrentTask {
 		get => m_CurrentTask;
 		set {
-			Debug.LogWarning(value);
 			m_CurrentTask = value;
+			if (s_CO != null) {
+				EditorCoroutineManager.StopCoroutine(s_CO);
+				s_CO = null;
+			}
+			s_CO = EditorCoroutineUtil.Once(null, 60, () => {
+				m_CurrentTask = null;
+				s_CO = null;
+			});
 		}
 	}
+	
+	private static EditorCoroutine s_CO;
 
 	[MenuItem("Tools_Log/LogCurrentTask", priority = -1)]
 	private static void LogCurrentTask() {
