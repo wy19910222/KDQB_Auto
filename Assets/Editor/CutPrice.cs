@@ -57,10 +57,14 @@ public class CutPrice {
 			if (Recognize.CanCutPrice) {
 				Color32[,] sharerName = Operation.GetColorsOnScreen(899, 737, 90, 20);
 				if (s_CachedSharerName == null || Recognize.ApproximatelyRect(sharerName, s_CachedSharerName) < 0.9F) {
-					Operation.Click(960, 880);	// 砍一刀按钮
-					s_CachedSharerName = sharerName;
-					yield return new EditorWaitForSeconds(0.5F);
-					Operation.Click(960, 880);	// 关闭恭喜获得界面
+					if (Task.CurrentTask == null) {
+						Task.CurrentTask = nameof(CutPrice);
+						Operation.Click(960, 880);	// 砍一刀按钮
+						s_CachedSharerName = sharerName;
+						yield return new EditorWaitForSeconds(0.5F);
+						Operation.Click(960, 880);	// 关闭恭喜获得界面
+						Task.CurrentTask = null;
+					}
 				}
 			}
 		}

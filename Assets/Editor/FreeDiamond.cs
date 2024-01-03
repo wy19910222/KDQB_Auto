@@ -77,6 +77,11 @@ public class FreeDiamond {
 				case Recognize.Scene.OUTSIDE when Recognize.IsOutsideFaraway:
 					continue;
 			}
+
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(FreeDiamond);
 			
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(1820, 136);	// 商城按钮
@@ -91,6 +96,8 @@ public class FreeDiamond {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+
+			Task.CurrentTask = null;
 			
 			yield return new EditorWaitForSeconds(INTERVAL);
 		}

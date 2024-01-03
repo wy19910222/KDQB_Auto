@@ -56,6 +56,11 @@ public class AutoFix {
 		while (true) {
 			int isQuickFixExist = Recognize.IsQuickFixExist();
 			if (isQuickFixExist > 0) {
+				if (Task.CurrentTask != null) {
+					continue;
+				}
+				Task.CurrentTask = nameof(AutoFix);
+				
 				Debug.Log("修理按钮");
 				switch (isQuickFixExist) {
 					case 1:
@@ -74,7 +79,10 @@ public class AutoFix {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
+				
+				Task.CurrentTask = null;
 			}
+			
 			yield return new EditorWaitForSeconds(INTERVAL);
 		}
 		// ReSharper disable once IteratorNeverReturns
