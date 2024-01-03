@@ -20,7 +20,19 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 	}
 	
 	private void OnGUI() {
-		AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试帮助间隔（秒）", AllianceMechaDonate.INTERVAL, 1800, 7200);
+		AllianceHelp.INTERVAL = EditorGUILayout.IntSlider("尝试帮助间隔（秒）", AllianceHelp.INTERVAL, 1800, 7200);
+		bool started = AllianceHelp.s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;
+		if (started) {
+			EditorGUILayout.LabelField("今天已尝试");
+		} else {
+			TimeSpan ts = AllianceHelp.s_NextTime - DateTime.Now;
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField($"下一次尝试时间：{ts:hh\\:mm\\:ss}");
+			if (GUILayout.Button("立即尝试")) {
+				AllianceHelp.s_NextTime = DateTime.Now;
+			}
+			EditorGUILayout.EndHorizontal();
+		}
 		GUILayout.Space(5F);
 		if (AllianceHelp.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -38,6 +50,7 @@ public class AllianceHelp {
 	public static int INTERVAL = 3600;	// 尝试间隔
 	
 	public static DateTime s_StartTime;	// 起头时间
+	public static DateTime s_NextTime = DateTime.Now;
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -59,18 +72,23 @@ public class AllianceHelp {
 	}
 
 	private static IEnumerator Update() {
-		DateTime nextTime = DateTime.Now;
 		while (true) {
 			yield return null;
 			
-			DateTime date = DateTime.Now.Date;
-			bool started = s_StartTime != null && s_StartTime > date;
-			bool nextTimeNotReach = DateTime.Now < nextTime;
+			DateTime now = DateTime.Now;
+			bool started = s_StartTime > (now - new TimeSpan(0, 1, 0)).Date;
+			bool nextTimeNotReach = DateTime.Now < s_NextTime;
 			if ((started || nextTimeNotReach) && !Recognize.IsAllianceHelpAwardOuter) {
 				continue;
 			}
+
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(AllianceHelp);
+			
 			if (!nextTimeNotReach) {
-				nextTime = DateTime.Now + new TimeSpan(INTERVAL, 0, 0);
+				s_NextTime = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
 			}
 			
 			Debug.Log("联盟按钮");
@@ -104,7 +122,7 @@ public class AllianceHelp {
 					s_StartTime = DateTime.Now;
 				}
 			}
-			for (int i = 0; i < 20; ++i) {
+			for (int i = 0; i < 10; ++i) {
 				if (Recognize.CanAllianceHelpOthers) {
 					Debug.Log("帮助全部按钮");
 					Operation.Click(960, 780);	// 帮助全部按钮
@@ -117,6 +135,8 @@ public class AllianceHelp {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+
+			Task.CurrentTask = null;
 			
 			yield return new EditorWaitForSeconds(5F);
 		}
