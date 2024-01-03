@@ -148,7 +148,8 @@ public class AttackFlowingLightRoad {
 			Operation.Click(1880, 280);	// 新世界图标
 			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("打架气泡");
-			Operation.Click(820, 540);	// 打架气泡
+			// Operation.Click(820, 540);	// 打架气泡
+			Operation.Click(960, 430);	// 打架气泡
 			yield return new EditorWaitForSeconds(0.3F);
 			Debug.Log("攻击按钮");
 			Operation.Click(960, 700);	// 攻击按钮
