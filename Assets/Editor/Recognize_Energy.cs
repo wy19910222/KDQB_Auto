@@ -21,7 +21,8 @@ public static partial class Recognize {
 	}
 	
 	private const int ENERGY_EMPTY = 0;
-	private const int ENERGY_FULL = 75;
+	public static int ENERGY_FULL = 95;
+	
 	private const int ENERGY_EMPTY_X = 21;
 	private const int ENERGY_FULL_X = 116;
 	private const int ENERGY_Y = 127;

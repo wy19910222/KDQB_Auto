@@ -25,7 +25,11 @@ public class GlobalStatus : EditorWindow {
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.EnumPopup("场景", Recognize.CurrentScene);
 		EditorGUILayout.IntField("忙碌队列", Recognize.BusyGroupCount);
-		EditorGUILayout.IntField("体力值", Recognize.energy);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.IntField("体力值", Recognize.energy, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));
+		EditorGUILayout.LabelField("/", GUILayout.Width(8F));
+		Recognize.ENERGY_FULL = EditorGUILayout.IntField(Recognize.ENERGY_FULL);
+		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
 	}
 
