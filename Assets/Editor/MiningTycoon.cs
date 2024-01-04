@@ -47,13 +47,9 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 			}
 		}
 	}
-
-	private void OnBecameVisible() {
-		EditorApplication.update += Repaint;
-	}
-
-	private void OnBecameInvisible() {
-		EditorApplication.update -= Repaint;
+	
+	private void Update() {
+		Repaint();
 	}
 }
 

@@ -32,12 +32,8 @@ public class GlobalStatus : EditorWindow {
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
 	}
-
-	private void OnBecameVisible() {
-		EditorApplication.update += Repaint;
-	}
-
-	private void OnBecameInvisible() {
-		EditorApplication.update -= Repaint;
+	
+	private void Update() {
+		Repaint();
 	}
 }

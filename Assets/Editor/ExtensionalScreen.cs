@@ -117,13 +117,9 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 		}
 		// EditorGUILayout.EndScrollView();
 	}
-
-	private void OnBecameVisible() {
-		EditorApplication.update += Repaint;
-	}
-
-	private void OnBecameInvisible() {
-		EditorApplication.update -= Repaint;
+	
+	private void Update() {
+		Repaint();
 	}
 }
 

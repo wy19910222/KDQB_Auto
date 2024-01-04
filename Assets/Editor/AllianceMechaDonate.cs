@@ -50,13 +50,9 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 		}
 		EditorGUILayout.EndHorizontal();
 	}
-
-	private void OnBecameVisible() {
-		EditorApplication.update += Repaint;
-	}
-
-	private void OnBecameInvisible() {
-		EditorApplication.update -= Repaint;
+	
+	private void Update() {
+		Repaint();
 	}
 }
 
