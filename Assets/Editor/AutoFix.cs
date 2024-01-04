@@ -54,7 +54,7 @@ public class AutoFix {
 
 	private static IEnumerator Update() {
 		while (true) {
-			int isQuickFixExist = Recognize.IsQuickFixExist();
+			int isQuickFixExist = Recognize.IsQuickFixExist;
 			if (isQuickFixExist > 0) {
 				if (Task.CurrentTask != null) {
 					continue;
@@ -71,9 +71,11 @@ public class AutoFix {
 						break;
 				}
 				yield return new EditorWaitForSeconds(0.2F);
-				Debug.Log("全体修理按钮");
-				Operation.Click(930, 960);	// 全体修理按钮
-				yield return new EditorWaitForSeconds(0.2F);
+				if (Recognize.CanFixAll) {
+					Debug.Log("全体修理按钮");
+					Operation.Click(930, 960);	// 全体修理按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 					Debug.Log("关闭窗口");
 					Operation.Click(720, 128);	// 左上角返回按钮

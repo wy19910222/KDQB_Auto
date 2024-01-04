@@ -32,73 +32,6 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly Color32[,] NETWORK_DISCONNECTED = Operation.GetFromFile("PersistentData/Textures/NetworkDisconnected.png");
-	public static bool IsNetworkDisconnected {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(910, 440, 100, 26);
-			return ApproximatelyRect(realColors, NETWORK_DISCONNECTED) > 0.99F;
-		}
-	}
-
-	private static readonly Color32[,] CUT_PRICE = Operation.GetFromFile("PersistentData/Textures/CutPrice.png");
-	public static bool CanCutPrice {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(930, 870, 60, 22);
-			return ApproximatelyRect(realColors, CUT_PRICE) > 0.99F;
-		}
-	}
-
-	public static bool IsWindowCovered {
-		get {
-			return GetCachedValueOrNew(nameof(IsWindowCovered), () => {
-				switch (CurrentScene) {
-					case Scene.FIGHTING:
-						// 左上角返回按钮颜色很暗
-						return !Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
-					case Scene.INSIDE:
-					case Scene.OUTSIDE:
-						// 右下角一排按钮颜色很暗
-						return !Approximately(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
-				}
-				return false;
-			});
-		}
-	}
-
-	public static bool IsWindowNoCovered {
-		get {
-			return GetCachedValueOrNew(nameof(IsWindowNoCovered), () => {
-				switch (CurrentScene) {
-					case Scene.FIGHTING:
-						// 左上角返回按钮颜色不暗
-						return Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
-					case Scene.INSIDE:
-					case Scene.OUTSIDE:
-						// 右下角一排按钮颜色不暗
-						return Approximately(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
-				}
-				return false;
-			});
-		}
-	}
-
-	public static float WindowCoveredCount {
-		get {
-			return GetCachedValueOrNew(nameof(WindowCoveredCount), () => {
-				switch (CurrentScene) {
-					case Scene.FIGHTING:
-						// 左上角返回按钮颜色很暗
-						return ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
-					case Scene.INSIDE:
-					case Scene.OUTSIDE:
-						// 右下角一排按钮颜色很暗
-						return ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 620), new Color32(69, 146, 221, 255));
-				}
-				return -1;
-			});
-		}
-	}
-
 	public static bool IsOutsideFaraway => GetCachedValueOrNew(nameof(IsOutsideFaraway), () => 
 			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0);
 
@@ -129,14 +62,6 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly Color32[,] INVITE_TO_MIGRATE = Operation.GetFromFile("PersistentData/Textures/InviteToMigrate.png");
-	public static bool IsMigrateInviting {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(905, 397, 110, 28);
-			return ApproximatelyRect(realColors, INVITE_TO_MIGRATE) > 0.99F;
-		}
-	}
-	
 	// 当前是否处于搜索面板
 	public static bool IsSearching => Approximately(Operation.GetColorOnScreen(960, 466), new Color32(119, 131, 184, 255));
 
@@ -162,30 +87,36 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] ALLIANCE_HELP_OUTER = Operation.GetFromFile("PersistentData/Textures/AllianceHelpOuter.png");
+	public static bool CanAllianceHelpOuter  {
+		get {
+			return GetCachedValueOrNew(nameof(CanAllianceHelpOuter), () => {
+				Color32[,] realColors = Operation.GetColorsOnScreen(1777, 698, 36, 36);
+				return ApproximatelyRectIgnoreCovered(realColors, ALLIANCE_HELP_OUTER) > 0.99F;
+			});
+		}
+	}
+
 	private static readonly Color32[,] QUICK_FIX = Operation.GetFromFile("PersistentData/Textures/QuickFix.png");
-	public static int IsQuickFixExist() {
-		if (ApproximatelyRect(Operation.GetColorsOnScreen(774, 786, 37, 37), QUICK_FIX) > 0.7F) {
-			return 1;
-		} else if (ApproximatelyRect(Operation.GetColorsOnScreen(832, 786, 37, 37), QUICK_FIX) > 0.7F) {
-			return 2;
-		} else {
-			return 0;
+	public static int IsQuickFixExist {
+		get {
+			return GetCachedValueOrNew(nameof(IsQuickFixExist), () => {
+				if (ApproximatelyRect(Operation.GetColorsOnScreen(774, 786, 37, 37), QUICK_FIX) > 0.7F) {
+					return 1;
+				} else if (ApproximatelyRect(Operation.GetColorsOnScreen(832, 786, 37, 37), QUICK_FIX) > 0.7F) {
+					return 2;
+				} else {
+					return 0;
+				}
+			});
 		}
 	}
 
-	private static readonly Color32[,] FRIENDLY_HINT = Operation.GetFromFile("PersistentData/Textures/FriendlyHint.png");
-	public static bool IsFriendlyHinting {
+	private static readonly Color32[,] FIX_ALL = Operation.GetFromFile("PersistentData/Textures/FixAll.png");
+	public static bool CanFixAll {
 		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(905, 395, 110, 28);
-			return ApproximatelyRect(realColors, FRIENDLY_HINT) > 0.99F;
-		}
-	}
-
-	private static readonly Color32[,] FIGHTING_ABORT = Operation.GetFromFile("PersistentData/Textures/FightingAbort.png");
-	public static bool IsFightingAborting {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(910, 440, 100, 26);
-			return ApproximatelyRect(realColors, FIGHTING_ABORT) > 0.99F;
+			Color32[,] realColors = Operation.GetColorsOnScreen(803, 948, 96, 26);
+			return ApproximatelyRectIgnoreCovered(realColors, FIX_ALL) > 0.99F;
 		}
 	}
 
@@ -196,13 +127,6 @@ public static partial class Recognize {
 			return ApproximatelyRectIgnoreCovered(realColors, GATHER_FEAR_STAR, 1.05F) > 0.99F;
 		}
 	}
-	
-	public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
-		new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),
-		new Vector2Int(20, 42), new Vector2Int(42, 42), new Vector2Int(65, 42),
-		new Vector2Int(20, 65),	// 右下角有数量显示，不能作为判断依据
-		new Vector2Int(12, 73), // 用于判断背景是什么颜色
-	};
 	
 	private const int SOLDIER_EMPTY_X = 48;
 	private const int SOLDIER_FULL_X = 156;
@@ -220,4 +144,19 @@ public static partial class Recognize {
 			return 0;
 		}
 	}
+
+	private static readonly Color32[,] CUT_PRICE = Operation.GetFromFile("PersistentData/Textures/CutPrice.png");
+	public static bool CanCutPrice {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(930, 870, 60, 22);
+			return ApproximatelyRect(realColors, CUT_PRICE) > 0.99F;
+		}
+	}
+	
+	// public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
+	// 	new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),
+	// 	new Vector2Int(20, 42), new Vector2Int(42, 42), new Vector2Int(65, 42),
+	// 	new Vector2Int(20, 65),	// 右下角有数量显示，不能作为判断依据
+	// 	new Vector2Int(12, 73), // 用于判断背景是什么颜色
+	// };
 }

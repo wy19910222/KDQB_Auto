@@ -16,7 +16,7 @@ public class ConnectingMonitoringConfig : PrefsEditorWindow<ConnectingMonitoring
 	}
 	
 	private void OnGUI() {
-		ConnectingMonitoring.INTERVAL = EditorGUILayout.IntSlider("监测间隔", ConnectingMonitoring.INTERVAL, 60, 3600);
+		ConnectingMonitoring.INTERVAL = EditorGUILayout.IntSlider("监测间隔", ConnectingMonitoring.INTERVAL, 5, 3600);
 		GUILayout.Space(5F);
 		if (ConnectingMonitoring.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -31,7 +31,7 @@ public class ConnectingMonitoringConfig : PrefsEditorWindow<ConnectingMonitoring
 }
 
 public class ConnectingMonitoring {
-	public static int INTERVAL = 60;	// 监测间隔
+	public static int INTERVAL = 10;	// 监测间隔
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -60,6 +60,10 @@ public class ConnectingMonitoring {
 			}
 			while (Recognize.IsMigrateInviting) {
 				Operation.Click(1140, 408);	// 关闭按钮
+				yield return new EditorWaitForSeconds(0.5F);
+			}
+			while (Recognize.IsMoreGroupPopup) {
+				Operation.Click(1140, 308);	// 关闭按钮
 				yield return new EditorWaitForSeconds(0.5F);
 			}
 			yield return new EditorWaitForSeconds(INTERVAL);

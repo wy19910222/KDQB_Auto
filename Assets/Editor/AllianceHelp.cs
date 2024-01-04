@@ -74,7 +74,14 @@ public class AllianceHelp {
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
+
+			// 在外面帮助
+			if (Recognize.CanAllianceHelpOuter) {
+				Operation.Click(1795, 716);	// 联盟按钮
+				yield return new EditorWaitForSeconds(0.2F);
+			}
 			
+			// 去里面请求帮助
 			DateTime now = DateTime.Now;
 			bool started = s_StartTime > (now - new TimeSpan(0, 1, 0)).Date;
 			bool nextTimeNotReach = DateTime.Now < s_NextTime;
@@ -122,7 +129,7 @@ public class AllianceHelp {
 					s_StartTime = DateTime.Now;
 				}
 			}
-			for (int i = 0; i < 10; ++i) {
+			for (int i = 0; i < 5; ++i) {
 				if (Recognize.CanAllianceHelpOthers) {
 					Debug.Log("帮助全部按钮");
 					Operation.Click(960, 780);	// 帮助全部按钮
@@ -130,7 +137,7 @@ public class AllianceHelp {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
-			for (int i = 0; i < 10 && Recognize.IsWindowCovered1; i++) {
+			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 				Debug.Log("左上角返回按钮");
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
