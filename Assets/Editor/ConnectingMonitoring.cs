@@ -63,7 +63,7 @@ public class ConnectingMonitoring {
 				yield return new EditorWaitForSeconds(0.5F);
 			}
 			while (Recognize.IsMoreGroupPopup) {
-				Operation.Click(1140, 308);	// 关闭按钮
+				Operation.Click(1168, 308);	// 关闭按钮
 				yield return new EditorWaitForSeconds(0.5F);
 			}
 			yield return new EditorWaitForSeconds(INTERVAL);
