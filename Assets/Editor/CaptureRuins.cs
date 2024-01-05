@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class CaptureRuinsConfig : EditorWindow {
-	[MenuItem("Tools_Window/Default/CaptureRuins", false, 23)]
+	[MenuItem("Tools_Window/Default/CaptureRuins", false, 29)]
 	private static void Open() {
 		GetWindow<CaptureRuinsConfig>("王者遗迹截图").Show();
 	}

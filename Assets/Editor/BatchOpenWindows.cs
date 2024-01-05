@@ -9,6 +9,7 @@ public static class BatchOpenWindows {
 		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AttackMarshal");
 		EditorApplication.ExecuteMenuItem("Tools_Window/Default/FreeDiamond");
 		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AllianceMechaDonate");
+		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AllianceHelp");
 		EditorApplication.ExecuteMenuItem("Tools_Window/Default/ConnectingMonitoring");
 		EditorApplication.ExecuteMenuItem("Tools_Window/Default/BlockBreak");
 		EditorApplication.ExecuteMenuItem("Tools_Window/Default/AutoFix");

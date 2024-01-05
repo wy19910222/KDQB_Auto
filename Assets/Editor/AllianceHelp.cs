@@ -14,7 +14,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
-	[MenuItem("Tools_Window/Default/AllianceHelp")]
+	[MenuItem("Tools_Window/Default/AllianceHelp", false, 23)]
 	private static void Open() {
 		GetWindow<AllianceHelpConfig>("联盟帮助").Show();
 	}
