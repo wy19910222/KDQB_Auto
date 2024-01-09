@@ -113,12 +113,9 @@ public static partial class Recognize {
 	}
 
 	private static readonly Color32[,] FIX_ALL = Operation.GetFromFile("PersistentData/Textures/FixAll.png");
-	public static bool CanFixAll {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(803, 948, 96, 26);
-			return ApproximatelyRectIgnoreCovered(realColors, FIX_ALL) > 0.99F;
-		}
-	}
+	public static bool CanFixAll =>
+			ApproximatelyRect(Operation.GetColorsOnScreen(803, 948, 96, 26), FIX_ALL, 1.5F) > 0.7F ||
+			ApproximatelyRect(Operation.GetColorsOnScreen(913, 948, 96, 26), FIX_ALL, 1.5F) > 0.7F;
 
 	private static readonly Color32[,] GATHER_FEAR_STAR = Operation.GetFromFile("PersistentData/Textures/GatherFearStar.png");
 	public static bool IsGatherFearStar {
