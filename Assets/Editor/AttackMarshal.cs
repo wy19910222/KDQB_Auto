@@ -155,10 +155,10 @@ public class AttackMarshal {
 			if (!Recognize.IsMarshalExist) {
 				Debug.Log($"未检测到元帅按钮，尝试切换场景");
 				Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-				yield return new EditorWaitForSeconds(1F);
+				yield return new EditorWaitForSeconds(2F);
 				if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
 					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-					yield return new EditorWaitForSeconds(1F);
+					yield return new EditorWaitForSeconds(2F);
 				}
 				yield return new EditorWaitForSeconds(1F);
 				if (!Recognize.IsMarshalExist) {
