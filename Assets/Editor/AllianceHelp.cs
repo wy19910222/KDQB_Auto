@@ -20,6 +20,7 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 	}
 	
 	private void OnGUI() {
+		AllianceHelp.ONLY_HELP_OTHERS = EditorGUILayout.Toggle("仅帮助他人", AllianceHelp.ONLY_HELP_OTHERS);
 		AllianceHelp.INTERVAL = EditorGUILayout.IntSlider("尝试帮助间隔（秒）", AllianceHelp.INTERVAL, 1800, 7200);
 		bool started = AllianceHelp.s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;
 		if (started) {
@@ -47,6 +48,7 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 }
 
 public class AllianceHelp {
+	public static bool ONLY_HELP_OTHERS = false;	// 仅帮助别人
 	public static int INTERVAL = 3600;	// 尝试间隔
 	
 	public static DateTime s_StartTime;	// 起头时间
@@ -75,10 +77,18 @@ public class AllianceHelp {
 		while (true) {
 			yield return null;
 
+			if (Recognize.IsWindowCovered) {
+				continue;
+			}
+
 			// 在外面帮助
 			if (Recognize.CanAllianceHelpOuter) {
 				Operation.Click(1795, 716);	// 联盟按钮
 				yield return new EditorWaitForSeconds(0.2F);
+			}
+
+			if (ONLY_HELP_OTHERS) {
+				continue;
 			}
 			
 			// 去里面请求帮助
@@ -129,13 +139,13 @@ public class AllianceHelp {
 					s_StartTime = DateTime.Now;
 				}
 			}
-			for (int i = 0; i < 5; ++i) {
-				if (Recognize.CanAllianceHelpOthers) {
-					Debug.Log("帮助全部按钮");
-					Operation.Click(960, 780);	// 帮助全部按钮
-				}
-				yield return new EditorWaitForSeconds(0.2F);
-			}
+			// for (int i = 0; i < 5; ++i) {
+			// 	if (Recognize.CanAllianceHelpOthers) {
+			// 		Debug.Log("帮助全部按钮");
+			// 		Operation.Click(960, 780);	// 帮助全部按钮
+			// 	}
+			// 	yield return new EditorWaitForSeconds(0.2F);
+			// }
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 				Debug.Log("左上角返回按钮");
