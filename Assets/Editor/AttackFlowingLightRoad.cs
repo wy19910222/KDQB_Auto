@@ -123,6 +123,12 @@ public class AttackFlowingLightRoad {
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;
 			}
+			yield return new EditorWaitForSeconds(0.3F);
+			if (Recognize.BusyGroupCount >= GROUP_COUNT ||
+					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
+					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
+				continue;
+			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 
 			if (Recognize.IsWindowCovered) {	// 如果有窗口覆盖，说明用户正在操作
