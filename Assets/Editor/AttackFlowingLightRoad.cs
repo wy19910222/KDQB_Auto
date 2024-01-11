@@ -23,6 +23,17 @@ public class AttackFlowingLightRoadConfig : PrefsEditorWindow<AttackFlowingLight
 	private readonly GUIStyle m_Style = new GUIStyle();
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("攻击目标", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+		string[] titles = {"左下", "左上", "右上", "右下"};
+		for (int i = 0; i < 4; ++i) {
+			bool targetSelected = AttackFlowingLightRoad.ATTACK_TARGET == i;
+			bool newTargetSelected = GUILayout.Toggle(targetSelected, titles[i], "Button");
+			if (!targetSelected && newTargetSelected) {
+				AttackFlowingLightRoad.ATTACK_TARGET = i;
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
 		GUIContent content = new GUIContent($"{AttackFlowingLightRoad.AttackTimes} /");
 		float width = m_Style.CalcSize(content).x + 3;
 		GUILayout.Space(EditorGUIUtility.labelWidth + 2);
@@ -60,6 +71,7 @@ public class AttackFlowingLightRoadConfig : PrefsEditorWindow<AttackFlowingLight
 public class AttackFlowingLightRoad {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
+	public static int ATTACK_TARGET = 0;	// 攻击目标
 	public static int ATTACK_TIMES = 10;	// 攻击总次数
 	public static bool USE_SMALL_BOTTLE = false;	// 是否使用小体
 	public static bool USE_BIG_BOTTLE = false;	// 是否使用大体
@@ -154,8 +166,20 @@ public class AttackFlowingLightRoad {
 			Operation.Click(1880, 280);	// 新世界图标
 			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("打架气泡");
-			// Operation.Click(820, 540);	// 打架气泡
-			Operation.Click(960, 430);	// 打架气泡
+			switch (ATTACK_TARGET) {
+				case 0:
+					Operation.Click(820, 540);	// 打架气泡
+					break;
+				case 1:
+					Operation.Click(960, 430);	// 打架气泡
+					break;
+				case 2:
+					Operation.Click(1100, 540);	// 打架气泡
+					break;
+				case 3:
+					Operation.Click(960, 640);	// 打架气泡
+					break;
+			}
 			yield return new EditorWaitForSeconds(0.3F);
 			Debug.Log("攻击按钮");
 			Operation.Click(960, 700);	// 攻击按钮
