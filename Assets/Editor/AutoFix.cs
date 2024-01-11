@@ -69,6 +69,9 @@ public class AutoFix {
 					case 2:
 						Operation.Click(850, 800);	// 修理按钮按钮
 						break;
+					case 3:
+						Operation.Click(918, 800);	// 修理按钮按钮
+						break;
 				}
 				yield return new EditorWaitForSeconds(0.2F);
 				if (Recognize.CanFixAll) {

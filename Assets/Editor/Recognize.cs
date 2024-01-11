@@ -105,6 +105,8 @@ public static partial class Recognize {
 					return 1;
 				} else if (ApproximatelyRect(Operation.GetColorsOnScreen(832, 786, 37, 37), QUICK_FIX) > 0.7F) {
 					return 2;
+				} else if (ApproximatelyRect(Operation.GetColorsOnScreen(900, 786, 37, 37), QUICK_FIX) > 0.7F) {
+					return 3;
 				} else {
 					return 0;
 				}
