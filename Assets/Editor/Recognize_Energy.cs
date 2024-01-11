@@ -34,16 +34,16 @@ public static partial class Recognize {
 				if (deltaX >= 0) {
 					const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
 					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
-					// 最少只能判断到x=19
+					// 最少只能判断到x=19，再继续会受到体力图标的影响
 					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
-						if (Approximately(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F)) {
+						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR, 0.4F) >= 0) {
 							return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
 						}
 					}
 					// 10以下误差会比较大，最少只能判断到x=11
 					if (WindowCoveredCount >= 0) {
 						float threshold = 420 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
-						for (int x = colors.GetLength(0) - 1; x >= 11; --x) {
+						for (int x = 20; x >= 11; --x) {
 							Color32 c = colors[x, 0];
 							if (c.r + c.g + c.b > threshold) {
 								return Mathf.RoundToInt((float) (x - 3) / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
