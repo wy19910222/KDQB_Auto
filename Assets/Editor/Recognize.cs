@@ -37,6 +37,27 @@ public static partial class Recognize {
 
 	public static bool IsOutsideNearby => GetCachedValueOrNew(nameof(IsOutsideNearby), () => 
 			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0);
+	
+	public static bool? IsMiniMapShowing {
+		get {
+			return GetCachedValueOrNew<bool?>(nameof(IsMiniMapShowing), () => {
+				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+				if (deltaY != -1) {
+					Color32[,] realColors = Operation.GetColorsOnScreen(20, 150 + deltaY, 12, 20);
+					Color32 targetColor = new Color32(191, 191, 191, 255);
+					if (ApproximatelyCoveredCount(realColors[2, 9], targetColor) >= 0 &&
+							ApproximatelyCoveredCount(realColors[11, 9], targetColor) >= 0) {
+						return true;
+					}
+					if (ApproximatelyCoveredCount(realColors[10, 7], targetColor) >= 0 &&
+							ApproximatelyCoveredCount(realColors[10, 16], targetColor) >= 0) {
+						return false;
+					}
+				}
+				return null;
+			});
+		}
+	}
 
 	public static bool IsFightingPlayback => GetCachedValueOrNew(nameof(IsFightingPlayback), () => 
 			Approximately(Operation.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255)));

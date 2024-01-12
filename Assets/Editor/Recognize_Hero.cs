@@ -83,11 +83,16 @@ public static partial class Recognize {
 			deltaY = 0;
 			heroAvatar = heroAvatarFaraway;
 		}
+		deltaY = IsMiniMapShowing switch {
+			true => deltaY + 155,
+			false => deltaY,
+			_ => -1
+		};
 		if (deltaY >= 0 && heroAvatar != null) {
 			int groupCount = 0;
 			// 返回加速等蓝色按钮中间的白色
 			Color32 targetColor = new Color32(255, 255, 255, 255);
-			Color32[,] realColors = Operation.GetColorsOnScreen(0, 400 + deltaY, 160, 500);
+			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + deltaY + 50, 160, 500);
 			while (groupCount < 10) {
 				Color32 realColor = realColors[158, 34 + groupCount * 50];
 				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
@@ -126,10 +131,15 @@ public static partial class Recognize {
 	[MenuItem("Assets/LogGroupHeroAvatar", priority = -1)]
 	public static void LogGroupHeroAvatar() {
 		int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+		deltaY = IsMiniMapShowing switch {
+			true => deltaY + 155,
+			false => deltaY,
+			_ => -1
+		};
 		if (deltaY >= 0) {
 			int groupCount = 0;
 			Color32 targetColor = new Color32(98, 135, 229, 255);
-			Color32[,] realColors = Operation.GetColorsOnScreen(0, 400 + deltaY, 160, 500);
+			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + deltaY + 50, 160, 500);
 			while (groupCount < 10) {
 				Color32 realColor = realColors[158, 34 + groupCount * 50];
 				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {

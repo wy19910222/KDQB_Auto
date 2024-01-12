@@ -18,15 +18,20 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(BusyGroupCount), () => {
 				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+				deltaY = IsMiniMapShowing switch {
+					true => deltaY + 155,
+					false => deltaY,
+					_ => -1
+				};
 				if (deltaY >= 0) {
 					int groupCount = 0;
 					// 返回加速等蓝色按钮中间的白色
 					Color32 targetColor = new Color32(255, 255, 255, 255);
 					// 434的位置需要将小地图保持展开状态
-					Color32[,] realColors = Operation.GetColorsOnScreen(158, 434 + deltaY, 1, 451);
+					Color32[,] realColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
 					while (groupCount < 10) {
 						Color32 realColor = realColors[0, groupCount * 50];
-						// Debug.LogError($"{groupCount}: [158, {434 + deltaY + groupCount * 50}]: {realColor}");
+						// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realColor}");
 						if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
 							break;
 						}
@@ -54,9 +59,14 @@ public static partial class Recognize {
 				deltaY = 0;
 				stateDict = GROUP_STATE_DICT_FARAWAY;
 			}
+			deltaY = IsMiniMapShowing switch {
+				true => deltaY + 155,
+				false => deltaY,
+				_ => -1
+			};
 			if (deltaY >= 0 && stateDict != null) {
 				const int width = 11, height = 9;
-				Color32[,] colors = Operation.GetColorsOnScreen(47, 441 + deltaY + groupIndex * 50, width, height);
+				Color32[,] colors = Operation.GetColorsOnScreen(47, 286 + deltaY + groupIndex * 50 + 50, width, height);
 				Color32[,] averageColors = new Color32[width, height];
 				for (int y = 0; y < height; ++y) {
 					for (int x = 0; x < width; ++x) {
