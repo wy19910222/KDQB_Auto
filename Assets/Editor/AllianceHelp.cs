@@ -81,10 +81,15 @@ public class AllianceHelp {
 				continue;
 			}
 
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			
 			// 在外面帮助
 			if (Recognize.CanAllianceHelpOuter) {
-				// Operation.Click(1795, 716);	// 联盟按钮
-				Operation.Click(1815, 725);	// 联盟按钮，避开跟车
+				Debug.Log("帮助气泡");
+				// Operation.Click(1795, 716);	// 帮助气泡
+				Operation.Click(1820, 725);	// 帮助气泡，避开跟车
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 
