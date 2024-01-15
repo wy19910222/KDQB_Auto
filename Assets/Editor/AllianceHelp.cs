@@ -87,10 +87,18 @@ public class AllianceHelp {
 			
 			// 在外面帮助
 			if (Recognize.CanAllianceHelpOuter) {
+				Task.CurrentTask = nameof(AllianceHelp);
 				Debug.Log("帮助气泡");
 				// Operation.Click(1795, 716);	// 帮助气泡
 				Operation.Click(1820, 725);	// 帮助气泡，避开跟车
-				yield return new EditorWaitForSeconds(0.2F);
+				yield return new EditorWaitForSeconds(0.1F);
+				// 有可能会点到上车提示气泡
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
+					Debug.Log("关闭窗口");
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}				
+				Task.CurrentTask = null;
 			}
 
 			if (ONLY_HELP_OTHERS) {
