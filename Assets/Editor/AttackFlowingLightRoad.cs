@@ -15,7 +15,7 @@ using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class AttackFlowingLightRoadConfig : PrefsEditorWindow<AttackFlowingLightRoad> {
-	[MenuItem("Tools_Window/Default/AttackFlowingLightRoad", false, 3)]
+	[MenuItem("Tools_Window/NewWorld/AttackFlowingLightRoad", false, 3)]
 	private static void Open() {
 		GetWindow<AttackFlowingLightRoadConfig>("攻击流光之路").Show();
 	}
