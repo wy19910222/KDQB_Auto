@@ -286,6 +286,12 @@ public class Gather {
 				Debug.Log("惧星气泡里的集结按钮");
 				Operation.Click(870, 830);	// 集结按钮
 				yield return new EditorWaitForSeconds(0.3F);
+				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+					// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
+					Debug.Log("惧星气泡里的集结按钮");
+					Operation.Click(870, 850);	// 集结按钮
+					yield return new EditorWaitForSeconds(0.3F);
+				}
 			} else {
 				Debug.Log("其他气泡里的集结按钮");
 				Operation.Click(1050, 450);	// 集结按钮
