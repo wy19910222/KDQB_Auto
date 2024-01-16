@@ -39,6 +39,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, optionWidth);
 		EditorGUILayout.EndHorizontal();
 		Follow.FOLLOW_COOLDOWN = EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN);
+		Follow.FORCE_CLOSE_WINDOW = EditorGUILayout.Toggle("是否强制关闭窗口", Follow.FORCE_CLOSE_WINDOW);
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
@@ -155,6 +156,7 @@ public class Follow {
 	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
 	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
 	public static float FOLLOW_COOLDOWN = 20F;	// 同一人跟车冷却
+	public static bool FORCE_CLOSE_WINDOW = false;	// 无论是不是当前流程开启的窗口，都强制关闭
 	
 	public static readonly Dictionary<Recognize.FollowType, int> TypeCountDict = new Dictionary<Recognize.FollowType, int>(); // 各类型次数
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
@@ -299,6 +301,13 @@ public class Follow {
 			Operation.Click(968, 307);	// 加入按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			yield return new EditorWaitForSeconds(delay * 0.5F);
+			// 等待进入战斗界面，如果超过1秒钟没进去，说明进入失败，结束流程
+			for (int i = 0; i < 10 && Recognize.CurrentScene != Recognize.Scene.FIGHTING; ++i) {
+				if (i == 9) {
+					goto EndOfFollow;
+				}
+				yield return new EditorWaitForSeconds(0.1F);
+			}
 			Debug.Log("士兵卡片");
 			Operation.Click(1160, 962);	// 士兵卡片
 			yield return new EditorWaitForSeconds(0.1F);
@@ -326,15 +335,21 @@ public class Follow {
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("确认退出按钮");
 				Operation.Click(1064, 634);	// 确认退出按钮
-				yield return new EditorWaitForSeconds(0.2F);
+				// 等待退出战斗界面
+				for (int i = 0; i < 10 && Recognize.CurrentScene == Recognize.Scene.FIGHTING; i++) {
+					yield return new EditorWaitForSeconds(0.1F);
+				}
 			}
 			EndOfFollow:
-			if (followWindowOpened) {
+			if (followWindowOpened || FORCE_CLOSE_WINDOW) {
 				// 如果是从外面进来的，则关闭跟车界面
 				Debug.Log("左上角返回按钮");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
+					if (i == 9) {
+						Debug.LogError("10次都没关掉");
+					}
 				}
 			}
 			Task.CurrentTask = null;
