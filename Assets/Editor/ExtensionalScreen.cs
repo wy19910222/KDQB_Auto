@@ -97,10 +97,15 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 			EditorGUILayout.EndHorizontal();
 		}
 		// m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
-		if (ExtensionalScreen.Tex && ExtensionalScreen.IsRunning) {
+		{
 			Rect rect = EditorGUILayout.BeginVertical();
-			rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
-			GUI.DrawTexture(rect, ExtensionalScreen.Tex);
+			if (ExtensionalScreen.Tex && ExtensionalScreen.IsRunning) {
+				rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
+				GUI.DrawTexture(rect, ExtensionalScreen.Tex);
+			} else {
+				rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
+				EditorGUI.DrawRect(rect, Color.gray);
+			}
 			Vector2Int mousePos = MouseUtils.GetMousePos();
 			float x = rect.x + rect.width * (mousePos.x - ExtensionalScreen.RANGE_X) / ExtensionalScreen.RANGE_W;
 			float y = rect.y + rect.height * (mousePos.y - ExtensionalScreen.RANGE_Y) / ExtensionalScreen.RANGE_H;
@@ -108,11 +113,6 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 			GUI.contentColor = Color.black;
 			GUI.DrawTexture(new Rect(x, y, m_CursorTex.width, m_CursorTex.height), m_CursorTex);
 			GUI.contentColor = prevColor;
-			EditorGUILayout.EndVertical();
-		} else {
-			Rect rect = EditorGUILayout.BeginVertical();
-			rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
-			EditorGUI.DrawRect(rect, Color.gray);
 			EditorGUILayout.EndVertical();
 		}
 		// EditorGUILayout.EndScrollView();
