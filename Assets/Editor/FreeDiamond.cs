@@ -22,6 +22,7 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 			FreeDiamond.LEFT_COUNT = 20;
 		}
 		EditorGUILayout.EndHorizontal();
+		FreeDiamond.TAB_ORDER = EditorGUILayout.IntSlider("标签排序（周卡排第几个）", FreeDiamond.TAB_ORDER, 1, 10);
 		FreeDiamond.INTERVAL = EditorGUILayout.Slider("点击间隔", FreeDiamond.INTERVAL, 15.5F, 16.5F);
 		GUILayout.Space(5F);
 		if (FreeDiamond.IsRunning) {
@@ -38,6 +39,7 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 
 public class FreeDiamond {
 	public static int LEFT_COUNT = 20;	// 剩余次数
+	public static int TAB_ORDER = 3;	// 周卡页面排序
 	public static float INTERVAL = 16;	// 监测间隔
 	
 	private static EditorCoroutine s_CO;
@@ -83,10 +85,23 @@ public class FreeDiamond {
 			}
 			Task.CurrentTask = nameof(FreeDiamond);
 			
-			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(1820, 136);	// 商城按钮
 			yield return new EditorWaitForSeconds(0.2F);
-			Operation.Click(925, 195);	// 周卡标签
+			
+			const int TAB_WIDTH = 137;
+			int orderOffsetX = (TAB_ORDER - 4) * TAB_WIDTH;
+			while (orderOffsetX > 0) {
+				const int dragDistance = TAB_WIDTH * 4;
+				// 往左拖动
+				var ie = Operation.NoInertiaDrag(1190, 200, 1190 - dragDistance, 200, 0.5F);
+				while (ie.MoveNext()) {
+					yield return ie.Current;
+				}
+				yield return new EditorWaitForSeconds(0.1F);
+				orderOffsetX -= dragDistance;
+			}
+			Debug.Log("活动标签页");
+			Operation.Click(1190 + orderOffsetX, 200);	// 周卡标签
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(1125, 310);	// 领取按钮
 			LEFT_COUNT--;
