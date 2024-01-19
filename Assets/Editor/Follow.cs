@@ -16,6 +16,7 @@ using Random = UnityEngine.Random;
 
 public class FollowConfig : PrefsEditorWindow<Follow> {
 	private string m_TempJXOwnerName;
+	private Vector2 m_ScrollPos;
 	
 	[MenuItem("Tools_Window/Default/Follow", false, 0)]
 	private static void Open() {
@@ -69,6 +70,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 		if (Follow.TypeCountDict.TryGetValue(Recognize.FollowType.FEAR_STAR, out int count) && count > 0) {
 			GUILayout.Space(5F);
+			m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos, GUILayout.MaxHeight(240F));
 			foreach (var ownerName in new List<string>(Follow.OwnerNameDict.Keys)) {
 				if (!Follow.OwnerEnabledDict.ContainsKey(ownerName)) {
 					Follow.OwnerEnabledDict.Add(ownerName, false);
@@ -110,6 +112,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 				}
 				EditorGUILayout.EndHorizontal();
 			}
+			EditorGUILayout.EndScrollView();
 		}
 		GUILayout.Space(5F);
 		if (Follow.IsRunning) {
