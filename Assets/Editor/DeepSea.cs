@@ -108,8 +108,8 @@ public class DeepSea {
 					}
 				}
 				Debug.Log("活动按钮");
-				// Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 290 : 280);	// 活动按钮
-				Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 350 : 280);	// 活动按钮（被新世界图标挤到下一格了）
+				Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 290 : 280);	// 活动按钮
+				// Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 350 : 280);	// 活动按钮（被新世界图标挤到下一格了）
 				yield return new EditorWaitForSeconds(0.5F);
 				Debug.Log("拖动以显示活动标签页");
 				const int TAB_WIDTH = 137;
