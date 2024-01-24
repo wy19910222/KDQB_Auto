@@ -8,10 +8,17 @@
 using UnityEditor;
 using UnityEngine;
 
-public class GlobalStatus : EditorWindow {
+public class GlobalStatusConfig : EditorWindow {
 	[MenuItem("Tools_Window/Default/GlobalStatus", false, -1)]
 	private static void Open() {
-		GetWindow<GlobalStatus>("全局状态").Show();
+		GetWindow<GlobalStatusConfig>("全局状态").Show();
+	}
+
+	protected void OnEnable() {
+		Recognize.GROUP_COUNT = EditorPrefs.GetInt($"Recognize.GROUP_COUNT");
+	}
+	protected void OnDisable() {
+		EditorPrefs.SetInt($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
 	}
 
 	private void OnGUI() {
@@ -24,6 +31,7 @@ public class GlobalStatus : EditorWindow {
 		}
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.EnumPopup("场景", Recognize.CurrentScene);
+		Recognize.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Recognize.GROUP_COUNT, 0, 7);
 		EditorGUILayout.IntField("忙碌队列", Recognize.BusyGroupCount);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.IntField("体力值", Recognize.energy, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));

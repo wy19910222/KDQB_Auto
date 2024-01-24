@@ -14,6 +14,8 @@ using UnityEditor;
 using UnityEngine;
 
 public static partial class Recognize {
+	public static int GROUP_COUNT = 4;	// 拥有行军队列数
+	
 	public static int BusyGroupCount {
 		get {
 			return GetCachedValueOrNew(nameof(BusyGroupCount), () => {
