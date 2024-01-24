@@ -20,7 +20,6 @@ public static class FollowOld {
 	private static bool INCLUDE_NMY = true;	// 是否跟难民营
 	private static bool INCLUDE_AXPP = true;	// 是否跟爱心砰砰
 	private static bool INCLUDE_JX = false;	// 是否跟惧星
-	private static int GROUP_COUNT = 4;	// 拥有行军队列数
 	
 	private static readonly List<Vector2Int> s_PosList = new List<Vector2Int>() {
 		new Vector2Int(968, 307),	// 加入集结按钮
@@ -96,7 +95,7 @@ public static class FollowOld {
 					}
 					groupCount++;
 				}
-				return groupCount < GROUP_COUNT;
+				return groupCount < Recognize.GROUP_COUNT;
 			}
 			return false;
 		},

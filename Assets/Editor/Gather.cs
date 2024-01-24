@@ -22,7 +22,6 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 	}
 	
 	private void OnGUI() {
-		Gather.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Gather.GROUP_COUNT, 0, 7);
 		Gather.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Gather.RESERVED_ENERGY);
 		
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
@@ -116,7 +115,6 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 public class Gather {
 	public static bool Test { get; set; } // 测试模式
 	
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
 	
 	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
@@ -132,7 +130,6 @@ public class Gather {
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string>();
-		switches.Add($"拥有行军队列【{GROUP_COUNT}】");
 		if (!USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0)) {
 			switches.Add($"保留体力值【{RESERVED_ENERGY}】");
 		}
@@ -185,7 +182,7 @@ public class Gather {
 					continue;
 				}
 				// 队列数量
-				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
@@ -197,7 +194,7 @@ public class Gather {
 				// 可能处于世界场景远近景切换的动画过程中，所以等待0.2秒再判断一次
 				yield return new EditorWaitForSeconds(0.2F);
 				// 队列数量
-				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}

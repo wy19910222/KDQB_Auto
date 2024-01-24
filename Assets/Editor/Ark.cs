@@ -29,7 +29,6 @@ public class ArkConfig : PrefsEditorWindow<Ark> {
 			Ark.DAILY_TIME = new TimeSpan(startHours, startMinutes, 0);
 		}
 		EditorGUILayout.EndHorizontal();
-		Ark.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Ark.GROUP_COUNT, 0, 7);
 		Ark.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Ark.SQUAD_NUMBER, 1, 8);
 		EditorGUILayout.BeginHorizontal();
 		for (int i = 0, length = Ark.IsInArks.Length; i < length; ++i) {
@@ -52,7 +51,6 @@ public class ArkConfig : PrefsEditorWindow<Ark> {
 
 public class Ark {
 	public static TimeSpan DAILY_TIME = new TimeSpan(9, 5, 0);
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	
 	public static readonly bool[] IsInArks = new bool[4];	// 当天是否进过方舟
@@ -96,9 +94,9 @@ public class Ark {
 			}
 
 			for (int i = 0, length = IsInArks.Length; i < length; ++i) {
-				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+					if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 						break;
 					}
 				}

@@ -19,7 +19,6 @@ public class AttackDiscipleConfig : EditorWindow {
 	}
 	
 	private void OnGUI() {
-		AttackDisciple2.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackDisciple2.GROUP_COUNT, 0, 7);
 		AttackDisciple2.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", AttackDisciple2.RESERVED_ENERGY);
 		AttackDisciple2.TARGET = EditorGUILayout.Popup("训练目标", AttackDisciple2.TARGET, new []{"第7使徒", "第8使徒", "腐坏机甲", "第10使徒"});
 		AttackDisciple2.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackDisciple2.SQUAD_NUMBER, 1, 8);
@@ -37,7 +36,6 @@ public class AttackDiscipleConfig : EditorWindow {
 }
 
 public static class AttackDisciple2 {
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
 	public static int SQUAD_NUMBER = 4;	// 使用编队号码
 	public static int TARGET;	// 攻打目标
@@ -49,7 +47,6 @@ public static class AttackDisciple2 {
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string> {
-			$"拥有行军队列【{GROUP_COUNT}】",
 			$"使用编队【{SQUAD_NUMBER}】"
 		};
 		Debug.Log($"自动作战研究已开启，{string.Join("，", switches)}");
@@ -78,9 +75,9 @@ public static class AttackDisciple2 {
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
-				if (Recognize.energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < GROUP_COUNT) {
+				if (Recognize.energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < Recognize.GROUP_COUNT) {
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < GROUP_COUNT) {
+					if (Recognize.energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < Recognize.GROUP_COUNT) {
 						Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 						break;
 					}

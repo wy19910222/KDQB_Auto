@@ -24,13 +24,6 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 	}
 	
 	private void OnGUI() {
-		Follow.KEEP_NO_WINDOW = EditorGUILayout.Toggle("在外面跟车", Follow.KEEP_NO_WINDOW);
-		Follow.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Follow.GROUP_COUNT, 0, 7);
-		
-		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
-		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
-		EditorGUI.DrawRect(wireRect1, Color.gray);
-		
 		Follow.SINGLE_GROUP = EditorGUILayout.Toggle("单队列跟车", Follow.SINGLE_GROUP);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("跟车延迟", GUILayout.Width(EditorGUIUtility.labelWidth));
@@ -40,14 +33,22 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, optionWidth);
 		EditorGUILayout.EndHorizontal();
 		Follow.FOLLOW_COOLDOWN = EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN);
-		Follow.FEAR_STAR_FIRST = EditorGUILayout.Toggle("惧星优先", Follow.FEAR_STAR_FIRST);
-		bool newResetDaily = EditorGUILayout.Toggle("每日重置次数", Follow.RESET_DAILY);
+		
+		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
+		EditorGUI.DrawRect(wireRect1, Color.gray);
+		
+		EditorGUILayout.BeginHorizontal();
+		Follow.KEEP_NO_WINDOW = GUILayout.Toggle(Follow.KEEP_NO_WINDOW, "在外面跟车", "Button");
+		Follow.FEAR_STAR_FIRST = GUILayout.Toggle(Follow.FEAR_STAR_FIRST, "惧星优先", "Button");
+		bool newResetDaily = GUILayout.Toggle(Follow.RESET_DAILY, "每日重置次数", "Button");
 		if (newResetDaily != Follow.RESET_DAILY) {
 			Follow.RESET_DAILY = newResetDaily;
 			if (newResetDaily) {
 				Follow.LAST_RESET_TIME = DateTime.Now.Date;
 			}
 		}
+		EditorGUILayout.EndHorizontal();
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
@@ -161,7 +162,6 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 
 public class Follow {
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static bool SINGLE_GROUP = true;	// 是否单队列跟车
 	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
 	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
@@ -230,7 +230,7 @@ public class Follow {
 			
 			// 队列数量
 			int busyGroupCount = Recognize.BusyGroupCount;
-			if (busyGroupCount >= GROUP_COUNT) {
+			if (busyGroupCount >= Recognize.GROUP_COUNT) {
 				continue;
 			}
 			// 如果单队列跟车

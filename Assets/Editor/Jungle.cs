@@ -46,7 +46,6 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 			EditorGUI.DrawRect(wireRect0, Color.gray);
 		}
 		
-		Jungle.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Jungle.GROUP_COUNT, 0, 7);
 		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
 		bool useBottle = Jungle.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {
@@ -134,7 +133,6 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 public class Jungle {
 	public static bool Test { get; set; } // 测试模式
 
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
 	public static float COOLDOWN = 5;	// 打野间隔
 	
@@ -153,7 +151,6 @@ public class Jungle {
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string>();
-		switches.Add($"拥有行军队列【{GROUP_COUNT}】");
 		switches.Add($"打野间隔【{COOLDOWN}】");
 		if (!USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0)) {
 			switches.Add($"保留体力值【{RESERVED_ENERGY}】");
@@ -211,7 +208,7 @@ public class Jungle {
 					continue;
 				}
 				// 队列数量
-				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
@@ -223,7 +220,7 @@ public class Jungle {
 				// 可能处于世界场景远近景切换的动画过程中，所以等待0.2秒再判断一次
 				yield return new EditorWaitForSeconds(0.2F);
 				// 队列数量
-				if (Recognize.BusyGroupCount >= GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}

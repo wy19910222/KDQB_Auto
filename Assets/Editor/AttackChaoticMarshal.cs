@@ -38,7 +38,6 @@ public class AttackChaoticMarshalConfig : PrefsEditorWindow<AttackChaoticMarshal
 			AttackChaoticMarshal.s_AttackTimeList.Add(DateTime.Now);
 		}
 		EditorGUILayout.EndHorizontal();
-		AttackChaoticMarshal.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", AttackChaoticMarshal.GROUP_COUNT, 0, 7);
 		AttackChaoticMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackChaoticMarshal.SQUAD_NUMBER, 1, 8);
 		AttackChaoticMarshal.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", AttackChaoticMarshal.USE_SMALL_BOTTLE);
 		AttackChaoticMarshal.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", AttackChaoticMarshal.USE_BIG_BOTTLE);
@@ -56,7 +55,6 @@ public class AttackChaoticMarshalConfig : PrefsEditorWindow<AttackChaoticMarshal
 }
 
 public class AttackChaoticMarshal {
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	public static int ATTACK_TIMES = 5;	// 攻击总次数
 	public static bool USE_SMALL_BOTTLE = false;	// 是否使用小体
@@ -86,7 +84,6 @@ public class AttackChaoticMarshal {
 	private static void Enable() {
 		Disable();
 		List<string> switches = new List<string> {
-			$"拥有行军队列【{GROUP_COUNT}】",
 			$"使用编队【{SQUAD_NUMBER}】"
 		};
 		if (USE_SMALL_BOTTLE) { switches.Add("【允许使用小体】"); }
@@ -109,14 +106,14 @@ public class AttackChaoticMarshal {
 		while (true) {
 			yield return null;
 			
-			if (Recognize.BusyGroupCount >= GROUP_COUNT ||
+			if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;
 			}
 			yield return new EditorWaitForSeconds(0.3F);
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-			if (Recognize.BusyGroupCount >= GROUP_COUNT ||
+			if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;
