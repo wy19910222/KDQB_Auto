@@ -40,7 +40,14 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Follow.FOLLOW_DELAY_MAX = EditorGUILayout.FloatField(Follow.FOLLOW_DELAY_MAX, optionWidth);
 		EditorGUILayout.EndHorizontal();
 		Follow.FOLLOW_COOLDOWN = EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN);
-		Follow.FORCE_CLOSE_WINDOW = EditorGUILayout.Toggle("是否强制关闭窗口", Follow.FORCE_CLOSE_WINDOW);
+		Follow.FEAR_STAR_FIRST = EditorGUILayout.Toggle("惧星优先", Follow.FEAR_STAR_FIRST);
+		bool newResetDaily = EditorGUILayout.Toggle("每日重置次数", Follow.RESET_DAILY);
+		if (newResetDaily != Follow.RESET_DAILY) {
+			Follow.RESET_DAILY = newResetDaily;
+			if (newResetDaily) {
+				Follow.LAST_RESET_TIME = DateTime.Now.Date;
+			}
+		}
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
@@ -49,24 +56,24 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		if (EditorGUIUtility.currentViewWidth > 460) {
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.BeginVertical();
-			CustomField(Recognize.FollowType.WAR_HAMMER, 50);
-			CustomField(Recognize.FollowType.REFUGEE_CAMP, 10);
-			CustomField(Recognize.FollowType.FEAR_STAR, 10);
+			CustomField(Recognize.FollowType.WAR_HAMMER);
+			CustomField(Recognize.FollowType.REFUGEE_CAMP);
+			CustomField(Recognize.FollowType.FEAR_STAR);
 			EditorGUILayout.EndVertical();
 			EditorGUILayout.BeginVertical();
-			CustomField(Recognize.FollowType.STRONGHOLD, 50);
-			CustomField(Recognize.FollowType.ELITE_GUARD, 50);
-			CustomField(Recognize.FollowType.HEART_PANG, 50);
+			CustomField(Recognize.FollowType.STRONGHOLD);
+			CustomField(Recognize.FollowType.ELITE_GUARD);
+			CustomField(Recognize.FollowType.HEART_PANG);
 			EditorGUILayout.EndVertical();
 			EditorGUILayout.EndHorizontal();
 		} else {
-			CustomField(Recognize.FollowType.STRONGHOLD, 50);
-			CustomField(Recognize.FollowType.ELITE_GUARD, 50);
-			CustomField(Recognize.FollowType.HEART_PANG, 50);
+			CustomField(Recognize.FollowType.STRONGHOLD);
+			CustomField(Recognize.FollowType.ELITE_GUARD);
+			CustomField(Recognize.FollowType.HEART_PANG);
 			GUILayout.Space(5F);
-			CustomField(Recognize.FollowType.WAR_HAMMER, 50);
-			CustomField(Recognize.FollowType.REFUGEE_CAMP, 10);
-			CustomField(Recognize.FollowType.FEAR_STAR, 10);
+			CustomField(Recognize.FollowType.WAR_HAMMER);
+			CustomField(Recognize.FollowType.REFUGEE_CAMP);
+			CustomField(Recognize.FollowType.FEAR_STAR);
 		}
 		if (Follow.TypeCountDict.TryGetValue(Recognize.FollowType.FEAR_STAR, out int count) && count > 0) {
 			GUILayout.Space(5F);
@@ -126,9 +133,9 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 	}
 
-	private static void CustomField(Recognize.FollowType type, int defaultValue) {
+	private static void CustomField(Recognize.FollowType type) {
 		Follow.TypeCountDict.TryGetValue(type, out int countHammer);
-		Follow.TypeCountDict[type] = CustomField($"跟{Utils.GetEnumInspectorName(type)}", countHammer, defaultValue);
+		Follow.TypeCountDict[type] = CustomField($"跟{Utils.GetEnumInspectorName(type)}", countHammer, Follow.GetDefaultCount(type));
 	}
 
 	private static int CustomField(string label, int count, int defaultValue) {
@@ -159,7 +166,10 @@ public class Follow {
 	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
 	public static float FOLLOW_DELAY_MAX = 5F;	// 跟车延迟
 	public static float FOLLOW_COOLDOWN = 20F;	// 同一人跟车冷却
-	public static bool FORCE_CLOSE_WINDOW = false;	// 无论是不是当前流程开启的窗口，都强制关闭
+	public static bool FEAR_STAR_FIRST = true;	// 惧星没跟完不跟其他
+	
+	public static bool RESET_DAILY = true;	// 每日重置次数
+	public static DateTime LAST_RESET_TIME;	// 上次重置时间
 	
 	public static readonly Dictionary<Recognize.FollowType, int> TypeCountDict = new Dictionary<Recognize.FollowType, int>(); // 各类型次数
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
@@ -191,10 +201,33 @@ public class Follow {
 		}
 	}
 
+	public static int GetDefaultCount(Recognize.FollowType type) {
+		return type switch {
+			Recognize.FollowType.WAR_HAMMER => 50,
+			Recognize.FollowType.REFUGEE_CAMP => 10,
+			Recognize.FollowType.FEAR_STAR => 10,
+			Recognize.FollowType.STRONGHOLD => 50,
+			Recognize.FollowType.ELITE_GUARD => 50,
+			Recognize.FollowType.HEART_PANG => 50,
+			_ => TypeCountDict[type]
+		};
+	}
+
 	private static IEnumerator Update() {
 		long cooldownTime = 0;
 		while (true) {
 			yield return null;
+			if (RESET_DAILY) {
+				DateTime date = DateTime.Now.Date;
+				if (LAST_RESET_TIME < date) {
+					TypeCountDict[Recognize.FollowType.STRONGHOLD] = GetDefaultCount(Recognize.FollowType.STRONGHOLD);
+					TypeCountDict[Recognize.FollowType.WAR_HAMMER] = GetDefaultCount(Recognize.FollowType.WAR_HAMMER);
+					TypeCountDict[Recognize.FollowType.REFUGEE_CAMP] = GetDefaultCount(Recognize.FollowType.REFUGEE_CAMP);
+					TypeCountDict[Recognize.FollowType.FEAR_STAR] = GetDefaultCount(Recognize.FollowType.FEAR_STAR);
+					LAST_RESET_TIME = date;
+				}
+			}
+			
 			// 队列数量
 			int busyGroupCount = Recognize.BusyGroupCount;
 			if (busyGroupCount >= GROUP_COUNT) {
@@ -254,6 +287,7 @@ public class Follow {
 			}
 			Debug.Log("未加入");
 			Recognize.FollowType type = Recognize.GetFollowType();
+			int fearStarCount = TypeCountDict[Recognize.FollowType.FEAR_STAR];
 			int count = 0;
 			switch (type) {
 				case Recognize.FollowType.UNKNOWN:
@@ -267,14 +301,14 @@ public class Follow {
 				case Recognize.FollowType.STRONGHOLD:
 				case Recognize.FollowType.ELITE_GUARD:
 				case Recognize.FollowType.HEART_PANG:
-					count = TypeCountDict[type];
+					count = FEAR_STAR_FIRST && fearStarCount > 0 ? 0 : TypeCountDict[type];
 					if (count <= 0) {
 						Debug.Log($"不跟{type}");
 						goto EndOfFollow;
 					}
 					break;
 				case Recognize.FollowType.FEAR_STAR:
-					count = TypeCountDict[type];
+					count = fearStarCount;
 					if (count <= 0) {
 						Debug.Log($"不跟{type}");
 						goto EndOfFollow;
@@ -344,7 +378,7 @@ public class Follow {
 				}
 			}
 			EndOfFollow:
-			if (followWindowOpened || FORCE_CLOSE_WINDOW) {
+			if (followWindowOpened) {
 				// 如果是从外面进来的，则关闭跟车界面
 				Debug.Log("左上角返回按钮");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
@@ -358,7 +392,7 @@ public class Follow {
 			Task.CurrentTask = null;
 			if (followWindowOpened) {
 				// 外面的按钮持续几秒钟才消失
-				yield return new EditorWaitForSeconds(1F);
+				yield return new EditorWaitForSeconds(2F);
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
