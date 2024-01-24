@@ -20,19 +20,34 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 	}
 	
 	private void OnGUI() {
-		AllianceHelp.ONLY_HELP_OTHERS = EditorGUILayout.Toggle("仅帮助他人", AllianceHelp.ONLY_HELP_OTHERS);
-		AllianceHelp.INTERVAL = EditorGUILayout.IntSlider("尝试帮助间隔（秒）", AllianceHelp.INTERVAL, 1800, 7200);
-		bool started = AllianceHelp.s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;
-		if (started) {
-			EditorGUILayout.LabelField("今天已尝试");
-		} else {
-			TimeSpan ts = AllianceHelp.s_NextTime - DateTime.Now;
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField($"下一次尝试时间：{ts:hh\\:mm\\:ss}");
-			if (GUILayout.Button("立即尝试")) {
-				AllianceHelp.s_NextTime = DateTime.Now;
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("帮助类型：", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+		AllianceHelp.OUTER_HELPS = GUILayout.Toggle(AllianceHelp.OUTER_HELPS, "在外面帮助他人", "Button");
+		AllianceHelp.INTO_REQUEST = GUILayout.Toggle(AllianceHelp.INTO_REQUEST, "去里面请求帮助", "Button");
+		EditorGUILayout.EndHorizontal();
+		if (AllianceHelp.INTO_REQUEST) {
+			AllianceHelp.INTO_HELPS_TIMES = EditorGUILayout.IntSlider("在里面帮助检查次数", AllianceHelp.INTO_HELPS_TIMES, 0, 10);
+			AllianceHelp.INTERVAL = EditorGUILayout.IntSlider("尝试请求间隔（秒）", AllianceHelp.INTERVAL, 1800, 7200);
+			bool started = AllianceHelp.s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;
+			if (started) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField("今天已请求", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+				if (GUILayout.Button("取消已请求")) {
+					AllianceHelp.s_StartTime = DateTime.Now - new TimeSpan(24, 0, 0);
+				}
+				EditorGUILayout.EndHorizontal();
+			} else {
+				TimeSpan ts = AllianceHelp.s_NextTime - DateTime.Now;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField($"下一次尝试时间：{ts:hh\\:mm\\:ss}");
+				if (GUILayout.Button("立即尝试")) {
+					AllianceHelp.s_NextTime = DateTime.Now;
+				}
+				if (GUILayout.Button("设为已请求")) {
+					AllianceHelp.s_StartTime = DateTime.Now;
+				}
+				EditorGUILayout.EndHorizontal();
 			}
-			EditorGUILayout.EndHorizontal();
 		}
 		GUILayout.Space(5F);
 		if (AllianceHelp.IsRunning) {
@@ -48,8 +63,10 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 }
 
 public class AllianceHelp {
-	public static bool ONLY_HELP_OTHERS = false;	// 仅帮助别人
-	public static int INTERVAL = 3600;	// 尝试间隔
+	public static bool OUTER_HELPS = false;	// 在外面帮助他人
+	public static bool INTO_REQUEST = false;	// 去里面请求帮助
+	public static int INTO_HELPS_TIMES = 5;	// 去里面请求帮助
+	public static int INTERVAL = 3600;	// 尝试请求间隔
 	
 	public static DateTime s_StartTime;	// 起头时间
 	public static DateTime s_NextTime = DateTime.Now;
@@ -81,95 +98,93 @@ public class AllianceHelp {
 				continue;
 			}
 
-			if (Task.CurrentTask != null) {
-				continue;
-			}
-			
-			// 在外面帮助
-			if (Recognize.CanAllianceHelpOuter) {
-				Task.CurrentTask = nameof(AllianceHelp);
-				Debug.Log("帮助气泡");
-				// Operation.Click(1795, 716);	// 帮助气泡
-				Operation.Click(1820, 725);	// 帮助气泡，避开跟车
-				yield return new EditorWaitForSeconds(0.1F);
-				// 有可能会点到上车提示气泡
-				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
-					Debug.Log("关闭窗口");
-					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
-				}				
-				Task.CurrentTask = null;
-			}
-
-			if (ONLY_HELP_OTHERS) {
-				continue;
-			}
-			
-			// 去里面请求帮助
-			DateTime now = DateTime.Now;
-			bool started = s_StartTime > (now - new TimeSpan(0, 1, 0)).Date;
-			bool nextTimeNotReach = DateTime.Now < s_NextTime;
-			if ((started || nextTimeNotReach) && !Recognize.IsAllianceHelpAwardOuter) {
-				continue;
-			}
-
-			if (Task.CurrentTask != null) {
-				continue;
-			}
-			Task.CurrentTask = nameof(AllianceHelp);
-			
-			if (!nextTimeNotReach) {
-				s_NextTime = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
-			}
-			
-			Debug.Log("联盟按钮");
-			Operation.Click(1870, 710);	// 联盟按钮
-			yield return new EditorWaitForSeconds(0.2F);
-			Debug.Log("联盟帮助按钮");
-			Operation.Click(1080, 620);	// 联盟帮助按钮
-			yield return new EditorWaitForSeconds(0.2F);
-			Debug.Log($"IsAllianceHelpAwardIntuitive: {Recognize.IsAllianceHelpAwardIntuitive}");
-			if (Recognize.IsAllianceHelpAwardIntuitive) {
-				Debug.Log("领取奖励按钮");
-				Operation.Click(1115, 895);	// 领取奖励按钮
-				yield return new EditorWaitForSeconds(1F);
-				Debug.Log("点空白处关闭恭喜获得界面");
-				Operation.Click(1115, 895);	// 点空白处关闭恭喜获得界面
-				yield return new EditorWaitForSeconds(0.3F);
-			}
-			Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
-			if (Recognize.CanAllianceHelpRequest) {
-				Debug.Log("请求帮助按钮");
-				Operation.Click(1115, 895);	// 请求帮助按钮
-				yield return new EditorWaitForSeconds(0.5F);
-				int index = Random.Range(0, 4);
-				Debug.Log("选择帮助物品");
-				Operation.Click(795 + 109 * index, 410);	// 选择帮助物品
-				yield return new EditorWaitForSeconds(0.2F);
-				Debug.Log("请求帮助按钮");
-				Operation.Click(960, 750);	// 请求帮助按钮
-				yield return new EditorWaitForSeconds(0.5F);
-				if (!started) {
-					s_StartTime = DateTime.Now;
+			if (OUTER_HELPS) {
+				// 在外面帮助
+				if (Recognize.CanAllianceHelpOuter) {
+					if (Task.CurrentTask == null) {
+						Task.CurrentTask = nameof(AllianceHelp);
+						Debug.Log("帮助气泡");
+						// Operation.Click(1795, 716);	// 帮助气泡
+						Operation.Click(1820, 725);	// 帮助气泡，避开跟车
+						yield return new EditorWaitForSeconds(0.2F);
+						// 有可能会点到上车提示气泡
+						for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
+							Debug.Log("关闭窗口");
+							Operation.Click(720, 128);	// 左上角返回按钮
+							yield return new EditorWaitForSeconds(0.2F);
+						}				
+						Task.CurrentTask = null;
+					}
 				}
 			}
-			// for (int i = 0; i < 5; ++i) {
-			// 	if (Recognize.CanAllianceHelpOthers) {
-			// 		Debug.Log("帮助全部按钮");
-			// 		Operation.Click(960, 780);	// 帮助全部按钮
-			// 	}
-			// 	yield return new EditorWaitForSeconds(0.2F);
-			// }
-			
-			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
-				Debug.Log("左上角返回按钮");
-				Operation.Click(720, 128);	// 左上角返回按钮
-				yield return new EditorWaitForSeconds(0.2F);
-			}
 
-			Task.CurrentTask = null;
-			
-			yield return new EditorWaitForSeconds(5F);
+			if (INTO_REQUEST) {
+				// 去里面请求帮助
+				DateTime now = DateTime.Now;
+				bool started = s_StartTime > (now - new TimeSpan(0, 1, 0)).Date;
+				bool nextTimeNotReach = DateTime.Now < s_NextTime;
+				if ((started || nextTimeNotReach) && !Recognize.IsAllianceHelpAwardOuter) {
+					continue;
+				}
+	
+				if (Task.CurrentTask != null) {
+					continue;
+				}
+				Task.CurrentTask = nameof(AllianceHelp);
+				
+				if (!nextTimeNotReach) {
+					s_NextTime = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
+				}
+				
+				Debug.Log("联盟按钮");
+				Operation.Click(1870, 710);	// 联盟按钮
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("联盟帮助按钮");
+				Operation.Click(1080, 620);	// 联盟帮助按钮
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log($"IsAllianceHelpAwardIntuitive: {Recognize.IsAllianceHelpAwardIntuitive}");
+				if (Recognize.IsAllianceHelpAwardIntuitive) {
+					Debug.Log("领取奖励按钮");
+					Operation.Click(1115, 895);	// 领取奖励按钮
+					yield return new EditorWaitForSeconds(1F);
+					Debug.Log("点空白处关闭恭喜获得界面");
+					Operation.Click(1115, 895);	// 点空白处关闭恭喜获得界面
+					yield return new EditorWaitForSeconds(0.3F);
+				}
+				Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
+				if (Recognize.CanAllianceHelpRequest) {
+					Debug.Log("请求帮助按钮");
+					Operation.Click(1115, 895);	// 请求帮助按钮
+					yield return new EditorWaitForSeconds(0.5F);
+					int index = Random.Range(0, 4);
+					Debug.Log("选择帮助物品");
+					Operation.Click(795 + 109 * index, 410);	// 选择帮助物品
+					yield return new EditorWaitForSeconds(0.2F);
+					Debug.Log("请求帮助按钮");
+					Operation.Click(960, 750);	// 请求帮助按钮
+					yield return new EditorWaitForSeconds(0.5F);
+					if (!started) {
+						s_StartTime = DateTime.Now;
+					}
+				}
+				for (int i = 0; i < INTO_HELPS_TIMES; ++i) {
+					if (Recognize.CanAllianceHelpOthers) {
+						Debug.Log("帮助全部按钮");
+						Operation.Click(960, 780);	// 帮助全部按钮
+					}
+					yield return new EditorWaitForSeconds(0.2F);
+				}
+				
+				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
+					Debug.Log("左上角返回按钮");
+					Operation.Click(720, 128);	// 左上角返回按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
+	
+				Task.CurrentTask = null;
+				
+				yield return new EditorWaitForSeconds(5F);
+			}
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
