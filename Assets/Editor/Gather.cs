@@ -163,6 +163,13 @@ public class Gather {
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
+			// 确定攻击目标
+			int target = RandomTarget();
+			if (target == -1) {
+				// Debug.Log("未选择攻击目标，取消操作");
+				continue;
+			}
+			
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
 				// Debug.Log("不在世界场景");
 				continue;
@@ -203,12 +210,6 @@ public class Gather {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
-			}
-			// 确定攻击目标
-			int target = RandomTarget();
-			if (target == -1) {
-				Debug.Log("未选择攻击目标，取消操作");
-				continue;
 			}
 			
 			if (Task.CurrentTask != null) {
