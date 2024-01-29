@@ -378,7 +378,7 @@ public class Follow {
 				}
 			}
 			EndOfFollow:
-			if (followWindowOpened) {
+			if (followWindowOpened || GlobalStatus.IsUnattended) {
 				// 如果是从外面进来的，则关闭跟车界面
 				Debug.Log("左上角返回按钮");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
