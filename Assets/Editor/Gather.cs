@@ -137,7 +137,9 @@ public class Gather {
 			List<string> targets = new List<string>();
 			for (int i = 0, length = TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
 				int attackCount = TARGET_ATTACK_COUNT_LIST[i];
-				targets.Add(attackCount > 0 ? $"第{i + 1}个{attackCount}次" : $"第{i + 1}个不限次数");
+				if (attackCount > 0) {
+					targets.Add($"第{i + 1}个{attackCount}次");
+				}
 			}
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
