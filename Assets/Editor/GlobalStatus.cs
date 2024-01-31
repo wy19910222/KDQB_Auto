@@ -25,7 +25,10 @@ public class GlobalStatusConfig : EditorWindow {
 
 	private void OnGUI() {
 		EditorGUILayout.RectField("游戏范围", Operation.CURRENT_GAME_RECT);
+		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Toggle("无人值守", GlobalStatus.IsUnattended);
+		EditorGUILayout.LabelField($"{GlobalStatus.UnattendedDuration / 1000_000_0}/{GlobalStatus.UNATTENDED_THRESHOLD / 1000_000_0}");
+		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("当前任务", GUILayout.Width(EditorGUIUtility.labelWidth));
 		EditorGUILayout.LabelField(Task.CurrentTask ?? "Idle", GUILayout.MinWidth(0));
@@ -54,7 +57,8 @@ public class GlobalStatusConfig : EditorWindow {
 
 public static class GlobalStatus {
 	public static bool IsUnattended { get; private set; }
-	public const long UNATTENDED_THRESHOLD = 30 * 1000 * 1000 * 10; // 30秒
+	public static long UnattendedDuration { get; private set; }
+	public const long UNATTENDED_THRESHOLD = 30 * 1000_000_0; // 30秒
 
 	private static EditorCoroutine s_CO;
 	
@@ -84,9 +88,13 @@ public static class GlobalStatus {
 			if (nextMousePos.x != prevMousePos.x || nextMousePos.y != prevMousePos.y) {
 				prevMousePos = nextMousePos;
 				startDT = now;
+				UnattendedDuration = 0;
 				IsUnattended = false;
-			} else if ((now - startDT).Ticks > UNATTENDED_THRESHOLD) {
-				IsUnattended = true;
+			} else {
+				UnattendedDuration = (now - startDT).Ticks;
+				if (UnattendedDuration > UNATTENDED_THRESHOLD) {
+					IsUnattended = true;
+				}
 			}
 		}
 	}
