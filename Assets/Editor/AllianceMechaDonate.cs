@@ -32,6 +32,7 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 			AllianceMechaDonate.NEXT_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
 		EditorGUILayout.EndHorizontal();
+		AllianceMechaDonate.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaDonate.DONATE_COUNT, 1, 5);
 		AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", AllianceMechaDonate.INTERVAL, 120, 1800);
 		AllianceMechaDonate.COOL_DOWN = EditorGUILayout.IntSlider("捐献成功后冷却（小时）", AllianceMechaDonate.COOL_DOWN, 6, 12);
 		GUILayout.Space(5F);
@@ -57,6 +58,7 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 }
 
 public class AllianceMechaDonate {
+	public static int DONATE_COUNT = 3;	// 捐献数量
 	public static int INTERVAL = 300;	// 点击间隔
 	public static int COOL_DOWN = 6;	// 捐献冷却
 	public static DateTime NEXT_TIME = DateTime.Now;
@@ -119,13 +121,15 @@ public class AllianceMechaDonate {
 					Operation.Click(720, 128);	// 点击窗口外关闭窗口
 					yield return new EditorWaitForSeconds(0.1F);
 					if (!isInRank) {
-						Operation.Click(960, 960);	// 捐献按钮
-						yield return new EditorWaitForSeconds(0.3F);
-						if (Recognize.IsAllianceMechaDonateConfirming) {
-							Operation.Click(960, 686);	// 兑换按钮
-							yield return new EditorWaitForSeconds(0.2F);
-							Operation.Click(1167, 353);	// 关闭按钮
-							yield return new EditorWaitForSeconds(0.2F);
+						for (int i = 0; i < DONATE_COUNT; ++i) {
+							Operation.Click(960, 960);	// 捐献按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							if (Recognize.IsAllianceMechaDonateConfirming) {
+								Operation.Click(960, 686);	// 兑换按钮
+								yield return new EditorWaitForSeconds(0.2F);
+								Operation.Click(1167, 353);	// 关闭按钮
+								yield return new EditorWaitForSeconds(0.2F);
+							}
 						}
 						succeed = true;
 					}
