@@ -273,7 +273,7 @@ public class Follow {
 			if (followWindowOpened) {
 				Debug.Log("外面加入按钮");
 				Operation.Click(1771, 714);	// 加入按钮
-				yield return new EditorWaitForSeconds(0.1F);
+				yield return new EditorWaitForSeconds(0.2F);
 				// 是否有加入按钮(切后台可能导致动画阻塞，从而外面有按钮实际集结已结束)
 				if (!Recognize.IsFollowJoinBtnExist) {
 					goto EndOfFollow;
