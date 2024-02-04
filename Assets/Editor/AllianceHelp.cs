@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,6 +27,27 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 		AllianceHelp.INTO_REQUEST = GUILayout.Toggle(AllianceHelp.INTO_REQUEST, "去里面请求帮助", "Button");
 		EditorGUILayout.EndHorizontal();
 		if (AllianceHelp.INTO_REQUEST) {
+			for (int i = AllianceHelp.TARGET_LIST.Count; i < 4; ++i) {
+				AllianceHelp.TARGET_LIST.Add(0);
+			}
+			for (int i = 0; i < 4; ++i) {
+				EditorGUILayout.BeginHorizontal();
+				EditorGUI.BeginChangeCheck();
+				int count = AllianceHelp.TARGET_LIST[i];
+				int newCount = Math.Max(EditorGUILayout.IntField($"    目标{i + 1}", Math.Abs(count)), 0);
+				if (EditorGUI.EndChangeCheck()) {
+					count = count < 0 ? -newCount : newCount;
+					AllianceHelp.TARGET_LIST[i] = count;
+				}
+				EditorGUI.BeginChangeCheck();
+				EditorGUILayout.Toggle(count > 0, GUILayout.Width(16F));
+				if (EditorGUI.EndChangeCheck()) {
+					count = count == 0 ? 999 : -count;
+					AllianceHelp.TARGET_LIST[i] = count;
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+			
 			AllianceHelp.INTO_HELPS_TIMES = EditorGUILayout.IntSlider("在里面帮助检查次数", AllianceHelp.INTO_HELPS_TIMES, 0, 10);
 			AllianceHelp.INTERVAL = EditorGUILayout.IntSlider("尝试请求间隔（秒）", AllianceHelp.INTERVAL, 1800, 7200);
 			bool started = AllianceHelp.s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;
@@ -67,6 +89,8 @@ public class AllianceHelp {
 	public static bool INTO_REQUEST = false;	// 去里面请求帮助
 	public static int INTO_HELPS_TIMES = 5;	// 去里面请求帮助
 	public static int INTERVAL = 3600;	// 尝试请求间隔
+	
+	public static readonly List<int> TARGET_LIST = new List<int>();	// 帮助物品随机范围
 	
 	public static DateTime s_StartTime;	// 起头时间
 	public static DateTime s_NextTime = DateTime.Now;
@@ -136,6 +160,13 @@ public class AllianceHelp {
 					s_NextTime = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
 				}
 				
+				// 确定帮助物品
+				int target = RandomTarget();
+				if (target == -1) {
+					// Debug.Log("未选择攻击目标，取消操作");
+					continue;
+				}
+				
 				Debug.Log("联盟按钮");
 				Operation.Click(1870, 710);	// 联盟按钮
 				yield return new EditorWaitForSeconds(0.2F);
@@ -158,10 +189,13 @@ public class AllianceHelp {
 					yield return new EditorWaitForSeconds(0.5F);
 					int index = Random.Range(0, 4);
 					Debug.Log("选择帮助物品");
-					Operation.Click(795 + 109 * index, 410);	// 选择帮助物品
+					Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
 					yield return new EditorWaitForSeconds(0.2F);
 					Debug.Log("请求帮助按钮");
 					Operation.Click(960, 750);	// 请求帮助按钮
+					if (TARGET_LIST[target] < 999) {
+						--TARGET_LIST[target];
+					}
 					yield return new EditorWaitForSeconds(0.5F);
 					if (!started) {
 						s_StartTime = DateTime.Now;
@@ -187,5 +221,18 @@ public class AllianceHelp {
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static int RandomTarget() {
+		List<int> list = new List<int>();
+		for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
+			if (TARGET_LIST[i] > 0) {
+				list.Add(i);
+			}
+		}
+		if (list.Count <= 0) {
+			return -1;
+		}
+		return list[Random.Range(0, list.Count)];
 	}
 }
