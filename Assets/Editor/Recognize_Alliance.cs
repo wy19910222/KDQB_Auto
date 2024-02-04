@@ -49,7 +49,6 @@ public static partial class Recognize {
 	private static readonly Color32[,] ALLIANCE_MECHA_DONATE_RANK_LIST = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateRankList.png");
 	public static bool IsAllianceMechaDonateRankShowing {
 		get {
-			// 通过判断排行列表中最后一行的底色确定自己是否在排行中
 			Color32[,] realColors = Operation.GetColorsOnScreen(915, 185, 90, 24);
 			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_RANK_LIST) > 0.99F;
 		}
@@ -64,11 +63,14 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly Color32[,] ALLIANCE_MECHA_DONATE_CONFIRM = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateConfirm.png");
+	// private static readonly Color32[,] ALLIANCE_MECHA_DONATE_CONFIRM = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateConfirm.png");
+	private static readonly Color32[,] ALLIANCE_MECHA_DONATE_CONFIRM_BTN = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateConfirmBtn.png");
 	public static bool IsAllianceMechaDonateConfirming {
 		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(860, 340, 200, 30);
-			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM) > 0.99F;
+			// Color32[,] realColors = Operation.GetColorsOnScreen(860, 340, 200, 30);
+			// return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM) > 0.99F;
+			Color32[,] realColors = Operation.GetColorsOnScreen(930, 672, 60, 30);
+			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM_BTN) > 0.99F;
 		}
 	}
 
