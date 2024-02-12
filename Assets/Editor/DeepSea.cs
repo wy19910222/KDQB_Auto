@@ -127,19 +127,24 @@ public class DeepSea {
 				Debug.Log("活动标签页");
 				Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
 				yield return new EditorWaitForSeconds(0.1F);
-				
-				Debug.Log("点击探测器");
-				for (int i = 0; i < DETECTOR_COUNT; ++i) {
-					Debug.Log($"点击探测器{i + 1}");
-					Operation.Click(808 + 153 * i, 870);	// 探测器
-					yield return new EditorWaitForSeconds(0.2F);
-					Operation.Click(808 + 153 * i, 870);	// 探测器
-					yield return new EditorWaitForSeconds(0.2F);
-					Operation.Click(808 + 153 * i, 870);	// 探测器
-					yield return new EditorWaitForSeconds(0.2F);
-					Operation.Click(808 + 153 * i, 870);	// 探测器
-					yield return new EditorWaitForSeconds(0.2F);
+
+				if (Recognize.IsDeepSea) {
+					Debug.Log("点击探测器");
+					for (int i = 0; i < DETECTOR_COUNT; ++i) {
+						Debug.Log($"点击探测器{i + 1}");
+						Operation.Click(808 + 153 * i, 870);	// 探测器
+						yield return new EditorWaitForSeconds(0.2F);
+						Operation.Click(808 + 153 * i, 870);	// 探测器
+						yield return new EditorWaitForSeconds(0.2F);
+						Operation.Click(808 + 153 * i, 870);	// 探测器
+						yield return new EditorWaitForSeconds(0.2F);
+						Operation.Click(808 + 153 * i, 870);	// 探测器
+						yield return new EditorWaitForSeconds(0.2F);
+					}
+				} else {
+					Debug.Log("标签错误，取消操作");
 				}
+				
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 					Debug.Log("关闭窗口");
 					Operation.Click(720, 128);	// 左上角返回按钮

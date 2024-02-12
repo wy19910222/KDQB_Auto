@@ -125,29 +125,33 @@ public class MiningTycoon {
 			Debug.Log("活动标签页");
 			Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
 			yield return new EditorWaitForSeconds(0.1F);
+
+			if (Recognize.IsMiningTycoon) {
+				Debug.Log($"尝试领取矿车奖励");
+				for (int i = 4; i > 0; --i) {
+					Operation.Click(660 + 120 * i, 850);	// 点击矿车
+					yield return new EditorWaitForSeconds(0.2F);
+					Operation.Click(960, 730);	// 领取奖励按钮
+					Operation.Click(660, 850);	// 点击窗口外关闭
+					yield return new EditorWaitForSeconds(0.2F);
+				}
+
+				Debug.Log("挖矿");
+				for (int i = 0; i < 20; ++i) {
+					Operation.Click(1060, 970);	// 挖矿按钮
+					yield return new EditorWaitForSeconds(0.2F);
+				}
 			
-			Debug.Log($"尝试领取矿车奖励");
-			for (int i = 4; i > 0; --i) {
-				Operation.Click(660 + 120 * i, 850);	// 点击矿车
+				Debug.Log($"开始获取第{TRAMCAR_COUNTDOWN_NUMBER}个矿车");
+				Operation.Click(660 + 120 * TRAMCAR_COUNTDOWN_NUMBER, 850);	// 点击矿车
 				yield return new EditorWaitForSeconds(0.2F);
-				Operation.Click(960, 730);	// 领取奖励按钮
+				Operation.Click(830, 730);	// 开始收取按钮
+				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(660, 850);	// 点击窗口外关闭
 				yield return new EditorWaitForSeconds(0.2F);
+			} else {
+				Debug.Log("标签错误，取消操作");
 			}
-
-			Debug.Log("挖矿");
-			for (int i = 0; i < 20; ++i) {
-				Operation.Click(1060, 970);	// 挖矿按钮
-				yield return new EditorWaitForSeconds(0.2F);
-			}
-			
-			Debug.Log($"开始获取第{TRAMCAR_COUNTDOWN_NUMBER}个矿车");
-			Operation.Click(660 + 120 * TRAMCAR_COUNTDOWN_NUMBER, 850);	// 点击矿车
-			yield return new EditorWaitForSeconds(0.2F);
-			Operation.Click(830, 730);	// 开始收取按钮
-			yield return new EditorWaitForSeconds(0.2F);
-			Operation.Click(660, 850);	// 点击窗口外关闭
-			yield return new EditorWaitForSeconds(0.2F);
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
