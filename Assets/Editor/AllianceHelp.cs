@@ -187,10 +187,9 @@ public class AllianceHelp {
 					Debug.Log("请求帮助按钮");
 					Operation.Click(1115, 895);	// 请求帮助按钮
 					yield return new EditorWaitForSeconds(0.5F);
-					int index = Random.Range(0, 4);
 					Debug.Log("选择帮助物品");
 					Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 					Debug.Log("请求帮助按钮");
 					Operation.Click(960, 750);	// 请求帮助按钮
 					if (TARGET_LIST[target] < 999) {
