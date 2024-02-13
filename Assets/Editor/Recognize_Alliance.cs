@@ -42,7 +42,7 @@ public static partial class Recognize {
 	public static bool IsAllianceMechaDonateEnabled {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(1067, 929, 16, 16);
-			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_ENABLED) > 0.99F;
+			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_ENABLED) > 0.9F;
 		}
 	}
 
@@ -50,7 +50,7 @@ public static partial class Recognize {
 	public static bool IsAllianceMechaDonateRankShowing {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(915, 185, 90, 24);
-			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_RANK_LIST) > 0.99F;
+			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_RANK_LIST) > 0.9F;
 		}
 	}
 
@@ -59,7 +59,7 @@ public static partial class Recognize {
 		get {
 			// 通过判断排行列表中最后一行的底色确定自己是否在排行中
 			Color32[,] realColors = Operation.GetColorsOnScreen(780, 850, 10, 10);
-			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_IN_RANK) > 0.99F;
+			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_IN_RANK) > 0.9F;
 		}
 	}
 
@@ -68,9 +68,9 @@ public static partial class Recognize {
 	public static bool IsAllianceMechaDonateConfirming {
 		get {
 			// Color32[,] realColors = Operation.GetColorsOnScreen(860, 340, 200, 30);
-			// return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM) > 0.99F;
+			// return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM) > 0.9F;
 			Color32[,] realColors = Operation.GetColorsOnScreen(930, 672, 60, 30);
-			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM_BTN) > 0.99F;
+			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_CONFIRM_BTN) > 0.9F;
 		}
 	}
 
@@ -79,7 +79,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardOuter), () => {
 				Color32[,] realColors1 = Operation.GetColorsOnScreen(1869, 686, 30, 30);
-				return ApproximatelyRect(realColors1, ALLIANCE_HELP_AWARD_OUTER) > 0.99F;
+				return ApproximatelyRect(realColors1, ALLIANCE_HELP_AWARD_OUTER) > 0.9F;
 			});
 		}
 	}
@@ -89,7 +89,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardInner), () => {
 				Color32[,] realColors = Operation.GetColorsOnScreen(1130, 590, 60, 60);
-				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_INNER) > 0.99F;
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_INNER) > 0.9F;
 			});
 		}
 	}
@@ -99,7 +99,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardIntuitive), () => {
 				Color32[,] realColors = Operation.GetColorsOnScreen(1073, 885, 82, 23);
-				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_INTUITIVE) > 0.99F;
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_INTUITIVE) > 0.9F;
 			});
 		}
 	}
@@ -109,7 +109,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(CanAllianceHelpRequest), () => {
 				Color32[,] realColors = Operation.GetColorsOnScreen(1073, 885, 82, 23);
-				return ApproximatelyRect(realColors, ALLIANCE_HELP_REQUEST) > 0.99F;
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_REQUEST) > 0.9F;
 			});
 		}
 	}
@@ -119,7 +119,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(CanAllianceHelpCancel), () => {
 				Color32[,] realColors = Operation.GetColorsOnScreen(1073, 885, 82, 23);
-				return ApproximatelyRect(realColors, ALLIANCE_HELP_CANCEL) > 0.99F;
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_CANCEL) > 0.9F;
 			});
 		}
 	}
@@ -129,7 +129,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(CanAllianceHelpOthers), () => {
 				Color32[,] realColors = Operation.GetColorsOnScreen(926, 768, 69, 19);
-				return ApproximatelyRect(realColors, ALLIANCE_HELP_OTHERS) > 0.99F;
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_OTHERS) > 0.9F;
 			});
 		}
 	}
