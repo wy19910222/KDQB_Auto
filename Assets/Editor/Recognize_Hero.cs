@@ -91,14 +91,8 @@ public static partial class Recognize {
 		if (deltaY >= 0 && heroAvatar != null) {
 			int groupCount = 0;
 			// 返回加速等蓝色按钮中间的白色
-			Color32 targetColor = new Color32(255, 255, 255, 255);
 			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + deltaY + 50, 160, 500);
-			while (groupCount < 10) {
-				Color32 realColor = realColors[158, 34 + groupCount * 50];
-				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
-					break;
-				}
-
+			while (groupCount < BusyGroupCount) {
 				int approximatelyCount = 0;
 				int pointCount = AVATAR_SAMPLE_POINTS.Length;
 				for (int i = 0; i < pointCount; ++i) {
@@ -113,6 +107,13 @@ public static partial class Recognize {
 					}
 					Color32 color = new Color32((byte) (r / 3), (byte) (g / 3), (byte) (b / 3), 255);
 					// Color32 color = realColors[finalPoint.x, finalPoint.y];
+					if (groupCount == 4 && deltaY == 76 + 155) {
+						Color32 coverColor = new Color32(129, 169, 203, 255);
+						float[] weight = new[] {0.1F, 0.1F, 0.1F, 0.15F, 0.15F, 0.15F, 0.2F};
+						color.r = (byte) ((color.r - coverColor.r * weight[i]) / (1 - weight[i]));
+						color.g = (byte) ((color.g - coverColor.g * weight[i]) / (1 - weight[i]));
+						color.b = (byte) ((color.b - coverColor.b * weight[i]) / (1 - weight[i]));
+					}
 					if (ApproximatelyCoveredCount(color, heroAvatar[i], 1.5F) >= 0) {
 						++approximatelyCount;
 					}

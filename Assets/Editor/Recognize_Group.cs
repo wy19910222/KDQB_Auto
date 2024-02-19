@@ -34,8 +34,14 @@ public static partial class Recognize {
 					while (groupCount < 10) {
 						Color32 realColor = realColors[0, groupCount * 50];
 						// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realColor}");
-						if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
-							break;
+						if (groupCount == 4 && deltaY == 76 + 155) {
+							if (ApproximatelyCoveredCount(realColor, new Color32(192, 212, 229, 255)) < 0) {
+								break;
+							}
+						} else {
+							if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
+								break;
+							}
 						}
 						groupCount++;
 					}
