@@ -74,6 +74,16 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] ALLIANCE_HELP_OUTER = Operation.GetFromFile("PersistentData/Textures/AllianceHelpOuter.png");
+	public static bool CanAllianceHelpOuter  {
+		get {
+			return GetCachedValueOrNew(nameof(CanAllianceHelpOuter), () => {
+				Color32[,] realColors = Operation.GetColorsOnScreen(1777, 698, 36, 36);
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_OUTER, 1.6F) > 0.7F;
+			});
+		}
+	}
+
 	private static readonly Color32[,] ALLIANCE_HELP_AWARD_OUTER = Operation.GetFromFile("PersistentData/Textures/AllianceHelpAwardOuter.png");
 	public static bool IsAllianceHelpAwardOuter {
 		get {
