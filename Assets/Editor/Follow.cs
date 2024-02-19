@@ -54,6 +54,7 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
 		EditorGUI.DrawRect(wireRect2, Color.gray);
 
+		CustomField(Recognize.FollowType.UNKNOWN);
 		if (EditorGUIUtility.currentViewWidth > 460) {
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.BeginVertical();
@@ -203,6 +204,7 @@ public class Follow {
 
 	public static int GetDefaultCount(Recognize.FollowType type) {
 		return type switch {
+			Recognize.FollowType.UNKNOWN => 50,
 			Recognize.FollowType.WAR_HAMMER => 50,
 			Recognize.FollowType.REFUGEE_CAMP => 10,
 			Recognize.FollowType.FEAR_STAR => 10,
@@ -222,7 +224,9 @@ public class Follow {
 				if (LAST_RESET_TIME < date) {
 					TypeCountDict[Recognize.FollowType.STRONGHOLD] = GetDefaultCount(Recognize.FollowType.STRONGHOLD);
 					TypeCountDict[Recognize.FollowType.WAR_HAMMER] = GetDefaultCount(Recognize.FollowType.WAR_HAMMER);
+					TypeCountDict[Recognize.FollowType.ELITE_GUARD] = GetDefaultCount(Recognize.FollowType.ELITE_GUARD);
 					TypeCountDict[Recognize.FollowType.REFUGEE_CAMP] = GetDefaultCount(Recognize.FollowType.REFUGEE_CAMP);
+					TypeCountDict[Recognize.FollowType.HEART_PANG] = GetDefaultCount(Recognize.FollowType.HEART_PANG);
 					TypeCountDict[Recognize.FollowType.FEAR_STAR] = GetDefaultCount(Recognize.FollowType.FEAR_STAR);
 					LAST_RESET_TIME = date;
 				}
@@ -290,12 +294,10 @@ public class Follow {
 			int fearStarCount = TypeCountDict[Recognize.FollowType.FEAR_STAR];
 			int count = 0;
 			switch (type) {
-				case Recognize.FollowType.UNKNOWN:
-					Debug.Log("未知类型，不跟车");
-					goto EndOfFollow;
 				case Recognize.FollowType.NONE:
 					Debug.Log("未显示Icon，不跟车");
 					goto EndOfFollow;
+				case Recognize.FollowType.UNKNOWN:
 				case Recognize.FollowType.WAR_HAMMER:
 				case Recognize.FollowType.REFUGEE_CAMP:
 				case Recognize.FollowType.STRONGHOLD:
