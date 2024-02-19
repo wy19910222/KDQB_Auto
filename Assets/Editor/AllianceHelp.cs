@@ -172,7 +172,7 @@ public class AllianceHelp {
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("联盟帮助按钮");
 				Operation.Click(1080, 620);	// 联盟帮助按钮
-				yield return new EditorWaitForSeconds(0.2F);
+				yield return new EditorWaitForSeconds(0.5F);
 				Debug.Log($"IsAllianceHelpAwardIntuitive: {Recognize.IsAllianceHelpAwardIntuitive}");
 				if (Recognize.IsAllianceHelpAwardIntuitive) {
 					Debug.Log("领取奖励按钮");
@@ -180,7 +180,7 @@ public class AllianceHelp {
 					yield return new EditorWaitForSeconds(1F);
 					Debug.Log("点空白处关闭恭喜获得界面");
 					Operation.Click(1115, 895);	// 点空白处关闭恭喜获得界面
-					yield return new EditorWaitForSeconds(0.3F);
+					yield return new EditorWaitForSeconds(0.5F);
 				}
 				Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
 				if (Recognize.CanAllianceHelpRequest) {
