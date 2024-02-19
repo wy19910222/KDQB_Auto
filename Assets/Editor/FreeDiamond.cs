@@ -23,7 +23,6 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 		}
 		EditorGUILayout.EndHorizontal();
 		FreeDiamond.TAB_ORDER = EditorGUILayout.IntSlider("标签排序（周卡排第几个）", FreeDiamond.TAB_ORDER, 1, 10);
-		FreeDiamond.INTERVAL = EditorGUILayout.Slider("点击间隔", FreeDiamond.INTERVAL, 15.5F, 16.5F);
 		GUILayout.Space(5F);
 		if (FreeDiamond.IsRunning) {
 			if (GUILayout.Button("关闭")) {
@@ -40,7 +39,6 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 public class FreeDiamond {
 	public static int LEFT_COUNT = 20;	// 剩余次数
 	public static int TAB_ORDER = 3;	// 周卡页面排序
-	public static float INTERVAL = 16;	// 监测间隔
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -62,6 +60,7 @@ public class FreeDiamond {
 	}
 
 	private static IEnumerator Update() {
+		const int INTERVAL = 15;
 		while (true) {
 			yield return null;
 			if (LEFT_COUNT <= 0) {
