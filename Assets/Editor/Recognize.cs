@@ -142,6 +142,22 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, CUT_PRICE) > 0.99F;
 		}
 	}
+
+	private static readonly Color32[,] FREE_DIAMOND_COOL_DOWN = Operation.GetFromFile("PersistentData/Textures/FreeDiamondCoolDown.png");
+	public static bool IsFreeDiamondCoolDown {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1099, 295, 55, 30);
+			return ApproximatelyRect(realColors, FREE_DIAMOND_COOL_DOWN) > 0.9F;
+		}
+	}
+
+	private static readonly Color32[,] FREE_DIAMOND_NO_COUNTDOWN = Operation.GetFromFile("PersistentData/Textures/FreeDiamondNoCountdown.png");
+	public static bool IsFreeDiamondNoCountdown {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1096, 261, 58, 15);
+			return ApproximatelyRect(realColors, FREE_DIAMOND_NO_COUNTDOWN) > 0.9F;
+		}
+	}
 	
 	// public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 	// 	new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),

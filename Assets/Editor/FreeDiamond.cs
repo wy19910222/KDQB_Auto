@@ -17,9 +17,9 @@ public class FreeDiamondConfig : PrefsEditorWindow<FreeDiamond> {
 	
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
-		FreeDiamond.LEFT_COUNT = EditorGUILayout.IntSlider("剩余次数", FreeDiamond.LEFT_COUNT, 0, 20);
+		EditorGUILayout.IntField("剩余次数", FreeDiamond.LEFT_COUNT);
 		if (GUILayout.Button("重置", GUILayout.Width(EditorGUIUtility.fieldWidth))) {
-			FreeDiamond.LEFT_COUNT = 20;
+			FreeDiamond.LEFT_COUNT = 999;
 		}
 		EditorGUILayout.EndHorizontal();
 		FreeDiamond.TAB_ORDER = EditorGUILayout.IntSlider("标签排序（周卡排第几个）", FreeDiamond.TAB_ORDER, 1, 10);
@@ -104,7 +104,15 @@ public class FreeDiamond {
 			Operation.Click(1190 + orderOffsetX, 200);	// 周卡标签
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(1125, 310);	// 领取按钮
-			LEFT_COUNT--;
+			yield return new EditorWaitForSeconds(1F);	// 钻石飘飞特效挡住了按钮，所以等1秒后再判断
+			
+			if (Recognize.IsFreeDiamondCoolDown) {
+				if (Recognize.IsFreeDiamondNoCountdown) {
+					LEFT_COUNT = 0;
+				} else {
+					LEFT_COUNT--;
+				}
+			}
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
