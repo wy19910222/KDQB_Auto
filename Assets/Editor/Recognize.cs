@@ -164,6 +164,35 @@ public static partial class Recognize {
 			return 0;
 		}
 	}
+	
+	private static readonly Color32 HERO_EMPTY_COLOR1 = new Color32(97, 166, 248, 255);
+	private static readonly Color32 HERO_EMPTY_COLOR2 = new Color32(85, 157, 242, 255);
+	public static int HeroEmptyCount {
+		get {
+			int count = 0;
+			Color32[,] realColors = Operation.GetColorsOnScreen(20, 391, 160, 27);
+			if (IsHeroEmpty(realColors, 132, 0)) {
+				++count;
+			}
+			if (IsHeroEmpty(realColors, 70, 0) || IsHeroEmpty(realColors, 104, 0)) {
+				++count;
+			}
+			if (IsHeroEmpty(realColors, 7, 0) || IsHeroEmpty(realColors, 35, 0)) {
+				++count;
+			}
+			return count;
+		}
+	}
+	private static bool IsHeroEmpty(Color32[,] realColors, int x, int y) {
+		Color32 realColor1 = realColors[x + 5, y + 5];
+		Color32 realColor2 = realColors[x + 21, y + 5];
+		Color32 realColor3 = realColors[x + 5, y + 21];
+		Color32 realColor4 = realColors[x + 21, y + 21];
+		return Approximately(realColor1, HERO_EMPTY_COLOR1)
+				&& Approximately(realColor2, HERO_EMPTY_COLOR1)
+				&& Approximately(realColor3, HERO_EMPTY_COLOR2)
+				&& Approximately(realColor4, HERO_EMPTY_COLOR2);
+	}
 
 	private static readonly Color32[,] CUT_PRICE = Operation.GetFromFile("PersistentData/Textures/CutPrice.png");
 	public static bool CanCutPrice {

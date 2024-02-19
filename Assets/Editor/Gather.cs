@@ -342,7 +342,7 @@ public class Gather {
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
-				if (!test && Recognize.SoldierCountPercent > 0.99F) {
+				if (!test && Recognize.SoldierCountPercent > 0.99F && Recognize.HeroEmptyCount <= 0) {
 					Operation.Click(960, 470);	// 出战按钮
 					TARGET_ATTACK_COUNT_LIST[target]--;
 					Debug.Log("出发");
