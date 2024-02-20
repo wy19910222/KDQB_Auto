@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,6 +21,7 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 	
 	private void OnGUI() {
 		DeepSea.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", DeepSea.ACTIVITY_ORDER, 1, 20);
+		DeepSea.ORDER_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", DeepSea.ORDER_RADIUS, 1, 6);
 		DeepSea.DETECTOR_COUNT = EditorGUILayout.IntSlider("拥有探测器", DeepSea.DETECTOR_COUNT, 1, 3);
 		// DeepSea.CLICK_INTERVAL = Mathf.Clamp(EditorGUILayout.IntField("点击间隔时间（秒）", DeepSea.CLICK_INTERVAL), 60, 1200);
 		EditorGUILayout.BeginHorizontal();
@@ -56,10 +58,10 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 
 public class DeepSea {
 	public static int ACTIVITY_ORDER = 8;	// 活动排序
+	public static int ORDER_RADIUS = 5;	// 寻找标签半径
 	public static int DETECTOR_COUNT = 3;	// 拥有探测器数量
 	public static TimeSpan DEFAULT_COUNTDOWN = new TimeSpan(8, 0, 0);	// 倒计时
-	public static int TRY_COUNT = 3;	// 倒计时结束时尝试3次
-	// public static int CLICK_INTERVAL = 120;	// 点击间隔
+	public static int TRY_COUNT = 2;	// 倒计时结束时尝试2次
 	public static DateTime TargetDT;
 	public static TimeSpan Countdown {
 		get => TargetDT - DateTime.Now;
@@ -85,6 +87,7 @@ public class DeepSea {
 	}
 
 	private static IEnumerator Update() {
+		List<int> nearbyOrders = new List<int>();
 		while (true) {
 			yield return null;
 			if (DateTime.Now < TargetDT) {
@@ -95,11 +98,22 @@ public class DeepSea {
 				continue;
 			}
 
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(DeepSea);
+
+			int activityOrder = ACTIVITY_ORDER;
+			if (nearbyOrders.Count > 0) {
+				activityOrder = nearbyOrders[0];
+				nearbyOrders.RemoveAt(0);
+			}
+			bool success = false;
 			for (int tryCount = 0; tryCount < TRY_COUNT; ++tryCount) {
 				// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
 				Recognize.Scene currentScene = Recognize.CurrentScene;
 				if (currentScene == Recognize.Scene.OUTSIDE && Recognize.IsOutsideFaraway) {
-					while (Recognize.IsOutsideFaraway) {
+					for (int i = 0; i < 50 && Recognize.IsOutsideFaraway; i++) {
 						Vector2Int oldPos = MouseUtils.GetMousePos();
 						MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
 						MouseUtils.ScrollWheel(1);
@@ -113,7 +127,7 @@ public class DeepSea {
 				yield return new EditorWaitForSeconds(0.5F);
 				Debug.Log("拖动以显示活动标签页");
 				const int TAB_WIDTH = 137;
-				int orderOffsetX = (ACTIVITY_ORDER - 4) * TAB_WIDTH;
+				int orderOffsetX = (activityOrder - 4) * TAB_WIDTH;
 				while (orderOffsetX > 0) {
 					const int dragDistance = TAB_WIDTH * 4;
 					// 往左拖动
@@ -129,6 +143,7 @@ public class DeepSea {
 				yield return new EditorWaitForSeconds(0.1F);
 
 				if (Recognize.IsDeepSea) {
+					success = true;
 					Debug.Log("点击探测器");
 					for (int i = 0; i < DETECTOR_COUNT; ++i) {
 						Debug.Log($"点击探测器{i + 1}");
@@ -140,9 +155,11 @@ public class DeepSea {
 						yield return new EditorWaitForSeconds(0.2F);
 						Operation.Click(808 + 153 * i, 870);	// 探测器
 						yield return new EditorWaitForSeconds(0.2F);
+						Operation.Click(808 + 153 * i, 870);	// 探测器
+						yield return new EditorWaitForSeconds(0.2F);
+						Operation.Click(808 + 153 * i, 870);	// 探测器
+						yield return new EditorWaitForSeconds(0.2F);
 					}
-				} else {
-					Debug.Log("标签错误，取消操作");
 				}
 				
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
@@ -150,8 +167,41 @@ public class DeepSea {
 					Operation.Click(720, 128);	// 左上角返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
+
+				if (!success) {
+					break;
+				}
 			}
-			TargetDT = DateTime.Now + DEFAULT_COUNTDOWN;
+			
+			Task.CurrentTask = null;
+
+			if (success) {
+				if (nearbyOrders.Count > 0) {
+					nearbyOrders.Clear();
+				}
+				ACTIVITY_ORDER = activityOrder;
+				TargetDT = DateTime.Now + DEFAULT_COUNTDOWN;
+			} else {
+				if (activityOrder == ACTIVITY_ORDER) {
+					for (int i = 1; i <= ORDER_RADIUS; i++) {
+						int prevOrder = ACTIVITY_ORDER - i;
+						if (prevOrder > 0) {
+							nearbyOrders.Add(prevOrder);
+						}
+						nearbyOrders.Add(ACTIVITY_ORDER + i);
+					}
+					Debug.Log($"标签{activityOrder}错误，稍后相邻标签页: {string.Join(",", nearbyOrders)}");
+					TargetDT = DateTime.Now + new TimeSpan(0, 0, 2);
+				} else {
+					if (nearbyOrders.Count > 0) {
+						Debug.Log($"标签{activityOrder}错误，稍后继续尝试标签页: " + nearbyOrders[0]);
+						TargetDT = DateTime.Now + new TimeSpan(0, 0, 2);
+					} else {
+						Debug.LogError($"标签{activityOrder}错误，取消操作");
+						TargetDT = DateTime.Now + DEFAULT_COUNTDOWN;
+					}
+				}
+			}
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}

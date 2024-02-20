@@ -17,5 +17,11 @@ public static partial class Recognize {
 		}
 	}
 
-	public static bool IsDeepSea => true;
+	private static readonly Color32[,] DEEP_SEA_BTN = Operation.GetFromFile("PersistentData/Textures/DeepSeaBtn.png");
+	public static bool IsDeepSea {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(801, 240, 80, 22);
+			return ApproximatelyRectIgnoreCovered(realColors, DEEP_SEA_BTN) > 0.9F;
+			}
+	}
 }
