@@ -136,7 +136,7 @@ public class AllianceHelp {
 							Debug.Log("关闭窗口");
 							Operation.Click(720, 128);	// 左上角返回按钮
 							yield return new EditorWaitForSeconds(0.2F);
-						}				
+						}
 						Task.CurrentTask = null;
 					}
 				}
@@ -160,12 +160,6 @@ public class AllianceHelp {
 					s_NextTime = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
 				}
 				
-				// 确定帮助物品
-				int target = RandomTarget();
-				if (target == -1) {
-					// Debug.Log("未选择攻击目标，取消操作");
-					continue;
-				}
 				
 				Debug.Log("联盟按钮");
 				Operation.Click(1870, 710);	// 联盟按钮
@@ -184,20 +178,24 @@ public class AllianceHelp {
 				}
 				Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
 				if (Recognize.CanAllianceHelpRequest) {
-					Debug.Log("请求帮助按钮");
-					Operation.Click(1115, 895);	// 请求帮助按钮
-					yield return new EditorWaitForSeconds(0.5F);
-					Debug.Log("选择帮助物品");
-					Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
-					yield return new EditorWaitForSeconds(0.3F);
-					Debug.Log("请求帮助按钮");
-					Operation.Click(960, 750);	// 请求帮助按钮
-					if (TARGET_LIST[target] < 999) {
-						--TARGET_LIST[target];
-					}
-					yield return new EditorWaitForSeconds(0.5F);
-					if (!started) {
-						s_StartTime = DateTime.Now;
+					// 确定帮助物品
+					int target = RandomTarget();
+					if (target != -1) {
+						Debug.Log("请求帮助按钮");
+						Operation.Click(1115, 895);	// 请求帮助按钮
+						yield return new EditorWaitForSeconds(0.5F);
+						Debug.Log("选择帮助物品");
+						Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
+						yield return new EditorWaitForSeconds(0.3F);
+						Debug.Log("请求帮助按钮");
+						Operation.Click(960, 750);	// 请求帮助按钮
+						if (TARGET_LIST[target] < 999) {
+							--TARGET_LIST[target];
+						}
+						yield return new EditorWaitForSeconds(0.5F);
+						if (!started) {
+							s_StartTime = DateTime.Now;
+						}
 					}
 				}
 				for (int i = 0; i < INTO_HELPS_TIMES; ++i) {
