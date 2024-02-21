@@ -150,13 +150,13 @@ public class AttackChaoticMarshal {
 			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("远征活动按钮");
 			Operation.Click(760, 940);	// 远征活动按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("混乱之源标签");
 			Operation.Click(1050, 195);	// 混乱之源标签
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("前往按钮");
 			Operation.Click(1135, 920);	// 前往按钮
-			yield return new EditorWaitForSeconds(0.3F);
+			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("攻击按钮");
 			Operation.Click(1055, 835);	// 攻击按钮
 			yield return new EditorWaitForSeconds(0.3F);
