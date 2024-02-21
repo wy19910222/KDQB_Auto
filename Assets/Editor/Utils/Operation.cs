@@ -153,4 +153,11 @@ public static class Operation {
 		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
 		return ScreenshotUtils.Screenshot(x, y, width, height);
 	}
+
+	public static Vector2Int GetMousePos() {
+		Vector2Int pos = MouseUtils.GetMousePos();
+		pos.x = Mathf.RoundToInt((pos.x - CURRENT_GAME_RECT.x) / CURRENT_GAME_RECT.width * BASED_GAME_RECT.width + BASED_GAME_RECT.x);
+		pos.y = Mathf.RoundToInt((pos.y - CURRENT_GAME_RECT.y) / CURRENT_GAME_RECT.height * BASED_GAME_RECT.height + BASED_GAME_RECT.y);
+		return pos;
+	}
 }
