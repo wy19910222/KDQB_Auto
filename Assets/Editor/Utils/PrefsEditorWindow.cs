@@ -6,7 +6,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Reflection;
@@ -45,7 +44,7 @@ public class PrefsEditorWindow<T> : EditorWindow {
 	protected string StartMenuName => $"Tools_Task/Start{typeof(T).Name}";
 	protected string StopMenuName => $"Tools_Task/Stop{typeof(T).Name}";
 	protected bool m_IsRunning;
-	protected bool IsRunning {
+	protected virtual bool IsRunning {
 		get => m_IsRunning;
 		set {
 			m_IsRunning = value;
