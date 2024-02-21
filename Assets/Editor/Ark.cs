@@ -29,7 +29,9 @@ public class ArkConfig : PrefsEditorWindow<Ark> {
 			Ark.DAILY_TIME = new TimeSpan(startHours, startMinutes, 0);
 		}
 		EditorGUILayout.EndHorizontal();
-		Ark.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Ark.SQUAD_NUMBER, 1, 8);
+		for (int i = 0, length = Ark.SQUAD_NUMBERS.Length; i < length; ++i) {
+			Ark.SQUAD_NUMBERS[i] = EditorGUILayout.IntSlider($"{i + 1}号方舟使用编队", Ark.SQUAD_NUMBERS[i], 1, 8);
+		}
 		EditorGUILayout.BeginHorizontal();
 		for (int i = 0, length = Ark.IsInArks.Length; i < length; ++i) {
 			Ark.IsInArks[i] = GUILayout.Toggle(Ark.IsInArks[i], $"{i + 1}号方舟", "Button");
@@ -51,7 +53,7 @@ public class ArkConfig : PrefsEditorWindow<Ark> {
 
 public class Ark {
 	public static TimeSpan DAILY_TIME = new TimeSpan(9, 5, 0);
-	public static int SQUAD_NUMBER = 1;	// 使用编队号码
+	public static readonly int[] SQUAD_NUMBERS = new int[4];	// 各个方舟使用编队号码
 	
 	public static readonly bool[] IsInArks = new bool[4];	// 当天是否进过方舟
 	
@@ -93,7 +95,12 @@ public class Ark {
 				continue;
 			}
 
-			for (int i = 0, length = IsInArks.Length; i < length; ++i) {
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(Ark);
+
+			for (int i = IsInArks.Length - 1; i >= 0; --i) {
 				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
 					yield return new EditorWaitForSeconds(0.2F);
 					if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
@@ -122,7 +129,7 @@ public class Ark {
 						yield return new EditorWaitForSeconds(0.5F);
 						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 							Debug.Log("选择队列");
-							Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+							Operation.Click(1145 + 37 * SQUAD_NUMBERS[i], 870);	// 选择队列
 							yield return new EditorWaitForSeconds(0.2F);
 							Debug.Log("出战按钮");
 							Operation.Click(960, 470);	// 出战按钮
@@ -137,6 +144,8 @@ public class Ark {
 					}
 				}
 			}
+			
+			Task.CurrentTask = null;
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
