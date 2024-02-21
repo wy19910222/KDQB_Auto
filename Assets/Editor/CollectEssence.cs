@@ -13,7 +13,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class CollectEssenceConfig : PrefsEditorWindow<CollectEssence> {
-	[MenuItem("Tools_Window/NewWorld/CollectEssence", false, 21)]
+	// [MenuItem("Tools_Window/NewWorld/CollectEssence", false, 21)]
 	private static void Open() {
 		GetWindow<CollectEssenceConfig>("收取精华").Show();
 	}
@@ -62,14 +62,14 @@ public class CollectEssence {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Tools_Task/StartCollectEssence", priority = -1)]
+	// [MenuItem("Tools_Task/StartCollectEssence", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"收取精华已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Tools_Task/StopCollectEssence", priority = -1)]
+	// [MenuItem("Tools_Task/StopCollectEssence", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
