@@ -21,7 +21,17 @@ public class BatchOpenWindowsConfig : PrefsEditorWindow<BatchOpenWindows> {
 	private List<string> m_AddedTypes = new List<string>();
 	[SerializeField]
 	private List<string> m_TempWindowNames = new List<string>();
-	
+
+	protected override void OnEnable() {
+		base.OnEnable();
+		if (m_AddedTypes.Count <= 0) {
+			foreach (string type in BatchOpenWindows.TYPE_WINDOWS_DICT.Keys) {
+				m_AddedTypes.Add(type);
+				m_TempWindowNames.Add(string.Empty);
+			}
+		}
+	}
+
 	private void OnGUI() {
 		if (GUILayout.Button("全部打开")) {
 			BatchOpenWindows.OpenWindows();
