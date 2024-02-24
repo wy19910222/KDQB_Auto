@@ -183,7 +183,7 @@ public class AllianceHelp {
 					if (target != -1) {
 						Debug.Log("请求帮助按钮");
 						Operation.Click(1115, 895);	// 请求帮助按钮
-						yield return new EditorWaitForSeconds(0.5F);
+						yield return new EditorWaitForSeconds(0.7F);
 						Debug.Log("选择帮助物品");
 						Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
 						yield return new EditorWaitForSeconds(0.3F);
