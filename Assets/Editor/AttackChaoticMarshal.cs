@@ -130,6 +130,11 @@ public class AttackChaoticMarshal {
 			}
 			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
 			
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(AttackChaoticMarshal);
+			
 			Debug.Log("八国活动按钮");
 			switch (Recognize.CurrentScene) {
 				case Recognize.Scene.INSIDE:
@@ -224,6 +229,8 @@ public class AttackChaoticMarshal {
 				Operation.Click(1064, 634);	// 确认退出按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+			
+			Task.CurrentTask = null;
 			
 			yield return new EditorWaitForSeconds(5);
 		}
