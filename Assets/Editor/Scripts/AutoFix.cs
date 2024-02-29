@@ -9,27 +9,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEditor;
 
-public class AutoFixConfig : PrefsEditorWindow<AutoFix> {
-	[MenuItem("Tools_Window/Default/AutoFix", false, 22)]
-	private static void Open() {
-		GetWindow<AutoFixConfig>("自动修理").Show();
-	}
-	
-	private void OnGUI() {
-		AutoFix.INTERVAL = EditorGUILayout.IntSlider("监测间隔", AutoFix.INTERVAL, 5, 20);
-		GUILayout.Space(5F);
-		if (AutoFix.IsRunning) {
-			if (GUILayout.Button("关闭")) {
-				IsRunning = false;
-			}
-		} else {
-			if (GUILayout.Button("开启")) {
-				IsRunning = true;
-			}
-		}
-	}
-}
-
 public class AutoFix {
 	public static int INTERVAL = 5;	// 监测间隔
 	
