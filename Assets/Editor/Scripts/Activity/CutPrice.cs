@@ -9,27 +9,6 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
-using Debug = UnityEngine.Debug;
-
-public class CutPriceConfig : PrefsEditorWindow<CutPrice> {
-	[MenuItem("Tools_Window/Activity/CutPrice")]
-	private static void Open() {
-		GetWindow<CutPriceConfig>("砍一刀").Show();
-	}
-	
-	private void OnGUI() {
-		if (CutPrice.IsRunning) {
-			if (GUILayout.Button("关闭")) {
-				IsRunning = false;
-			}
-		} else {
-			if (GUILayout.Button("开启")) {
-				IsRunning = true;
-			}
-		}
-	}
-}
-
 public class CutPrice {
 	private static Color32[,] s_CachedSharerName;	// 缓存分享者的昵称
 	private static EditorCoroutine s_CO;
