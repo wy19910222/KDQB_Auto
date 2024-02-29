@@ -188,7 +188,11 @@ public class Follow {
 			float delay = UnityEngine.Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);
 			Debug.Log("加入按钮");
 			Operation.Click(968, 307);	// 加入按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
+			if (Recognize.IsFollowConfirming) {
+				Debug.Log("确定加入按钮");
+				Operation.Click(960, 670);	// 确定按钮
+			}
 			yield return new EditorWaitForSeconds(delay * 0.5F);
 			// 等待进入战斗界面，如果超过1秒钟没进去，说明进入失败，结束流程
 			for (int i = 0; i < 10 && Recognize.CurrentScene != Recognize.Scene.FIGHTING; ++i) {

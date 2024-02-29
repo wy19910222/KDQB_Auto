@@ -119,6 +119,15 @@ public static partial class Recognize {
 		return FollowType.UNKNOWN;
 	}
 
+	// private static readonly Color32[,] ALLIANCE_MECHA_DONATE_CONFIRM = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateConfirm.png");
+	private static readonly Color32[,] FOLLOW_CONFIRM = Operation.GetFromFile("PersistentData/Textures/FollowConfirm.png");
+	public static bool IsFollowConfirming {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(910, 400, 100, 29);
+			return ApproximatelyRect(realColors, FOLLOW_CONFIRM) > 0.9F;
+		}
+	}
+
 	public static bool IsTooLateWindowExist {
 		get {
 			if (CurrentScene == Scene.FIGHTING) {
