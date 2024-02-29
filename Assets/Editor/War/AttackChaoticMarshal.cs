@@ -11,49 +11,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-using Debug = UnityEngine.Debug;
-using Random = UnityEngine.Random;
-
-public class AttackChaoticMarshalConfig : PrefsEditorWindow<AttackChaoticMarshal> {
-	[MenuItem("Tools_Window/War/AttackChaoticMarshal")]
-	private static void Open() {
-		GetWindow<AttackChaoticMarshalConfig>("攻击混乱之源").Show();
-	}
-
-	private readonly GUIStyle m_Style = new GUIStyle();
-	private void OnGUI() {
-		EditorGUILayout.BeginHorizontal();
-		GUIContent content = new GUIContent($"{AttackChaoticMarshal.AttackTimes} /");
-		float width = m_Style.CalcSize(content).x + 3;
-		GUILayout.Space(EditorGUIUtility.labelWidth + 2);
-		EditorGUILayout.LabelField(content, "RightLabel", GUILayout.Width(width));
-		EditorGUIUtility.labelWidth += width;
-		GUILayout.Space(-EditorGUIUtility.labelWidth - 2);
-		AttackChaoticMarshal.ATTACK_TIMES = EditorGUILayout.IntField("攻击次数", AttackChaoticMarshal.ATTACK_TIMES);
-		EditorGUIUtility.labelWidth -= width;
-		if (GUILayout.Button("-")) {
-			AttackChaoticMarshal.s_AttackTimeList.RemoveAt(AttackChaoticMarshal.s_AttackTimeList.Count - 1);
-		}
-		if (GUILayout.Button("+")) {
-			AttackChaoticMarshal.s_AttackTimeList.Add(DateTime.Now);
-		}
-		EditorGUILayout.EndHorizontal();
-		AttackChaoticMarshal.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", AttackChaoticMarshal.SQUAD_NUMBER, 1, 8);
-		AttackChaoticMarshal.USE_SMALL_BOTTLE = EditorGUILayout.Toggle("是否使用小体", AttackChaoticMarshal.USE_SMALL_BOTTLE);
-		AttackChaoticMarshal.USE_BIG_BOTTLE = EditorGUILayout.Toggle("是否使用大体", AttackChaoticMarshal.USE_BIG_BOTTLE);
-		GUILayout.Space(5F);
-		if (AttackChaoticMarshal.IsRunning) {
-			if (GUILayout.Button("关闭")) {
-				IsRunning = false;
-			}
-		} else {
-			if (GUILayout.Button("开启")) {
-				IsRunning = true;
-			}
-		}
-	}
-}
-
 public class AttackChaoticMarshal {
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	public static int ATTACK_TIMES = 5;	// 攻击总次数
@@ -241,6 +198,6 @@ public class AttackChaoticMarshal {
 		List<Recognize.EnergyShortcutAddingType> list = new List<Recognize.EnergyShortcutAddingType>();
 		if (USE_SMALL_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.SMALL_BOTTLE); }
 		if (USE_BIG_BOTTLE) { list.Add(Recognize.EnergyShortcutAddingType.BIG_BOTTLE); }
-		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
+		return list.Count > 0 ? list[UnityEngine.Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
 	}
 }
