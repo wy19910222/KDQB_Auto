@@ -10,25 +10,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEditor;
 
-public class CaptureGlobalConfig : PrefsEditorWindow<CaptureGlobal> {
-	[MenuItem("Tools_Window/War/CaptureGlobal")]
-	private static void Open() {
-		GetWindow<CaptureGlobalConfig>("全区截图").Show();
-	}
-	
-	private void OnGUI() {
-		if (CaptureGlobal.IsRunning) {
-			if (GUILayout.Button("取消截图")) {
-				IsRunning = false;
-			}
-		} else {
-			if (GUILayout.Button("开始截图")) {
-				IsRunning = true;
-			}
-		}
-	}
-}
-
 public class CaptureGlobal {
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
