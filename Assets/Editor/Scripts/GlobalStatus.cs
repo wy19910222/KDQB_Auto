@@ -17,7 +17,6 @@ public static class GlobalStatus {
 
 	private static EditorCoroutine s_CO;
 	
-
 	[InitializeOnLoadMethod]
 	private static void Enable() {
 		Disable();

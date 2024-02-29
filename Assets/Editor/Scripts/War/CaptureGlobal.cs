@@ -123,20 +123,52 @@ public class CaptureGlobal {
 		int totalRow = row + 2;
 		int totalColumn = column + 2;
 		Debug.LogError($"row:{row}, column:{column}, totalRow:{totalRow}, totalColumn:{totalColumn}");
-		Color32[] colors = new Color32[width * totalColumn * height * totalRow];
-		for (int i = totalRow - 1; i >= 0; --i) {
+		Color32[,] colors = new Color32[width * totalColumn, height * totalRow];
+		for (int i = 0; i < totalRow; ++i) {
 			for (int j = 0; j < totalColumn; ++j) {
-				for (int y = height - 1; y >= 0; --y) {
+				for (int y = 0; y < height; ++y) {
 					for (int x = 0; x < width; ++x) {
-						int totalX = j * width + x;
-						int totalY = (totalRow - 1 - i) * height + (height - 1 - y);
-						colors[totalY * totalColumn * width + totalX] = colorsBlocks[j, i][x, y];
+						colors[j * width + x, i * height + y] = colorsBlocks[j, i][x, y];
 					}
 				}
 			}
 		}
-		Texture2D tex = new Texture2D(totalColumn * width, totalRow * height);
-		tex.SetPixels32(colors);
+		// for (int i = totalRow - 1; i >= 0; --i) {
+		// 	for (int j = 0; j < totalColumn; ++j) {
+		// 		for (int y = height - 1; y >= 0; --y) {
+		// 			for (int x = 0; x < width; ++x) {
+		// 				int totalX = j * width + x;
+		// 				int totalY = (totalRow - 1 - i) * height + (height - 1 - y);
+		// 				colors[totalX, totalY] = colorsBlocks[j, i][x, y];
+		// 			}
+		// 		}
+		// 	}
+		// }
+		int top = height - ((screenHeight - height) / 2 - 15 - 101);
+		int bottom = height - ((screenHeight - height) / 2 + 15 - 64);
+		int side = width - (screenWidth - width) / 2;
+		int clippedWidth = width * totalColumn - side - side;
+		int clippedHeight = height * totalRow - top - bottom;
+		Color32[] clippedColors = new Color32[clippedWidth * clippedHeight];
+		for (int y = clippedHeight - 1; y >= 0; --y) {
+			for (int x = 0; x < clippedWidth; ++x) {
+				clippedColors[y * clippedWidth + x] = colors[side + x, top + clippedHeight - 1 - y];
+			}
+		}
+		// Color32[] colors = new Color32[width * totalColumn * height * totalRow];
+		// for (int i = totalRow - 1; i >= 0; --i) {
+		// 	for (int j = 0; j < totalColumn; ++j) {
+		// 		for (int y = height - 1; y >= 0; --y) {
+		// 			for (int x = 0; x < width; ++x) {
+		// 				int totalX = j * width + x;
+		// 				int totalY = (totalRow - 1 - i) * height + (height - 1 - y);
+		// 				colors[totalY * totalColumn * width + totalX] = colorsBlocks[j, i][x, y];
+		// 			}
+		// 		}
+		// 	}
+		// }
+		Texture2D tex = new Texture2D(clippedWidth, clippedHeight);
+		tex.SetPixels32(clippedColors);
 		tex.Apply();
 		byte[] bytes = tex.EncodeToPNG();
 		File.WriteAllBytes($"Assets/{filename}.png", bytes);
