@@ -7,14 +7,16 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 public class MiningTycoon {
 	public static int ACTIVITY_ORDER = 7;	// 活动排序
+	public static int ORDER_RADIUS = 5;	// 寻找标签半径
 	public static int TRAMCAR_COUNTDOWN_NUMBER = 3;	// 收取矿车编号
 	public static DateTime NEAREST_DT = DateTime.Now;
-	public static int CLICK_INTERVAL = 120;	// 点击间隔
+	public static int CLICK_INTERVAL = 1;	// 点击间隔
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -36,6 +38,7 @@ public class MiningTycoon {
 	}
 
 	private static IEnumerator Update() {
+		List<int> nearbyOrders = new List<int>();
 		while (true) {
 			yield return null;
 			if (DateTime.Now < NEAREST_DT) {
@@ -47,9 +50,21 @@ public class MiningTycoon {
 				continue;
 			}
 
+			// 战斗场景
 			Recognize.Scene currentScene = Recognize.CurrentScene;
 			if (currentScene == Recognize.Scene.FIGHTING) {
 				continue;
+			}
+
+			if (Task.CurrentTask != null) {
+				continue;
+			}
+			Task.CurrentTask = nameof(DeepSea);
+
+			int activityOrder = ACTIVITY_ORDER;
+			if (nearbyOrders.Count > 0) {
+				activityOrder = nearbyOrders[0];
+				nearbyOrders.RemoveAt(0);
 			}
 			
 			// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
@@ -68,7 +83,7 @@ public class MiningTycoon {
 			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("拖动以显示活动标签页");
 			const int TAB_WIDTH = 137;
-			int orderOffsetX = (ACTIVITY_ORDER - 4) * TAB_WIDTH;
+			int orderOffsetX = (activityOrder - 4) * TAB_WIDTH;
 			while (orderOffsetX > 0) {
 				const int dragDistance = TAB_WIDTH * 4;
 				// 往左拖动
@@ -106,8 +121,34 @@ public class MiningTycoon {
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(660, 850);	// 点击窗口外关闭
 				yield return new EditorWaitForSeconds(0.2F);
+				
+				// 成功，更新倒计时
+				if (nearbyOrders.Count > 0) {
+					nearbyOrders.Clear();
+				}
+				ACTIVITY_ORDER = activityOrder;
+				NEAREST_DT = DateTime.Now + new TimeSpan(CLICK_INTERVAL, 0, 0);
 			} else {
-				Debug.Log("标签错误，取消操作");
+				// 失败，更新倒计时
+				if (activityOrder == ACTIVITY_ORDER) {
+					for (int i = 1; i <= ORDER_RADIUS; i++) {
+						int prevOrder = ACTIVITY_ORDER - i;
+						if (prevOrder > 0) {
+							nearbyOrders.Add(prevOrder);
+						}
+						nearbyOrders.Add(ACTIVITY_ORDER + i);
+					}
+					Debug.Log($"标签{activityOrder}错误，稍后相邻标签页: {string.Join(",", nearbyOrders)}");
+					NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, 2);
+				} else {
+					if (nearbyOrders.Count > 0) {
+						Debug.Log($"标签{activityOrder}错误，稍后继续尝试标签页: " + nearbyOrders[0]);
+						NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, 2);
+					} else {
+						Debug.LogError($"标签{activityOrder}错误，取消操作");
+						NEAREST_DT = DateTime.Now + new TimeSpan(CLICK_INTERVAL, 0, 0);
+					}
+				}
 			}
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
@@ -116,7 +157,7 @@ public class MiningTycoon {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
-			NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, CLICK_INTERVAL);
+			Task.CurrentTask = null;
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}

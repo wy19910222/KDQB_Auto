@@ -18,9 +18,9 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
+		MiningTycoon.ORDER_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", MiningTycoon.ORDER_RADIUS, 1, 6);
 		MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER = EditorGUILayout.IntSlider("收取矿车编号", MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER, 1, 4);
 
-		GUILayout.Space(5F);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
 		TimeSpan ts = MiningTycoon.NEAREST_DT - DateTime.Now;
@@ -34,7 +34,7 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 			MiningTycoon.NEAREST_DT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
 		EditorGUILayout.EndHorizontal();
-		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
+		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（小时）", MiningTycoon.CLICK_INTERVAL, 1, 24);
 		
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {

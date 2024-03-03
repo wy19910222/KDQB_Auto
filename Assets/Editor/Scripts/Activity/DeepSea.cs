@@ -53,6 +53,11 @@ public class DeepSea {
 			if (Recognize.IsWindowCovered) {
 				continue;
 			}
+			// 战斗场景
+			Recognize.Scene currentScene = Recognize.CurrentScene;
+			if (currentScene == Recognize.Scene.FIGHTING) {
+				continue;
+			}
 
 			if (Task.CurrentTask != null) {
 				continue;
@@ -65,7 +70,6 @@ public class DeepSea {
 				nearbyOrders.RemoveAt(0);
 			}
 			// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
-			Recognize.Scene currentScene = Recognize.CurrentScene;
 			if (currentScene == Recognize.Scene.OUTSIDE && Recognize.IsOutsideFaraway) {
 				for (int i = 0; i < 50 && Recognize.IsOutsideFaraway; i++) {
 					Vector2Int oldPos = MouseUtils.GetMousePos();
