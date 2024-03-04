@@ -19,6 +19,12 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 	// private Vector2 m_ScrollPos;
 	[SerializeField]
 	private Rect m_GameRect = Operation.CURRENT_GAME_RECT;
+	
+	private const float LENS_BORDER = 2;
+	
+	private float m_HalfWidth = 60;
+	private float m_HalfHeight = 40;
+	private float m_LensScale = 3;
 
 	protected override void OnEnable() {
 		base.OnEnable();
@@ -68,6 +74,17 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 				ExtensionalScreen.RANGE_Y = EditorGUILayout.IntField("Y", ExtensionalScreen.RANGE_Y);
 				ExtensionalScreen.RANGE_W = EditorGUILayout.IntField("W", ExtensionalScreen.RANGE_W);
 				ExtensionalScreen.RANGE_H = EditorGUILayout.IntField("H", ExtensionalScreen.RANGE_H);
+				
+				Rect rect3 = GUILayoutUtility.GetRect(10F, rect.height, GUILayout.Width(10F));
+				Rect wireRect3 = new Rect(rect3.x + 4.5F, rect3.y, 1, rect.height + 6);
+				EditorGUI.DrawRect(wireRect3, Color.gray);
+				
+				EditorGUILayout.LabelField(new GUIContent("放大镜", "开启时按住Ctrl，在光标位置显示放大镜"), GUILayout.Width(50));
+				EditorGUIUtility.labelWidth = 14;
+				m_HalfWidth = EditorGUILayout.IntField("W", Mathf.RoundToInt(m_HalfWidth * 2)) * 0.5F;
+				m_HalfHeight = EditorGUILayout.IntField("H", Mathf.RoundToInt(m_HalfHeight * 2)) * 0.5F;
+				m_LensScale = EditorGUILayout.FloatField("S", m_LensScale);
+				
 				EditorGUIUtility.labelWidth = labelWidth;
 			EditorGUILayout.EndHorizontal();
 			GUILayout.Space(5F);
@@ -96,22 +113,38 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 		}
 		// m_ScrollPos = EditorGUILayout.BeginScrollView(m_ScrollPos);
 		{
+			// 绘制范围
 			Rect rect = EditorGUILayout.BeginVertical();
-			if (ExtensionalScreen.Tex && ExtensionalScreen.IsRunning) {
-				rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
-				GUI.DrawTexture(rect, ExtensionalScreen.Tex);
-			} else {
-				rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
-				EditorGUI.DrawRect(rect, Color.gray);
-			}
+			rect.height = ExtensionalScreen.Tex.height * rect.width / ExtensionalScreen.Tex.width;
+			// 光标位置
 			Vector2Int mousePos = MouseUtils.GetMousePos();
 			float x = rect.x + rect.width * (mousePos.x - ExtensionalScreen.RANGE_X) / ExtensionalScreen.RANGE_W;
 			float y = rect.y + rect.height * (mousePos.y - ExtensionalScreen.RANGE_Y) / ExtensionalScreen.RANGE_H;
+			// 绘制画面
+			if (ExtensionalScreen.Tex && ExtensionalScreen.IsRunning) {
+				GUI.DrawTexture(rect, ExtensionalScreen.Tex);
+				if (Event.current.control) {
+					// 绘制放大镜
+					Rect rectLens = new Rect(x - m_HalfWidth, y - m_HalfHeight, m_HalfWidth + m_HalfWidth, m_HalfHeight + m_HalfHeight);
+					Rect rectLensWithBorder = new Rect(rectLens.x - LENS_BORDER, rectLens.y - LENS_BORDER, rectLens.width + LENS_BORDER + LENS_BORDER, rectLens.height + LENS_BORDER + LENS_BORDER);
+					EditorGUI.DrawRect(rectLensWithBorder, Color.gray);
+					GUI.BeginClip(rectLens);
+					Rect rectInClip = new Rect(m_HalfWidth - (x - rect.x) * m_LensScale, m_HalfHeight - (y - rect.y) * m_LensScale, rect.width * m_LensScale, rect.height * m_LensScale);
+					GUI.DrawTexture(rectInClip, ExtensionalScreen.Tex);
+					GUI.EndClip();
+				}
+			} else {
+				EditorGUI.DrawRect(rect, Color.gray);
+			}
+			
 			Color prevColor = GUI.contentColor;
 			GUI.contentColor = Color.black;
 			GUI.DrawTexture(new Rect(x, y, m_CursorTex.width, m_CursorTex.height), m_CursorTex);
 			GUI.contentColor = prevColor;
 			EditorGUILayout.EndVertical();
+			if (ExtensionalScreen.Tex && ExtensionalScreen.IsRunning) {
+				
+			}
 		}
 		// EditorGUILayout.EndScrollView();
 	}
