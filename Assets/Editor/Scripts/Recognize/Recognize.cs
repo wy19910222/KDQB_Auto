@@ -45,11 +45,13 @@ public static partial class Recognize {
 				if (deltaY != -1) {
 					Color32[,] realColors = Operation.GetColorsOnScreen(20, 150 + deltaY, 12, 20);
 					Color32 targetColor = new Color32(191, 191, 191, 255);
-					if (ApproximatelyCoveredCount(realColors[2, 9], targetColor) >= 0 &&
+					if (Equals(realColors[2, 9], realColors[11, 9]) &&
+							ApproximatelyCoveredCount(realColors[2, 9], targetColor) >= 0 &&
 							ApproximatelyCoveredCount(realColors[11, 9], targetColor) >= 0) {
 						return true;
 					}
-					if (ApproximatelyCoveredCount(realColors[10, 7], targetColor) >= 0 &&
+					if (Equals(realColors[10, 7], realColors[10, 16]) &&
+							ApproximatelyCoveredCount(realColors[10, 7], targetColor) >= 0 &&
 							ApproximatelyCoveredCount(realColors[10, 16], targetColor) >= 0) {
 						return false;
 					}
