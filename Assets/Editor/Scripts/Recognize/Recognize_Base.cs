@@ -159,4 +159,8 @@ public static partial class Recognize {
 			_ => 1
 		};
 	}
+	
+	public static bool Equals(Color32 color1, Color32 color2) {
+		return color2.r == color1.r && color2.g == color1.g && color2.b == color1.b;
+	}
 }
