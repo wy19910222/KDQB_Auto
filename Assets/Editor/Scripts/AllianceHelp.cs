@@ -88,7 +88,6 @@ public class AllianceHelp {
 					s_NextTime = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
 				}
 				
-				
 				Debug.Log("联盟按钮");
 				Operation.Click(1870, 710);	// 联盟按钮
 				yield return new EditorWaitForSeconds(0.2F);
@@ -125,6 +124,9 @@ public class AllianceHelp {
 							s_StartTime = DateTime.Now;
 						}
 					}
+					if (Recognize.CanAllianceHelpRequest) {
+						Debug.LogError("请求帮助失败！");
+					}
 				}
 				for (int i = 0; i < INTO_HELPS_TIMES; ++i) {
 					if (Recognize.CanAllianceHelpOthers) {
@@ -156,7 +158,13 @@ public class AllianceHelp {
 			}
 		}
 		if (list.Count <= 0) {
-			return -1;
+			if (GlobalStatus.UnattendedDuration > 300 * 1000_000_0L) {
+				for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
+					list.Add(i);
+				}
+			} else {
+				return -1;
+			}
 		}
 		return list[UnityEngine.Random.Range(0, list.Count)];
 	}
