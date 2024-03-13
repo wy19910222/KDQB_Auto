@@ -11,7 +11,7 @@ using UnityEditor;
 using UnityEngine;
 
 public static class GlobalStatus {
-	public static bool IsUnattended { get; private set; }
+	public static bool IsUnattended => UnattendedDuration > UNATTENDED_THRESHOLD;
 	public static long UnattendedDuration { get; private set; }
 	public const long UNATTENDED_THRESHOLD = 30 * 1000_000_0; // 30秒
 
@@ -43,13 +43,10 @@ public static class GlobalStatus {
 				prevMousePos = nextMousePos;
 				startDT = now;
 				UnattendedDuration = 0;
-				IsUnattended = false;
 			} else {
 				UnattendedDuration = (now - startDT).Ticks;
-				if (UnattendedDuration > UNATTENDED_THRESHOLD) {
-					IsUnattended = true;
-				}
 			}
 		}
+		// ReSharper disable once IteratorNeverReturns
 	}
 }
