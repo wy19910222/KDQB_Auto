@@ -18,6 +18,8 @@ public static partial class Recognize {
 		YLK,
 		[InspectorName("明日香")]
 		MRX,
+		[InspectorName("阿宝")]
+		AB,
 	}
 
 	public static int GetHeroGroupNumber(HeroType type) {
@@ -25,6 +27,7 @@ public static partial class Recognize {
 			HeroType.DAN => GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY),
 			HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
 			HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
+			HeroType.AB => GetHeroGroupNumber(AVATAR_AB_FARAWAY, AVATAR_AB_NEARBY),
 			_ => -1
 		};
 		if (ret == -1) {
@@ -33,6 +36,7 @@ public static partial class Recognize {
 				HeroType.DAN => GetHeroGroupNumber(AVATAR_DAN_FARAWAY, AVATAR_DAN_NEARBY),
 				HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
 				HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
+				HeroType.AB => GetHeroGroupNumber(AVATAR_AB_FARAWAY, AVATAR_AB_NEARBY),
 				_ => -1
 			};
 		}
@@ -72,6 +76,16 @@ public static partial class Recognize {
 		new Color32(211, 132, 72, 255), new Color32(221, 141, 64, 255), new Color32(198, 116, 60, 255),
 		new Color32(147, 66, 70, 255), new Color32(186, 127, 90, 255), new Color32(231, 204, 203, 255),
 												new Color32(158, 105, 93, 255),
+	};
+	public static readonly Color32[] AVATAR_AB_FARAWAY = {
+		new Color32(250, 192, 93, 255), new Color32(227, 226, 219, 255), new Color32(215, 210, 206, 255),
+		new Color32(223, 222, 215, 255), new Color32(229, 225, 217, 255), new Color32(146, 134, 117, 255),
+												new Color32(187, 173, 163, 255), 
+	};
+	public static readonly Color32[] AVATAR_AB_NEARBY = {
+		new Color32(251, 196, 93, 255), new Color32(223, 219, 213, 255), new Color32(212, 208, 205, 255),
+		new Color32(225, 222, 215, 255), new Color32(229, 226, 219, 255), new Color32(128, 116, 102, 255),
+												new Color32(194, 185, 175, 255), 
 	};
 	public static int GetHeroGroupNumber(IReadOnlyList<Color32> heroAvatarFaraway, IReadOnlyList<Color32> heroAvatarNearby) {
 		int deltaY = -1;
@@ -139,14 +153,8 @@ public static partial class Recognize {
 		};
 		if (deltaY >= 0) {
 			int groupCount = 0;
-			Color32 targetColor = new Color32(98, 135, 229, 255);
 			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + deltaY + 50, 160, 500);
-			while (groupCount < 10) {
-				Color32 realColor = realColors[158, 34 + groupCount * 50];
-				if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
-					break;
-				}
-				
+			while (groupCount < BusyGroupCount) {
 				Debug.LogError($"----------------------{groupCount}----------------------");
 				List<Color32> list = new List<Color32>();
 				for (int i = 0, length = AVATAR_SAMPLE_POINTS.Length; i < length; ++i) {
