@@ -5,6 +5,7 @@
  * @EditTime: 2023-10-12 00:00:51 756
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ public class Gather {
 	public static int SQUAD_NUMBER = 3;	// 使用编队号码
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 集结英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
+	
+	public static DateTime LAST_RESET_TIME;	// 上次重置时间
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -64,6 +67,14 @@ public class Gather {
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
+			
+			// 每天10次惧星
+			DateTime date = DateTime.Now.Date;
+			if (LAST_RESET_TIME < date) {
+				TARGET_ATTACK_COUNT_LIST[1] = 10;
+				LAST_RESET_TIME = date;
+			}
+			
 			// 确定攻击目标
 			int target = RandomTarget();
 			if (target == -1) {
@@ -279,7 +290,7 @@ public class Gather {
 		if (list.Count <= 0) {
 			return -1;
 		}
-		return list[Random.Range(0, list.Count)];
+		return list[UnityEngine.Random.Range(0, list.Count)];
 	}
 	
 	private static Recognize.EnergyShortcutAddingType RandomUseBottle() {
@@ -293,6 +304,6 @@ public class Gather {
 		if (USE_BOTTLE_DICT.TryGetValue(Recognize.EnergyShortcutAddingType.DIAMOND_BUY, out int buyCount) && buyCount > 0) {
 			list.Add(Recognize.EnergyShortcutAddingType.DIAMOND_BUY);
 		}
-		return list.Count > 0 ? list[Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
+		return list.Count > 0 ? list[UnityEngine.Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
 	}
 }
