@@ -24,14 +24,11 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 			if (GUILayout.Button("打印头像特征")) {
 				Recognize.LogGroupHeroAvatar();
 			}
-			if (GUILayout.Button("打印戴安娜位置")) {
-				Debug.LogError($"戴安娜：{Recognize.GetHeroGroupNumber(Recognize.HeroType.DAN)}");
-			}
-			if (GUILayout.Button("打印尤里卡位置")) {
-				Debug.LogError($"尤里卡：{Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK)}");
-			}
-			if (GUILayout.Button("打印明日香位置")) {
-				Debug.LogError($"明日香：{Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX)}");
+			foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
+				string heroName = Utils.GetEnumInspectorName(type);
+				if (GUILayout.Button($"打印{heroName}位置")) {
+					Debug.LogError($"{heroName}：{Recognize.GetHeroGroupNumber(type)}");
+				}
 			}
 			if (EditorGUIUtility.currentViewWidth > 400) {
 				EditorGUILayout.EndHorizontal();
