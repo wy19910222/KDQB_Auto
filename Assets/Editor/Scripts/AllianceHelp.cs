@@ -118,7 +118,7 @@ public class AllianceHelp {
 							yield return new EditorWaitForSeconds(0.3F);
 							Debug.Log("请求帮助按钮");
 							Operation.Click(960, 750);	// 请求帮助按钮
-							yield return new EditorWaitForSeconds(0.5F);
+							yield return new EditorWaitForSeconds(1F);
 							if (Recognize.CanAllianceHelpCancel) {
 								success = true;
 								break;
