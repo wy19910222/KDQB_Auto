@@ -113,7 +113,7 @@ public static partial class Recognize {
 	
 	private static Dictionary<string, Color32[,]> LoadGroupStateDict(string type) {
 		string key = $"{nameof(Recognize)}.{type}";
-		string str = EditorPrefs.GetString(key, "{}");
+		string str = Prefs.Get(key, "{}");
 		Dictionary<string, Color32[,]> dict = JsonConvert.DeserializeObject<Dictionary<string, Color32[,]>>(str);
 		if (dict is not {Count: > 0}) {
 			string filePath = $"{Application.dataPath}/PersistentData/{key}.txt";

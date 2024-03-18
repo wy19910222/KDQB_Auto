@@ -18,11 +18,11 @@ public class PrefsEditorWindow<T> : EditorWindow {
 
 	protected virtual void OnEnable() {
 		DoLoadOptions();
-		IsRunning = EditorPrefs.GetBool($"{typeof(T).Name}Window.IsRunning");
+		IsRunning = Prefs.Get<bool>($"{typeof(T).Name}Window.IsRunning");
 	}
 	protected virtual void OnDisable() {
 		DoSaveOptions();
-		EditorPrefs.SetBool($"{typeof(T).Name}Window.IsRunning", IsRunning);
+		Prefs.Set($"{typeof(T).Name}Window.IsRunning", IsRunning);
 	}
 
 
@@ -128,15 +128,15 @@ public class PrefsEditorWindow<T> : EditorWindow {
 			string key = $"{type.Name}.{fi.Name}";
 			object defaultValue = fi.GetValue(null);
 			if (fi.FieldType == typeof(bool)) {
-				fi.SetValue(null, EditorPrefs.GetBool(key, (bool) defaultValue));
+				fi.SetValue(null, Prefs.Get(key, (bool) defaultValue));
 			} else if (fi.FieldType == typeof(int)) {
-				fi.SetValue(null, EditorPrefs.GetInt(key, (int) defaultValue));
+				fi.SetValue(null, Prefs.Get(key, (int) defaultValue));
 			} else if (fi.FieldType == typeof(float)) {
-				fi.SetValue(null, EditorPrefs.GetFloat(key, (float) defaultValue));
+				fi.SetValue(null, Prefs.Get(key, (float) defaultValue));
 			} else if (fi.FieldType == typeof(string)) {
-				fi.SetValue(null, EditorPrefs.GetString(key, (string) defaultValue));
+				fi.SetValue(null, Prefs.Get(key, (string) defaultValue));
 			} else {
-				string valueStr = EditorPrefs.GetString(key);
+				string valueStr = Prefs.Get<string>(key);
 				if (!string.IsNullOrEmpty(valueStr)) {
 					object value = JsonConvert.DeserializeObject(valueStr, fi.FieldType);
 					fi.SetValue(null, value);
@@ -152,16 +152,16 @@ public class PrefsEditorWindow<T> : EditorWindow {
 			string key = $"{type.Name}.{fi.Name}";
 			object value = fi.GetValue(null);
 			if (fi.FieldType == typeof(bool)) {
-				EditorPrefs.SetBool(key, (bool) value);
+				Prefs.Set(key, (bool) value);
 			} else if (fi.FieldType == typeof(int)) {
-				EditorPrefs.SetInt(key, (int) value);
+				Prefs.Set(key, (int) value);
 			} else if (fi.FieldType == typeof(float)) {
-				EditorPrefs.SetFloat(key, (float) value);
+				Prefs.Set(key, (float) value);
 			} else if (fi.FieldType == typeof(string)) {
-				EditorPrefs.SetString(key, (string) value);
+				Prefs.Set(key, (string) value);
 			} else {
 				string valueStr = JsonConvert.SerializeObject(value);
-				EditorPrefs.SetString(key, valueStr);
+				Prefs.Set(key, valueStr);
 			}
 		}
 	}

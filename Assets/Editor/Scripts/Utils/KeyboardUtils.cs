@@ -18,13 +18,13 @@ public static class KeyboardUtils {
 	[MenuItem("Assets/Hook", priority = -1)]
 	public static void Hook() {
 		Unhook();
-		EditorPrefs.SetInt("KeyboardUtils.HookID", SetHook(HookCallback));
+		Prefs.Set("KeyboardUtils.HookID", SetHook(HookCallback));
 		Debug.LogError("开始按键监听");
 	}
 	
 	[MenuItem("Assets/Unhook", priority = -1)]
 	public static void Unhook() {
-		int hookID = EditorPrefs.GetInt("KeyboardUtils.HookID");
+		int hookID = Prefs.Get<int>("KeyboardUtils.HookID");
 		if (hookID != 0) {
 			UnhookWindowsHookEx(hookID);
 			Debug.LogError("结束按键监听");
@@ -61,7 +61,7 @@ public static class KeyboardUtils {
 				OnKeyUp?.Invoke(vkCode);
 			}
 		}
-		return CallNextHookEx(EditorPrefs.GetInt("KeyboardUtils.HookID"), nCode, wParam, lParam);
+		return CallNextHookEx(Prefs.Get<int>("KeyboardUtils.HookID"), nCode, wParam, lParam);
 	}
 
 	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]

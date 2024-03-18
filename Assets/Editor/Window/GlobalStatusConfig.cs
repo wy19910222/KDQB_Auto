@@ -15,12 +15,12 @@ public class GlobalStatusConfig : EditorWindow {
 	}
 
 	protected void OnEnable() {
-		Recognize.GROUP_COUNT = EditorPrefs.GetInt($"Recognize.GROUP_COUNT");
-		Recognize.ENERGY_FULL = EditorPrefs.GetInt($"Recognize.ENERGY_FULL");
+		Recognize.GROUP_COUNT = Prefs.Get<int>($"Recognize.GROUP_COUNT");
+		Recognize.ENERGY_FULL = Prefs.Get<int>($"Recognize.ENERGY_FULL");
 	}
 	protected void OnDisable() {
-		EditorPrefs.SetInt($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
-		EditorPrefs.SetInt($"Recognize.ENERGY_FULL", Recognize.ENERGY_FULL);
+		Prefs.Set($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
+		Prefs.Set($"Recognize.ENERGY_FULL", Recognize.ENERGY_FULL);
 	}
 
 	private void OnGUI() {
