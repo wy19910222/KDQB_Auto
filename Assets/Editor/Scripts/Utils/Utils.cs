@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using UnityEngine;
 
 public static class Utils {
 	public static string GetEnumInspectorName(object enumValue) {
@@ -9,11 +8,16 @@ public static class Utils {
 		FieldInfo field = enumType.GetField(enumName);
 		object[] attrs = field.GetCustomAttributes(false);
 		foreach (var attr in attrs) {
-			if (attr is InspectorNameAttribute inspectorName) {
+			if (attr is UnityEngine.InspectorNameAttribute inspectorName) {
 				enumName = inspectorName.displayName;
 				break;
 			}
 		}
 		return enumName;
+	}
+	
+	[UnityEditor.MenuItem("Tools_Utils/Recompile", priority = -1)]
+	public static void Recompile() {
+		UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
 	}
 }
