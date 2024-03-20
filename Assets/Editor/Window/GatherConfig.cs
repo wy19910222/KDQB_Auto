@@ -48,6 +48,7 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 			}
 			EditorGUILayout.EndHorizontal();
 		}
+		Gather.TARGET_LEVEL_OFFSET = EditorGUILayout.IntSlider("等级偏移（如果非惧星）", Gather.TARGET_LEVEL_OFFSET, -9, 0);
 		Gather.FEAR_STAR_LEVEL = EditorGUILayout.IntSlider("等级（如果是惧星）", Gather.FEAR_STAR_LEVEL, 1, 5);
 		
 		Rect rect2 = GUILayoutUtility.GetRect(0, 10);

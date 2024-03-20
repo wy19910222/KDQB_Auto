@@ -18,6 +18,7 @@ public class Gather {
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
 	
 	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
+	public static int TARGET_LEVEL_OFFSET = 0;	// 目标等级偏移，最高等级是0
 	public static int FEAR_STAR_LEVEL = 4;	// 打的惧星等级
 	public static int SQUAD_NUMBER = 3;	// 使用编队号码
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 集结英雄头像
@@ -169,6 +170,10 @@ public class Gather {
 			} else {
 				Debug.Log("其他等级滑块");
 				Operation.Click(1062, 880);	// 其他等级滑块
+				for (int i = 0; i > TARGET_LEVEL_OFFSET; --i) {
+					yield return new EditorWaitForSeconds(0.1F);
+					Operation.Click(822, 880);	// 其他等级滑块
+				}
 			}
 			yield return new EditorWaitForSeconds(0.1F);
 			
