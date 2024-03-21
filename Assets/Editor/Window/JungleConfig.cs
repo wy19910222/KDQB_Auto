@@ -38,6 +38,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 			EditorGUI.DrawRect(wireRect0, Color.gray);
 		}
 		
+		Jungle.UNATTENDED_DURATION = EditorGUILayout.Slider("等待无操作（秒）", Jungle.UNATTENDED_DURATION, 0, 20);
 		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
 		bool useBottle = Jungle.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {

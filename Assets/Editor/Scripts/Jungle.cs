@@ -15,6 +15,7 @@ public class Jungle {
 	public static bool Test { get; set; } // 测试模式
 
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
+	public static float UNATTENDED_DURATION = 10;	// 等待无操作时长
 	public static float COOLDOWN = 5;	// 打野间隔
 	
 	public static readonly List<bool> TARGET_ATTACK_LIST = new List<bool>();	// 攻击目标随机范围
@@ -34,6 +35,9 @@ public class Jungle {
 		List<string> switches = new List<string> {
 			$"打野间隔【{COOLDOWN}】"
 		};
+		if (UNATTENDED_DURATION > 0) {
+			switches.Add($"等待无操作【{UNATTENDED_DURATION}】秒");
+		}
 		if (!USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0)) {
 			switches.Add($"保留体力值【{RESERVED_ENERGY}】");
 		}
@@ -71,12 +75,16 @@ public class Jungle {
 		int starOffset = 0;
 		while (true) {
 			yield return null;
+			if (GlobalStatus.UnattendedDuration < UNATTENDED_DURATION * 1000_000_0) {
+				// Debug.Log("正在做其他操作");
+				continue;
+			}
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
 				// Debug.Log("不在世界场景");
 				continue;
 			}
 			if (Recognize.IsWindowCovered) {
-				// Debug.Log("有窗口打开着，正在做其他操作");
+				// Debug.Log("有窗口打开着");
 				continue;
 			}
 			
