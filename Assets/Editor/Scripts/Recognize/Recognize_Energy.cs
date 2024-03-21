@@ -25,8 +25,10 @@ public static partial class Recognize {
 	
 	private const int ENERGY_EMPTY_X = 21;
 	private const int ENERGY_FULL_X = 116;
-	private const int ENERGY_Y = 127;
-	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
+	// private const int ENERGY_Y = 127;
+	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
+	private const int ENERGY_Y = 113;
+	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(197, 237, 100, 255);
 	public static int energy {
 		get {
 			return GetCachedValueOrNew(nameof(energy), () => {
