@@ -126,7 +126,7 @@ public class Jungle {
 			Task.CurrentTask = nameof(Jungle);
 			
 			// 开始打野
-			while (!Recognize.IsSearching) {
+			for (int i = 0; i < 5 && !Recognize.IsSearching; i++) {
 				Debug.Log("搜索按钮");
 				Operation.Click(750, 970);	// 搜索按钮
 				yield return new EditorWaitForSeconds(0.3F);
