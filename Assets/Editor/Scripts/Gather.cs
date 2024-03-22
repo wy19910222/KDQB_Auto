@@ -16,6 +16,7 @@ public class Gather {
 	public static bool Test { get; set; } // 测试模式
 	
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
+	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	
 	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
 	public static int TARGET_LEVEL_OFFSET = 0;	// 目标等级偏移，最高等级是0
@@ -35,6 +36,9 @@ public class Gather {
 		List<string> switches = new List<string>();
 		if (!USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0)) {
 			switches.Add($"保留体力值【{RESERVED_ENERGY}】");
+		}
+		if (UNATTENDED_DURATION > 0) {
+			switches.Add($"等待无操作【{UNATTENDED_DURATION}】秒");
 		}
 		{
 			List<string> targets = new List<string>();
@@ -74,6 +78,11 @@ public class Gather {
 			if (LAST_RESET_TIME < date) {
 				TARGET_ATTACK_COUNT_LIST[1] = 10;
 				LAST_RESET_TIME = date;
+			}
+			
+			if (GlobalStatus.UnattendedDuration < UNATTENDED_DURATION * 1000_000_0) {
+				// Debug.Log("正在做其他操作");
+				continue;
 			}
 			
 			// 确定攻击目标
@@ -131,7 +140,7 @@ public class Gather {
 			Task.CurrentTask = nameof(Gather);
 			
 			// 开始集结
-			while (!Recognize.IsSearching) {
+			for (int i = 0; i < 5 && !Recognize.IsSearching; i++) {
 				Debug.Log("搜索按钮");
 				Operation.Click(750, 970);	// 搜索按钮
 				yield return new EditorWaitForSeconds(0.3F);

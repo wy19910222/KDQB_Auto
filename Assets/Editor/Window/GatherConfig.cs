@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,8 +17,12 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 	}
 	
 	private void OnGUI() {
-		Gather.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Gather.RESERVED_ENERGY);
-		
+		Gather.UNATTENDED_DURATION = EditorGUILayout.Slider("等待无操作（秒）", Gather.UNATTENDED_DURATION, 0, 20);
+		bool useBottle = Gather.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
+		if (!useBottle) {
+			Gather.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Gather.RESERVED_ENERGY);
+		}
+
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
 		EditorGUI.DrawRect(wireRect1, Color.gray);
