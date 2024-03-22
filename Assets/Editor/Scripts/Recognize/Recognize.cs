@@ -188,6 +188,47 @@ public static partial class Recognize {
 			return false;
 		}
 	}
+
+	private static readonly Color32[,] MAIN_BTN_RED_POINT = Operation.GetFromFile("PersistentData/Textures/MainBtnRedPoint.png");
+	public static bool CanRecruitOuter {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1890, 609, 9, 9);
+			return ApproximatelyRect(realColors, MAIN_BTN_RED_POINT) > 0.9F;
+		}
+	}
+
+	public static bool CanRecruitMiddle {
+		get {
+			Color32 realColor1 = Operation.GetColorOnScreen(1204, 933);
+			Color32 realColor2 = Operation.GetColorOnScreen(1119, 933);
+			Color32 targetColor = new Color32(222, 57, 0, 255);
+			return Approximately(realColor1, targetColor) || Approximately(realColor2, targetColor);
+		}
+	}
+
+	public static bool CanGeneralRecruit {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(765, 926);
+			Color32 targetColor = new Color32(222, 57, 0, 255);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool CanSkillRecruit {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(1193, 926);
+			Color32 targetColor = new Color32(222, 57, 0, 255);
+			return Approximately(realColor, targetColor);
+		}
+	}
+
+	public static bool CanRecruitInner {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(938, 780);
+			Color32 targetColor = new Color32(222, 57, 0, 255);
+			return Approximately(realColor, targetColor);
+		}
+	}
 	
 	// public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 	// 	new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),
