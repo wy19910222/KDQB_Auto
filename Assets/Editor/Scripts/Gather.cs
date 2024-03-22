@@ -234,7 +234,7 @@ public class Gather {
 					Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
 					_ => 0
 				};
-				while (Recognize.IsEnergyShortcutAdding && i < iMax) {
+				while (Recognize.IsEnergyShortcutAdding && USE_BOTTLE_DICT[useBottle] > 0 && i < iMax) {
 					List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
 					int index = types.IndexOf(useBottle);
 					if (index != -1) {

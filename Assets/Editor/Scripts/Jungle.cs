@@ -15,7 +15,7 @@ public class Jungle {
 	public static bool Test { get; set; } // 测试模式
 
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
-	public static float UNATTENDED_DURATION = 10;	// 等待无操作时长
+	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	public static float COOLDOWN = 5;	// 打野间隔
 	
 	public static readonly List<bool> TARGET_ATTACK_LIST = new List<bool>();	// 攻击目标随机范围
@@ -259,7 +259,7 @@ public class Jungle {
 					Recognize.EnergyShortcutAddingType.DIAMOND_BUY => 1,
 					_ => 0
 				};
-				while (Recognize.IsEnergyShortcutAdding && i < iMax) {
+				while (Recognize.IsEnergyShortcutAdding && USE_BOTTLE_DICT[useBottle] > 0 && i < iMax) {
 					List<Recognize.EnergyShortcutAddingType> types = Recognize.GetShortcutTypes();
 					int index = types.IndexOf(useBottle);
 					if (index != -1) {
