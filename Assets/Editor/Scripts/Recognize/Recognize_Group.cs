@@ -28,18 +28,38 @@ public static partial class Recognize {
 				if (deltaY >= 0) {
 					int groupCount = 0;
 					// 返回加速等蓝色按钮中间的白色
-					Color32 targetColor = new Color32(255, 255, 255, 255);
+					Color32 targetBtnColor = new Color32(255, 255, 255, 255);
+					// 头像框底色
+					Color32 targetAvatarGrayColor = new Color32(189, 213, 227, 255);	// 无英雄
+					Color32 targetAvatarBlueColor = new Color32(110, 183, 247, 255);	// 蓝色英雄
+					Color32 targetAvatarPurpleColor = new Color32(236, 153, 253, 255);	// 紫色英雄
+					Color32 targetAvatarOrangeColor = new Color32(252, 199, 94, 255);	// 橙色英雄
 					// 434的位置需要将小地图保持展开状态
-					Color32[,] realColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
+					Color32[,] realBtnColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
+					Color32[,] realAvatarColors = Operation.GetColorsOnScreen(26, 267 + deltaY + 50, 1, 451);
 					while (groupCount < 10) {
-						Color32 realColor = realColors[0, groupCount * 50];
+						Color32 realBtnColor = realBtnColors[0, groupCount * 50];
+						Color32 realAvatarColor = realAvatarColors[0, groupCount * 50];
 						// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realColor}");
 						if (groupCount == 4 && deltaY == 76 + 155) {
-							if (ApproximatelyCoveredCount(realColor, new Color32(192, 212, 229, 255)) < 0) {
+							if (ApproximatelyCoveredCount(realBtnColor, new Color32(192, 212, 229, 255)) < 0) {
+								break;
+							}
+							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor) < 0) {
 								break;
 							}
 						} else {
-							if (ApproximatelyCoveredCount(realColor, targetColor) < 0) {
+							if (ApproximatelyCoveredCount(realBtnColor, targetBtnColor) < 0) {
+								break;
+							}
+							// Debug.LogError($"{{{26}, {67 + deltaY + 50 + groupCount * 50}}}: {realAvatarColor}");
+							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor) < 0) {
 								break;
 							}
 						}
