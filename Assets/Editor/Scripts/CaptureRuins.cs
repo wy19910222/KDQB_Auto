@@ -10,7 +10,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEditor;
 
-public static class CaptureRuins {
+public class CaptureRuins {
+	public static bool CAPTURE_NORTH = true;
+	public static bool CAPTURE_SOUTH = true;
+	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 	
@@ -31,20 +34,25 @@ public static class CaptureRuins {
 	}
 
 	private static IEnumerator IECapture() {
-		{
+		while (Task.CurrentTask != null) {
+			yield return null;
+		}
+		Task.CurrentTask = nameof(CaptureRuins);
+		if (CAPTURE_NORTH) {
 			// 北边遗迹截图
-			var ie = IEDoCapture(new Vector2Int(1064, 492), new Vector2Int(1060, 820), new Vector2Int(1100, 600), "NorthRuins");
+			var ie = IEDoCapture(new Vector2Int(1064, 492), new Vector2Int(1040, 670), new Vector2Int(1100, 600), "NorthRuins");
 			while (ie.MoveNext()) {
 				yield return ie.Current;
 			}
 		}
-		{
+		if (CAPTURE_SOUTH) {
 			// 南边遗迹截图
-			var ie = IEDoCapture(new Vector2Int(856, 624), new Vector2Int(1030, 460), new Vector2Int(1100, 460), "SouthRuins");
+			var ie = IEDoCapture(new Vector2Int(856, 624), new Vector2Int(1040, 670), new Vector2Int(1100, 460), "SouthRuins");
 			while (ie.MoveNext()) {
 				yield return ie.Current;
 			}
 		}
+		Task.CurrentTask = null;
 		s_CO = null;
 	}
 
@@ -54,7 +62,7 @@ public static class CaptureRuins {
 		}
 		{
 			// 先拉远，保证跳转遗迹后会重置视距
-			var ie = Operation.Zoom(-80);
+			var ie = Operation.Zoom(-20);
 			while (ie.MoveNext()) {
 				yield return ie.Current;
 			}
