@@ -17,14 +17,19 @@ public class GlobalStatusConfig : EditorWindow {
 	protected void OnEnable() {
 		Recognize.GROUP_COUNT = Prefs.Get<int>($"Recognize.GROUP_COUNT");
 		Recognize.ENERGY_FULL = Prefs.Get<int>($"Recognize.ENERGY_FULL");
+		string gameRectStr = Prefs.Get<string>($"Operation.CURRENT_GAME_RECT");
+		if (!string.IsNullOrEmpty(gameRectStr)) {
+			Operation.CURRENT_GAME_RECT = Utils.StringToRect(gameRectStr);
+		}
 	}
 	protected void OnDisable() {
 		Prefs.Set($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
 		Prefs.Set($"Recognize.ENERGY_FULL", Recognize.ENERGY_FULL);
+		Prefs.Set($"Operation.CURRENT_GAME_RECT", Utils.RectToString(Operation.CURRENT_GAME_RECT));
 	}
 
 	private void OnGUI() {
-		EditorGUILayout.RectField("游戏范围", Operation.CURRENT_GAME_RECT);
+		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectField("游戏范围", Operation.CURRENT_GAME_RECT);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Toggle("无人值守", GlobalStatus.IsUnattended);
 		EditorGUILayout.LabelField($"{GlobalStatus.UnattendedDuration / 1000_000_0}/{GlobalStatus.UNATTENDED_THRESHOLD / 1000_000_0}");

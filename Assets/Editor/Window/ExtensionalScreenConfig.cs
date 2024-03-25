@@ -17,8 +17,6 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 	private bool m_HideOptions;
 	private Texture2D m_CursorTex;
 	// private Vector2 m_ScrollPos;
-	[SerializeField]
-	private Rect m_GameRect = Operation.CURRENT_GAME_RECT;
 	
 	private const float LENS_BORDER = 2;
 	
@@ -48,7 +46,6 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 		}
 		m_CursorTex.SetPixels(colors);
 		m_CursorTex.Apply();
-		Operation.CURRENT_GAME_RECT = m_GameRect;
 	}
 
 	protected override void OnMenu(GenericMenu menu) {
@@ -99,15 +96,15 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 				}
 			}
 			if (GUILayout.Button("设置游戏范围")) {
-				m_GameRect.x = ExtensionalScreen.RANGE_X;
-				m_GameRect.y = ExtensionalScreen.RANGE_Y;
-				m_GameRect.width = ExtensionalScreen.RANGE_W;
-				m_GameRect.height = ExtensionalScreen.RANGE_H;
-				Operation.CURRENT_GAME_RECT = m_GameRect;
+				Operation.CURRENT_GAME_RECT = new Rect(
+						ExtensionalScreen.RANGE_X,
+						ExtensionalScreen.RANGE_Y,
+						ExtensionalScreen.RANGE_W,
+						ExtensionalScreen.RANGE_H
+				);
 			}
 			if (GUILayout.Button("重置游戏范围")) {
-				m_GameRect = Operation.BASED_GAME_RECT;
-				Operation.CURRENT_GAME_RECT = m_GameRect;
+				Operation.CURRENT_GAME_RECT = Operation.BASED_GAME_RECT;
 			}
 			EditorGUILayout.EndHorizontal();
 		}
