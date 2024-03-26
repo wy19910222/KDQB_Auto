@@ -125,21 +125,23 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		Type type = typeof(T);
 		FieldInfo[] fis = type.GetFields(BindingFlags.Static | BindingFlags.Public);
 		foreach (FieldInfo fi in fis) {
-			string key = $"{type.Name}.{fi.Name}";
-			object defaultValue = fi.GetValue(null);
-			if (fi.FieldType == typeof(bool)) {
-				fi.SetValue(null, Prefs.Get(key, (bool) defaultValue));
-			} else if (fi.FieldType == typeof(int)) {
-				fi.SetValue(null, Prefs.Get(key, (int) defaultValue));
-			} else if (fi.FieldType == typeof(float)) {
-				fi.SetValue(null, Prefs.Get(key, (float) defaultValue));
-			} else if (fi.FieldType == typeof(string)) {
-				fi.SetValue(null, Prefs.Get(key, (string) defaultValue));
-			} else {
-				string valueStr = Prefs.Get<string>(key);
-				if (!string.IsNullOrEmpty(valueStr)) {
-					object value = JsonConvert.DeserializeObject(valueStr, fi.FieldType);
-					fi.SetValue(null, value);
+			if (!fi.IsLiteral) {
+				string key = $"{type.Name}.{fi.Name}";
+				object defaultValue = fi.GetValue(null);
+				if (fi.FieldType == typeof(bool)) {
+					fi.SetValue(null, Prefs.Get(key, (bool) defaultValue));
+				} else if (fi.FieldType == typeof(int)) {
+					fi.SetValue(null, Prefs.Get(key, (int) defaultValue));
+				} else if (fi.FieldType == typeof(float)) {
+					fi.SetValue(null, Prefs.Get(key, (float) defaultValue));
+				} else if (fi.FieldType == typeof(string)) {
+					fi.SetValue(null, Prefs.Get(key, (string) defaultValue));
+				} else {
+					string valueStr = Prefs.Get<string>(key);
+					if (!string.IsNullOrEmpty(valueStr)) {
+						object value = JsonConvert.DeserializeObject(valueStr, fi.FieldType);
+						fi.SetValue(null, value);
+					}
 				}
 			}
 		}
@@ -149,19 +151,21 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		Type type = typeof(T);
 		FieldInfo[] fis = type.GetFields(BindingFlags.Static | BindingFlags.Public);
 		foreach (FieldInfo fi in fis) {
-			string key = $"{type.Name}.{fi.Name}";
-			object value = fi.GetValue(null);
-			if (fi.FieldType == typeof(bool)) {
-				Prefs.Set(key, (bool) value);
-			} else if (fi.FieldType == typeof(int)) {
-				Prefs.Set(key, (int) value);
-			} else if (fi.FieldType == typeof(float)) {
-				Prefs.Set(key, (float) value);
-			} else if (fi.FieldType == typeof(string)) {
-				Prefs.Set(key, (string) value);
-			} else {
-				string valueStr = JsonConvert.SerializeObject(value);
-				Prefs.Set(key, valueStr);
+			if (!fi.IsLiteral) {
+				string key = $"{type.Name}.{fi.Name}";
+				object value = fi.GetValue(null);
+				if (fi.FieldType == typeof(bool)) {
+					Prefs.Set(key, (bool) value);
+				} else if (fi.FieldType == typeof(int)) {
+					Prefs.Set(key, (int) value);
+				} else if (fi.FieldType == typeof(float)) {
+					Prefs.Set(key, (float) value);
+				} else if (fi.FieldType == typeof(string)) {
+					Prefs.Set(key, (string) value);
+				} else {
+					string valueStr = JsonConvert.SerializeObject(value);
+					Prefs.Set(key, valueStr);
+				}
 			}
 		}
 	}
