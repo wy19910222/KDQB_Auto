@@ -15,6 +15,7 @@ public class GlobalStatusConfig : EditorWindow {
 	}
 
 	protected void OnEnable() {
+		GlobalStatus.Enable();
 		Recognize.GROUP_COUNT = Prefs.Get<int>($"Recognize.GROUP_COUNT");
 		Recognize.ENERGY_FULL = Prefs.Get<int>($"Recognize.ENERGY_FULL");
 		string gameRectStr = Prefs.Get<string>($"Operation.CURRENT_GAME_RECT");
@@ -23,6 +24,7 @@ public class GlobalStatusConfig : EditorWindow {
 		}
 	}
 	protected void OnDisable() {
+		GlobalStatus.Disable();
 		Prefs.Set($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
 		Prefs.Set($"Recognize.ENERGY_FULL", Recognize.ENERGY_FULL);
 		Prefs.Set($"Operation.CURRENT_GAME_RECT", Utils.RectToString(Operation.CURRENT_GAME_RECT));

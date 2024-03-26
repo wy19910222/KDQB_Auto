@@ -17,14 +17,13 @@ public static class GlobalStatus {
 
 	private static EditorCoroutine s_CO;
 	
-	[InitializeOnLoadMethod]
-	private static void Enable() {
+	public static void Enable() {
 		Disable();
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 		Debug.Log($"全局状态监测已开启");
 	}
 
-	private static void Disable() {
+	public static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
 			s_CO = null;
