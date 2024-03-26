@@ -30,13 +30,13 @@ public static partial class Recognize {
 					// 返回加速等蓝色按钮中间的白色
 					Color32 targetBtnColor = new Color32(255, 255, 255, 255);
 					// 头像框底色
-					Color32 targetAvatarGrayColor = new Color32(189, 213, 227, 255);	// 无英雄
-					Color32 targetAvatarBlueColor = new Color32(110, 183, 247, 255);	// 蓝色英雄
-					Color32 targetAvatarPurpleColor = new Color32(236, 153, 253, 255);	// 紫色英雄
-					Color32 targetAvatarOrangeColor = new Color32(252, 199, 94, 255);	// 橙色英雄
+					Color32 targetAvatarGrayColor = new Color32(184, 205, 220, 255);	// 无英雄
+					Color32 targetAvatarBlueColor = new Color32(88, 186, 240, 255);	// 蓝色英雄
+					Color32 targetAvatarPurpleColor = new Color32(231, 149, 252, 255);	// 紫色英雄
+					Color32 targetAvatarOrangeColor = new Color32(251, 193, 88, 255);	// 橙色英雄
 					// 434的位置需要将小地图保持展开状态
 					Color32[,] realBtnColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
-					Color32[,] realAvatarColors = Operation.GetColorsOnScreen(26, 267 + deltaY + 50, 1, 451);
+					Color32[,] realAvatarColors = Operation.GetColorsOnScreen(23, 267 + deltaY + 50, 1, 451);
 					while (groupCount < 10) {
 						Color32 realBtnColor = realBtnColors[0, groupCount * 50];
 						Color32 realAvatarColor = realAvatarColors[0, groupCount * 50];
@@ -55,7 +55,7 @@ public static partial class Recognize {
 							if (ApproximatelyCoveredCount(realBtnColor, targetBtnColor) < 0) {
 								break;
 							}
-							// Debug.LogError($"{{{26}, {67 + deltaY + 50 + groupCount * 50}}}: {realAvatarColor}");
+							// Debug.LogError($"{{{23}, {267 + deltaY + 50 + groupCount * 50}}}: {realAvatarColor}");
 							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor) < 0
 									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor) < 0
 									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor) < 0
