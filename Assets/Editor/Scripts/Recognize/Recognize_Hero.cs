@@ -20,6 +20,10 @@ public static partial class Recognize {
 		MRX,
 		[InspectorName("阿宝")]
 		AB,
+		[InspectorName("普蕾")]
+		PL,
+		[InspectorName("公爵")]
+		GJ,
 	}
 
 	public static int GetHeroGroupNumber(HeroType type) {
@@ -28,6 +32,8 @@ public static partial class Recognize {
 			HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
 			HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
 			HeroType.AB => GetHeroGroupNumber(AVATAR_AB_FARAWAY, AVATAR_AB_NEARBY),
+			HeroType.PL => GetHeroGroupNumber(AVATAR_PL_FARAWAY, AVATAR_PL_NEARBY),
+			HeroType.GJ => GetHeroGroupNumber(AVATAR_GJ_FARAWAY, AVATAR_GJ_NEARBY),
 			_ => -1
 		};
 		if (ret == -1) {
@@ -37,6 +43,8 @@ public static partial class Recognize {
 				HeroType.YLK => GetHeroGroupNumber(AVATAR_YLK_FARAWAY, AVATAR_YLK_NEARBY),
 				HeroType.MRX => GetHeroGroupNumber(AVATAR_MRX_FARAWAY, AVATAR_MRX_NEARBY),
 				HeroType.AB => GetHeroGroupNumber(AVATAR_AB_FARAWAY, AVATAR_AB_NEARBY),
+				HeroType.PL => GetHeroGroupNumber(AVATAR_PL_FARAWAY, AVATAR_PL_NEARBY),
+				HeroType.GJ => GetHeroGroupNumber(AVATAR_GJ_FARAWAY, AVATAR_GJ_NEARBY),
 				_ => -1
 			};
 		}
@@ -80,12 +88,32 @@ public static partial class Recognize {
 	public static readonly Color32[] AVATAR_AB_FARAWAY = {
 		new Color32(250, 192, 93, 255), new Color32(227, 226, 219, 255), new Color32(215, 210, 206, 255),
 		new Color32(223, 222, 215, 255), new Color32(229, 225, 217, 255), new Color32(146, 134, 117, 255),
-												new Color32(187, 173, 163, 255), 
+												new Color32(187, 173, 163, 255),
 	};
 	public static readonly Color32[] AVATAR_AB_NEARBY = {
 		new Color32(251, 196, 93, 255), new Color32(223, 219, 213, 255), new Color32(212, 208, 205, 255),
 		new Color32(225, 222, 215, 255), new Color32(229, 226, 219, 255), new Color32(128, 116, 102, 255),
-												new Color32(194, 185, 175, 255), 
+												new Color32(194, 185, 175, 255),
+	};
+	public static readonly Color32[] AVATAR_PL_FARAWAY = {
+		new Color32(250, 192, 93, 255), new Color32(236, 176, 142, 255), new Color32(170, 126, 107, 255),
+		new Color32(230, 184, 126, 255), new Color32(90, 101, 49, 255), new Color32(159, 107, 87, 255),
+												new Color32(35, 31, 31, 255),
+	};
+	public static readonly Color32[] AVATAR_PL_NEARBY = {
+		new Color32(251, 196, 93, 255), new Color32(232, 169, 135, 255), new Color32(159, 113, 95, 255),
+		new Color32(226, 190, 150, 255), new Color32(152, 158, 67, 255), new Color32(170, 120, 103, 255),
+												new Color32(35, 30, 29, 255),
+	};
+	public static readonly Color32[] AVATAR_GJ_FARAWAY = {
+		new Color32(250, 192, 93, 255), new Color32(208, 163, 104, 255), new Color32(196, 165, 100, 255),
+		new Color32(241, 170, 74, 255), new Color32(190, 131, 109, 255), new Color32(168, 125, 137, 255),
+												new Color32(104, 78, 85, 255),
+	};
+	public static readonly Color32[] AVATAR_GJ_NEARBY = {
+		new Color32(251, 196, 93, 255), new Color32(196, 158, 87, 255), new Color32(180, 153, 97, 255),
+		new Color32(241, 171, 80, 255), new Color32(160, 114, 94, 255), new Color32(170, 133, 150, 255),
+												new Color32(123, 95, 114, 255),
 	};
 	public static int GetHeroGroupNumber(IReadOnlyList<Color32> heroAvatarFaraway, IReadOnlyList<Color32> heroAvatarNearby) {
 		int deltaY = -1;
