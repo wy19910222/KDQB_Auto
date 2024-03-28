@@ -183,9 +183,8 @@ public class Follow {
 				goto EndOfFollow;
 			}
 			Debug.Log("决定跟车");
-			// 清除失败的记录
-			s_CachedOwnerName = ownerName;
-			float delay = UnityEngine.Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);
+			s_CachedOwnerName = ownerName;	// 记录车主
+			float delay = UnityEngine.Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);	// 额外随机延迟量
 			Debug.Log("加入按钮");
 			Operation.Click(968, 307);	// 加入按钮
 			yield return new EditorWaitForSeconds(0.3F);
@@ -216,8 +215,6 @@ public class Follow {
 				cooldownTime = long.MaxValue;
 				yield return new EditorWaitForSeconds(0.5F);
 			} else {
-				// 跟车次数减1
-				TypeCountDict[type] = count - 1;
 				// 跟车冷却
 				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
 			}
@@ -232,6 +229,13 @@ public class Follow {
 				for (int i = 0; i < 10 && Recognize.CurrentScene == Recognize.Scene.FIGHTING; i++) {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
+			}
+			if (Recognize.BusyGroupCount > busyGroupCount) {
+				Debug.Log("跟车成功");
+				// 跟车次数减1
+				TypeCountDict[type] = count - 1;
+			} else {
+				Debug.LogError("跟车失败");
 			}
 			EndOfFollow:
 			if (followWindowOpened || GlobalStatus.IsUnattended) {
