@@ -72,8 +72,7 @@ public class AllianceHelp {
 
 			if (INTO_REQUEST) {
 				// 去里面请求帮助
-				DateTime now = DateTime.Now;
-				bool started = s_StartTime > (now - new TimeSpan(0, 1, 0)).Date;
+				bool started = s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;
 				bool nextTimeNotReach = DateTime.Now < s_NextTime;
 				if ((started || nextTimeNotReach) && !Recognize.IsAllianceHelpAwardOuter) {
 					continue;
