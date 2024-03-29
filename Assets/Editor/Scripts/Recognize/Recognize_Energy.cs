@@ -24,11 +24,14 @@ public static partial class Recognize {
 	public static int ENERGY_FULL = 95;
 	
 	private const int ENERGY_EMPTY_X = 21;
-	private const int ENERGY_FULL_X = 116;
+	// private const int ENERGY_FULL_X = 116;
 	// private const int ENERGY_Y = 127;
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
-	private const int ENERGY_Y = 113;
-	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(197, 237, 100, 255);
+	// private const int ENERGY_Y = 113;
+	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(197, 237, 100, 255);
+	private const int ENERGY_FULL_X = 119;
+	private const int ENERGY_Y = 128;
+	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(254, 237, 64, 255);
 	public static int energy {
 		get {
 			return GetCachedValueOrNew(nameof(energy), () => {
@@ -38,7 +41,7 @@ public static partial class Recognize {
 					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
 					// 最少只能判断到x=19，再继续会受到体力图标的影响
 					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
-						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR, 0.4F) >= 0) {
+						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR, 0.3F) >= 0) {
 							return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
 						}
 					}
