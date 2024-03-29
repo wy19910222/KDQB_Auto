@@ -23,6 +23,8 @@ public class Follow {
 	public static DateTime LAST_RESET_TIME;	// 上次重置时间
 	
 	public static readonly Dictionary<Recognize.FollowType, int> TypeCountDict = new Dictionary<Recognize.FollowType, int>(); // 各类型次数
+	public static readonly Dictionary<Recognize.FollowType, bool> TypeWillResetDict = new Dictionary<Recognize.FollowType, bool>(); // 各类型每日是否重置次数
+	public static readonly Dictionary<Recognize.FollowType, bool> TypeCanOuterDict = new Dictionary<Recognize.FollowType, bool>(); // 各类型是否支持在外面跟车
 	public static readonly Dictionary<string, Color32[,]> OwnerNameDict = new Dictionary<string, Color32[,]>(); // 记录下来的车主昵称
 	public static readonly Dictionary<string, bool> OwnerEnabledDict = new Dictionary<string, bool>();	// 记录下来的要跟车的车主
 	
@@ -72,12 +74,11 @@ public class Follow {
 			if (RESET_DAILY) {
 				DateTime date = DateTime.Now.Date;
 				if (LAST_RESET_TIME < date) {
-					TypeCountDict[Recognize.FollowType.STRONGHOLD] = GetDefaultCount(Recognize.FollowType.STRONGHOLD);
-					TypeCountDict[Recognize.FollowType.WAR_HAMMER] = GetDefaultCount(Recognize.FollowType.WAR_HAMMER);
-					TypeCountDict[Recognize.FollowType.ELITE_GUARD] = GetDefaultCount(Recognize.FollowType.ELITE_GUARD);
-					TypeCountDict[Recognize.FollowType.REFUGEE_CAMP] = GetDefaultCount(Recognize.FollowType.REFUGEE_CAMP);
-					TypeCountDict[Recognize.FollowType.HEART_PANG] = GetDefaultCount(Recognize.FollowType.HEART_PANG);
-					TypeCountDict[Recognize.FollowType.FEAR_STAR] = GetDefaultCount(Recognize.FollowType.FEAR_STAR);
+					foreach (var (followType, willReset) in TypeWillResetDict) {
+						if (willReset) {
+							TypeCountDict[followType] = GetDefaultCount(followType);
+						}
+					}
 					LAST_RESET_TIME = date;
 				}
 			}
@@ -116,6 +117,18 @@ public class Follow {
 				if (Recognize.IsWindowCovered) {
 					continue;
 				}
+				// 如果所有支持在外面跟车的类别都没次数了
+				bool anyoneCanOuter = false;
+				foreach (var (followType, canOuter) in TypeCanOuterDict) {
+					if (canOuter && TypeCountDict[followType] > 0) {
+						anyoneCanOuter = true;
+						break;
+					}
+				}
+				if (!anyoneCanOuter) {
+					continue;
+				}
+				
 				followWindowOpened = true;
 			}
 

@@ -132,11 +132,16 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 	}
 
 	private static void CustomField(Recognize.FollowType type) {
-		Follow.TypeCountDict.TryGetValue(type, out int countHammer);
-		Follow.TypeCountDict[type] = CustomField($"跟{Utils.GetEnumInspectorName(type)}", countHammer, Follow.GetDefaultCount(type));
+		Follow.TypeCountDict.TryGetValue(type, out int count);
+		Follow.TypeCanOuterDict.TryGetValue(type, out bool canOuter);
+		Follow.TypeWillResetDict.TryGetValue(type, out bool willReset);
+		CustomField($"跟{Utils.GetEnumInspectorName(type)}", Follow.GetDefaultCount(type), ref count, ref canOuter, ref willReset);
+		Follow.TypeCountDict[type] = count;
+		Follow.TypeCanOuterDict[type] = canOuter;
+		Follow.TypeWillResetDict[type] = willReset;
 	}
 
-	private static int CustomField(string label, int count, int defaultValue) {
+	private static void CustomField(string label, int defaultValue, ref int count, ref bool canOuter, ref bool willReset) {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
 		int newCount = Math.Max(EditorGUILayout.IntField(label, Math.Abs(count)), 0);
@@ -152,7 +157,12 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 				count = -count;
 			}
 		}
+		if (Follow.KEEP_NO_WINDOW) {
+			canOuter = GUILayout.Toggle(canOuter, "外面跟车", "Button", GUILayout.Width(64F));
+		}
+		if (Follow.RESET_DAILY) {
+			willReset = GUILayout.Toggle(willReset, "每日重置", "Button", GUILayout.Width(64F));
+		}
 		EditorGUILayout.EndHorizontal();
-		return count;
 	}
 }
