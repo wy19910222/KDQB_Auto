@@ -193,7 +193,7 @@ public static partial class Recognize {
 	public static bool CanRecruitOuter {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(1890, 609, 9, 9);
-			return ApproximatelyRect(realColors, MAIN_BTN_RED_POINT) > 0.9F;
+			return ApproximatelyRect(realColors, MAIN_BTN_RED_POINT, 2F) > 0.8F;
 		}
 	}
 

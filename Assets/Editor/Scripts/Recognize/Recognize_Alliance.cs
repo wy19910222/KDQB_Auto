@@ -89,7 +89,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(IsAllianceHelpAwardOuter), () => {
 				Color32[,] realColors = Operation.GetColorsOnScreen(1888, 680, 19, 16);
-				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_OUTER) > 0.8F;
+				return ApproximatelyRect(realColors, ALLIANCE_HELP_AWARD_OUTER, 2F) > 0.8F;
 			});
 		}
 	}
