@@ -36,6 +36,11 @@ public class FreeDiamond {
 		const int INTERVAL = 15;
 		while (true) {
 			yield return null;
+			
+			if (!Network.IsInternetAvailable()) {
+				LEFT_COUNT = 999;
+			}
+			
 			if (LEFT_COUNT <= 0) {
 				continue;
 			}
