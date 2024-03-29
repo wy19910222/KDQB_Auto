@@ -12,7 +12,7 @@ using UnityEditor;
 public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 	[MenuItem("Tools_Window/Default/AllianceMechaOpen", false, 21)]
 	private static void Open() {
-		GetWindow<AllianceMechaOpenConfig>("联盟机甲捐献").Show();
+		GetWindow<AllianceMechaOpenConfig>("联盟机甲开启").Show();
 	}
 	
 	private void OnGUI() {
@@ -32,7 +32,7 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 		AllianceMechaOpen.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaOpen.DONATE_COUNT, 1, 10);
 		
 		GUILayout.Space(5F);
-		if (AllianceMechaDonate.IsRunning) {
+		if (AllianceMechaOpen.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
 			}
