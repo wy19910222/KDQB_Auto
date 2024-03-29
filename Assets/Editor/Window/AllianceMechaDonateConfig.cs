@@ -29,7 +29,7 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 			AllianceMechaDonate.NEXT_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
 		EditorGUILayout.EndHorizontal();
-		AllianceMechaDonate.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaDonate.DONATE_COUNT, 1, 5);
+		AllianceMechaDonate.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaDonate.DONATE_COUNT, 1, 10);
 		AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("尝试捐献间隔（秒）", AllianceMechaDonate.INTERVAL, 120, 1800);
 		AllianceMechaDonate.COOL_DOWN = EditorGUILayout.IntSlider("捐献成功后冷却（小时）", AllianceMechaDonate.COOL_DOWN, 6, 12);
 		GUILayout.Space(5F);
