@@ -5,6 +5,7 @@
  * @EditTime: 2023-11-05 19:12:07 769
  */
 
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEditor;
@@ -34,10 +35,14 @@ public class FreeDiamond {
 
 	private static IEnumerator Update() {
 		const int INTERVAL = 15;
+		DateTime disconnectedTime = new DateTime(9999, 1, 1);
 		while (true) {
 			yield return null;
 			
 			if (!Network.IsInternetAvailable()) {
+				disconnectedTime = DateTime.Now;
+			} else if ((DateTime.Now - disconnectedTime).TotalSeconds > 10) {
+				disconnectedTime = new DateTime(9999, 1, 1);
 				LEFT_COUNT = 999;
 			}
 			
