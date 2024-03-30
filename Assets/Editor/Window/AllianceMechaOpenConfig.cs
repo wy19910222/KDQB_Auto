@@ -32,6 +32,7 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 		AllianceMechaOpen.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaOpen.DONATE_COUNT, 1, 10);
 		
 		GUILayout.Space(5F);
+		EditorGUILayout.BeginHorizontal();
 		if (AllianceMechaOpen.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -41,6 +42,10 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 				IsRunning = true;
 			}
 		}
+		if (GUILayout.Button("测试", GUILayout.Width(60F))) {
+			EditorApplication.ExecuteMenuItem("Tools_Task/TestAllianceMechaOpen");
+		}
+		EditorGUILayout.EndHorizontal();
 	}
 	
 	private void Update() {

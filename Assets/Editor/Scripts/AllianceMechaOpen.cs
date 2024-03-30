@@ -11,6 +11,8 @@ using UnityEngine;
 using UnityEditor;
 
 public class AllianceMechaOpen {
+	public static bool Test { get; set; } // 测试模式
+	
 	public static TimeSpan DAILY_TIME = new TimeSpan(10, 0, 0);	// 开启时间
 	public static int MECHA_INDEX = 0;	// 机甲序号
 	public static int MECHA_LEVEL = 1;	// 机甲等级
@@ -61,36 +63,49 @@ public class AllianceMechaOpen {
 			}
 			Task.CurrentTask = nameof(AllianceMechaOpen);
 			
+			bool test = Test;
 			// bool succeed = false;
+			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.2F);
+			Debug.Log("联盟活动按钮");
 			Operation.Click(830, 620);	// 联盟活动按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			int index = Array.IndexOf(Recognize.AllianceActivityTypes, Recognize.AllianceActivityType.MECHA);
 			if (index != -1) {
 				// 开启
+				Debug.Log("联盟机甲");
 				Operation.Click(960, 300 + 269 * index);	// 联盟机甲
 				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("机甲序号");
 				Operation.Click(937 + Mathf.RoundToInt(16.5F * MECHA_INDEX), 413);	// 机甲序号
 				yield return new EditorWaitForSeconds(0.2F);
-				Operation.Click(772 + 63 * MECHA_INDEX, 483);	// 机甲序号
+				Debug.Log("机甲等级");
+				Operation.Click(772 + 63 * MECHA_INDEX, 483);	// 机甲等级
 				yield return new EditorWaitForSeconds(0.2F);
 				if (Recognize.IsAllianceMechaOpenEnabled) {
+					Debug.Log("开启按钮");
 					Operation.Click(960, 960);	// 开启按钮
 					yield return new EditorWaitForSeconds(0.3F);
-					Operation.Click(960, 700);	// 确定按钮
-					yield return new EditorWaitForSeconds(0.3F);
-					// succeed = true;
-				
-					// 捐献
-					for (int i = 0; i < DONATE_COUNT; ++i) {
-						Operation.Click(960, 960);	// 捐献按钮
+					if (test) {
+						Debug.Log("确定按钮");
+						Operation.Click(960, 700);	// 确定按钮
 						yield return new EditorWaitForSeconds(0.3F);
-						if (Recognize.IsAllianceMechaDonateConfirming) {
-							Operation.Click(960, 686);	// 兑换按钮
-							yield return new EditorWaitForSeconds(0.2F);
-							Operation.Click(1167, 353);	// 关闭按钮
-							yield return new EditorWaitForSeconds(0.2F);
+						// succeed = true;
+				
+						// 捐献
+						for (int i = 0; i < DONATE_COUNT; ++i) {
+							Debug.Log("捐献按钮");
+							Operation.Click(960, 960);	// 捐献按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							if (Recognize.IsAllianceMechaDonateConfirming) {
+								Debug.Log("兑换按钮");
+								Operation.Click(960, 686);	// 兑换按钮
+								yield return new EditorWaitForSeconds(0.2F);
+								Debug.Log("关闭按钮");
+								Operation.Click(1167, 353);	// 关闭按钮
+								yield return new EditorWaitForSeconds(0.2F);
+							}
 						}
 					}
 				}
@@ -109,5 +124,23 @@ public class AllianceMechaOpen {
 			Task.CurrentTask = null;
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+
+	[MenuItem("Tools_Task/TestAllianceMechaOpen", priority = -1)]
+	private static void ExecuteTest() {
+		Debug.Log($"测试");
+		EditorCoroutineManager.StartCoroutine(IEExecuteTest());
+	}
+	private static IEnumerator IEExecuteTest() {
+		if (Task.CurrentTask != null) {
+			Debug.LogError($"正在执行【{Task.CurrentTask}】, 请稍后！");
+			yield break;
+		}
+		DateTime prevNextTime = s_OpenTime;
+		s_OpenTime = default;
+		do {
+			yield return null;
+		} while (Task.CurrentTask != null);
+		s_OpenTime = prevNextTime;
 	}
 }
