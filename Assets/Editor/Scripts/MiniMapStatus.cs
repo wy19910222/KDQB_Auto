@@ -37,15 +37,17 @@ public class MiniMapStatus {
 			
 			bool? isMiniMapShowing = Recognize.IsMiniMapShowing;
 			if (isMiniMapShowing != null && isMiniMapShowing != KEEP_SHOWING) {
-				if (Task.CurrentTask != null) {
-					continue;
+				int deltaY = Recognize.IsOutsideNearby ? 76 : Recognize.IsOutsideFaraway ? 0 : -1;
+				if (deltaY >= 0) {
+					if (Task.CurrentTask != null) {
+						continue;
+					}
+					Task.CurrentTask = nameof(MiniMapStatus);
+					Debug.Log("小地图展开收起按钮");
+					Operation.Click(27, 161 + deltaY);	// 修理按钮按钮
+				
+					Task.CurrentTask = null;
 				}
-				Task.CurrentTask = nameof(MiniMapStatus);
-				
-				Debug.Log("小地图展开收起按钮");
-				Operation.Click(27, 237);	// 修理按钮按钮
-				
-				Task.CurrentTask = null;
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
