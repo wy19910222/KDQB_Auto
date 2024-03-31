@@ -82,14 +82,26 @@ public class FreeDiamond {
 				yield return new EditorWaitForSeconds(0.1F);
 				orderOffsetX -= dragDistance;
 			}
-			Debug.Log("活动标签页");
+			Debug.Log("周卡标签");
 			Operation.Click(1190 + orderOffsetX, 200);	// 周卡标签
+			yield return null;
+			// 往下拖动
+			{
+				Debug.Log("往下拖动");
+				var ie = Operation.Drag(720, 250, 720, 400);
+				while (ie.MoveNext()) {
+					yield return ie.Current;
+				}
+			}
 			yield return new EditorWaitForSeconds(0.2F);
+			Debug.Log("领取按钮");
 			Operation.Click(1125, 310);	// 领取按钮
 			yield return new EditorWaitForSeconds(1F);	// 钻石飘飞特效挡住了按钮，所以等1秒后再判断
 			
 			if (Recognize.IsFreeDiamondCoolDown) {
+				Debug.Log("冷却中，灰色按钮");
 				if (Recognize.IsFreeDiamondNoCountdown) {
+					Debug.Log("无倒计时");
 					LEFT_COUNT = 0;
 				} else {
 					LEFT_COUNT--;
