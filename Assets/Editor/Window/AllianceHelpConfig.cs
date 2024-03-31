@@ -43,6 +43,14 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 				EditorGUILayout.EndHorizontal();
 			}
 			
+			EditorGUILayout.BeginHorizontal();
+			AllianceHelp.REQUEST_COIN = EditorGUILayout.Toggle("请求一次金币帮助", AllianceHelp.REQUEST_COIN);
+			if (AllianceHelp.s_RequestCoinTime > DateTime.Now.Date) {
+				if (GUILayout.Button("重置")) {
+					AllianceHelp.s_RequestCoinTime = default;
+				}
+			}
+			EditorGUILayout.EndHorizontal();
 			AllianceHelp.INTO_HELPS_TIMES = EditorGUILayout.IntSlider("在里面帮助检查次数", AllianceHelp.INTO_HELPS_TIMES, 0, 10);
 			AllianceHelp.INTERVAL = EditorGUILayout.IntSlider("尝试请求间隔（秒）", AllianceHelp.INTERVAL, 1800, 7200);
 			bool started = AllianceHelp.s_StartTime > (DateTime.Now - new TimeSpan(0, 1, 0)).Date;

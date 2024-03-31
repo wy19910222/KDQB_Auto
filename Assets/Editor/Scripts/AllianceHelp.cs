@@ -14,6 +14,7 @@ using UnityEditor;
 
 public class AllianceHelp {
 	public static bool OUTER_HELPS = false;	// 在外面帮助他人
+	public static bool REQUEST_COIN = true;	// 请求一次金币帮助
 	public static bool INTO_REQUEST = false;	// 去里面请求帮助
 	public static int INTO_HELPS_TIMES = 5;	// 去里面请求帮助
 	public static int INTERVAL = 3600;	// 尝试请求间隔
@@ -21,6 +22,7 @@ public class AllianceHelp {
 	public static readonly List<int> TARGET_LIST = new List<int>();	// 帮助物品随机范围
 	
 	public static DateTime s_StartTime;	// 起头时间
+	public static DateTime s_RequestCoinTime;	// 请求金币帮助时间
 	public static DateTime s_NextTime = DateTime.Now;
 	
 	private static EditorCoroutine s_CO;
@@ -105,6 +107,26 @@ public class AllianceHelp {
 				Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
 				if (Recognize.CanAllianceHelpRequest) {
 					bool success = false;
+					if (REQUEST_COIN && s_RequestCoinTime <= DateTime.Now.Date) {
+						Debug.Log("先请求一次金币帮助");
+						Debug.Log("请求帮助按钮");
+						Operation.Click(1115, 895);	// 请求帮助按钮
+						yield return new EditorWaitForSeconds(0.7F);
+						Debug.Log("选择金币帮助");
+						Operation.Click(905, 600);	// 选择金币帮助
+						yield return new EditorWaitForSeconds(0.3F);
+						Debug.Log("请求帮助按钮");
+						Operation.Click(960, 750);	// 请求帮助按钮
+						yield return new EditorWaitForSeconds(1F);
+						Debug.Log("取消帮助按钮");
+						Operation.Click(1115, 895);	// 取消帮助按钮
+						yield return new EditorWaitForSeconds(0.7F);
+						Debug.Log("确定按钮");
+						Operation.Click(1060, 700);	// 确定按钮
+						yield return new EditorWaitForSeconds(1F);
+						
+						s_RequestCoinTime = DateTime.Now;
+					}
 					int target = RandomTarget();
 					Debug.Log($"确定帮助物品:{target}");
 					if (target != -1) {
