@@ -59,7 +59,7 @@ public class MiningTycoon {
 			if (Task.CurrentTask != null) {
 				continue;
 			}
-			Task.CurrentTask = nameof(DeepSea);
+			Task.CurrentTask = nameof(MiningTycoon);
 
 			int activityOrder = ACTIVITY_ORDER;
 			if (nearbyOrders.Count > 0) {
