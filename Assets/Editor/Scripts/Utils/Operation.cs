@@ -35,7 +35,7 @@ public static class Operation {
 		MouseUtils.SetMousePos(x, y);
 	}
 
-	public static IEnumerator Drag(int x1, int y1, int x2, int y2, float duration = 0.2F) {
+	public static IEnumerator Drag(int x1, int y1, int x2, int y2, float duration = 0.4F) {
 		x1 = Mathf.RoundToInt((x1 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
 		y1 = Mathf.RoundToInt((y1 - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		x2 = Mathf.RoundToInt((x2 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
