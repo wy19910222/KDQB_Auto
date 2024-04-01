@@ -51,18 +51,18 @@ public class AutoRecruit {
 					switch (i) {
 						case 0:
 							Debug.Log("英雄招募按钮");
-							Operation.Click(1090, 960);	// 英雄招募按钮
+							Operation.Click(1090, 960);	// 英雄招募按钮（英雄列表界面）
 							yield return new EditorWaitForSeconds(0.2F);
 							break;
 						case 1:
 							Debug.Log("普通招募标签");
 							Operation.Click(745, 955);	// 普通招募标签
-							yield return new EditorWaitForSeconds(0.2F);
+							yield return new EditorWaitForSeconds(0.5F);
 							break;
 						case 2:
 							Debug.Log("技能招募标签");
 							Operation.Click(1175, 955);	// 技能招募标签
-							yield return new EditorWaitForSeconds(0.2F);
+							yield return new EditorWaitForSeconds(0.5F);
 							break;
 					}
 
