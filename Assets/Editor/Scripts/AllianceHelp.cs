@@ -130,7 +130,7 @@ public class AllianceHelp {
 					int target = RandomTarget();
 					Debug.Log($"确定帮助物品:{target}");
 					if (target != -1) {
-						for (int i = 0; i < 10; i++) {
+						for (int i = 0; i < 5; i++) {
 							Debug.Log("请求帮助按钮");
 							Operation.Click(1115, 895);	// 请求帮助按钮
 							yield return new EditorWaitForSeconds(0.7F);
