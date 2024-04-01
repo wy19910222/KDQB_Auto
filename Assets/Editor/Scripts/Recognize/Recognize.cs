@@ -136,6 +136,21 @@ public static partial class Recognize {
 			return ApproximatelyRectIgnoreCovered(realColors, GATHER_FEAR_STAR, 1.05F) > 0.9F;
 		}
 	}
+
+	private static readonly Color32[,] ABILITY_SHORTCUTS_BTN = Operation.GetFromFile("PersistentData/Textures/AbilityShortcutsBtn.png");
+	public static int AbilityShortcutsBtnPosition {
+		get {
+			Color32[,] realColors3 = Operation.GetColorsOnScreen(811, 772, 82, 19);
+			if (ApproximatelyRectIgnoreCovered(realColors3, ABILITY_SHORTCUTS_BTN, 2F) > 0.7F) {
+				return 3;
+			}
+			Color32[,] realColors4 = Operation.GetColorsOnScreen(920, 772, 82, 19);
+			if (ApproximatelyRectIgnoreCovered(realColors4, ABILITY_SHORTCUTS_BTN, 2F) > 0.7F) {
+				return 4;
+			}
+			return -1;
+		}
+	}
 	
 	// public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 	// 	new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),
