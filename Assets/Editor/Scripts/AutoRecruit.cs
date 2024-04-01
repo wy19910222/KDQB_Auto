@@ -55,15 +55,23 @@ public class AutoRecruit {
 							yield return new EditorWaitForSeconds(0.2F);
 							break;
 						case 1:
-							Debug.Log("普通招募标签");
-							Operation.Click(745, 955);	// 普通招募标签
-							yield return new EditorWaitForSeconds(0.5F);
-							break;
+							if (Recognize.CanGeneralRecruit) {
+								Debug.Log("普通招募标签");
+								Operation.Click(745, 955);	// 普通招募标签
+								yield return new EditorWaitForSeconds(0.5F);
+								break;
+							} else {
+								continue;
+							}
 						case 2:
-							Debug.Log("技能招募标签");
-							Operation.Click(1175, 955);	// 技能招募标签
-							yield return new EditorWaitForSeconds(0.5F);
-							break;
+							if (Recognize.CanSkillRecruit) {
+								Debug.Log("技能招募标签");
+								Operation.Click(1175, 955);	// 技能招募标签
+								yield return new EditorWaitForSeconds(0.5F);
+								break;
+							} else {
+								continue;
+							}
 					}
 
 					if (Recognize.CanRecruitInner) {
