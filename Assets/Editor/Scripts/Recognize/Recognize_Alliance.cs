@@ -46,6 +46,20 @@ public static partial class Recognize {
 		}
 	}
 	
+	// 从0开始
+	public static int CurrentMechaIndex {
+		get {
+			Color32 targetColor = new Color32(255,255, 255, 255);
+			for (int i = 0; i < 4; i++) {
+				Color32 realColor = Operation.GetColorOnScreen(937 + Mathf.RoundToInt(16.5F * i), 413);
+				if (Approximately(realColor, targetColor)) {
+					return i;
+				}
+			}
+			return -1;
+		}
+	}
+	
 	private static readonly Color32[,] ALLIANCE_MECHA_DONATE_ENABLED = Operation.GetFromFile("PersistentData/Textures/AllianceMechaDonateEnabled.png");
 	public static bool IsAllianceMechaDonateEnabled {
 		get {

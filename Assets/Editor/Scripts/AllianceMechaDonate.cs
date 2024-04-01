@@ -58,6 +58,7 @@ public class AllianceMechaDonate {
 			Task.CurrentTask = nameof(AllianceMechaDonate);
 			
 			bool succeed = false;
+			int mechaIndex = 0;
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(830, 620);	// 联盟活动按钮
@@ -74,6 +75,7 @@ public class AllianceMechaDonate {
 					Operation.Click(720, 128);	// 点击窗口外关闭窗口
 					yield return new EditorWaitForSeconds(0.1F);
 					if (!isInRank) {
+						mechaIndex = Recognize.CurrentMechaIndex;
 						for (int i = 0; i < DONATE_COUNT; ++i) {
 							Operation.Click(960, 960);	// 捐献按钮
 							yield return new EditorWaitForSeconds(0.3F);
