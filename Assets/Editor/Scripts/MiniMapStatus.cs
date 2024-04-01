@@ -18,7 +18,7 @@ public class MiniMapStatus {
 	[MenuItem("Tools_Task/StartMiniMapStatus", priority = -1)]
 	private static void Enable() {
 		Disable();
-		Debug.Log($"自动修理已开启");
+		Debug.Log($"小地图状态监管已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
@@ -27,7 +27,7 @@ public class MiniMapStatus {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
 			s_CO = null;
-			Debug.Log("自动修理已关闭");
+			Debug.Log("小地图状态监管已关闭");
 		}
 	}
 
