@@ -106,7 +106,7 @@ public class AutoCastCastleAbility {
 				Color32 btnColor = Operation.GetColorOnScreen(1080, 810 + orderOffsetY);
 				if (Recognize.Approximately(btnColor, new Color32(76, 188, 71, 255))) {
 					Debug.Log("使用按钮");
-					// Operation.Click(1114, 810 + orderOffsetY);	// 使用按钮
+					Operation.Click(1114, 810 + orderOffsetY);	// 使用按钮
 					ability.cooldownTime = DateTime.Now + new TimeSpan(ability.cooldownHours, 0, 0);
 				} else {
 					ability.cooldownTime = DateTime.Now + new TimeSpan(0, 0, RETRY_DELAY);
