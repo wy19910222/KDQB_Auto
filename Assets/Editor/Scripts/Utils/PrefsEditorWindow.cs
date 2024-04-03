@@ -24,7 +24,11 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		DoSaveOptions();
 		Prefs.Set($"{typeof(T).Name}Window.IsRunning", IsRunning);
 	}
-
+	
+	protected virtual void OnDestroy() {
+		Debug.LogError("OnDestroy");
+		IsRunning = false;
+	}
 
 	protected bool m_LoadComplexDataFromBackup = false;
 	private void DoLoadOptions() {
