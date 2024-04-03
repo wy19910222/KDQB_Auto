@@ -17,6 +17,19 @@ public static partial class Recognize {
 		DEFENCE,
 	}
 	
+	public enum AllianceMechaType {
+		[InspectorName("未知")]
+		UNKNOWN = 0,
+		[InspectorName("阿尔法")]
+		ALPHA = 1,
+		[InspectorName("伽马")]
+		GAMMA = 2,
+		[InspectorName("德尔塔")]
+		DELTA = 3,
+		[InspectorName("伊普西龙")]
+		EPSILON = 4,
+	}
+	
 	private static readonly Color32[,] ALLIANCE_ACTIVITY_MECHA = Operation.GetFromFile("PersistentData/Textures/AllianceActivityMecha.png");
 	private static readonly Color32[,] ALLIANCE_ACTIVITY_DEFENCE = Operation.GetFromFile("PersistentData/Textures/AllianceActivityDefence.png");
 	public static AllianceActivityType[] AllianceActivityTypes {
@@ -47,16 +60,16 @@ public static partial class Recognize {
 	}
 	
 	// 从0开始
-	public static int CurrentMechaIndex {
+	public static AllianceMechaType CurrentMechaType {
 		get {
 			Color32 targetColor = new Color32(255,255, 255, 255);
-			for (int i = 0; i < 4; i++) {
-				Color32 realColor = Operation.GetColorOnScreen(937 + Mathf.RoundToInt(16.5F * i), 413);
+			for (AllianceMechaType i = AllianceMechaType.ALPHA; i <= AllianceMechaType.EPSILON; i++) {
+				Color32 realColor = Operation.GetColorOnScreen(Mathf.RoundToInt(920.3F + 16.5F * (int) i), 413);
 				if (Approximately(realColor, targetColor)) {
 					return i;
 				}
 			}
-			return -1;
+			return AllianceMechaType.UNKNOWN;
 		}
 	}
 	

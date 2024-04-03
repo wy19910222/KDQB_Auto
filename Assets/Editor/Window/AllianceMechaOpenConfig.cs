@@ -14,6 +14,15 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 	private static void Open() {
 		GetWindow<AllianceMechaOpenConfig>("联盟机甲开启").Show();
 	}
+
+	// public bool m_OnAwake = true;
+	// protected override void OnEnable() {
+	// 	if (m_OnAwake) {
+	// 		m_OnAwake = false;
+	// 		Prefs.Set($"{nameof(AllianceMechaOpen)}Window.IsRunning", false);
+	// 	}
+	// 	base.OnEnable();
+	// }
 	
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
@@ -27,7 +36,7 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 		}
 		EditorGUILayout.EndHorizontal();
 		
-		AllianceMechaOpen.MECHA_INDEX = EditorGUILayout.IntSlider("机甲序号", AllianceMechaOpen.MECHA_INDEX, 0, 3);
+		AllianceMechaOpen.MECHA_TYPE = (Recognize.AllianceMechaType) EditorGUILayout.EnumPopup("机甲类型", AllianceMechaOpen.MECHA_TYPE);
 		AllianceMechaOpen.MECHA_LEVEL = EditorGUILayout.IntSlider("机甲等级", AllianceMechaOpen.MECHA_LEVEL, 1, 6);
 		AllianceMechaOpen.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaOpen.DONATE_COUNT, 1, 10);
 		
