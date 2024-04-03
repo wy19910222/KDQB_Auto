@@ -25,7 +25,7 @@ public struct CastleAbility {
 
 public class AutoCastCastleAbility {
 	public static int RETRY_DELAY = 300;
-	public static List<CastleAbility> ABILITIES = new List<CastleAbility>();
+	public static readonly List<CastleAbility> ABILITIES = new List<CastleAbility>();
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -107,7 +107,10 @@ public class AutoCastCastleAbility {
 				if (Recognize.Approximately(btnColor, new Color32(76, 188, 71, 255))) {
 					Debug.Log("使用按钮");
 					Operation.Click(1114, 810 + orderOffsetY);	// 使用按钮
-					ability.cooldownTime = DateTime.Now + new TimeSpan(ability.cooldownHours, 0, 0);
+					yield return new EditorWaitForSeconds(0.3F);
+					Debug.Log("确认按钮");
+					Operation.Click(960, 700);	// 确认按钮
+					ability.cooldownTime = DateTime.Now + new TimeSpan(ability.cooldownHours, 0, 10);
 				} else {
 					ability.cooldownTime = DateTime.Now + new TimeSpan(0, 0, RETRY_DELAY);
 				}
