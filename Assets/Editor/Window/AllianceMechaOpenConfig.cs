@@ -12,17 +12,9 @@ using UnityEditor;
 public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 	[MenuItem("Tools_Window/Default/AllianceMechaOpen", false, 21)]
 	private static void Open() {
+		Prefs.Set($"{nameof(AllianceMechaOpen)}Window.IsRunning", false);
 		GetWindow<AllianceMechaOpenConfig>("联盟机甲开启").Show();
 	}
-
-	// public bool m_OnAwake = true;
-	// protected override void OnEnable() {
-	// 	if (m_OnAwake) {
-	// 		m_OnAwake = false;
-	// 		Prefs.Set($"{nameof(AllianceMechaOpen)}Window.IsRunning", false);
-	// 	}
-	// 	base.OnEnable();
-	// }
 	
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
