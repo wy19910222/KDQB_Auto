@@ -197,7 +197,7 @@ public class Gather {
 					Operation.Click(660, 970);	// 点击空白处
 					yield return new EditorWaitForSeconds(0.3F);
 				}
-				continue;
+				goto EndOfGather;
 			}
 
 			// 搜索面板消失，说明搜索到了
@@ -286,6 +286,7 @@ public class Gather {
 				}
 			}
 			
+			EndOfGather:
 			Task.CurrentTask = null;
 			
 			// 休息5秒，避免出错时一直受控不能操作

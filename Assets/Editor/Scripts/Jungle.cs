@@ -193,7 +193,7 @@ public class Jungle {
 					Operation.Click(660, 970);	// 点击空白处
 					yield return new EditorWaitForSeconds(0.3F);
 				}
-				continue;
+				goto EndOfJungle;
 			}
 			
 			// 搜索面板消失，说明搜索到了
@@ -321,6 +321,7 @@ public class Jungle {
 				}
 			}
 			
+			EndOfJungle:
 			Task.CurrentTask = null;
 			
 			yield return new EditorWaitForSeconds(COOLDOWN);
