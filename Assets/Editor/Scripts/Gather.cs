@@ -156,7 +156,7 @@ public class Gather {
 				while (ie.MoveNext()) {
 					yield return ie.Current;
 				}
-				yield return new EditorWaitForSeconds(1F);
+				yield return new EditorWaitForSeconds(0.5F);
 			}
 			Debug.Log("拖动以显示攻击目标");
 			int orderOffsetX = (target - 2) * TARGET_WIDTH;
