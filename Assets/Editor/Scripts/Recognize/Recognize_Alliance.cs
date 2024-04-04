@@ -63,10 +63,10 @@ public static partial class Recognize {
 	public static AllianceMechaType CurrentMechaType {
 		get {
 			Color32 targetColor = new Color32(255,255, 255, 255);
-			for (AllianceMechaType i = AllianceMechaType.ALPHA; i <= AllianceMechaType.EPSILON; i++) {
-				Color32 realColor = Operation.GetColorOnScreen(Mathf.RoundToInt(920.3F + 16.5F * (int) i), 413);
+			for (AllianceMechaType type = AllianceMechaType.ALPHA; type <= AllianceMechaType.EPSILON; type++) {
+				Color32 realColor = Operation.GetColorOnScreen(Mathf.RoundToInt(920.3F + 16.5F * (int) type), 413);
 				if (Approximately(realColor, targetColor)) {
-					return i;
+					return type;
 				}
 			}
 			return AllianceMechaType.UNKNOWN;
