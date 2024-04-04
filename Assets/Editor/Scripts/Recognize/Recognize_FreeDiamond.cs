@@ -8,6 +8,20 @@
 using UnityEngine;
 
 public static partial class Recognize {
+	public static bool MallIsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(1794, 110);
+			return Approximately(realColor, new Color32(225, 64, 12, 255));
+		}
+	}
+
+	public static bool DailySuppliesIsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(786, 367);
+			return Approximately(realColor, new Color32(221, 57, 0, 255));
+		}
+	}
+	
 	private static readonly Color32[,] FREE_DIAMOND_COOL_DOWN = Operation.GetFromFile("PersistentData/Textures/FreeDiamondCoolDown.png");
 	public static bool IsFreeDiamondCoolDown {
 		get {
