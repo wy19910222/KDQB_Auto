@@ -118,25 +118,34 @@ public class DeepSea {
 				TargetDTs.Add(DateTime.Now + DEFAULT_COUNTDOWN);
 			} else {
 				// 失败，更新倒计时
-				if (activityOrder == ACTIVITY_ORDER) {
-					for (int i = 1; i <= ORDER_RADIUS; i++) {
-						int prevOrder = ACTIVITY_ORDER - i;
-						if (prevOrder > 0) {
-							nearbyOrders.Add(prevOrder);
+				if (GlobalStatus.IsUnattended) {
+					// 无人值守状态，尝试相邻标签页
+					if (activityOrder == ACTIVITY_ORDER) {
+						for (int i = 1; i <= ORDER_RADIUS; i++) {
+							int prevOrder = ACTIVITY_ORDER - i;
+							if (prevOrder > 0) {
+								nearbyOrders.Add(prevOrder);
+							}
+							nearbyOrders.Add(ACTIVITY_ORDER + i);
 						}
-						nearbyOrders.Add(ACTIVITY_ORDER + i);
-					}
-					Debug.Log($"标签{activityOrder}错误，稍后相邻标签页: {string.Join(",", nearbyOrders)}");
-					TargetDTs[0] = DateTime.Now + new TimeSpan(0, 0, 2);
-				} else {
-					if (nearbyOrders.Count > 0) {
-						Debug.Log($"标签{activityOrder}错误，稍后继续尝试标签页: " + nearbyOrders[0]);
+						Debug.Log($"标签{activityOrder}错误，稍后尝试相邻标签页: {string.Join(",", nearbyOrders)}");
 						TargetDTs[0] = DateTime.Now + new TimeSpan(0, 0, 2);
 					} else {
-						Debug.LogError($"标签{activityOrder}错误，取消操作");
-						TargetDTs.RemoveAt(0);
-						TargetDTs.Add(DateTime.Now + DEFAULT_COUNTDOWN);
+						if (nearbyOrders.Count > 0) {
+							Debug.Log($"标签{activityOrder}错误，稍后继续尝试标签页: " + nearbyOrders[0]);
+							TargetDTs[0] = DateTime.Now + new TimeSpan(0, 0, 2);
+						} else {
+							Debug.LogError($"标签{activityOrder}错误，取消操作");
+							TargetDTs.RemoveAt(0);
+							TargetDTs.Add(DateTime.Now + DEFAULT_COUNTDOWN);
+						}
 					}
+				} else {
+					// 非无人值守状态，取消操作
+					Debug.LogError($"非无人值守状态，取消操作");
+					TargetDTs.RemoveAt(0);
+					TargetDTs.Add(DateTime.Now + DEFAULT_COUNTDOWN);
+					nearbyOrders.Clear();
 				}
 			}
 				
