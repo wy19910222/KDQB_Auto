@@ -7,15 +7,19 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 public class AllianceMechaDonate {
-	public static int DONATE_COUNT = 3;	// 捐献数量
+	public static int DEFAULT_DONATE_COUNT = 3;	// 捐献数量
 	public static int INTERVAL = 300;	// 点击间隔
-	public static int COOL_DOWN = 6;	// 捐献冷却
 	public static DateTime NEXT_TIME = DateTime.Now;
 	
+	public static readonly Dictionary<Recognize.AllianceMechaType, bool> VALID_DICT = new Dictionary<Recognize.AllianceMechaType, bool>();
+	public static readonly Dictionary<Recognize.AllianceMechaType, DateTime> FIXED_TIME_DICT = new Dictionary<Recognize.AllianceMechaType, DateTime>();
+	public static readonly Dictionary<Recognize.AllianceMechaType, int[]> DONATE_COUNTS_DICT = new Dictionary<Recognize.AllianceMechaType, int[]>();
+
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
 
@@ -39,7 +43,13 @@ public class AllianceMechaDonate {
 		// bool prevIsMarshalTime = false;
 		while (true) {
 			yield return null;
+			
+			if (!IsAnyMechaFixed()) {
+				// Debug.Log("所有机甲都在修理");
+				continue;
+			}
 			if (DateTime.Now < NEXT_TIME) {
+				// Debug.Log("等待重试中");
 				continue;
 			}
 			
@@ -57,8 +67,6 @@ public class AllianceMechaDonate {
 			}
 			Task.CurrentTask = nameof(AllianceMechaDonate);
 			
-			bool succeed = false;
-			Recognize.AllianceMechaType mechaType = 0;
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.2F);
 			Operation.Click(830, 620);	// 联盟活动按钮
@@ -74,9 +82,17 @@ public class AllianceMechaDonate {
 					bool isInRank = Recognize.IsAllianceMechaDonateInRank;
 					Operation.Click(720, 128);	// 点击窗口外关闭窗口
 					yield return new EditorWaitForSeconds(0.1F);
+					Recognize.AllianceMechaType mechaType = Recognize.CurrentMechaType;
 					if (!isInRank) {
-						mechaType = Recognize.CurrentMechaType;
-						for (int i = 0; i < DONATE_COUNT; ++i) {
+						int mechaLevel = Recognize.CurrentMechaLevel;
+						int donateCount = DEFAULT_DONATE_COUNT;
+						if (DONATE_COUNTS_DICT.TryGetValue(mechaType, out int[] counts)) {
+							int count = counts[mechaLevel - 1];
+							if (count > 0) {
+								donateCount = count;
+							}
+						}
+						for (int i = 0; i < donateCount; ++i) {
 							Operation.Click(960, 960);	// 捐献按钮
 							yield return new EditorWaitForSeconds(0.3F);
 							if (Recognize.IsAllianceMechaDonateConfirming) {
@@ -86,7 +102,16 @@ public class AllianceMechaDonate {
 								yield return new EditorWaitForSeconds(0.2F);
 							}
 						}
-						succeed = true;
+
+						FIXED_TIME_DICT[mechaType] = mechaType switch {
+							Recognize.AllianceMechaType.ALPHA => DateTime.Now + new TimeSpan(12 + 1, 0, 0),
+							Recognize.AllianceMechaType.GAMMA => DateTime.Now + new TimeSpan(2, 1, 0, 0),
+							Recognize.AllianceMechaType.DELTA => DateTime.Now + new TimeSpan(4, 1, 0, 0),
+							Recognize.AllianceMechaType.EPSILON => DateTime.Now + new TimeSpan(7, 1, 0, 0),
+							_ => DateTime.Now + new TimeSpan(12 + 1, 0, 0)
+						};
+					} else {
+						FIXED_TIME_DICT[mechaType] = DateTime.Now + new TimeSpan(12 + 1, 0, 0);
 					}
 				}
 			}
@@ -98,13 +123,22 @@ public class AllianceMechaDonate {
 			
 			Task.CurrentTask = null;
 
-			if (succeed) {
-				NEXT_TIME = DateTime.Now + new TimeSpan(COOL_DOWN, 0, 0);
-			} else {
-				NEXT_TIME = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
-			}
+			NEXT_TIME = DateTime.Now + new TimeSpan(0, 0, INTERVAL);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+
+	public static bool IsAnyMechaFixed() {
+		if (FIXED_TIME_DICT.Count <= 0) {
+			return true;
+		}
+		DateTime now = DateTime.Now;
+		foreach (var (type, time) in FIXED_TIME_DICT) {
+			if (VALID_DICT.TryGetValue(type, out bool valid) && valid && now > time) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	[MenuItem("Tools_Task/OnceAllianceMechaDonate", priority = -1)]
