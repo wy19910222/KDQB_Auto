@@ -26,7 +26,6 @@ public class PrefsEditorWindow<T> : EditorWindow {
 	}
 	
 	protected virtual void OnDestroy() {
-		Debug.LogError("OnDestroy");
 		IsRunning = false;
 	}
 
