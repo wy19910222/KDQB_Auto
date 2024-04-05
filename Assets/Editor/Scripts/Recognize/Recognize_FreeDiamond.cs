@@ -21,6 +21,13 @@ public static partial class Recognize {
 			return Approximately(realColor, new Color32(221, 57, 0, 255));
 		}
 	}
+
+	public static bool DiscountPacksIsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(988, 168);
+			return Approximately(realColor, new Color32(221, 57, 0, 255));
+		}
+	}
 	
 	private static readonly Color32[,] FREE_DIAMOND_COOL_DOWN = Operation.GetFromFile("PersistentData/Textures/FreeDiamondCoolDown.png");
 	public static bool IsFreeDiamondCoolDown {

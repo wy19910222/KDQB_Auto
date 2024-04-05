@@ -68,6 +68,26 @@ public class DailySupplies {
 				Operation.Click(761, 392);	// 补给图标
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+
+			if (Recognize.DiscountPacksIsNew) {
+				succeed = true;
+				Debug.Log("特惠礼包标签页");
+				Operation.Click(925, 195);	// 特惠礼包标签页
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("免费奖励");
+				Operation.Click(1168, 296);	// 免费奖励
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("免费奖励");
+				Operation.Click(1168, 296);	// 免费奖励
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("进度奖励");
+				for (int i = 0; i < 9; ++i) {
+					Operation.Click(838 + 39 * i, 350 + (i + 1) % 2 * 100);	// 免费奖励
+					yield return new EditorWaitForSeconds(0.5F);
+					Operation.Click(990, 300);	// 点空白处关闭恭喜获得
+					yield return new EditorWaitForSeconds(0.2F);
+				}
+			}
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");

@@ -11,7 +11,7 @@ using UnityEditor;
 public class DailySuppliesConfig : PrefsEditorWindow<DailySupplies> {
 	[MenuItem("Tools_Window/Default/DailySupplies", false, 20)]
 	private static void Open() {
-		GetWindow<DailySuppliesConfig>("周卡免费钻石").Show();
+		GetWindow<DailySuppliesConfig>("每日补给").Show();
 	}
 	
 	private void OnGUI() {
