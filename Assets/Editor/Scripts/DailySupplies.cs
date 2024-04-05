@@ -88,7 +88,14 @@ public class DailySupplies {
 					yield return new EditorWaitForSeconds(0.2F);
 				}
 			}
-			
+
+			if (Recognize.MoreIsNew) {
+				succeed = true;
+				Debug.Log("更多红点");
+				Operation.Click(1198, 166);	// 更多红点
+				yield return new EditorWaitForSeconds(0.2F);
+			}
+
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
 				Operation.Click(720, 128);	// 左上角返回按钮

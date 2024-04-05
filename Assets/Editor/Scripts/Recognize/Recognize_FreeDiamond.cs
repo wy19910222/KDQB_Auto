@@ -18,14 +18,21 @@ public static partial class Recognize {
 	public static bool DailySuppliesIsNew {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(786, 367);
-			return Approximately(realColor, new Color32(221, 57, 0, 255));
+			return Approximately(realColor, new Color32(222, 57, 0, 255));
 		}
 	}
 
 	public static bool DiscountPacksIsNew {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(988, 168);
-			return Approximately(realColor, new Color32(221, 57, 0, 255));
+			return Approximately(realColor, new Color32(222, 57, 0, 255));
+		}
+	}
+
+	public static bool MoreIsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(1204, 166);
+			return Approximately(realColor, new Color32(222, 57, 0, 255));
 		}
 	}
 	
