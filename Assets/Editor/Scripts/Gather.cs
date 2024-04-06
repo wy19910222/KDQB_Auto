@@ -19,6 +19,7 @@ public class Gather {
 	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	
 	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
+	public static readonly List<bool> TYPE_WILL_RESET_LIST = new List<bool>(); // 各类型每日是否重置次数
 	public static int TARGET_LEVEL_OFFSET = 0;	// 目标等级偏移，最高等级是0
 	public static int FEAR_STAR_LEVEL = 4;	// 打的惧星等级
 	public static int SQUAD_NUMBER = 3;	// 使用编队号码
@@ -69,6 +70,13 @@ public class Gather {
 		}
 	}
 
+	public static int GetDailyCount(int i) {
+		return i switch {
+			1 => 10,
+			_ => 0
+		};
+	}
+
 	private static IEnumerator Update() {
 		while (true) {
 			yield return null;
@@ -76,7 +84,11 @@ public class Gather {
 			// 每天10次惧星
 			DateTime date = DateTime.Now.Date;
 			if (LAST_RESET_TIME < date) {
-				TARGET_ATTACK_COUNT_LIST[1] = 10;
+				for (int i = 0, length = TYPE_WILL_RESET_LIST.Count; i < length; ++i) {
+					if (TYPE_WILL_RESET_LIST[i]) {
+						TARGET_ATTACK_COUNT_LIST[i] = GetDailyCount(i);
+					}
+				}
 				LAST_RESET_TIME = date;
 			}
 			

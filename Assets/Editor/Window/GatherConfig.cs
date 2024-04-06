@@ -36,6 +36,9 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 			Gather.TARGET_ATTACK_COUNT_LIST.Add(0);
 		}
 		EditorGUILayout.EndHorizontal();
+		for (int i = Gather.TYPE_WILL_RESET_LIST.Count; i < Gather.TARGET_ATTACK_COUNT_LIST.Count; i++) {
+			Gather.TYPE_WILL_RESET_LIST.Add(false);
+		}
 		for (int i = 0, length = Gather.TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
 			EditorGUILayout.BeginHorizontal();
 			EditorGUI.BeginChangeCheck();
@@ -51,6 +54,7 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 				count = -count;
 				Gather.TARGET_ATTACK_COUNT_LIST[i] = count;
 			}
+			Gather.TYPE_WILL_RESET_LIST[i] = GUILayout.Toggle(Gather.TYPE_WILL_RESET_LIST[i], "每日重置", "Button", GUILayout.Width(64F));
 			EditorGUILayout.EndHorizontal();
 		}
 		Gather.TARGET_LEVEL_OFFSET = EditorGUILayout.IntSlider("等级偏移（如果非惧星）", Gather.TARGET_LEVEL_OFFSET, -9, 0);
