@@ -28,6 +28,20 @@ public static partial class Recognize {
 			return Approximately(realColor, new Color32(222, 57, 0, 255));
 		}
 	}
+	
+	public static int DiscountPacksProgress {
+		get {
+			Color32 targetColor = new Color32(83, 150, 255, 255);
+			Color32[,] colors = Operation.GetColorsOnScreen(800, 404, 350, 1);
+			// 最少只能判断到x=19，再继续会受到体力图标的影响
+			for (int i = 0; i < 9; ++i) {
+				if (!Approximately(colors[31+ Mathf.FloorToInt(i * 39.2F), 0], targetColor)) {
+					return i;
+				}
+			}
+			return 9;
+		}
+	}
 
 	public static bool MoreIsNew {
 		get {

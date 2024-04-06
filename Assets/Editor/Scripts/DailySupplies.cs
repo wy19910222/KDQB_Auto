@@ -77,11 +77,10 @@ public class DailySupplies {
 				Debug.Log("免费奖励");
 				Operation.Click(1168, 296);	// 免费奖励
 				yield return new EditorWaitForSeconds(0.2F);
-				Debug.Log("免费奖励");
-				Operation.Click(1168, 296);	// 免费奖励
+				Operation.Click(990, 300);	// 点空白处关闭恭喜获得
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("进度奖励");
-				for (int i = 0; i < 9; ++i) {
+				for (int i = 0, length = Recognize.DiscountPacksProgress; i < length; ++i) {
 					Operation.Click(838 + 39 * i, 350 + (i + 1) % 2 * 100);	// 免费奖励
 					yield return new EditorWaitForSeconds(0.5F);
 					Operation.Click(990, 300);	// 点空白处关闭恭喜获得
