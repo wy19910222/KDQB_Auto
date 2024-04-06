@@ -92,7 +92,7 @@ public class DailySupplies {
 			if (Recognize.MoreIsNew) {
 				succeed = true;
 				Debug.Log("更多红点");
-				Operation.Click(1198, 166);	// 更多红点
+				Operation.Click(1198, 168);	// 更多红点
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 

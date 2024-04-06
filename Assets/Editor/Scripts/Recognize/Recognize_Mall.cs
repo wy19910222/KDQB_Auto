@@ -31,7 +31,7 @@ public static partial class Recognize {
 
 	public static bool MoreIsNew {
 		get {
-			Color32 realColor = Operation.GetColorOnScreen(1204, 166);
+			Color32 realColor = Operation.GetColorOnScreen(1204, 168);
 			return Approximately(realColor, new Color32(222, 57, 0, 255));
 		}
 	}
