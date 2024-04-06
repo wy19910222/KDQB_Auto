@@ -2,7 +2,14 @@
 using UnityEngine;
 
 public static class Prefs {
-	private static readonly string ProjectName = Application.dataPath[(Application.dataPath.LastIndexOfAny(new []{'/', '\\'}) + 1)..];
+	private static string ProjectName {
+		get {
+			string dataPath = Application.dataPath;
+			dataPath = dataPath[..dataPath.LastIndexOfAny(new []{'/', '\\'})];
+			dataPath = dataPath[(dataPath.LastIndexOfAny(new []{'/', '\\'}) + 1)..];
+			return dataPath;
+		}
+	}
 	
 	public static void Set<T>(string key, T value) {
 		switch (value) {
@@ -18,7 +25,6 @@ public static class Prefs {
 			case string sValue:
 				EditorPrefs.SetString($"{ProjectName}.{key}", sValue);
 				break;
-			
 		}
 	}
 	
