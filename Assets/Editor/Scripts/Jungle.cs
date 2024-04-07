@@ -301,7 +301,8 @@ public class Jungle {
 				}
 			}
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
-				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
+				Debug.Log("选择编队");
+				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);
 				if (!test && (Recognize.FightingSoldierCountPercent > 0.99F || !isStarSlider)) {
 					Operation.Click(960, 470);	// 出战按钮
