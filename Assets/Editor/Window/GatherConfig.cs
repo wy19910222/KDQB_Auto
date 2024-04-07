@@ -20,7 +20,10 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		Gather.UNATTENDED_DURATION = EditorGUILayout.Slider("等待无操作（秒）", Gather.UNATTENDED_DURATION, 0, 20);
 		bool useBottle = Gather.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {
+			EditorGUILayout.BeginHorizontal();
 			Gather.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Gather.RESERVED_ENERGY);
+			Gather.DAN_EXIST = GUILayout.Toggle(Gather.DAN_EXIST, "有戴安娜", "Button");
+			EditorGUILayout.EndHorizontal();
 		}
 
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);

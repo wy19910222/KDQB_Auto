@@ -42,7 +42,10 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		Jungle.COOLDOWN = Mathf.Max(EditorGUILayout.FloatField("打野间隔", Jungle.COOLDOWN), 5);
 		bool useBottle = Jungle.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {
+			EditorGUILayout.BeginHorizontal();
 			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
+			Jungle.DAN_EXIST = GUILayout.Toggle(Jungle.DAN_EXIST, "有戴安娜", "Button");
+			EditorGUILayout.EndHorizontal();
 		}
 		
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);

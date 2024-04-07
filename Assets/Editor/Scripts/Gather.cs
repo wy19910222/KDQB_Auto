@@ -16,6 +16,7 @@ public class Gather {
 	public static bool Test { get; set; } // 测试模式
 	
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
+	public static bool DAN_EXIST = true;	// 是否有戴安娜
 	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	
 	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
@@ -118,7 +119,7 @@ public class Gather {
 				Debug.Log("测试模式，忽略体力与队列数量");
 			} else {
 				// 体力值
-				if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + 8) {
+				if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + (DAN_EXIST ? 8 : 10)) {
 					// Debug.Log($"当前体力：{Recognize.energy}");
 					continue;
 				}
