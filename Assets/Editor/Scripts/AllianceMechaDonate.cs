@@ -45,6 +45,9 @@ public class AllianceMechaDonate {
 			yield return null;
 			
 			if (!IsAnyMechaFixed()) {
+				if (DateTime.Now < NEXT_TIME) {
+					NEXT_TIME = DateTime.Now;
+				}
 				// Debug.Log("所有机甲都在修理");
 				continue;
 			}
