@@ -76,7 +76,7 @@ public class DailySupplies {
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("免费奖励");
 				Operation.Click(1168, 296);	// 免费奖励
-				yield return new EditorWaitForSeconds(0.2F);
+				yield return new EditorWaitForSeconds(0.5F);
 				Operation.Click(990, 300);	// 点空白处关闭恭喜获得
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("进度奖励");
