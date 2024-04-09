@@ -5,67 +5,22 @@
  * @EditTime: 2023-09-21 20:30:39 016
  */
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public static class Test {
 	private static bool Approximately(Color32 c1, Color32 c2, int threshold) {
 		return Mathf.Abs(c1.r - c2.r) <= threshold &&
 				Mathf.Abs(c1.g - c2.g) <= threshold &&
 				Mathf.Abs(c1.b - c2.b) <= threshold;
-	}
-	
-	[MenuItem("Assets/LogGroupHeroAvatar", priority = -1)]
-	private static void LogGroupHeroAvatar() {
-		int deltaY = Recognize.IsOutsideNearby ? 76 : Recognize.IsOutsideFaraway ? 0 : -1;
-		if (deltaY >= 0) {
-			int groupCount = 0;
-			Color32 targetColor1 = new Color32(98, 135, 229, 255);	// 无界面覆盖
-			Color32 targetColor2 = new Color32(29, 40, 68, 255);	// 联盟背包等窗口覆盖
-			Color32 targetColor3 = new Color32(9, 12, 20, 255);	// 曙光活动主界面（或双层窗口）覆盖
-			while (groupCount < 10) {
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-				Debug.Log(realColor);
-				Debug.Log(Approximately(realColor, targetColor1, 10));
-				Debug.Log(Approximately(realColor, targetColor2, 10));
-				Debug.Log(Approximately(realColor, targetColor3, 10));
-				if (!Approximately(realColor, targetColor1, 10) &&
-						!Approximately(realColor, targetColor2, 10) &&
-						!Approximately(realColor, targetColor3, 10)) {
-					break;
-				}
-				Debug.Log($"----------------------{groupCount}-----------------------");
-				List<Color32> list = new List<Color32>();
-				for (int i = 0, length = Recognize.AVATAR_SAMPLE_POINTS.Length; i < length; ++i) {
-					Vector2Int point = Recognize.AVATAR_SAMPLE_POINTS[i];
-					Vector2Int finalPoint = new Vector2Int(22 + point.x, 418 + deltaY + groupCount * 50 + point.y);
-					int r = 0, g = 0, b = 0;
-					for (int y = -1; y < 2; ++y) {
-						Color32 c = ScreenshotUtils.GetColorOnScreen(finalPoint.x, finalPoint.y + y);
-						r += c.r;
-						g += c.g;
-						b += c.b;
-					}
-					Color32 color = new Color32((byte) (r / 3), (byte) (g / 3), (byte) (b / 3), 255);
-					list.Add(color);
-					// Debug.Log($"{finalPoint}: {color}");
-				}
-				StringBuilder sb = new StringBuilder();
-				foreach (var c in list) {
-					sb.Append("new Color32(");
-					sb.Append(c.r);
-					sb.Append(", ");
-					sb.Append(c.g);
-					sb.Append(", ");
-					sb.Append(c.b);
-					sb.Append(", 255), ");
-				}
-				Debug.LogError(sb);
-				groupCount++;
-			}
-		}
 	}
 	
 	// [MenuItem("Assets/LogCoverCoefficient", priority = -1)]
@@ -270,11 +225,11 @@ public static class Test {
 	// 	Debug.Log($"2层：{coefficient2R}, {coefficient2G}, {coefficient2B}");
 	// }
 	
-	[MenuItem("Assets/LogYLKGroupNumber", priority = -1)]
-	private static void LogYLKGroupNumber() {
-		Debug.LogError(Recognize.GetYLKGroupNumber());
-	}
-	
+	// [MenuItem("Assets/LogMRXGroupNumber", priority = -1)]
+	// private static void LogMRXGroupNumber() {
+	// 	Debug.LogError(Recognize.GetMRXGroupNumber());
+	// }
+	//
 	// [MenuItem("Assets/LogWindowCoveredCount", priority = -1)]
 	// private static void LogWindowCoveredCount() {
 	// 	Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)));
@@ -285,36 +240,181 @@ public static class Test {
 	// 	Debug.LogError(Recognize.ApproximatelyCoveredCount(ScreenshotUtils.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)));
 	// }
 	//
-	// [MenuItem("Assets/TestGetThreshold", priority = -1)]
-	// private static void TestGetThreshold() {
-	// 	Debug.LogError($"122: {Recognize.GetThreshold(29.302F)}");
-	// 	Debug.LogError($"121: {Recognize.GetThreshold(40.365F)}");
-	// 	Debug.LogError($"129: {Recognize.GetThreshold(68.471F)}");
+	[MenuItem("Assets/TestGetThreshold", priority = -1)]
+	private static void TestGetThreshold() {
+		// Debug.LogError($"122: {Recognize.GetThreshold(29.302F)}");
+		// Debug.LogError($"121: {Recognize.GetThreshold(40.365F)}");
+		// Debug.LogError($"129: {Recognize.GetThreshold(68.471F)}");
+		// Debug.LogError($"195: {Recognize.GetThreshold(195) * 195}");
+		// Debug.LogError($"232: {Recognize.GetThreshold(232) * 232}");
+		// Debug.LogError($"64: {Recognize.GetThreshold(64) * 64}");
+	}
+	
+	[MenuItem("Assets/LogBusyGroupCount", priority = -1)]
+	private static void LogBusyGroupCount() {
+		Stopwatch sw = Stopwatch.StartNew();
+		Debug.LogError(Recognize.BusyGroupCount);
+		Debug.LogError(Recognize.BusyGroupCount);
+		Debug.LogError(sw.Elapsed.Milliseconds);
+	}
+	
+	[MenuItem("Assets/LogFollowType", priority = -1)]
+	private static void LogFollowType() {
+		Debug.LogError(Recognize.GetFollowType());
+	}
+	
+	[MenuItem("Assets/LogAllianceActivityTypes", priority = -1)]
+	private static void LogAllianceActivityTypes() {
+		Debug.LogError(string.Join(", ", Recognize.AllianceActivityTypes));
+	}
+	
+	[MenuItem("Assets/ScreenshotFollowTypeIcon", priority = -1)]
+	private static void ScreenshotFollowTypeIcon() {
+		EditorCoroutineManager.StartCoroutine(IEScreenshotFollowTypeIcon());
+	}
+	private static IEnumerator IEScreenshotFollowTypeIcon() {
+		Stopwatch sw = Stopwatch.StartNew();
+		for (int i = 0; i < 100; i++) {
+			ScreenshotUtils.Screenshot(988, 182, 213, 167, Application.dataPath + $"/Follow/Test{DateTime.Now:yyyy-MM-dd_HH.mm.ss.fff}.png");
+			yield return new EditorWaitForSeconds(0.05F);
+		}
+		Debug.LogError(sw.Elapsed.Milliseconds);
+	}
+	
+	// [MenuItem("Assets/LogScreenshotCost", priority = -1)]
+	// private static void LogScreenshotCost() {
+	// 	Stopwatch sw = Stopwatch.StartNew();
+	// 	for (int i = 0; i < 3; i++) {
+	// 		ScreenshotUtils.GetColorOnScreen(Random.Range(0, 1920), Random.Range(0, 1080));
+	// 		ScreenshotUtils.GetColorOnScreen(Random.Range(0, 1920), Random.Range(0, 1080));
+	// 		ScreenshotUtils.GetColorOnScreen(Random.Range(0, 1920), Random.Range(0, 1080));
+	// 	}
+	// 	Debug.LogError(sw.Elapsed.Milliseconds);
+	// 	sw.Restart();
+	// 	for (int i = 0; i < 3; i++) {
+	// 		ScreenshotUtils.GetColorsOnScreen(0, 0, 192, 108);
+	// 	}
+	// 	Debug.LogError(sw.Elapsed.Milliseconds);
+	// 	sw.Restart();
+	// 	for (int i = 0; i < 1; i++) {
+	// 		ScreenshotUtils.GetColorsOnScreen(0, 0, 1920, 1080);
+	// 	}
+	// 	Debug.LogError(sw.Elapsed.Milliseconds);
 	// }
 	//
-	// [MenuItem("Assets/LogBusyGroupCount", priority = -1)]
-	// private static void LogBusyGroupCount() {
-	// 	Debug.LogError(Recognize.BusyGroupCount);
-	// }
-	//
-	// [MenuItem("Assets/LogIsSearching", priority = -1)]
-	// private static void LogIsSearching() {
-	// 	var a = ScreenshotUtils.GetColorOnScreen(960, 466);
-	// 	var b = new Color32(119, 131, 184, 255);
-	// 	Debug.LogError(a);
-	// 	Debug.LogError(b);
-	// 	Debug.LogError(Recognize.Approximately(a, b));
+	[MenuItem("Assets/LogIsQuickFixExist", priority = -1)]
+	private static void LogIsQuickFixExist() {
+		Debug.LogError(Recognize.IsQuickFixExist);
+	}
+	
+	// [MenuItem("Assets/LogFollowIcon", priority = -1)]
+	// private static void LogFollowIcon() {
+	// 	Color32 targetColor = new Color32(77, 134, 159, 255);
+	// 	const int realX = 1116;
+	// 	const int realY = 273;
+	// 	for (int y = -1; y < 2; y++) {
+	// 		for (int x = -1; x < 2; x++) {
+	// 			Color32 realColor = ScreenshotUtils.GetColorOnScreen(realX + x, realY + y);
+	// 			Debug.LogError($"{x}, {y}: {Recognize.Approximately(realColor, targetColor)}");
+	// 		}
+	// 	}
 	// }
 	
-	[MenuItem("Assets/LogFollowIcon", priority = -1)]
-	private static void LogIsSearching() {
-		Color32 targetColor = new Color32(77, 134, 159, 255);
-		const int realX = 1116;
-		const int realY = 273;
-		for (int y = -1; y < 2; y++) {
-			for (int x = -1; x < 2; x++) {
-				Color32 realColor = ScreenshotUtils.GetColorOnScreen(realX + x, realY + y);
-				Debug.LogError($"{x}, {y}: {Recognize.Approximately(realColor, targetColor)}");
+	[MenuItem("Assets/LogIsFollowOuterJoinBtnExist", priority = -1)]
+	private static void LogIsFollowOuterJoinBtnExist() {
+	}
+	[MenuItem("Assets/LogEnergy", priority = -1)]
+	private static void LogEnergy() {
+		Stopwatch sw = Stopwatch.StartNew();
+		Debug.LogError(Recognize.energy);
+		Debug.LogError(sw.Elapsed.TotalMilliseconds);
+		Debug.LogError(Recognize.CurrentScene);
+	}
+	[MenuItem("Assets/TestGroupState", priority = -1)]
+	private static void TestGroupState() {
+		for (int i = 0; i < 4; i++) {
+			Debug.LogError(Recognize.GetGroupState(i));;
+		}
+	}
+
+	[MenuItem("Assets/IsFollowOwnerEnabled", priority = -1)]
+	public static void IsFollowOwnerEnabled() {
+		Debug.LogError(Follow.IsFollowOwnerEnabled());
+	}
+
+	private static EditorCoroutine s_CO;
+	[MenuItem("Assets/TestMultiDesktop_Start", priority = -1)]
+	private static void TestMultiDesktopStart() {
+		TestMultiDesktopStop();
+		s_CO = EditorCoroutineManager.StartCoroutine(DoTestMultiDesktopStart());
+	}
+	[MenuItem("Assets/TestMultiDesktop_Stop", priority = -1)]
+	private static void TestMultiDesktopStop() {
+		if (s_CO != null) {
+			EditorCoroutineManager.StopCoroutine(s_CO);
+		}
+	}
+	private static IEnumerator DoTestMultiDesktopStart() {
+		while (true) {
+			ScreenshotUtils.Screenshot(0, 0, 1920, 1080, Application.dataPath + $"/PersistentData/Textures/Test{DateTime.Now:yyyy-MM-dd_HH.mm.ss.fff}.png");
+			AssetDatabase.Refresh();
+			Debug.LogError("-----------------------------------");
+			yield return new EditorWaitForSeconds(5);
+		}
+	}
+
+	private static EditorCoroutine s_CO1;
+	[MenuItem("Assets/Test", priority = -1)]
+	private static void TestFunc() {
+		Debug.LogError(string.Join(",", Recognize.GetShortcutTypes()));
+	}
+	
+	
+	private static EditorCoroutine s_CO_FIC;
+	[MenuItem("Test/StartFollowIconCheck", priority = -1)]
+	private static void StartFollowIconCheck() {
+		StopFollowIconCheck();
+		s_CO_FIC = EditorCoroutineManager.StartCoroutine(IEFollowIconCheck());
+	}
+	[MenuItem("Test/StopFollowIconCheck", priority = -1)]
+	private static void StopFollowIconCheck() {
+		if (s_CO_FIC != null) {
+			EditorCoroutineManager.StopCoroutine(s_CO_FIC);
+			EditorCoroutineManager.Flush(s_CO_FIC);
+		}
+	}
+	private static IEnumerator IEFollowIconCheck() {
+		const int X = 988, Y = 182;
+		const int WIDTH = 213, HEIGHT = 167;
+		Color32[,] prevColors = Operation.GetColorsOnScreen(X, Y, WIDTH, HEIGHT);
+		int width = prevColors.GetLength(0);
+		int height = prevColors.GetLength(1);
+		bool[,] diff = new bool[width, height];
+		Stopwatch sw = Stopwatch.StartNew();
+		for (int i = 0; i < 50; i++) {
+			yield return null;
+			Color32[,] realColors = Operation.GetColorsOnScreen(X, Y, WIDTH, HEIGHT);
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					if (!diff[x, y]) {
+						Color32 realColor = realColors[x, y];
+						Color32 prevColor = prevColors[x, y];
+						if (realColor.r != prevColor.r || realColor.g != prevColor.g || realColor.b != prevColor.b) {
+							diff[x, y] = true;
+						}
+					}
+				}
+			}
+			if (sw.Elapsed.TotalSeconds > 10) {
+				break;
+			}
+		}
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (!diff[x, y]) {
+					Color32 prevColor = prevColors[x, y];
+					Debug.LogError($"[{x}, {y}]: [{prevColor.r}, {prevColor.g}, {prevColor.b}]");
+				}
 			}
 		}
 	}
