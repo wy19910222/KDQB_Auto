@@ -16,6 +16,9 @@ public class AllianceMechaDonate {
 	public static int INTERVAL = 300;	// 点击间隔
 	public static DateTime NEXT_TIME = DateTime.Now;
 	
+	public static TimeSpan SKIP_BEGIN = new TimeSpan(0, 0, 0);
+	public static TimeSpan SKIP_END = new TimeSpan(8, 0, 0);
+	
 	public static readonly Dictionary<Recognize.AllianceMechaType, bool> VALID_DICT = new Dictionary<Recognize.AllianceMechaType, bool>();
 	public static readonly Dictionary<Recognize.AllianceMechaType, DateTime> FIXED_TIME_DICT = new Dictionary<Recognize.AllianceMechaType, DateTime>();
 	public static readonly Dictionary<Recognize.AllianceMechaType, int[]> DONATE_COUNTS_DICT = new Dictionary<Recognize.AllianceMechaType, int[]>();
@@ -106,13 +109,18 @@ public class AllianceMechaDonate {
 							}
 						}
 
+						DateTime now = DateTime.Now;
 						FIXED_TIME_DICT[mechaType] = mechaType switch {
-							Recognize.AllianceMechaType.ALPHA => DateTime.Now + new TimeSpan(12 + 1, 0, 0),
-							Recognize.AllianceMechaType.GAMMA => DateTime.Now + new TimeSpan(2, 1, 0, 0),
-							Recognize.AllianceMechaType.DELTA => DateTime.Now + new TimeSpan(4, 1, 0, 0),
-							Recognize.AllianceMechaType.EPSILON => DateTime.Now + new TimeSpan(7, 1, 0, 0),
-							_ => DateTime.Now + new TimeSpan(12 + 1, 0, 0)
+							Recognize.AllianceMechaType.ALPHA => now + new TimeSpan(12 + 1, 0, 0),
+							Recognize.AllianceMechaType.GAMMA => now + new TimeSpan(2, 1, 0, 0),
+							Recognize.AllianceMechaType.DELTA => now + new TimeSpan(4, 1, 0, 0),
+							Recognize.AllianceMechaType.EPSILON => now + new TimeSpan(7, 1, 0, 0),
+							_ => now + new TimeSpan(12 + 1, 0, 0)
 						};
+						TimeSpan timeOfToday = now - now.Date;
+						if (timeOfToday >= SKIP_BEGIN && timeOfToday < SKIP_END) {
+							FIXED_TIME_DICT[mechaType] += SKIP_END - SKIP_BEGIN;
+						}
 					} else {
 						FIXED_TIME_DICT[mechaType] = DateTime.Now + new TimeSpan(12 + 1, 0, 0);
 					}

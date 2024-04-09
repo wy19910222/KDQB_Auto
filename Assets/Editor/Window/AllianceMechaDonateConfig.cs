@@ -82,6 +82,36 @@ public class AllianceMechaDonateConfig : PrefsEditorWindow<AllianceMechaDonate> 
 		EditorGUI.DrawRect(wireRect1, Color.gray);
 		
 		{
+			EditorGUILayout.LabelField("跳过时间段");
+			EditorGUILayout.BeginHorizontal();
+			float prevFieldWidth = EditorGUIUtility.fieldWidth;
+			EditorGUIUtility.fieldWidth = 24F;
+			float prevLabelWidth = EditorGUIUtility.labelWidth;
+			EditorGUI.BeginChangeCheck();
+			TimeSpan tsSkipBegin = AllianceMechaDonate.SKIP_BEGIN;
+			EditorGUIUtility.labelWidth = 28F;
+			int hoursSkipBegin = EditorGUILayout.IntField("    ", tsSkipBegin.Hours);
+			EditorGUIUtility.labelWidth = 8F;
+			int minutesSkipBegin = EditorGUILayout.IntField(":", tsSkipBegin.Minutes);
+			int secondsSkipBegin = EditorGUILayout.IntField(":", tsSkipBegin.Seconds);
+			if (EditorGUI.EndChangeCheck()) {
+				AllianceMechaDonate.SKIP_BEGIN = new TimeSpan(hoursSkipBegin, minutesSkipBegin, secondsSkipBegin);
+			}
+			EditorGUI.BeginChangeCheck();
+			TimeSpan tsSkipEnd = AllianceMechaDonate.SKIP_END;
+			EditorGUIUtility.labelWidth = 28F;
+			int hoursSkipEnd = EditorGUILayout.IntField("——", tsSkipEnd.Hours);
+			EditorGUIUtility.labelWidth = 8F;
+			int minutesSkipEnd = EditorGUILayout.IntField(":", tsSkipEnd.Minutes);
+			int secondsSkipEnd = EditorGUILayout.IntField(":", tsSkipEnd.Seconds);
+			if (EditorGUI.EndChangeCheck()) {
+				AllianceMechaDonate.SKIP_END = new TimeSpan(hoursSkipEnd, minutesSkipEnd, secondsSkipEnd);
+			}
+			EditorGUIUtility.labelWidth = prevLabelWidth;
+			EditorGUIUtility.fieldWidth = prevFieldWidth;
+			EditorGUILayout.EndHorizontal();
+		}
+		{
 			AllianceMechaDonate.INTERVAL = EditorGUILayout.IntSlider("捐献失败尝试间隔（秒）", AllianceMechaDonate.INTERVAL, 120, 1800);
 			if (AllianceMechaDonate.IsAnyMechaFixed()) {
 				EditorGUILayout.BeginHorizontal();
