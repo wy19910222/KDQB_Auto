@@ -110,16 +110,26 @@ public class AllianceMechaDonate {
 						}
 
 						DateTime now = DateTime.Now;
-						FIXED_TIME_DICT[mechaType] = mechaType switch {
-							Recognize.AllianceMechaType.ALPHA => now + new TimeSpan(12 + 1, 0, 0),
-							Recognize.AllianceMechaType.GAMMA => now + new TimeSpan(2, 1, 0, 0),
-							Recognize.AllianceMechaType.DELTA => now + new TimeSpan(4, 1, 0, 0),
-							Recognize.AllianceMechaType.EPSILON => now + new TimeSpan(7, 1, 0, 0),
-							_ => now + new TimeSpan(12 + 1, 0, 0)
-						};
-						TimeSpan timeOfToday = now - now.Date;
-						if (timeOfToday >= SKIP_BEGIN && timeOfToday < SKIP_END) {
-							FIXED_TIME_DICT[mechaType] += SKIP_END - SKIP_BEGIN;
+						switch (mechaType) {
+							case Recognize.AllianceMechaType.ALPHA:
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12 + 1, 0, 0);
+								TimeSpan timeOfToday = now - now.Date;
+								if (timeOfToday >= SKIP_BEGIN && timeOfToday < SKIP_END) {
+									FIXED_TIME_DICT[mechaType] += SKIP_END - SKIP_BEGIN;
+								}
+								break;
+							case Recognize.AllianceMechaType.GAMMA:
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(2, 1, 0, 0);
+								break;
+							case Recognize.AllianceMechaType.DELTA:
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(4, 1, 0, 0);
+								break;
+							case Recognize.AllianceMechaType.EPSILON:
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(7, 1, 0, 0);
+								break;
+							default:
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12 + 1, 0, 0);
+								break;
 						}
 					} else {
 						FIXED_TIME_DICT[mechaType] = DateTime.Now + new TimeSpan(12 + 1, 0, 0);
