@@ -11,47 +11,45 @@ using UnityEngine;
 using UnityEditor;
 
 public class BlockBreak {
-	public static int FIGHTING_BLOCK_SECONDS = 30;	// 判定异常阈值（秒）
+	public static int FIGHTING_BLOCK_SECONDS = 30;	// 战斗阻塞异常阈值（秒）
+	public static int WINDOW_BLOCK_SECONDS = 30;	// 窗口阻塞异常阈值（秒）
 	
-	private static EditorCoroutine s_FightingBlockCO;
-	public static bool FightingBlockIsRunning => s_FightingBlockCO != null;
+	private static EditorCoroutine s_CO;
+	public static bool IsRunning => s_CO != null;
 
-	[MenuItem("Tools_Task/StartFightingBlockBreak", priority = -1)]
-	private static void StartFightingBlockBreak() {
-		StopFightingBlockBreak();
-		Debug.Log($"战斗异常阻塞处理已开启");
-		s_FightingBlockCO = EditorCoroutineManager.StartCoroutine(FightingBlockUpdate());
+	[MenuItem("Tools_Task/StartBlockBreak", priority = -1)]
+	private static void StartBlockBreak() {
+		StopBlockBreak();
+		Debug.Log($"异常阻塞处理已开启");
+		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Tools_Task/StopFightingBlockBreak", priority = -1)]
-	private static void StopFightingBlockBreak() {
-		if (s_FightingBlockCO != null) {
-			EditorCoroutineManager.StopCoroutine(s_FightingBlockCO);
-			s_FightingBlockCO = null;
-			Debug.Log("战斗异常阻塞处理已关闭");
+	[MenuItem("Tools_Task/StopBlockBreak", priority = -1)]
+	private static void StopBlockBreak() {
+		if (s_CO != null) {
+			EditorCoroutineManager.StopCoroutine(s_CO);
+			s_CO = null;
+			Debug.Log("异常阻塞处理已关闭");
 		}
 	}
 
-	private static IEnumerator FightingBlockUpdate() {
-		DateTime dt = DateTime.Now;
+	private static IEnumerator Update() {
+		DateTime fightingBlockDT = DateTime.Now;
+		DateTime windowBlockDT = DateTime.Now;
 		float windowCoveredCount = -1;
 		while (true) {
 			yield return null;
 			
 			// 非无人值守状态不处理
-			if (!GlobalStatus.IsUnattended) {
+			if (GlobalStatus.UnattendedDuration < 3 * 1000_000_0) {
+				windowBlockDT = DateTime.Now;
+				fightingBlockDT = DateTime.Now;
 				continue;
 			}
 			
-			if (Recognize.CurrentScene != Recognize.Scene.FIGHTING || Recognize.IsFightingPlayback) {
-				dt = DateTime.Now;
-			} else {
-				float newWindowCoveredCount = Recognize.WindowCoveredCount;
-				if (!Mathf.Approximately(newWindowCoveredCount, windowCoveredCount)) {
-					windowCoveredCount = newWindowCoveredCount;
-					dt = DateTime.Now;
-				}
-				if ((DateTime.Now - dt).TotalSeconds > FIGHTING_BLOCK_SECONDS) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+				// 战斗场景，只判断战斗阻塞
+				if ((DateTime.Now - fightingBlockDT).TotalSeconds > FIGHTING_BLOCK_SECONDS) {
 					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 						Debug.Log("点外部关闭弹窗");
 						Operation.Click(30, 140);	// 点外部关闭弹窗
@@ -65,59 +63,30 @@ public class BlockBreak {
 						Operation.Click(1064, 634);	// 确认退出按钮
 						yield return new EditorWaitForSeconds(0.2F);
 					}
-					dt = DateTime.Now;
+					fightingBlockDT = DateTime.Now;
 				}
-			}
-		}
-		// ReSharper disable once IteratorNeverReturns
-	}
-	
-	
-	public static int WINDOW_BLOCK_SECONDS = 30;	// 判定异常阈值（秒）
-	
-	private static EditorCoroutine s_WindowBlockCO;
-	public static bool WindowBlockIsRunning => s_WindowBlockCO != null;
-
-	[MenuItem("Tools_Task/StartWindowBlockBreak", priority = -1)]
-	private static void StartWindowBlockBreak() {
-		StopWindowBlockBreak();
-		Debug.Log($"窗口异常阻塞处理已开启");
-		s_WindowBlockCO = EditorCoroutineManager.StartCoroutine(WindowBlockUpdate());
-	}
-
-	[MenuItem("Tools_Task/StopWindowBlockBreak", priority = -1)]
-	private static void StopWindowBlockBreak() {
-		if (s_WindowBlockCO != null) {
-			EditorCoroutineManager.StopCoroutine(s_WindowBlockCO);
-			s_WindowBlockCO = null;
-			Debug.Log("窗口异常阻塞处理已关闭");
-		}
-	}
-
-	private static IEnumerator WindowBlockUpdate() {
-		DateTime dt = DateTime.Now;
-		float windowCoveredCount = -1;
-		while (true) {
-			yield return null;
-			
-			// 非无人值守状态不处理
-			if (!GlobalStatus.IsUnattended) {
-				continue;
-			}
-			
-			float newWindowCoveredCount = Recognize.WindowCoveredCount;
-			if (Mathf.Approximately(newWindowCoveredCount, windowCoveredCount)) {
-				dt = DateTime.Now;
-				windowCoveredCount = newWindowCoveredCount;
-			} else if (windowCoveredCount <= 0) {
-				dt = DateTime.Now;
-			} else if ((DateTime.Now - dt).TotalSeconds > WINDOW_BLOCK_SECONDS) {
-				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
-					Debug.Log("关闭窗口");
-					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+			} else {
+				// 重置战斗阻塞时间
+				fightingBlockDT = DateTime.Now;
+				
+				// 非战斗场景，只判断窗口阻塞
+				float newWindowCoveredCount = Recognize.WindowCoveredCount;
+				if (Mathf.Approximately(newWindowCoveredCount, windowCoveredCount)) {
+					// 窗口层数变化，重置窗口阻塞时间
+					windowBlockDT = DateTime.Now;
+					windowCoveredCount = newWindowCoveredCount;
+				} else if (newWindowCoveredCount <= 0) {
+					// 无窗口，重置窗口阻塞时间
+					windowBlockDT = DateTime.Now;
+				} else if ((DateTime.Now - windowBlockDT).TotalSeconds > WINDOW_BLOCK_SECONDS) {
+					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
+						Debug.Log("关闭窗口");
+						Operation.Click(720, 128);	// 左上角返回按钮
+						yield return new EditorWaitForSeconds(0.2F);
+					}
+					windowBlockDT = DateTime.Now;
+					windowCoveredCount = 0;
 				}
-				dt = DateTime.Now;
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns

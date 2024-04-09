@@ -17,25 +17,17 @@ public class BlockBreakConfig : PrefsEditorWindow<BlockBreak> {
 	private void OnGUI() {
 		EditorGUILayout.HelpBox(EditorGUIUtility.TrTempContent("停留在士兵选择界面超过一定时间，则认为处于异常阻塞状态"));
 		BlockBreak.FIGHTING_BLOCK_SECONDS = EditorGUILayout.IntSlider("判定异常阈值（秒）", BlockBreak.FIGHTING_BLOCK_SECONDS, 20, 60);
-		if (BlockBreak.FightingBlockIsRunning) {
-			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Tools_Task/StopFightingBlockBreak");
-			}
-		} else {
-			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Tools_Task/StartFightingBlockBreak");
-			}
-		}
 		GUILayout.Space(5F);
 		EditorGUILayout.HelpBox(EditorGUIUtility.TrTempContent("存在窗口且一直没有层数变化，则认为处于异常阻塞状态"));
 		BlockBreak.WINDOW_BLOCK_SECONDS = EditorGUILayout.IntSlider("判定异常阈值（秒）", BlockBreak.WINDOW_BLOCK_SECONDS, 20, 60);
-		if (BlockBreak.WindowBlockIsRunning) {
+		GUILayout.Space(5F);
+		if (BlockBreak.IsRunning) {
 			if (GUILayout.Button("关闭")) {
-				EditorApplication.ExecuteMenuItem("Tools_Task/StopWindowBlockBreak");
+				IsRunning = false;
 			}
 		} else {
 			if (GUILayout.Button("开启")) {
-				EditorApplication.ExecuteMenuItem("Tools_Task/StartWindowBlockBreak");
+				IsRunning = true;
 			}
 		}
 	}
