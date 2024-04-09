@@ -7,6 +7,7 @@
 
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using UnityEngine;
 
 using Graphics = System.Drawing.Graphics;
@@ -62,7 +63,12 @@ public static class ScreenshotUtils {
 	}
 	
 	public static Color32[,] GetFromFile(string filePath) {
-		using Bitmap bitmap = new Bitmap(Application.dataPath + "/" + filePath);
+		string path = Application.dataPath + "/" + filePath;
+		if (!File.Exists(path)) {
+			Debug.LogError($"Can not find file: {path}");
+			return null;
+		}
+		using Bitmap bitmap = new Bitmap(path);
 		byte[] pixelData = GetPixelsDataFromBitmap(bitmap);
 		int width = bitmap.Width;
 		int height = bitmap.Height;

@@ -42,8 +42,8 @@ public class ScreenShotAndApproximately : EditorWindow {
 			}
 		}
 		if (GUILayout.Button("对比")) {
-			Color32[,] targetColors = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceBtn.png");
-			Color32[,] realColors = Operation.GetColorsOnScreen(718, 852, 31, 31);
+			Color32[,] targetColors = Operation.GetFromFile($"PersistentData/Textures/{filename}.png");
+			Color32[,] realColors = Operation.GetColorsOnScreen(rect.x, rect.y, rect.width, rect.height);
 			Debug.Log(Recognize.ApproximatelyRect(realColors, targetColors));
 		}
 		EditorGUILayout.EndHorizontal();
