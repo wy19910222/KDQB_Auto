@@ -108,31 +108,35 @@ public class AllianceMechaDonate {
 								yield return new EditorWaitForSeconds(0.2F);
 							}
 						}
-
-						DateTime now = DateTime.Now;
-						switch (mechaType) {
-							case Recognize.AllianceMechaType.ALPHA:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12 + 1, 0, 0);
-								TimeSpan timeOfToday = now - now.Date;
-								if (timeOfToday >= SKIP_BEGIN && timeOfToday < SKIP_END) {
-									FIXED_TIME_DICT[mechaType] += SKIP_END - SKIP_BEGIN;
-								}
-								break;
-							case Recognize.AllianceMechaType.GAMMA:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(2, 0, 45, 0);
-								break;
-							case Recognize.AllianceMechaType.DELTA:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(4, 0, 45, 0);
-								break;
-							case Recognize.AllianceMechaType.EPSILON:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(7, 0, 45, 0);
-								break;
-							default:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12, 45, 0);
-								break;
-						}
-					} else {
-						FIXED_TIME_DICT[mechaType] = DateTime.Now + new TimeSpan(12, 45, 0);
+					}
+					switch (Recognize.AllianceMechaStatus) {
+						case Recognize.AllianceMechaState.CAN_DONATE:
+						case Recognize.AllianceMechaState.CAN_SUMMON:
+						case Recognize.AllianceMechaState.CAN_CHALLENGE:
+							DateTime now = DateTime.Now;
+							switch (mechaType) {
+								case Recognize.AllianceMechaType.ALPHA:
+									TimeSpan timeOfToday = now - now.Date;
+									if (timeOfToday >= SKIP_BEGIN && timeOfToday < SKIP_END) {
+										FIXED_TIME_DICT[mechaType] = now - timeOfToday + SKIP_END + new TimeSpan(12, 0, 0);
+									} else {
+										FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12, 45, 0);
+									}
+									break;
+								case Recognize.AllianceMechaType.GAMMA:
+									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(2, 0, 45, 0);
+									break;
+								case Recognize.AllianceMechaType.DELTA:
+									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(4, 0, 45, 0);
+									break;
+								case Recognize.AllianceMechaType.EPSILON:
+									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(7, 0, 45, 0);
+									break;
+								default:
+									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12, 45, 0);
+									break;
+							}
+							break;
 					}
 				}
 			}
