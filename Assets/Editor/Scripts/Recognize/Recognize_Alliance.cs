@@ -65,14 +65,6 @@ public static partial class Recognize {
 		}
 	}
 	
-	private static readonly Color32[,] ALLIANCE_MECHA_OPEN_BTN = Operation.GetFromFile("PersistentData/Textures/AllianceMechaOpenBtn.png");
-	public static bool IsAllianceMechaOpenEnabled {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(930, 949, 60, 30);
-			return ApproximatelyRect(realColors, ALLIANCE_MECHA_OPEN_BTN) > 0.8F;
-		}
-	}
-	
 	// 从0开始
 	public static AllianceMechaType CurrentMechaType {
 		get {
