@@ -119,20 +119,20 @@ public class AllianceMechaDonate {
 								}
 								break;
 							case Recognize.AllianceMechaType.GAMMA:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(2, 1, 0, 0);
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(2, 0, 45, 0);
 								break;
 							case Recognize.AllianceMechaType.DELTA:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(4, 1, 0, 0);
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(4, 0, 45, 0);
 								break;
 							case Recognize.AllianceMechaType.EPSILON:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(7, 1, 0, 0);
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(7, 0, 45, 0);
 								break;
 							default:
-								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12 + 1, 0, 0);
+								FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12, 45, 0);
 								break;
 						}
 					} else {
-						FIXED_TIME_DICT[mechaType] = DateTime.Now + new TimeSpan(12 + 1, 0, 0);
+						FIXED_TIME_DICT[mechaType] = DateTime.Now + new TimeSpan(12, 45, 0);
 					}
 				}
 			}
