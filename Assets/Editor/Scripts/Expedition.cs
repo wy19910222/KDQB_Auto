@@ -91,11 +91,11 @@ public class Expedition {
 			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("前往按钮");
 			Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY1);	// 前往按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
 			if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.WILD && !test) {
 				Debug.Log("宝箱按钮");
 				Operation.Click(751, 286);	// 宝箱按钮
-				yield return new EditorWaitForSeconds(0.2F);
+				yield return new EditorWaitForSeconds(0.5F);
 				if (Recognize.IsWildBackBtn) {
 					Debug.Log("返回按钮");
 					Operation.Click(960, 836);	// 返回按钮
@@ -128,11 +128,11 @@ public class Expedition {
 			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("前往按钮");
 			Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY2);	// 前往按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
 			if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
 				Debug.Log("运输车");
 				Operation.Click(840, 856);	// 运输车
-				yield return new EditorWaitForSeconds(0.2F);
+				yield return new EditorWaitForSeconds(0.5F);
 				if (Recognize.IsExpeditionGetBtn) {
 					Debug.Log("领取按钮");
 					Operation.Click(960, 900);	// 领取按钮
