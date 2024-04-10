@@ -5,6 +5,7 @@
  * @EditTime: 2023-09-27 01:41:06 799
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public static partial class Recognize {
@@ -28,6 +29,19 @@ public static partial class Recognize {
 		DELTA = 3,
 		[InspectorName("伊普西龙")]
 		EPSILON = 4,
+	}
+	
+	public enum AllianceMechaState {
+		[InspectorName("无")]
+		NONE = 0,
+		[InspectorName("可开启")]
+		CAN_OPEN = 1,
+		[InspectorName("可捐献")]
+		CAN_DONATE = 2,
+		[InspectorName("可召唤")]
+		CAN_SUMMON = 3,
+		[InspectorName("可挑战")]
+		CAN_CHALLENGE = 4,
 	}
 	
 	private static readonly Color32[,] ALLIANCE_ACTIVITY_MECHA = Operation.GetFromFile("PersistentData/Textures/AllianceActivityMecha.png");
@@ -86,6 +100,30 @@ public static partial class Recognize {
 				--level;
 			}
 			return -1;
+		}
+	}
+	
+	private static readonly Color32[,] ALLIANCE_MECHA_BTN_NONE = Operation.GetFromFile("PersistentData/Textures/AllianceMechaBtnNone.png");
+	private static readonly Color32[,] ALLIANCE_MECHA_BTN_OPEN = Operation.GetFromFile("PersistentData/Textures/AllianceMechaBtnOpen.png");
+	private static readonly Color32[,] ALLIANCE_MECHA_BTN_DONATE = Operation.GetFromFile("PersistentData/Textures/AllianceMechaBtnDonate.png");
+	private static readonly Color32[,] ALLIANCE_MECHA_BTN_FREE_DONATE = Operation.GetFromFile("PersistentData/Textures/AllianceMechaBtnFreeDonate.png");
+	private static readonly Color32[,] ALLIANCE_MECHA_BTN_SUMMON = Operation.GetFromFile("PersistentData/Textures/AllianceMechaBtnSummon.png");
+	public static AllianceMechaState AllianceMechaStatus {
+		get {
+			return GetCachedValueOrNew(nameof(AllianceMechaStatus), () => {
+				Color32[,] realColors = Operation.GetColorsOnScreen(907, 939, 106, 51);
+				if (ApproximatelyRect(realColors, ALLIANCE_MECHA_BTN_NONE) > 0.9F) {
+					return AllianceMechaState.NONE;
+				} else if (ApproximatelyRect(realColors, ALLIANCE_MECHA_BTN_OPEN) > 0.9F) {
+					return AllianceMechaState.CAN_OPEN;
+				} else if (ApproximatelyRect(realColors, ALLIANCE_MECHA_BTN_DONATE) > 0.9F || ApproximatelyRect(realColors, ALLIANCE_MECHA_BTN_FREE_DONATE) > 0.9F) {
+					return AllianceMechaState.CAN_DONATE;
+				} else if (ApproximatelyRect(realColors, ALLIANCE_MECHA_BTN_SUMMON) > 0.9F) {
+					return AllianceMechaState.CAN_SUMMON;
+				} else {
+					return AllianceMechaState.CAN_CHALLENGE;
+				}
+			});
 		}
 	}
 	
