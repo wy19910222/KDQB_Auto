@@ -44,6 +44,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		if (!useBottle) {
 			EditorGUILayout.BeginHorizontal();
 			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
+			// Jungle.KEEP_ENERGY_NOT_FULL = GUILayout.Toggle(Jungle.KEEP_ENERGY_NOT_FULL, "保持不满", "Button");
 			Jungle.DAN_EXIST = GUILayout.Toggle(Jungle.DAN_EXIST, "有戴安娜", "Button");
 			EditorGUILayout.EndHorizontal();
 		}

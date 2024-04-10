@@ -22,6 +22,7 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		if (!useBottle) {
 			EditorGUILayout.BeginHorizontal();
 			Gather.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Gather.RESERVED_ENERGY);
+			// Gather.KEEP_ENERGY_NOT_FULL = GUILayout.Toggle(Gather.KEEP_ENERGY_NOT_FULL, "保持不满", "Button");
 			Gather.DAN_EXIST = GUILayout.Toggle(Gather.DAN_EXIST, "有戴安娜", "Button");
 			EditorGUILayout.EndHorizontal();
 		}

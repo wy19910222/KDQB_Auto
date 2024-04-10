@@ -16,6 +16,7 @@ public class Gather {
 	public static bool Test { get; set; } // 测试模式
 	
 	public static int RESERVED_ENERGY = 60;	// 保留体力值
+	public static bool KEEP_ENERGY_NOT_FULL = true;	// 保持体力不满状态
 	public static bool DAN_EXIST = true;	// 是否有戴安娜
 	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	
@@ -119,9 +120,14 @@ public class Gather {
 				Debug.Log("测试模式，忽略体力与队列数量");
 			} else {
 				// 体力值
-				if (USE_BOTTLE_DICT.Values.All(count => count <= 0) && Recognize.energy < RESERVED_ENERGY + (DAN_EXIST ? 8 : 10)) {
-					// Debug.Log($"当前体力：{Recognize.energy}");
-					continue;
+				if (USE_BOTTLE_DICT.Values.All(count => count <= 0)) {
+					if (!KEEP_ENERGY_NOT_FULL || Recognize.energy < Recognize.ENERGY_FULL - 1) {
+						int cost = DAN_EXIST ? 8 : 10;
+						if (Recognize.energy < RESERVED_ENERGY + cost) {
+							// Debug.Log($"当前体力：{Recognize.energy}");
+							continue;
+						}
+					}
 				}
 				// 队列数量
 				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
