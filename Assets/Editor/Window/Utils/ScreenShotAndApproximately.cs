@@ -36,7 +36,7 @@ public class ScreenShotAndApproximately : EditorWindow {
 		EditorGUILayout.BeginHorizontal();
 		if (GUILayout.Button("截取")) {
 			if (!string.IsNullOrEmpty(filename)) {
-				Operation.Screenshot(rect.x, rect.y, rect.width, rect.height, $"{Application.dataPath}/PersistentData/Textures/{filename}.png");
+				Operation.Screenshot(rect.x, rect.y, rect.width, rect.height, $"PersistentData/Textures/{filename}.png");
 			} else {
 				Debug.LogError("Filename is empty!");
 			}

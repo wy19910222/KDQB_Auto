@@ -136,7 +136,7 @@ public static class Operation {
 		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		width = Mathf.RoundToInt(width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
 		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
-		filePath = filePath.Replace("\\", "/");
+		filePath = Application.dataPath + "/" + filePath.Replace("\\", "/");
 		int slashIndex = filePath.LastIndexOf("/");
 		if (slashIndex != -1) {
 			string directoryPath = filePath.Substring(0, slashIndex);
