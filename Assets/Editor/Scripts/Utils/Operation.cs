@@ -118,12 +118,13 @@ public static class Operation {
 		return ScreenshotUtils.GetColorsOnScreen(x, y, width, height, stride);
 	}
 
-	public static byte[] GetPixelsDataOnScreen(int x, int y, int width, int height) {
+	public static string GetTextOnScreen(int x, int y, int width, int height) {
 		x = Mathf.RoundToInt((x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
 		y = Mathf.RoundToInt((y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		width = Mathf.RoundToInt(width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
 		height = Mathf.RoundToInt(height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
-		return ScreenshotUtils.GetPixelsDataOnScreen(x, y, width, height);
+		byte[] bytes = ScreenshotUtils.GetPixelsRGBOnScreen(x, y, width, height);
+		return OCRUtils.Recognize(width, height, bytes);
 	}
 	
 	public static Color32[,] GetFromFile(string filePath) {
