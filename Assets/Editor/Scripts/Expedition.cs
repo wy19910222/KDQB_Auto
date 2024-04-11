@@ -118,14 +118,13 @@ public class Expedition {
 			while (orderOffsetY2 > 0) {
 				int dragDistance = ITEM_HEIGHT * 3;
 				// 往左拖动
-				var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance);
+				var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
 				while (ie.MoveNext()) {
 					yield return ie.Current;
 				}
 				yield return new EditorWaitForSeconds(0.1F);
 				orderOffsetY2 -= dragDistance;
 			}
-			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("前往按钮");
 			Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY2);	// 前往按钮
 			yield return new EditorWaitForSeconds(0.3F);
