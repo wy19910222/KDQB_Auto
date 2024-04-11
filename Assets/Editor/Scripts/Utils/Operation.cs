@@ -127,7 +127,7 @@ public static class Operation {
 	}
 	
 	public static Color32[,] GetFromFile(string filePath) {
-		return ScreenshotUtils.GetFromFile(filePath);
+		return ScreenshotUtils.GetColorsFromFile(filePath);
 	}
 	
 	public static void Screenshot(int x, int y, int width, int height, string filePath) {

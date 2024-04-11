@@ -62,7 +62,7 @@ public static class ScreenshotUtils {
 		return GetPixelsDataFromBitmap(bitmap);
 	}
 	
-	public static Color32[,] GetFromFile(string filePath) {
+	public static Color32[,] GetColorsFromFile(string filePath) {
 		string path = Application.dataPath + "/" + filePath;
 		if (!File.Exists(path)) {
 			Debug.LogError($"Can not find file: {path}");
