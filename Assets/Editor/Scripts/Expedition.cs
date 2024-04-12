@@ -16,7 +16,7 @@ public class Expedition {
 	public static int WILD_ORDER = 0;
 	public static int Expedition_ORDER = 4;
 	public static int INTERVAL_HOURS = 6;
-	public static DateTime TargetDT = default;	// 倒计时
+	public static DateTime TargetDT;	// 倒计时
 	
 	public static int ITEM_HEIGHT = 187;
 	public static int ITEM_VISIBLE_COUNT = 3;
@@ -41,6 +41,8 @@ public class Expedition {
 	}
 
 	private static IEnumerator Update() {
+		int tryCount = 0;
+		bool wildSucceed = false, expeditionSucceed = false;
 		while (true) {
 			yield return null;
 			bool test = Test;
@@ -100,6 +102,7 @@ public class Expedition {
 					Debug.Log("返回按钮");
 					Operation.Click(960, 836);	// 返回按钮
 					yield return new EditorWaitForSeconds(0.2F);
+					wildSucceed = true;
 				} else if (Recognize.IsWildGetBtn) {
 					Debug.Log("领取按钮");
 					Operation.Click(960, 836);	// 领取按钮
@@ -107,6 +110,7 @@ public class Expedition {
 					Debug.Log("空白处");
 					Operation.Click(960, 836);	// 空白处
 					yield return new EditorWaitForSeconds(0.2F);
+					wildSucceed = true;
 				}
 			}
 			Debug.Log("左上角返回按钮");
@@ -136,6 +140,7 @@ public class Expedition {
 					Debug.Log("领取按钮");
 					Operation.Click(960, 900);	// 领取按钮
 					yield return new EditorWaitForSeconds(0.3F);
+					expeditionSucceed = true;
 				}
 			}
 			Debug.Log("左上角返回按钮");
@@ -147,8 +152,15 @@ public class Expedition {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
-			
-			TargetDT = DateTime.Now + new TimeSpan(INTERVAL_HOURS, 0, 2);;
+
+			if (wildSucceed && expeditionSucceed || tryCount > 3) {
+				tryCount = 0;
+				wildSucceed = false;
+				expeditionSucceed = false;
+				TargetDT = DateTime.Now + new TimeSpan(INTERVAL_HOURS, 0, 2);
+			} else {
+				++tryCount;
+			}
 			
 			Task.CurrentTask = null;
 		}
