@@ -16,6 +16,7 @@ public class GlobalStatusConfig : EditorWindow {
 
 	protected void OnEnable() {
 		GlobalStatus.Enable();
+		EditorCoroutineManager.Enable = Prefs.Get($"EditorCoroutineManager.Enable", true);
 		Recognize.GROUP_COUNT = Prefs.Get<int>($"Recognize.GROUP_COUNT");
 		Recognize.ENERGY_FULL = Prefs.Get<int>($"Recognize.ENERGY_FULL");
 		string gameRectStr = Prefs.Get<string>($"Operation.CURRENT_GAME_RECT");
@@ -25,12 +26,14 @@ public class GlobalStatusConfig : EditorWindow {
 	}
 	protected void OnDisable() {
 		GlobalStatus.Disable();
+		Prefs.Set($"EditorCoroutineManager.Enable", EditorCoroutineManager.Enable);
 		Prefs.Set($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
 		Prefs.Set($"Recognize.ENERGY_FULL", Recognize.ENERGY_FULL);
 		Prefs.Set($"Operation.CURRENT_GAME_RECT", Utils.RectToString(Operation.CURRENT_GAME_RECT));
 	}
 
 	private void OnGUI() {
+		EditorCoroutineManager.Enable = GUILayout.Toggle(EditorCoroutineManager.Enable, "辅助开启", "Button");
 		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectField("游戏范围", Operation.CURRENT_GAME_RECT);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Toggle("无人值守", GlobalStatus.IsUnattended);
@@ -47,11 +50,12 @@ public class GlobalStatusConfig : EditorWindow {
 		Recognize.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Recognize.GROUP_COUNT, 0, 7);
 		EditorGUILayout.IntField("忙碌队列", Recognize.BusyGroupCount);
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.IntField("体力值", Recognize.energy, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));
+		EditorGUILayout.IntField("体力值", Recognize.EnergyOCR, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));
 		EditorGUILayout.LabelField("/", GUILayout.Width(8F));
 		Recognize.ENERGY_FULL = EditorGUILayout.IntField(Recognize.ENERGY_FULL);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
+		EditorGUILayout.LabelField("机甲状态：" + Recognize.AllianceMechaStatus);
 		// EditorGUILayout.IntField("戴安娜所在队列", Recognize.GetHeroGroupNumber(Recognize.HeroType.DAN));
 		// EditorGUILayout.IntField("尤里卡所在队列", Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK));
 		// EditorGUILayout.IntField("明日香所在队列", Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX));

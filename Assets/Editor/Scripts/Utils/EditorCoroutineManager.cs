@@ -54,9 +54,9 @@ namespace UnityEditor {
 		private static readonly Dictionary<Type, List<EditorCoroutine>> s_CoroutinesDict = new Dictionary<Type, List<EditorCoroutine>>();
 		private static List<EditorCoroutine> s_ListTemp = new List<EditorCoroutine>();
 	
-		private static readonly ConditionalWeakTable<EditorCoroutine, Func<bool>> s_MoveNextConditionDict =
-				new ConditionalWeakTable<EditorCoroutine, Func<bool>>();
-		
+		private static readonly ConditionalWeakTable<EditorCoroutine, Func<bool>> s_MoveNextConditionDict = new ConditionalWeakTable<EditorCoroutine, Func<bool>>();
+
+		public static bool Enable { get; set; } = true;
 		public static int FrameCount { get; private set; }
 		public static double TimeSinceStartup => EditorApplication.timeSinceStartup;
 	
@@ -68,13 +68,15 @@ namespace UnityEditor {
 			s_CoroutinesDict.Add(typeof(EditorCoroutine), new List<EditorCoroutine>());
 			s_CoroutinesDict.Add(typeof(EditorWaitForLateUpdate), new List<EditorCoroutine>());
 			EditorApplication.update += () => {
-				FrameCount++;
-				InvokeCoroutine(typeof(object));
-				InvokeCoroutine(typeof(EditorWaitForFrames));
-				InvokeCoroutine(typeof(EditorWaitForSeconds));
-				InvokeCoroutine(typeof(AsyncOperation));
-				InvokeCoroutine(typeof(EditorCoroutine));
-				InvokeCoroutine(typeof(EditorWaitForLateUpdate));
+				if (Enable) {
+					FrameCount++;
+					InvokeCoroutine(typeof(object));
+					InvokeCoroutine(typeof(EditorWaitForFrames));
+					InvokeCoroutine(typeof(EditorWaitForSeconds));
+					InvokeCoroutine(typeof(AsyncOperation));
+					InvokeCoroutine(typeof(EditorCoroutine));
+					InvokeCoroutine(typeof(EditorWaitForLateUpdate));
+				}
 			};
 		}
 		
