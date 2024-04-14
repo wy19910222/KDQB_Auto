@@ -9,8 +9,11 @@ using UnityEngine;
 
 public static partial class Recognize {
 	public enum Scene {
+		[InspectorName("主城")]
 		INSIDE,
+		[InspectorName("世界")]
 		OUTSIDE,
+		[InspectorName("战斗")]
 		FIGHTING,
 	}
 
