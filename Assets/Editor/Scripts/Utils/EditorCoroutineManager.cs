@@ -58,7 +58,7 @@ namespace UnityEditor {
 
 		public static bool Enable { get; set; } = true;
 		public static int FrameCount { get; private set; }
-		public static double TimeSinceStartup => EditorApplication.timeSinceStartup;
+		public static long TicksSinceStartup => DateTime.Now.Ticks;
 	
 		static EditorCoroutineManager() {
 			s_CoroutinesDict.Add(typeof(object), new List<EditorCoroutine>());
@@ -121,8 +121,8 @@ namespace UnityEditor {
 					s_MoveNextConditionDict.Add(coroutine, () => FrameCount > doneFrame);
 					break;
 				case EditorWaitForSeconds waitForSeconds:
-					double doneTime = TimeSinceStartup + waitForSeconds.Seconds;
-					s_MoveNextConditionDict.Add(coroutine, () => TimeSinceStartup > doneTime);
+					long doneTicks = TicksSinceStartup + Mathf.CeilToInt(waitForSeconds.Seconds * 1000_000_0);
+					s_MoveNextConditionDict.Add(coroutine, () => TicksSinceStartup > doneTicks);
 					break;
 				case AsyncOperation waitForOperation:
 					s_MoveNextConditionDict.Add(coroutine, () => waitForOperation.isDone);
