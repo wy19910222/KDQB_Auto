@@ -32,4 +32,31 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, CUT_PRICE) > 0.99F;
 		}
 	}
+
+	private static readonly Color32[,] Refugee_USE_SOS_BTN = Operation.GetFromFile("PersistentData/Textures/RefugeeUseSOSBtn.png");
+	private static readonly Color32[,] Refugee_GOTO_BTN = Operation.GetFromFile("PersistentData/Textures/RefugeeGotoBtn.png");
+	public static int CanUseSOS {
+		get {
+			Color32[,] realColors1 = Operation.GetColorsOnScreen(1099, 938, 41, 36);
+			if (ApproximatelyRect(realColors1, Refugee_GOTO_BTN) > 0.9F) {
+				return 3;
+			}
+			if (ApproximatelyRect(realColors1, Refugee_USE_SOS_BTN) > 0.7F) {
+				return 1;
+			}
+			Color32[,] realColors2 = Operation.GetColorsOnScreen(1099, 850, 41, 36);
+			if (ApproximatelyRect(realColors2, Refugee_USE_SOS_BTN) > 0.7F) {
+				return 2;
+			}
+			return 0;
+		}
+	}
+
+	private static readonly Color32[,] SOS_PROP_ICON = Operation.GetFromFile("PersistentData/Textures/SOSPropIcon.png");
+	public static bool IsSOSExist {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(738, 260, 60, 50);
+			return ApproximatelyRect(realColors, SOS_PROP_ICON) > 0.99F;
+		}
+	}
 }
