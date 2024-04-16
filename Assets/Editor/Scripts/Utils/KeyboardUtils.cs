@@ -13,21 +13,52 @@ using UnityEditor;
 using Debug = UnityEngine.Debug;
 
 public static class KeyboardUtils {
+	public enum VKCode {
+		Q = 81,
+		W = 87,
+		E = 69,
+		R = 82,
+		F1 = 112,
+		F2 = 113,
+		F3 = 114,
+		F4 = 115,
+	}
+	
+	
 	public static Action<int> OnKeyUp { get; set; }
+	public static Action<int> OnKeyDown { get; set; }
+
+	private static int m_HookID;
+	private static int HookID {
+		get {
+			if (m_HookID == 0) {
+				m_HookID = Prefs.Get<int>("KeyboardUtils.HookID");
+			}
+			return m_HookID;
+		}
+		set {
+			if (m_HookID != value) {
+				m_HookID = value;
+				Prefs.Set("KeyboardUtils.HookID", HookID);
+			}
+		}
+	}
+
+	public static bool IsRunning => m_HookID != 0;
 
 	[MenuItem("Assets/Hook", priority = -1)]
 	public static void Hook() {
 		Unhook();
-		Prefs.Set("KeyboardUtils.HookID", SetHook(HookCallback));
+		HookID = SetHook(HookCallback);
 		Debug.LogError("开始按键监听");
 	}
 	
 	[MenuItem("Assets/Unhook", priority = -1)]
 	public static void Unhook() {
-		int hookID = Prefs.Get<int>("KeyboardUtils.HookID");
-		if (hookID != 0) {
-			UnhookWindowsHookEx(hookID);
+		if (HookID != 0) {
+			UnhookWindowsHookEx(HookID);
 			Debug.LogError("结束按键监听");
+			HookID = 0;
 		}
 	}
 	
@@ -35,17 +66,20 @@ public static class KeyboardUtils {
 	private const int WM_KEYDOWN = 0x0100;
 	private const int WM_KEYUP = 0x0101;
 
+	private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
 	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	private static extern int SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
 	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	[return: MarshalAs(UnmanagedType.Bool)]
-	private static extern bool UnhookWindowsHookEx(int hhk);
+	private static extern bool UnhookWindowsHookEx(int hookID);
 
 	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	private static extern IntPtr CallNextHookEx(int hookID, int nCode, IntPtr wParam, IntPtr lParam);
 
-	private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+	private static extern IntPtr GetModuleHandle(string lpModuleName);
 
 	private static int SetHook(LowLevelKeyboardProc proc) {
 		using Process curProcess = Process.GetCurrentProcess();
@@ -56,14 +90,13 @@ public static class KeyboardUtils {
 	private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
 		if (nCode >= 0 && (wParam == (IntPtr) WM_KEYDOWN || wParam == (IntPtr) WM_KEYUP)) {
 			int vkCode = Marshal.ReadInt32(lParam);
-			Debug.LogError($"按键：0x{vkCode}");
-			if (wParam == (IntPtr) WM_KEYUP) {
+			// Debug.LogError($"按键：0x{vkCode}");
+			if (wParam == (IntPtr) WM_KEYDOWN) {
+				OnKeyUp?.Invoke(vkCode);
+			} else if (wParam == (IntPtr) WM_KEYUP) {
 				OnKeyUp?.Invoke(vkCode);
 			}
 		}
-		return CallNextHookEx(Prefs.Get<int>("KeyboardUtils.HookID"), nCode, wParam, lParam);
+		return CallNextHookEx(m_HookID, nCode, wParam, lParam);
 	}
-
-	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-	private static extern IntPtr GetModuleHandle(string lpModuleName);
 }
