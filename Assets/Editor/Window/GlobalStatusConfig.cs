@@ -55,6 +55,15 @@ public class GlobalStatusConfig : EditorWindow {
 		Recognize.ENERGY_FULL = EditorGUILayout.IntField(Recognize.ENERGY_FULL);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
+		// if (KeyboardUtils.IsRunning) {
+		// 	if (GUILayout.Button("UnhookKeyboard")) {
+		// 		KeyboardUtils.Unhook();
+		// 	}
+		// } else {
+		// 	if (GUILayout.Button("HookKeyboard")) {
+		// 		KeyboardUtils.Hook();
+		// 	}
+		// }
 		// EditorGUILayout.IntField("戴安娜所在队列", Recognize.GetHeroGroupNumber(Recognize.HeroType.DAN));
 		// EditorGUILayout.IntField("尤里卡所在队列", Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK));
 		// EditorGUILayout.IntField("明日香所在队列", Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX));
