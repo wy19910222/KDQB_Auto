@@ -113,29 +113,19 @@ public class AllianceMechaDonate {
 						case Recognize.AllianceMechaState.CAN_DONATE:
 						case Recognize.AllianceMechaState.CAN_SUMMON:
 						case Recognize.AllianceMechaState.CAN_CHALLENGE:
-							DateTime now = DateTime.Now;
-							switch (mechaType) {
-								case Recognize.AllianceMechaType.ALPHA:
-									TimeSpan timeOfToday = now - now.Date;
-									if (timeOfToday >= SKIP_BEGIN && timeOfToday < SKIP_END) {
-										FIXED_TIME_DICT[mechaType] = now - timeOfToday + SKIP_END + new TimeSpan(12, 0, 0);
-									} else {
-										FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12, 45, 0);
-									}
-									break;
-								case Recognize.AllianceMechaType.GAMMA:
-									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(2, 0, 45, 0);
-									break;
-								case Recognize.AllianceMechaType.DELTA:
-									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(4, 0, 45, 0);
-									break;
-								case Recognize.AllianceMechaType.EPSILON:
-									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(7, 0, 45, 0);
-									break;
-								default:
-									FIXED_TIME_DICT[mechaType] = now + new TimeSpan(12, 45, 0);
-									break;
+							DateTime fixedTime = mechaType switch {
+								Recognize.AllianceMechaType.ALPHA => DateTime.Now + new TimeSpan(12, 45, 0),
+								Recognize.AllianceMechaType.GAMMA => DateTime.Now + new TimeSpan(2, 0, 45, 0),
+								Recognize.AllianceMechaType.DELTA => DateTime.Now + new TimeSpan(4, 0, 45, 0),
+								Recognize.AllianceMechaType.EPSILON => DateTime.Now + new TimeSpan(7, 0, 45, 0),
+								_ => DateTime.Now + new TimeSpan(12, 45, 0)
+							};
+							DateTime cooldownDate = fixedTime.Date;
+							TimeSpan timeOfDate = fixedTime - cooldownDate;
+							if (timeOfDate >= SKIP_BEGIN && timeOfDate < SKIP_END) {
+								fixedTime = cooldownDate + SKIP_END;
 							}
+							FIXED_TIME_DICT[mechaType] = fixedTime;
 							break;
 					}
 				}
