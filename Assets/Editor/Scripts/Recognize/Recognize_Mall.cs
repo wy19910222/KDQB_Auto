@@ -11,7 +11,7 @@ public static partial class Recognize {
 	public static bool MallIsNew {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(1794, 110);
-			return Approximately(realColor, new Color32(225, 64, 12, 255));
+			return realColor.r > realColor.g + realColor.g + realColor.b + realColor.b;
 		}
 	}
 
