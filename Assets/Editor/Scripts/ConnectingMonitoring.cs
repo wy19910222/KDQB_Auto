@@ -45,6 +45,10 @@ public class ConnectingMonitoring {
 				Operation.Click(1168, 308);	// 关闭按钮
 				yield return new EditorWaitForSeconds(0.5F);
 			}
+			while (Recognize.IsISee) {
+				Operation.Click(960, 880);	// 我知道了按钮
+				yield return new EditorWaitForSeconds(0.5F);
+			}
 			yield return new EditorWaitForSeconds(INTERVAL);
 		}
 		// ReSharper disable once IteratorNeverReturns

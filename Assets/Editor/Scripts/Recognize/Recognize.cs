@@ -154,6 +154,14 @@ public static partial class Recognize {
 			return -1;
 		}
 	}
+
+	private static readonly Color32[,] I_SEE_BTN = Operation.GetFromFile("PersistentData/Textures/ISeeBtn.png");
+	public static bool IsISee {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(910, 866, 100, 30);
+			return ApproximatelyRectIgnoreCovered(realColors, I_SEE_BTN, 2F) > 0.9F;
+		}
+	}
 	
 	// public static readonly Vector2Int[] PROP_ICON_SAMPLE_POINTS = {
 	// 	new Vector2Int(20, 20), new Vector2Int(42, 20), new Vector2Int(65, 20),
