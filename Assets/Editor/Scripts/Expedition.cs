@@ -77,75 +77,79 @@ public class Expedition {
 			Debug.Log("每日军情按钮");
 			Operation.Click(733, 867);	// 活动按钮
 			yield return new EditorWaitForSeconds(0.2F);
-			
-			Debug.Log("拖动以显示荒野行动");
-			int orderOffsetY1 = (WILD_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT;
-			while (orderOffsetY1 > 0) {
-				int dragDistance = ITEM_HEIGHT * 4;
-				// 往左拖动
-				var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
-				while (ie.MoveNext()) {
-					yield return ie.Current;
+
+			if (!wildSucceed) {
+				Debug.Log("拖动以显示荒野行动");
+				int orderOffsetY1 = (WILD_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT;
+				while (orderOffsetY1 > 0) {
+					int dragDistance = ITEM_HEIGHT * 4;
+					// 往左拖动
+					var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
+					while (ie.MoveNext()) {
+						yield return ie.Current;
+					}
+					yield return new EditorWaitForSeconds(0.1F);
+					orderOffsetY1 -= dragDistance;
 				}
-				yield return new EditorWaitForSeconds(0.1F);
-				orderOffsetY1 -= dragDistance;
-			}
-			yield return new EditorWaitForSeconds(0.2F);
-			Debug.Log("前往按钮");
-			Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY1);	// 前往按钮
-			yield return new EditorWaitForSeconds(0.3F);
-			if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.WILD && !test) {
-				Debug.Log("宝箱按钮");
-				Operation.Click(751, 286);	// 宝箱按钮
-				yield return new EditorWaitForSeconds(0.5F);
-				if (Recognize.IsWildBackBtn) {
-					Debug.Log("返回按钮");
-					Operation.Click(960, 836);	// 返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
-					wildSucceed = true;
-				} else if (Recognize.IsWildGetBtn) {
-					Debug.Log("领取按钮");
-					Operation.Click(960, 836);	// 领取按钮
+				yield return new EditorWaitForSeconds(0.2F);
+				Debug.Log("前往按钮");
+				Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY1);	// 前往按钮
+				yield return new EditorWaitForSeconds(0.3F);
+				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.WILD && !test) {
+					Debug.Log("宝箱按钮");
+					Operation.Click(751, 286);	// 宝箱按钮
 					yield return new EditorWaitForSeconds(0.5F);
-					Debug.Log("空白处");
-					Operation.Click(960, 836);	// 空白处
-					yield return new EditorWaitForSeconds(0.2F);
-					wildSucceed = true;
+					if (Recognize.IsWildBackBtn) {
+						Debug.Log("返回按钮");
+						Operation.Click(960, 836);	// 返回按钮
+						yield return new EditorWaitForSeconds(0.2F);
+						wildSucceed = true;
+					} else if (Recognize.IsWildGetBtn) {
+						Debug.Log("领取按钮");
+						Operation.Click(960, 836);	// 领取按钮
+						yield return new EditorWaitForSeconds(0.5F);
+						Debug.Log("空白处");
+						Operation.Click(960, 836);	// 空白处
+						yield return new EditorWaitForSeconds(0.2F);
+						wildSucceed = true;
+					}
 				}
+				Debug.Log("左上角返回按钮");
+				Operation.Click(720, 128);	// 左上角返回按钮
+				yield return new EditorWaitForSeconds(0.2F);
 			}
-			Debug.Log("左上角返回按钮");
-			Operation.Click(720, 128);	// 左上角返回按钮
-			yield return new EditorWaitForSeconds(0.2F);
-			
-			Debug.Log("拖动以显示远征行动");
-			int orderOffsetY2 = (Expedition_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT;
-			while (orderOffsetY2 > 0) {
-				int dragDistance = ITEM_HEIGHT * 3;
-				// 往左拖动
-				var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
-				while (ie.MoveNext()) {
-					yield return ie.Current;
+
+			if (!expeditionSucceed) {
+				Debug.Log("拖动以显示远征行动");
+				int orderOffsetY2 = (Expedition_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT;
+				while (orderOffsetY2 > 0) {
+					int dragDistance = ITEM_HEIGHT * 3;
+					// 往左拖动
+					var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
+					while (ie.MoveNext()) {
+						yield return ie.Current;
+					}
+					yield return new EditorWaitForSeconds(0.1F);
+					orderOffsetY2 -= dragDistance;
 				}
-				yield return new EditorWaitForSeconds(0.1F);
-				orderOffsetY2 -= dragDistance;
-			}
-			Debug.Log("前往按钮");
-			Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY2);	// 前往按钮
-			yield return new EditorWaitForSeconds(0.3F);
-			if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
-				Debug.Log("运输车");
-				Operation.Click(840, 856);	// 运输车
-				yield return new EditorWaitForSeconds(0.5F);
-				if (Recognize.IsExpeditionGetBtn) {
-					Debug.Log("领取按钮");
-					Operation.Click(960, 900);	// 领取按钮
-					yield return new EditorWaitForSeconds(0.3F);
-					expeditionSucceed = true;
+				Debug.Log("前往按钮");
+				Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY2);	// 前往按钮
+				yield return new EditorWaitForSeconds(0.3F);
+				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
+					Debug.Log("运输车");
+					Operation.Click(840, 856);	// 运输车
+					yield return new EditorWaitForSeconds(0.5F);
+					if (Recognize.IsExpeditionGetBtn) {
+						Debug.Log("领取按钮");
+						Operation.Click(960, 900);	// 领取按钮
+						yield return new EditorWaitForSeconds(0.3F);
+						expeditionSucceed = true;
+					}
 				}
+				Debug.Log("左上角返回按钮");
+				Operation.Click(720, 128);	// 左上角返回按钮
+				yield return new EditorWaitForSeconds(0.2F);
 			}
-			Debug.Log("左上角返回按钮");
-			Operation.Click(720, 128);	// 左上角返回按钮
-			yield return new EditorWaitForSeconds(0.2F);
 			
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
