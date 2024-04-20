@@ -40,12 +40,15 @@ public static class GlobalStatus {
 
 	private static IEnumerator Update() {
 		Vector2Int prevMousePos = MouseUtils.GetMousePos();
+		bool prevMouseIsDown = MouseUtils.IsLeftDown();
 		while (true) {
 			yield return null;
 			Vector2Int nextMousePos = MouseUtils.GetMousePos();
+			bool nextMouseIsDown = MouseUtils.IsLeftDown();
 			DateTime now = DateTime.Now;
-			if (nextMousePos.x != prevMousePos.x || nextMousePos.y != prevMousePos.y) {
+			if (nextMousePos.x != prevMousePos.x || nextMousePos.y != prevMousePos.y || nextMouseIsDown != prevMouseIsDown) {
 				prevMousePos = nextMousePos;
+				prevMouseIsDown = nextMouseIsDown;
 				ActiveDT = now;
 				UnattendedDuration = 0;
 			} else {
