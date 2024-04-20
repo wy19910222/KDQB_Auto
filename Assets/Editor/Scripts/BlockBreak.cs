@@ -41,7 +41,7 @@ public class BlockBreak {
 			yield return null;
 			
 			// 非无人值守状态不处理
-			if (GlobalStatus.UnattendedDuration < 3 * 1000_000_0) {
+			if (!GlobalStatus.IsUnattended) {
 				windowBlockDT = DateTime.Now;
 				fightingBlockDT = DateTime.Now;
 				continue;
@@ -71,13 +71,17 @@ public class BlockBreak {
 				
 				// 非战斗场景，只判断窗口阻塞
 				float newWindowCoveredCount = Recognize.WindowCoveredCount;
-				if (Mathf.Approximately(newWindowCoveredCount, windowCoveredCount)) {
+				if (!Mathf.Approximately(newWindowCoveredCount, windowCoveredCount)) {
 					// 窗口层数变化，重置窗口阻塞时间
 					windowBlockDT = DateTime.Now;
 					windowCoveredCount = newWindowCoveredCount;
 				} else if (newWindowCoveredCount <= 0) {
 					// 无窗口，重置窗口阻塞时间
 					windowBlockDT = DateTime.Now;
+					if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
+						Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+						yield return new EditorWaitForSeconds(1F);
+					}
 				} else if ((DateTime.Now - windowBlockDT).TotalSeconds > WINDOW_BLOCK_SECONDS) {
 					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 						Debug.Log("关闭窗口");
