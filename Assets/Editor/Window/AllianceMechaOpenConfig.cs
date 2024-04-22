@@ -32,6 +32,23 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 		AllianceMechaOpen.MECHA_LEVEL = EditorGUILayout.IntSlider("机甲等级", AllianceMechaOpen.MECHA_LEVEL, 1, 6);
 		AllianceMechaOpen.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaOpen.DONATE_COUNT, 1, 10);
 		
+		EditorGUILayout.BeginHorizontal();
+		bool started = AllianceMechaOpen.s_OpenTime > (DateTime.Now - AllianceMechaOpen.DAILY_TIME).Date;
+		bool newStarted = GUILayout.Toggle(started, "今日已尝试", "Button");
+		if (newStarted != started) {
+			bool valid = true;
+			if (!AllianceMechaOpen.Test && DateTime.Now.TimeOfDay > AllianceMechaOpen.DAILY_TIME) {
+				if (!EditorUtility.DisplayDialog("提示", "当前非测试模式，更改状态后会立即执行，是否继续？", "继续", "取消")) {
+					valid = false;
+				}
+			}
+			if (valid) {
+				AllianceMechaOpen.s_OpenTime = newStarted ? DateTime.Now.Date : default;
+			}
+		}
+		AllianceMechaOpen.Test = GUILayout.Toggle(AllianceMechaOpen.Test, "测试模式", "Button");
+		EditorGUILayout.EndHorizontal();
+		
 		GUILayout.Space(5F);
 		EditorGUILayout.BeginHorizontal();
 		if (AllianceMechaOpen.IsRunning) {
@@ -43,7 +60,6 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 				IsRunning = true;
 			}
 		}
-		AllianceMechaOpen.Test = GUILayout.Toggle(AllianceMechaOpen.Test, "测试模式", "Button", GUILayout.Width(60F));
 		EditorGUI.BeginDisabledGroup(!AllianceMechaOpen.Test);
 		if (GUILayout.Button("单次执行", GUILayout.Width(60F))) {
 			EditorApplication.ExecuteMenuItem("Tools_Task/AllianceMechaOpenOnce");

@@ -87,7 +87,8 @@ public class AllianceMechaOpen {
 				Debug.Log("机甲等级");
 				Operation.Click(709 + 63 * MECHA_LEVEL, 483);	// 机甲等级
 				yield return new EditorWaitForSeconds(0.2F);
-				if (Recognize.AllianceMechaStatus == Recognize.AllianceMechaState.CAN_OPEN) {
+				Recognize.AllianceMechaState allianceMechaStatus = Recognize.AllianceMechaStatus;
+				if (allianceMechaStatus == Recognize.AllianceMechaState.CAN_OPEN) {
 					Debug.Log("开启按钮");
 					Operation.Click(960, 960);	// 开启按钮
 					yield return new EditorWaitForSeconds(0.3F);
