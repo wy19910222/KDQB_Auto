@@ -91,7 +91,7 @@ public class AllianceMechaOpen {
 					Debug.Log("开启按钮");
 					Operation.Click(960, 960);	// 开启按钮
 					yield return new EditorWaitForSeconds(0.3F);
-					if (test) {
+					if (!test) {
 						Debug.Log("确定按钮");
 						Operation.Click(960, 700);	// 确定按钮
 						yield return new EditorWaitForSeconds(0.3F);
