@@ -43,9 +43,12 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 				IsRunning = true;
 			}
 		}
-		if (GUILayout.Button("测试", GUILayout.Width(60F))) {
-			EditorApplication.ExecuteMenuItem("Tools_Task/TestAllianceMechaOpen");
+		AllianceMechaOpen.Test = GUILayout.Toggle(AllianceMechaOpen.Test, "测试模式", "Button", GUILayout.Width(60F));
+		EditorGUI.BeginDisabledGroup(!AllianceMechaOpen.Test);
+		if (GUILayout.Button("单次执行", GUILayout.Width(60F))) {
+			EditorApplication.ExecuteMenuItem("Tools_Task/AllianceMechaOpenOnce");
 		}
+		EditorGUI.EndDisabledGroup();
 		EditorGUILayout.EndHorizontal();
 	}
 	

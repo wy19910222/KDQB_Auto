@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class AllianceMechaOpen {
-	public static bool Test { get; set; } // 测试模式
+	public static bool Test { get; set; } = true; // 测试模式
 	
 	public static TimeSpan DAILY_TIME = new TimeSpan(10, 0, 0);	// 开启时间
 	public static Recognize.AllianceMechaType MECHA_TYPE = 0;	// 机甲序号
@@ -85,7 +85,7 @@ public class AllianceMechaOpen {
 				Operation.Click(Mathf.RoundToInt(920.3F + 16.5F * (int) MECHA_TYPE), 413);	// 机甲序号
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("机甲等级");
-				Operation.Click(772 + 63 * MECHA_LEVEL, 483);	// 机甲等级
+				Operation.Click(709 + 63 * MECHA_LEVEL, 483);	// 机甲等级
 				yield return new EditorWaitForSeconds(0.2F);
 				if (Recognize.AllianceMechaStatus == Recognize.AllianceMechaState.CAN_OPEN) {
 					Debug.Log("开启按钮");
@@ -130,12 +130,12 @@ public class AllianceMechaOpen {
 		// ReSharper disable once IteratorNeverReturns
 	}
 
-	[MenuItem("Tools_Task/TestAllianceMechaOpen", priority = -1)]
-	private static void ExecuteTest() {
+	[MenuItem("Tools_Task/AllianceMechaOpenOnce", priority = -1)]
+	private static void ExecuteOnce() {
 		Debug.Log($"测试");
-		EditorCoroutineManager.StartCoroutine(IEExecuteTest());
+		EditorCoroutineManager.StartCoroutine(IEExecuteOnce());
 	}
-	private static IEnumerator IEExecuteTest() {
+	private static IEnumerator IEExecuteOnce() {
 		if (Task.CurrentTask != null) {
 			Debug.LogError($"正在执行【{Task.CurrentTask}】, 请稍后！");
 			yield break;
