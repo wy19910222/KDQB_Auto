@@ -96,7 +96,7 @@ public class ExtensionalScreenConfig : PrefsEditorWindow<ExtensionalScreen> {
 				}
 			}
 			if (GUILayout.Button("设置游戏范围")) {
-				Operation.CURRENT_GAME_RECT = new Rect(
+				Operation.CURRENT_GAME_RECT = new RectInt(
 						ExtensionalScreen.RANGE_X,
 						ExtensionalScreen.RANGE_Y,
 						ExtensionalScreen.RANGE_W,

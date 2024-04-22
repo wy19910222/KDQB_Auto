@@ -34,7 +34,7 @@ public class GlobalStatusConfig : EditorWindow {
 
 	private void OnGUI() {
 		EditorCoroutineManager.Enable = GUILayout.Toggle(EditorCoroutineManager.Enable, "辅助开启", "Button");
-		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectField("游戏范围", Operation.CURRENT_GAME_RECT);
+		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectIntField("游戏范围", Operation.CURRENT_GAME_RECT);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Toggle("无人值守", GlobalStatus.IsUnattended);
 		EditorGUILayout.LabelField($"{GlobalStatus.UnattendedDuration / 1000_000_0}/{GlobalStatus.UNATTENDED_THRESHOLD / 1000_000_0}");
