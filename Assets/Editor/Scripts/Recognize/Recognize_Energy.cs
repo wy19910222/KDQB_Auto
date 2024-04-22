@@ -97,7 +97,6 @@ public static partial class Recognize {
 	public static int EnergyOCR {
 		get {
 			return GetCachedValueOrNew(nameof(EnergyOCR), () => {
-				System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 				int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
 				if (deltaX >= 0) {
 					string str = Operation.GetTextOnScreen(60 + deltaX, 111, 39, 20);
