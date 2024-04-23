@@ -50,7 +50,7 @@ public class CollectEssence {
 				continue;
 			}
 			
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
 				Debug.Log("处于出战界面，不执行操作");
 				continue;
 			}
@@ -61,8 +61,9 @@ public class CollectEssence {
 			
 			// 只有是世界界面近景或主城界面，才执行
 			switch (Recognize.CurrentScene) {
+				case Recognize.Scene.UNKNOWN:
 				case Recognize.Scene.FIGHTING:
-				case Recognize.Scene.OUTSIDE when Recognize.IsOutsideFaraway:
+				case Recognize.Scene.OUTSIDE_FARAWAY:
 					continue;
 			}
 
@@ -73,7 +74,8 @@ public class CollectEssence {
 
 			Debug.Log("新世界按钮");
 			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.OUTSIDE:
+				case Recognize.Scene.OUTSIDE_NEARBY:
+				case Recognize.Scene.OUTSIDE_FARAWAY:
 					Operation.Click(1875, 285);	// 新世界按钮
 					break;
 				case Recognize.Scene.INSIDE:

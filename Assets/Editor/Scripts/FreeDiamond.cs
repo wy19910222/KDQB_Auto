@@ -57,8 +57,9 @@ public class FreeDiamond {
 
 			// 只有是世界界面近景或主城界面，才执行
 			switch (Recognize.CurrentScene) {
+				case Recognize.Scene.UNKNOWN:
 				case Recognize.Scene.FIGHTING:
-				case Recognize.Scene.OUTSIDE when Recognize.IsOutsideFaraway:
+				case Recognize.Scene.OUTSIDE_FARAWAY:
 					continue;
 			}
 

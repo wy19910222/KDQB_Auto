@@ -57,7 +57,7 @@ public class CaptureRuins {
 	}
 
 	private static IEnumerator IEDoCapture(Vector2Int ruinsIconPos, Vector2Int gotoBtnPos, Vector2Int offset, string filename) {
-		if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+		if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE_NEARBY && Recognize.CurrentScene != Recognize.Scene.OUTSIDE_FARAWAY) {
 			yield break;
 		}
 		{

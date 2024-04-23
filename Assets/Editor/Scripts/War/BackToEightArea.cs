@@ -54,14 +54,11 @@ public class BackToEightArea {
 				case Recognize.Scene.INSIDE:
 					Operation.Click(1875, 356);	// 八国活动按钮
 					break;
-				case Recognize.Scene.OUTSIDE:
-					if (Recognize.IsOutsideNearby) {
-						Operation.Click(1875, 365);	// 八国活动按钮
-					} else if (Recognize.IsOutsideFaraway) {
-						Operation.Click(1875, 216);	// 八国活动按钮
-					} else {
-						continue;
-					}
+				case Recognize.Scene.OUTSIDE_NEARBY:
+					Operation.Click(1875, 365);	// 八国活动按钮
+					break;
+				case Recognize.Scene.OUTSIDE_FARAWAY:
+					Operation.Click(1875, 216);	// 八国活动按钮
 					break;
 				default:
 					continue;

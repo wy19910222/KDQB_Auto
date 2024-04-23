@@ -49,7 +49,7 @@ public class AllianceMechaOpen {
 				continue;
 			}
 			
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
 				Debug.Log("处于出战界面，不执行操作");
 				continue;
 			}

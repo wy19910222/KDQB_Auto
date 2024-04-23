@@ -54,8 +54,7 @@ public class Expedition {
 				continue;
 			}
 			// 战斗场景
-			Recognize.Scene currentScene = Recognize.CurrentScene;
-			if (currentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
 				continue;
 			}
 
@@ -65,14 +64,12 @@ public class Expedition {
 			Task.CurrentTask = nameof(Expedition);
 
 			// 如果是世界界面远景，则没有每日军情按钮，需要先切换到近景
-			if (currentScene == Recognize.Scene.OUTSIDE && Recognize.IsOutsideFaraway) {
-				for (int i = 0; i < 50 && !Recognize.DailyIntelligenceBtnVisible; i++) {
-					Vector2Int oldPos = MouseUtils.GetMousePos();
-					MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
-					MouseUtils.ScrollWheel(1);
-					MouseUtils.SetMousePos(oldPos.x, oldPos.y);
-					yield return new EditorWaitForSeconds(0.1F);
-				}
+			for (int i = 0; i < 50 && Recognize.CurrentScene == Recognize.Scene.OUTSIDE_FARAWAY; i++) {
+				Vector2Int oldPos = MouseUtils.GetMousePos();
+				MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
+				MouseUtils.ScrollWheel(1);
+				MouseUtils.SetMousePos(oldPos.x, oldPos.y);
+				yield return new EditorWaitForSeconds(0.1F);
 			}
 			Debug.Log("每日军情按钮");
 			Operation.Click(733, 867);	// 活动按钮

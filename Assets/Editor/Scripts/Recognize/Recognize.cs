@@ -9,14 +9,20 @@ using UnityEngine;
 
 public static partial class Recognize {
 	public enum Scene {
+		[InspectorName("未知")]
+		UNKNOWN,
 		[InspectorName("主城")]
 		INSIDE,
-		[InspectorName("世界")]
-		OUTSIDE,
+		[InspectorName("世界近景")]
+		OUTSIDE_NEARBY,
+		[InspectorName("世界远景")]
+		OUTSIDE_FARAWAY,
 		[InspectorName("战斗")]
 		FIGHTING,
 	}
 
+	private static readonly Color32[,] ICON_DIAMOND = Operation.GetFromFile("PersistentData/Textures/IconDiamond.png");
+	private static readonly Color32[,] ICON_COIN = Operation.GetFromFile("PersistentData/Textures/IconCoin.png");
 	public static Scene CurrentScene {
 		get {
 			return GetCachedValueOrNew(nameof(CurrentScene), () => {
@@ -24,13 +30,28 @@ public static partial class Recognize {
 				if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >= 0) {
 					return Scene.FIGHTING;
 				}
-				// 右下角一排按钮里的雷达按钮存在，说明处于世界界面
-				// 处于搜索界面，是没有整排按钮的，但还是处于世界界面
-				else if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0 ||
-						ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 617), new Color32(69, 146, 221, 255)) < 0) {
-					return Scene.OUTSIDE;
+				// 左上角钻石栏在无头像位置，说明处于世界远景
+				Color32[,] iconDiamondColors1 = Operation.GetColorsOnScreen(151, 111, 16, 16);
+				if (ApproximatelyRectIgnoreCovered(iconDiamondColors1, ICON_DIAMOND) > 0.7F) {
+					return Scene.OUTSIDE_FARAWAY;
 				}
-				return Scene.INSIDE;
+				// 左上角钻石栏在有头像位置，说明处于世界近景或城内
+				Color32[,] iconDiamondColors2 = Operation.GetColorsOnScreen(231, 111, 16, 16);
+				if (ApproximatelyRectIgnoreCovered(iconDiamondColors2, ICON_DIAMOND) > 0.7F) {
+					Color32[,] iconCoinColors = Operation.GetColorsOnScreen(98, 111, 16, 16);
+					if (ApproximatelyRectIgnoreCovered(iconCoinColors, ICON_COIN) > 0.9F) {
+						return Scene.INSIDE;
+					} else {
+						return Scene.OUTSIDE_NEARBY;
+					}
+				}
+				// // 右下角一排按钮里的雷达按钮存在，说明处于世界界面
+				// // 处于搜索界面，是没有整排按钮的，但还是处于世界界面
+				// else if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 540), new Color32(69, 146, 221, 255)) >= 0 ||
+				// 		ApproximatelyCoveredCount(Operation.GetColorOnScreen(1850, 617), new Color32(69, 146, 221, 255)) < 0) {
+				// 	return Scene.OUTSIDE;
+				// }
+				return Scene.UNKNOWN;
 			});
 		}
 	}
@@ -68,7 +89,7 @@ public static partial class Recognize {
 	public static bool IsInEightArea {
 		get {
 			switch (CurrentScene) {
-				case Scene.OUTSIDE:
+				case Scene.OUTSIDE_NEARBY:
 					// 通过判断战区buff是否存在确定是否在八国地图
 					Color32[,] realColors = Operation.GetColorsOnScreen(226, 184, 12, 12);
 					return ApproximatelyRect(realColors, AREA_BUFF) > 0.99F;

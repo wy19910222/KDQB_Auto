@@ -65,7 +65,7 @@ public class BlockBreak {
 					}
 					fightingBlockDT = DateTime.Now;
 				}
-			} else {
+			} else if (Recognize.CurrentScene != Recognize.Scene.UNKNOWN) {
 				// 重置战斗阻塞时间
 				fightingBlockDT = DateTime.Now;
 				

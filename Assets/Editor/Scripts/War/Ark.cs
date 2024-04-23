@@ -50,7 +50,7 @@ public class Ark {
 				continue;
 			}
 
-			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE_NEARBY && Recognize.CurrentScene != Recognize.Scene.OUTSIDE_FARAWAY) {
 				continue;
 			}
 

@@ -81,7 +81,7 @@ public class Jungle {
 				// Debug.Log("正在做其他操作");
 				continue;
 			}
-			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE_NEARBY && Recognize.CurrentScene != Recognize.Scene.OUTSIDE_FARAWAY) {
 				// Debug.Log("不在世界场景");
 				continue;
 			}

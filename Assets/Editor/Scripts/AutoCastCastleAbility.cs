@@ -62,8 +62,7 @@ public class AutoCastCastleAbility {
 				continue;
 			}
 			// 战斗场景
-			Recognize.Scene currentScene = Recognize.CurrentScene;
-			if (currentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
 				continue;
 			}
 

@@ -93,7 +93,7 @@ public static class AttackDisciple2 {
 			}
 
 			Debug.Log("准备打使徒");
-			Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.OUTSIDE ? 360 : 420);
+			Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 420 : 360);
 			yield return new EditorWaitForSeconds(0.1F);
 			Operation.Click(860, 860);	// 作战研究室按钮
 			yield return new EditorWaitForSeconds(0.1F);

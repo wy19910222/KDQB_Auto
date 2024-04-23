@@ -78,7 +78,7 @@ public class RescueRefugees {
 				continue;
 			}
 			
-			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE) {
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE_NEARBY && Recognize.CurrentScene != Recognize.Scene.OUTSIDE_FARAWAY) {
 				// Debug.Log("不在世界场景");
 				continue;
 			}

@@ -54,8 +54,7 @@ public class DeepSea {
 				continue;
 			}
 			// 战斗场景
-			Recognize.Scene currentScene = Recognize.CurrentScene;
-			if (currentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
 				continue;
 			}
 
@@ -70,18 +69,16 @@ public class DeepSea {
 				nearbyOrders.RemoveAt(0);
 			}
 			// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
-			if (currentScene == Recognize.Scene.OUTSIDE && Recognize.IsOutsideFaraway) {
-				for (int i = 0; i < 50 && Recognize.IsOutsideFaraway; i++) {
-					Vector2Int oldPos = MouseUtils.GetMousePos();
-					MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
-					MouseUtils.ScrollWheel(1);
-					MouseUtils.SetMousePos(oldPos.x, oldPos.y);
-					yield return new EditorWaitForSeconds(0.1F);
-				}
+			for (int i = 0; i < 50 && Recognize.CurrentScene == Recognize.Scene.OUTSIDE_FARAWAY; i++) {
+				Vector2Int oldPos = MouseUtils.GetMousePos();
+				MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
+				MouseUtils.ScrollWheel(1);
+				MouseUtils.SetMousePos(oldPos.x, oldPos.y);
+				yield return new EditorWaitForSeconds(0.1F);
 			}
 			Debug.Log("活动按钮");
-			Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 290 : 280);	// 活动按钮
-			// Operation.Click(1880, currentScene == Recognize.Scene.OUTSIDE ? 350 : 280);	// 活动按钮（被新世界图标挤到下一格了）
+			Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 280 : 290);	// 活动按钮
+			// Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 280 : 350);	// 活动按钮（被新世界图标挤到下一格了）
 			yield return new EditorWaitForSeconds(0.5F);
 			Debug.Log("拖动以显示活动标签页");
 			const int TAB_WIDTH = 137;

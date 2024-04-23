@@ -29,7 +29,7 @@ public static partial class Recognize {
 	
 	public static bool IsFollowOuterJoinBtnExist {
 		get {
-			if (CurrentScene == Scene.OUTSIDE) {
+			if (CurrentScene is Scene.OUTSIDE_NEARBY or Scene.OUTSIDE_FARAWAY) {
 				// 三个条件都满足才是绿色加入按钮
 				Color32[,] realColors = Operation.GetColorsOnScreen(1740, 700, 60, 11);
 				Color32 targetColor1 = new Color32(106, 212, 98, 255);

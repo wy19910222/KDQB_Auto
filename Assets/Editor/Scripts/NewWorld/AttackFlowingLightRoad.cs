@@ -90,10 +90,10 @@ public class AttackFlowingLightRoad {
 			Debug.Log($"无窗口覆盖");
 			
 			// 只有是世界界面近景，才执行
-			Recognize.Scene currentScene = Recognize.CurrentScene;
-			switch (currentScene) {
+			switch (Recognize.CurrentScene) {
+				case Recognize.Scene.UNKNOWN:
 				case Recognize.Scene.FIGHTING:
-				case Recognize.Scene.OUTSIDE when Recognize.IsOutsideFaraway:
+				case Recognize.Scene.OUTSIDE_FARAWAY:
 				case Recognize.Scene.INSIDE:
 					continue;
 			}
