@@ -58,7 +58,7 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField("今天已请求", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
 				if (GUILayout.Button("取消已请求")) {
-					AllianceHelp.s_StartTime = DateTime.Now - new TimeSpan(24, 0, 0);
+					AllianceHelp.s_StartTime = default;
 				}
 				EditorGUILayout.EndHorizontal();
 			} else {

@@ -154,6 +154,9 @@ public class AllianceHelp {
 							s_StartTime = DateTime.Now;
 						}
 					} else {
+						if (target != -1 && started) {
+							s_StartTime = default;
+						}
 						Debug.LogError("请求帮助失败！");
 					}
 				}
