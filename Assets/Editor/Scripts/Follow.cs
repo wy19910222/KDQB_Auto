@@ -243,6 +243,7 @@ public class Follow {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}
+			yield return new EditorWaitForSeconds(0.2F);
 			if (Recognize.BusyGroupCount > busyGroupCount) {
 				Debug.Log("跟车成功");
 				// 跟车次数减1
