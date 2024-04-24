@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEditor;
 
 public class AllianceMechaOpen {
-	public static bool Test { get; set; } = true; // 测试模式
+	public static bool Test { get; set; } // 测试模式
 	
 	public static TimeSpan DAILY_TIME = new TimeSpan(10, 0, 0);	// 开启时间
 	public static Recognize.AllianceMechaType MECHA_TYPE = 0;	// 机甲序号
