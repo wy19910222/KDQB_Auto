@@ -83,6 +83,15 @@ public class AutoRecruit {
 						Operation.Click(1060, 640);	// 空白处
 						yield return new EditorWaitForSeconds(0.2F);
 					}
+					if (Recognize.CanRecruitExtra) {
+						Debug.Log("额外招募按钮");
+						Operation.Click(772, 730);	// 额外招募按钮
+						yield return new EditorWaitForSeconds(1F);
+						Operation.Click(1060, 640);	// 空白处
+						yield return new EditorWaitForSeconds(0.2F);
+						Operation.Click(1060, 640);	// 空白处
+						yield return new EditorWaitForSeconds(0.2F);
+					}
 				}
 			}
 			

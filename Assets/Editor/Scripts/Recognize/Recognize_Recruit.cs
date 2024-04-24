@@ -48,4 +48,12 @@ public static partial class Recognize {
 			return Approximately(realColor, targetColor);
 		}
 	}
+
+	public static bool CanRecruitExtra {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(787, 711);
+			Color32 targetColor = new Color32(222, 57, 0, 255);
+			return Approximately(realColor, targetColor);
+		}
+	}
 }
