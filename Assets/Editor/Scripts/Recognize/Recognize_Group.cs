@@ -33,22 +33,22 @@ public static partial class Recognize {
 					Color32 targetAvatarGrayColor = new Color32(184, 205, 220, 255);	// 无英雄
 					Color32 targetAvatarBlueColor = new Color32(88, 186, 240, 255);	// 蓝色英雄
 					Color32 targetAvatarPurpleColor = new Color32(231, 149, 252, 255);	// 紫色英雄
-					Color32 targetAvatarOrangeColor = new Color32(251, 193, 88, 255);	// 橙色英雄
+					Color32 targetAvatarOrangeColor = new Color32(251, 200, 84, 255);	// 橙色英雄
 					// 434的位置需要将小地图保持展开状态
 					Color32[,] realBtnColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
 					Color32[,] realAvatarColors = Operation.GetColorsOnScreen(23, 267 + deltaY + 50, 1, 451);
 					while (groupCount < 10) {
 						Color32 realBtnColor = realBtnColors[0, groupCount * 50];
 						Color32 realAvatarColor = realAvatarColors[0, groupCount * 50];
-						// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realColor}");
+						// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realBtnColor}: {realAvatarColor}");
 						if (groupCount == 4 && deltaY == 76 + 155) {
 							if (ApproximatelyCoveredCount(realBtnColor, new Color32(192, 212, 229, 255)) < 0) {
 								break;
 							}
-							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor) < 0) {
+							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor, 1.5F) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor, 1.5F) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor, 1.5F) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor, 1.5F) < 0) {
 								break;
 							}
 						} else {
@@ -56,10 +56,10 @@ public static partial class Recognize {
 								break;
 							}
 							// Debug.LogError($"{{{23}, {267 + deltaY + 50 + groupCount * 50}}}: {realAvatarColor}");
-							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor) < 0) {
+							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor, 1.5F) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor, 1.5F) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor, 1.5F) < 0
+									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor, 1.5F) < 0) {
 								break;
 							}
 						}
