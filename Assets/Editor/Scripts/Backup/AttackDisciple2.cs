@@ -88,7 +88,7 @@ public static class AttackDisciple2 {
 				Debug.Log("左上角返回按钮");
 				do {
 					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 				} while (Recognize.IsWindowCovered);
 			}
 
@@ -106,7 +106,7 @@ public static class AttackDisciple2 {
 				Debug.Log("体力不足");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 				}
 			} else {
 				Debug.Log("选择出征");
@@ -120,7 +120,7 @@ public static class AttackDisciple2 {
 				yield return new EditorWaitForSeconds(0.3F);
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 				}
 			}
 			// 休息5秒，避免出错时一直受控不能操作

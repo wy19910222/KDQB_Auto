@@ -257,7 +257,7 @@ public class Follow {
 				Debug.Log("左上角返回按钮");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 					if (i == 9) {
 						Debug.LogError("10次都没关掉");
 					}

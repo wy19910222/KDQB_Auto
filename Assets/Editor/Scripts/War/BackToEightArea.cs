@@ -74,7 +74,7 @@ public class BackToEightArea {
 				Debug.Log("左上角返回按钮");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 				}
 				if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
 					Debug.Log("右下角主城与世界切换按钮");
@@ -85,7 +85,7 @@ public class BackToEightArea {
 				Debug.Log("左上角返回按钮");
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
 					Operation.Click(720, 128);	// 左上角返回按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 				}
 				SUCCESS_TIME = now;
 			}
