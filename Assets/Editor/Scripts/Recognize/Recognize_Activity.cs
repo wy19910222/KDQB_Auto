@@ -56,7 +56,7 @@ public static partial class Recognize {
 	public static bool IsSOSExist {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(738, 260, 60, 50);
-			return ApproximatelyRect(realColors, SOS_PROP_ICON) > 0.99F;
+			return ApproximatelyRect(realColors, SOS_PROP_ICON) > 0.9F;
 		}
 	}
 }
