@@ -183,7 +183,7 @@ public class RescueRefugees {
 					if (Recognize.IsSOSExist) {
 						Debug.Log("使用道具按钮");
 						Operation.Click(960, 960); // 使用道具按钮
-						yield return new EditorWaitForSeconds(0.2F);
+						yield return new EditorWaitForSeconds(0.3F);
 					}
 				}
 				if (!Recognize.IsWindowCovered) {
