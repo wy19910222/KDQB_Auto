@@ -110,7 +110,7 @@ public class FreeDiamond {
 				}
 			}
 
-			yield return new EditorWaitForSeconds(0.35F);
+			yield return new EditorWaitForSeconds(0.4F);
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
 				Operation.Click(720, 128);	// 左上角返回按钮
