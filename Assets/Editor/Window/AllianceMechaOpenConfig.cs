@@ -28,6 +28,9 @@ public class AllianceMechaOpenConfig : PrefsEditorWindow<AllianceMechaOpen> {
 		}
 		EditorGUILayout.EndHorizontal();
 		
+		AllianceMechaOpen.TRY_COUNT = EditorGUILayout.IntSlider("重试次数", AllianceMechaOpen.TRY_COUNT, 1, 3);
+		AllianceMechaOpen.TRY_INTERVAL = EditorGUILayout.IntField("重试间隔（秒）", AllianceMechaOpen.TRY_INTERVAL);
+		
 		AllianceMechaOpen.MECHA_TYPE = (Recognize.AllianceMechaType) EditorGUILayout.EnumPopup("机甲类型", AllianceMechaOpen.MECHA_TYPE);
 		AllianceMechaOpen.MECHA_LEVEL = EditorGUILayout.IntSlider("机甲等级", AllianceMechaOpen.MECHA_LEVEL, 1, 6);
 		AllianceMechaOpen.DONATE_COUNT = EditorGUILayout.IntSlider("捐献数量", AllianceMechaOpen.DONATE_COUNT, 1, 10);

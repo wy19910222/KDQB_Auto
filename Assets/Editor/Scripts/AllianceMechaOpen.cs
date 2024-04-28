@@ -14,6 +14,8 @@ public class AllianceMechaOpen {
 	public static bool Test { get; set; } // 测试模式
 	
 	public static TimeSpan DAILY_TIME = new TimeSpan(10, 0, 0);	// 开启时间
+	public static int TRY_COUNT = 3;	// 尝试次数
+	public static int TRY_INTERVAL = 10;	// 尝试间隔（秒）
 	public static Recognize.AllianceMechaType MECHA_TYPE = 0;	// 机甲序号
 	public static int MECHA_LEVEL = 1;	// 机甲等级
 	public static int DONATE_COUNT = 3;	// 捐献数量
@@ -40,12 +42,18 @@ public class AllianceMechaOpen {
 	}
 
 	private static IEnumerator Update() {
-		// bool prevIsMarshalTime = false;
+		int tryCount = 0;
+		DateTime failedTime = default;
 		while (true) {
 			yield return null;
-			
-			bool started = s_OpenTime > (DateTime.Now - DAILY_TIME).Date;
+
+			DateTime dateTime = DateTime.Now;
+			bool started = s_OpenTime > (dateTime - DAILY_TIME).Date;
 			if (started) {
+				continue;
+			}
+
+			if ((dateTime - failedTime).TotalSeconds <= TRY_INTERVAL) {
 				continue;
 			}
 			
@@ -68,7 +76,7 @@ public class AllianceMechaOpen {
 			Task.CurrentTask = nameof(AllianceMechaOpen);
 			
 			bool test = Test;
-			// bool succeed = false;
+			bool succeed = false;
 			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.2F);
@@ -96,7 +104,7 @@ public class AllianceMechaOpen {
 						Debug.Log("确定按钮");
 						Operation.Click(960, 700);	// 确定按钮
 						yield return new EditorWaitForSeconds(0.3F);
-						// succeed = true;
+						succeed = true;
 				
 						// 捐献
 						for (int i = 0; i < DONATE_COUNT; ++i) {
@@ -120,13 +128,17 @@ public class AllianceMechaOpen {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
-
-			// if (succeed) {
-				// 无论成功失败都只尝试一次
-				s_OpenTime = DateTime.Now;
-			// }
 			
 			Task.CurrentTask = null;
+
+			if (succeed || tryCount >= TRY_COUNT) {
+				s_OpenTime = DateTime.Now;
+				failedTime = default;
+				tryCount = 0;
+			} else {
+				failedTime = DateTime.Now;
+				++tryCount;
+			}
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
