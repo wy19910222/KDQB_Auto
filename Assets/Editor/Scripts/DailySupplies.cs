@@ -104,9 +104,9 @@ public class DailySupplies {
 
 			Task.CurrentTask = null;
 
-			yield return new WaitForSeconds(5);
+			yield return new EditorWaitForSeconds(2F);
 			if (!succeed) {
-				yield return new WaitForSeconds(FAILED_COOLDOWN_MINUTE * 60);
+				yield return new EditorWaitForSeconds(FAILED_COOLDOWN_MINUTE * 60);
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
