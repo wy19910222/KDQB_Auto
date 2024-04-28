@@ -25,6 +25,7 @@ public class Jungle {
 	public static bool REPEAT_5 = true;	// 是否五连
 	
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
+	public static bool MUST_FULL_SOLDIER = true;	// 必须满兵
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 打野英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
 	
@@ -310,7 +311,7 @@ public class Jungle {
 				Debug.Log("选择编队");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);
-				if (!test && (Recognize.FightingSoldierCountPercent > 0.99F || !isStarSlider)) {
+				if (!test && (!isStarSlider || !MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F)) {
 					Operation.Click(960, 470);	// 出战按钮
 					Debug.Log("出发");
 				} else {

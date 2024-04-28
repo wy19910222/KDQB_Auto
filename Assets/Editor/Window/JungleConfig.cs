@@ -75,7 +75,10 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
 		EditorGUI.DrawRect(wireRect2, Color.gray);
 		
+		EditorGUILayout.BeginHorizontal();
 		Jungle.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Jungle.SQUAD_NUMBER, 1, 8);
+		Jungle.MUST_FULL_SOLDIER = GUILayout.Toggle(Jungle.MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
 			bool isSelected = type == Jungle.HERO_AVATAR;

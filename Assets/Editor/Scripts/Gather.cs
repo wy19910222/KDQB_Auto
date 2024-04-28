@@ -25,6 +25,7 @@ public class Gather {
 	public static int TARGET_LEVEL_OFFSET = 0;	// 目标等级偏移，最高等级是0
 	public static int FEAR_STAR_LEVEL = 4;	// 打的惧星等级
 	public static int SQUAD_NUMBER = 3;	// 使用编队号码
+	public static bool MUST_FULL_SOLDIER = true;	// 必须满兵
 	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 集结英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
 	
@@ -286,7 +287,7 @@ public class Gather {
 				Debug.Log("选择编队");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);
-				if (!test && Recognize.FightingSoldierCountPercent > 0.99F && Recognize.FightingHeroEmptyCount <= 0) {
+				if (!test && (!MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount <= 0) {
 					Operation.Click(960, 470);	// 出战按钮
 					TARGET_ATTACK_COUNT_LIST[target]--;
 					Debug.Log("出发");

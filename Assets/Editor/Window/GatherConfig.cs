@@ -68,7 +68,10 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
 		EditorGUI.DrawRect(wireRect2, Color.gray);
 		
+		EditorGUILayout.BeginHorizontal();
 		Gather.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Gather.SQUAD_NUMBER, 1, 8);
+		Gather.MUST_FULL_SOLDIER = GUILayout.Toggle(Gather.MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
 			bool isSelected = type == Gather.HERO_AVATAR;
