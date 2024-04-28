@@ -104,7 +104,7 @@ public class DailySupplies {
 
 			Task.CurrentTask = null;
 
-			yield return new WaitForSeconds(2);
+			yield return new WaitForSeconds(5);
 			if (!succeed) {
 				yield return new WaitForSeconds(FAILED_COOLDOWN_MINUTE * 60);
 			}
