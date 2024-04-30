@@ -50,7 +50,7 @@ public class GlobalStatusConfig : EditorWindow {
 		Recognize.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Recognize.GROUP_COUNT, 0, 7);
 		EditorGUILayout.IntField("忙碌队列", Recognize.BusyGroupCount);
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.IntField("体力值", Recognize.EnergyOCR, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));
+		EditorGUILayout.IntField("体力值", Recognize.Energy, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));
 		EditorGUILayout.LabelField("/", GUILayout.Width(8F));
 		Recognize.ENERGY_FULL = EditorGUILayout.IntField(Recognize.ENERGY_FULL);
 		EditorGUILayout.EndHorizontal();

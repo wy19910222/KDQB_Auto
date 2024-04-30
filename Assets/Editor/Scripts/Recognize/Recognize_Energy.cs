@@ -33,9 +33,9 @@ public static partial class Recognize {
 	private const int ENERGY_FULL_X = 118;
 	private const int ENERGY_Y = 128;
 	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(254, 237, 64, 255);
-	public static int energy {
+	public static int Energy {
 		get {
-			return GetCachedValueOrNew(nameof(energy), () => {
+			return GetCachedValueOrNew(nameof(Energy), () => {
 				int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
 				if (deltaX >= 0) {
 					const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
@@ -104,7 +104,7 @@ public static partial class Recognize {
 						return result;
 					}
 				}
-				return energy;
+				return Energy;
 			});
 		}
 	}

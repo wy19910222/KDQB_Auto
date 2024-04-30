@@ -93,9 +93,9 @@ public class RescueRefugees {
 			} else {
 				// 体力值
 				if (USE_BOTTLE_DICT.Values.All(count => count <= 0)) {
-					if (!KEEP_ENERGY_NOT_FULL || Recognize.energy < Recognize.ENERGY_FULL - 1) {
+					if (!KEEP_ENERGY_NOT_FULL || Recognize.Energy < Recognize.ENERGY_FULL - 1) {
 						int cost = DAN_EXIST ? 3 : 5;
-						if (Recognize.energy < RESERVED_ENERGY + cost) {
+						if (Recognize.Energy < RESERVED_ENERGY + cost) {
 							// Debug.Log($"当前体力：{Recognize.energy}");
 							continue;
 						}

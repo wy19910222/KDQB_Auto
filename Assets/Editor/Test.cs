@@ -326,7 +326,7 @@ public static class Test {
 	[MenuItem("Assets/LogEnergy", priority = -1)]
 	private static void LogEnergy() {
 		Stopwatch sw = Stopwatch.StartNew();
-		Debug.LogError(Recognize.energy);
+		Debug.LogError(Recognize.Energy);
 		Debug.LogError(sw.Elapsed.TotalMilliseconds);
 		Debug.LogError(Recognize.CurrentScene);
 	}
