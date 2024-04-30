@@ -32,14 +32,14 @@ public static partial class Recognize {
 				}
 				// 左上角钻石栏在无头像位置，说明处于世界远景
 				Color32[,] iconDiamondColors1 = Operation.GetColorsOnScreen(151, 111, 16, 16);
-				if (ApproximatelyRectIgnoreCovered(iconDiamondColors1, ICON_DIAMOND) > 0.7F) {
+				if (ApproximatelyRectIgnoreCovered(iconDiamondColors1, ICON_DIAMOND, 1.5F) > 0.7F) {
 					return Scene.OUTSIDE_FARAWAY;
 				}
 				// 左上角钻石栏在有头像位置，说明处于世界近景或城内
 				Color32[,] iconDiamondColors2 = Operation.GetColorsOnScreen(231, 111, 16, 16);
-				if (ApproximatelyRectIgnoreCovered(iconDiamondColors2, ICON_DIAMOND) > 0.7F) {
+				if (ApproximatelyRectIgnoreCovered(iconDiamondColors2, ICON_DIAMOND, 1.5F) > 0.7F) {
 					Color32[,] iconCoinColors = Operation.GetColorsOnScreen(98, 111, 16, 16);
-					if (ApproximatelyRectIgnoreCovered(iconCoinColors, ICON_COIN) > 0.9F) {
+					if (ApproximatelyRectIgnoreCovered(iconCoinColors, ICON_COIN, 1.5F) > 0.7F) {
 						return Scene.INSIDE;
 					} else {
 						return Scene.OUTSIDE_NEARBY;
