@@ -196,6 +196,7 @@ public class Follow {
 				goto EndOfFollow;
 			}
 			Debug.Log("决定跟车");
+			bool maybeSucceed = false;
 			s_CachedOwnerName = ownerName;	// 记录车主
 			float delay = UnityEngine.Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);	// 额外随机延迟量
 			Debug.Log("加入按钮");
@@ -222,17 +223,20 @@ public class Follow {
 			yield return new EditorWaitForSeconds(0.2F);
 			// 如果出现赶不上弹框，则取消出征
 			if (Recognize.IsTooLateWindowExist) {
+				maybeSucceed = false;
 				Debug.Log("取消按钮");
 				Operation.Click(900, 657);	// 取消按钮
 				// 车主变化前不再上车
 				cooldownTime = long.MaxValue;
 				yield return new EditorWaitForSeconds(0.5F);
 			} else {
+				maybeSucceed = true;
 				// 跟车冷却
 				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
 			}
 			// 如果还停留在出征界面，则退出
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+				maybeSucceed = false;
 				Debug.Log("退出按钮");
 				Operation.Click(30, 140);	// 退出按钮
 				yield return new EditorWaitForSeconds(0.2F);
@@ -244,7 +248,7 @@ public class Follow {
 				}
 			}
 			yield return new EditorWaitForSeconds(0.2F);
-			if (Recognize.BusyGroupCount > busyGroupCount) {
+			if (maybeSucceed && Recognize.BusyGroupCount > busyGroupCount) {
 				Debug.Log("跟车成功");
 				// 跟车次数减1
 				TypeCountDict[type] = count - 1;
