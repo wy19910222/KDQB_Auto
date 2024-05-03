@@ -288,16 +288,17 @@ public class Gather {
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);
 				if (!test && (!MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount <= 0) {
+					Debug.Log("出发");
 					Operation.Click(960, 470);	// 出战按钮
 					TARGET_ATTACK_COUNT_LIST[target]--;
-					Debug.Log("出发");
+					yield return new EditorWaitForSeconds(0.3F);
 				} else {
 					Debug.Log("退出按钮");
 					Operation.Click(30, 140);	// 退出按钮
 					yield return new EditorWaitForSeconds(0.2F);
 					Debug.Log("确认退出按钮");
 					Operation.Click(1064, 634);	// 确认退出按钮
-					yield return new EditorWaitForSeconds(2);
+					yield return new EditorWaitForSeconds(0.3F);
 				}
 			} else {
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
