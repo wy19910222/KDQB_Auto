@@ -197,6 +197,7 @@ public class Follow {
 			}
 			Debug.Log("决定跟车");
 			bool maybeSucceed = false;
+			busyGroupCount = Recognize.BusyGroupCount;
 			s_CachedOwnerName = ownerName;	// 记录车主
 			float delay = UnityEngine.Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);	// 额外随机延迟量
 			Debug.Log("加入按钮");
