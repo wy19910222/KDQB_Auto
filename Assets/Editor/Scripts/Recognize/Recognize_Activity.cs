@@ -81,7 +81,7 @@ public static partial class Recognize {
 	}
 	public static List<int> GetMiningTruckTypes() {
 		List<int> list = new List<int>();
-		for (int i = 0; i < 3; ++i) {
+		for (int i = 0; i < 4; ++i) {
 			list.Add(GetMiningTruckType(i));
 		}
 		return list;
