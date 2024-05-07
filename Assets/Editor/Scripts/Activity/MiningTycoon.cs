@@ -116,9 +116,10 @@ public class MiningTycoon {
 				List<int> truckTypes = Recognize.GetMiningTruckTypes();
 				int targetIndex = TRAMCAR_COUNTDOWN_NUMBER - 1;
 				if (DateTime.Now > ACTIVITY_END_DT) {
+					// 活动结束，挨个收取
 					targetIndex = 0;
 				} else if (SMART_COLLECT) {
-					// 智能收取，-1 > 1 > 24 > 4/8
+					// 智能收取，-1 > 1 > 24 > 4/8（前3车凑成1个4+2个8）
 					targetIndex = truckTypes.IndexOf(-1);
 					if (targetIndex == -1) {
 						targetIndex = truckTypes.IndexOf(1);
