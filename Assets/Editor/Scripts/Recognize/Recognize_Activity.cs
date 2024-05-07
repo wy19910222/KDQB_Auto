@@ -5,6 +5,7 @@
  * @EditTime: 2023-09-27 01:41:06 799
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public static partial class Recognize {
@@ -58,5 +59,31 @@ public static partial class Recognize {
 			Color32[,] realColors = Operation.GetColorsOnScreen(738, 260, 60, 50);
 			return ApproximatelyRect(realColors, SOS_PROP_ICON) > 0.9F;
 		}
+	}
+
+	private static readonly Color32[,] MINING_TRUCK_1 = Operation.GetFromFile("PersistentData/Textures/MiningTruck1.png");
+	private static readonly Color32[,] MINING_TRUCK_4 = Operation.GetFromFile("PersistentData/Textures/MiningTruck4.png");
+	private static readonly Color32[,] MINING_TRUCK_8 = Operation.GetFromFile("PersistentData/Textures/MiningTruck8.png");
+	private static readonly Color32[,] MINING_TRUCK_24 = Operation.GetFromFile("PersistentData/Textures/MiningTruck24.png");
+	public static int GetMiningTruckType(int shortcutIndex) {
+		Color32[,] realColors = Operation.GetColorsOnScreen(775 + shortcutIndex * 118, 796, 40, 52);
+		if (ApproximatelyRect(realColors, MINING_TRUCK_1) > 0.6F) {
+			return 1;
+		} else if (ApproximatelyRect(realColors, MINING_TRUCK_4) > 0.6F) {
+			return 4;
+		} else if (ApproximatelyRect(realColors, MINING_TRUCK_8) > 0.6F) {
+			return 8;
+		} else if (ApproximatelyRect(realColors, MINING_TRUCK_24) > 0.6F) {
+			return 24;
+		} else {
+			return -1;
+		}
+	}
+	public static List<int> GetMiningTruckTypes() {
+		List<int> list = new List<int>();
+		for (int i = 0; i < 3; ++i) {
+			list.Add(GetMiningTruckType(i));
+		}
+		return list;
 	}
 }
