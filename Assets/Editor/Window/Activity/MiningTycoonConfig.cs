@@ -19,22 +19,54 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
 		MiningTycoon.ORDER_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", MiningTycoon.ORDER_RADIUS, 1, 6);
-		MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER = EditorGUILayout.IntSlider("收取矿车编号", MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER, 1, 4);
-
+		
 		EditorGUILayout.BeginHorizontal();
-		EditorGUI.BeginChangeCheck();
-		TimeSpan ts = MiningTycoon.NEAREST_DT - DateTime.Now;
-		int hours = EditorGUILayout.IntField("倒计时", ts.Hours);
-		float prevLabelWidth = EditorGUIUtility.labelWidth;
-		EditorGUIUtility.labelWidth = 8F;
-		int minutes = EditorGUILayout.IntField(":", ts.Minutes);
-		int seconds = EditorGUILayout.IntField(":", ts.Seconds);
-		EditorGUIUtility.labelWidth = prevLabelWidth;
-		if (EditorGUI.EndChangeCheck()) {
-			MiningTycoon.NEAREST_DT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
+		EditorGUILayout.LabelField("收取矿车编号", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+		MiningTycoon.SMART_COLLECT = GUILayout.Toggle(MiningTycoon.SMART_COLLECT, "智能收取", "Button", GUILayout.Width(60F));
+		if (!MiningTycoon.SMART_COLLECT) {
+			MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER = EditorGUILayout.IntSlider(MiningTycoon.TRAMCAR_COUNTDOWN_NUMBER, 1, 4);
 		}
 		EditorGUILayout.EndHorizontal();
-		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
+
+		EditorGUILayout.BeginHorizontal();
+		{
+			EditorGUI.BeginChangeCheck();
+			TimeSpan ts = MiningTycoon.NEAREST_DT - DateTime.Now;
+			int hours = EditorGUILayout.IntField("收取倒计时", ts.Hours);
+			float prevLabelWidth = EditorGUIUtility.labelWidth;
+			EditorGUIUtility.labelWidth = 8F;
+			int minutes = EditorGUILayout.IntField(":", ts.Minutes);
+			int seconds = EditorGUILayout.IntField(":", ts.Seconds);
+			EditorGUIUtility.labelWidth = prevLabelWidth;
+			if (EditorGUI.EndChangeCheck()) {
+				MiningTycoon.NEAREST_DT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+		
+		EditorGUILayout.BeginHorizontal();
+		{
+			EditorGUI.BeginChangeCheck();
+			float prevLFieldWidth = EditorGUIUtility.fieldWidth;
+			EditorGUIUtility.fieldWidth = 20F;
+			TimeSpan ts = MiningTycoon.ACTIVITY_END_DT - DateTime.Now;
+			int days = EditorGUILayout.IntField("活动结束倒计时", ts.Days);
+			EditorGUIUtility.fieldWidth = 30F;
+			float prevLabelWidth = EditorGUIUtility.labelWidth;
+			EditorGUIUtility.labelWidth = 14F;
+			int hours = EditorGUILayout.IntField("天", ts.Hours);
+			EditorGUIUtility.labelWidth = 8F;
+			int minutes = EditorGUILayout.IntField(":", ts.Minutes);
+			int seconds = EditorGUILayout.IntField(":", ts.Seconds);
+			EditorGUIUtility.labelWidth = prevLabelWidth;
+			EditorGUIUtility.fieldWidth = prevLFieldWidth;
+			if (EditorGUI.EndChangeCheck()) {
+				MiningTycoon.ACTIVITY_END_DT = DateTime.Now + new TimeSpan(days, hours, minutes, seconds);
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+		
+		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("失败点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
 		
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {

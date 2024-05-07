@@ -14,9 +14,11 @@ using UnityEngine;
 public class MiningTycoon {
 	public static int ACTIVITY_ORDER = 7;	// 活动排序
 	public static int ORDER_RADIUS = 5;	// 寻找标签半径
+	public static bool SMART_COLLECT;	// 智能收取
 	public static int TRAMCAR_COUNTDOWN_NUMBER = 3;	// 收取矿车编号
-	public static DateTime NEAREST_DT = DateTime.Now;
-	public static int CLICK_INTERVAL = 1800;	// 点击间隔（秒）
+	public static DateTime NEAREST_DT = DateTime.Now;	// 下一次收取时间
+	public static DateTime ACTIVITY_END_DT = DateTime.Now;	// 活动结束时间（不包括额外的一天）
+	public static int CLICK_INTERVAL = 1800;	// 失败点击间隔（秒）
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -110,10 +112,38 @@ public class MiningTycoon {
 					Operation.Click(1060, 970);	// 挖矿按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
-			
-				Debug.Log($"开始获取第{TRAMCAR_COUNTDOWN_NUMBER}个矿车");
+
 				List<int> truckTypes = Recognize.GetMiningTruckTypes();
-				Operation.Click(660 + 120 * TRAMCAR_COUNTDOWN_NUMBER, 850);	// 点击矿车
+				int targetIndex = TRAMCAR_COUNTDOWN_NUMBER - 1;
+				if (DateTime.Now > ACTIVITY_END_DT) {
+					targetIndex = 0;
+				} else if (SMART_COLLECT) {
+					// 智能收取，-1 > 1 > 24 > 4/8
+					targetIndex = truckTypes.IndexOf(-1);
+					if (targetIndex == -1) {
+						targetIndex = truckTypes.IndexOf(1);
+					}
+					if (targetIndex == -1) {
+						targetIndex = truckTypes.IndexOf(24);
+					}
+					if (targetIndex == -1) {
+						List<int> type4In3Indexes = new List<int>();
+						for (int i = 0, length = 3; i < length; ++i) {
+							if (truckTypes[i] == 4) {
+								type4In3Indexes.Add(i);
+							}
+						}
+
+						int type4In3Count = type4In3Indexes.Count;
+						targetIndex = type4In3Count switch {
+							<= 0 => 2,
+							1 => 3,
+							_ => type4In3Indexes[type4In3Count - 1]
+						};
+					}
+				}
+				Debug.Log($"开始获取第{targetIndex + 1}个矿车");
+				Operation.Click(780 + 120 * targetIndex, 850);	// 点击矿车
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(830, 730);	// 开始收取按钮
 				yield return new EditorWaitForSeconds(0.2F);
@@ -125,7 +155,7 @@ public class MiningTycoon {
 					nearbyOrders.Clear();
 				}
 				ACTIVITY_ORDER = activityOrder;
-				NEAREST_DT = DateTime.Now + new TimeSpan(Mathf.Abs(truckTypes[TRAMCAR_COUNTDOWN_NUMBER - 1]), 0, 0);
+				NEAREST_DT = DateTime.Now + new TimeSpan(Mathf.Abs(truckTypes[targetIndex]), 0, 0);
 			} else {
 				// 失败，更新倒计时
 				if (GlobalStatus.IsUnattended) {
