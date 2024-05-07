@@ -16,7 +16,7 @@ public class MiningTycoon {
 	public static int ORDER_RADIUS = 5;	// 寻找标签半径
 	public static int TRAMCAR_COUNTDOWN_NUMBER = 3;	// 收取矿车编号
 	public static DateTime NEAREST_DT = DateTime.Now;
-	public static int CLICK_INTERVAL = 1;	// 点击间隔
+	public static int CLICK_INTERVAL = 1800;	// 点击间隔（秒）
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -112,6 +112,7 @@ public class MiningTycoon {
 				}
 			
 				Debug.Log($"开始获取第{TRAMCAR_COUNTDOWN_NUMBER}个矿车");
+				List<int> truckTypes = Recognize.GetMiningTruckTypes();
 				Operation.Click(660 + 120 * TRAMCAR_COUNTDOWN_NUMBER, 850);	// 点击矿车
 				yield return new EditorWaitForSeconds(0.2F);
 				Operation.Click(830, 730);	// 开始收取按钮
@@ -124,7 +125,7 @@ public class MiningTycoon {
 					nearbyOrders.Clear();
 				}
 				ACTIVITY_ORDER = activityOrder;
-				NEAREST_DT = DateTime.Now + new TimeSpan(CLICK_INTERVAL, 0, 0);
+				NEAREST_DT = DateTime.Now + new TimeSpan(Mathf.Abs(truckTypes[TRAMCAR_COUNTDOWN_NUMBER - 1]), 0, 0);
 			} else {
 				// 失败，更新倒计时
 				if (GlobalStatus.IsUnattended) {
@@ -145,13 +146,13 @@ public class MiningTycoon {
 							NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, 2);
 						} else {
 							Debug.LogError($"标签{activityOrder}错误，取消操作");
-							NEAREST_DT = DateTime.Now + new TimeSpan(CLICK_INTERVAL, 0, 0);
+							NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, CLICK_INTERVAL);
 						}
 					}
 				} else {
 					// 非无人值守状态，取消操作
 					Debug.LogError($"非无人值守状态，取消操作");
-					NEAREST_DT = DateTime.Now + new TimeSpan(CLICK_INTERVAL, 0, 0);
+					NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, CLICK_INTERVAL);
 					nearbyOrders.Clear();
 				}
 			}

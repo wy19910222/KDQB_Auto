@@ -34,7 +34,7 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 			MiningTycoon.NEAREST_DT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
 		EditorGUILayout.EndHorizontal();
-		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（小时）", MiningTycoon.CLICK_INTERVAL, 1, 24);
+		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
 		
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {
