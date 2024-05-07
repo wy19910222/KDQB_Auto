@@ -12,6 +12,14 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
+public struct GatherTarget {
+	public int count;
+	public bool willReset;
+	public int levelOffset;
+	public int squadNumber;
+	public Recognize.HeroType heroAvatar;
+}
+
 public class Gather {
 	public static bool Test { get; set; } // 测试模式
 	
@@ -20,14 +28,14 @@ public class Gather {
 	public static bool DAN_EXIST = true;	// 是否有戴安娜
 	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	
-	public static readonly List<int> TARGET_ATTACK_COUNT_LIST = new List<int>();	// 攻击目标随机范围
-	public static readonly List<bool> TYPE_WILL_RESET_LIST = new List<bool>(); // 各类型每日是否重置次数
-	public static int TARGET_LEVEL_OFFSET = 0;	// 目标等级偏移，最高等级是0
-	public static int FEAR_STAR_LEVEL = 4;	// 打的惧星等级
-	public static int SQUAD_NUMBER = 3;	// 使用编队号码
+	public static readonly List<GatherTarget> TARGET_LIST = new() {
+		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1, heroAvatar = Recognize.HeroType.DAN},
+		new GatherTarget {count = 0, willReset = true, levelOffset = 0, squadNumber = 1, heroAvatar = Recognize.HeroType.DAN},
+		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1, heroAvatar = Recognize.HeroType.DAN},
+	};	// 攻击目标随机范围
+	
 	public static bool MUST_FULL_SOLDIER = true;	// 必须满兵
-	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 集结英雄头像
-	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
+	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new ();	// 是否自动补充体力
 	
 	public static DateTime LAST_RESET_TIME;	// 上次重置时间
 	
@@ -46,15 +54,14 @@ public class Gather {
 		}
 		{
 			List<string> targets = new List<string>();
-			for (int i = 0, length = TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
-				int attackCount = TARGET_ATTACK_COUNT_LIST[i];
+			for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
+				int attackCount = TARGET_LIST[i].count;
 				if (attackCount > 0) {
 					targets.Add($"第{i + 1}个{attackCount}次");
 				}
 			}
 			switches.Add($"目标【{string.Join("、", targets)}】");
 		}
-		switches.Add($"使用编队【{SQUAD_NUMBER}】");
 		foreach (var (type, count) in USE_BOTTLE_DICT) {
 			if (count > 0) {
 				switches.Add($"【{Utils.GetEnumInspectorName(type)}{count}次】");
@@ -87,9 +94,11 @@ public class Gather {
 			// 每天10次惧星
 			DateTime date = DateTime.Now.Date;
 			if (LAST_RESET_TIME < date) {
-				for (int i = 0, length = TYPE_WILL_RESET_LIST.Count; i < length; ++i) {
-					if (TYPE_WILL_RESET_LIST[i]) {
-						TARGET_ATTACK_COUNT_LIST[i] = GetDailyCount(i);
+				for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
+					GatherTarget _target = TARGET_LIST[i];
+					if (_target.willReset) {
+						_target.count = GetDailyCount(i);
+						TARGET_LIST[i] = _target;
 					}
 				}
 				LAST_RESET_TIME = date;
@@ -101,11 +110,12 @@ public class Gather {
 			}
 			
 			// 确定攻击目标
-			int target = RandomTarget();
-			if (target == -1) {
+			int targetIndex = RandomTarget();
+			if (targetIndex == -1) {
 				// Debug.Log("未选择攻击目标，取消操作");
 				continue;
 			}
+			GatherTarget target = TARGET_LIST[targetIndex];
 			
 			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE_NEARBY && Recognize.CurrentScene != Recognize.Scene.OUTSIDE_FARAWAY) {
 				// Debug.Log("不在世界场景");
@@ -135,8 +145,8 @@ public class Gather {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
-				// 存在打野英雄头像
-				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+				// 存在目标队列英雄头像
+				if (Recognize.GetHeroGroupNumber(target.heroAvatar) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
@@ -147,8 +157,8 @@ public class Gather {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
-				// 存在打野英雄头像
-				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+				// 存在目标队列英雄头像
+				if (Recognize.GetHeroGroupNumber(target.heroAvatar) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
@@ -169,17 +179,17 @@ public class Gather {
 			Operation.Click(1024, 512);	// 集结按钮
 			yield return new EditorWaitForSeconds(0.1F);
 			const int TARGET_WIDTH = 163;
-			Debug.Log("攻击目标: " + target);
+			Debug.Log("攻击目标: " + targetIndex);
 			{
 				// 先拖动到列表最开头，以便计算
-				var ie = Operation.NoInertiaDrag(803, 672, 803 + TARGET_WIDTH * (TARGET_ATTACK_COUNT_LIST.Count - 2), 672);
+				var ie = Operation.NoInertiaDrag(803, 672, 803 + TARGET_WIDTH * (TARGET_LIST.Count - 2), 672);
 				while (ie.MoveNext()) {
 					yield return ie.Current;
 				}
 				yield return new EditorWaitForSeconds(0.5F);
 			}
 			Debug.Log("拖动以显示攻击目标");
-			int orderOffsetX = (target - 2) * TARGET_WIDTH;
+			int orderOffsetX = (targetIndex - 2) * TARGET_WIDTH;
 			while (orderOffsetX > 0) {
 				int dragDistance = Mathf.Min(TARGET_WIDTH * 3, orderOffsetX);
 				// 往左拖动
@@ -193,16 +203,22 @@ public class Gather {
 			Operation.Click(1129 + orderOffsetX, 672);	// 选中目标
 			yield return new EditorWaitForSeconds(0.1F);
 			bool isGatherFearStar = Recognize.IsGatherFearStar;
-			if (isGatherFearStar) {
-				Debug.Log("惧星等级滑块");
-				Operation.Click(844 + 44 * FEAR_STAR_LEVEL, 880);	// 惧星等级滑块
-			} else {
-				Debug.Log("其他等级滑块");
-				Operation.Click(1062, 880);	// 其他等级滑块
-				for (int i = 0; i > TARGET_LEVEL_OFFSET; --i) {
-					yield return new EditorWaitForSeconds(0.1F);
-					Operation.Click(822, 880);	// 其他等级滑块
-				}
+			// if (isGatherFearStar) {
+			// 	Debug.Log("惧星等级滑块");
+			// 	Operation.Click(844 + 44 * FEAR_STAR_LEVEL, 880);	// 惧星等级滑块
+			// } else {
+			// 	Debug.Log("其他等级滑块");
+			// 	Operation.Click(1062, 880);	// 其他等级滑块
+			// 	for (int i = 0; i > TARGET_LEVEL_OFFSET; --i) {
+			// 		yield return new EditorWaitForSeconds(0.1F);
+			// 		Operation.Click(822, 880);	// 其他等级滑块
+			// 	}
+			// }
+			Debug.Log("等级滑块");
+			Operation.Click(1062, 880);	// 先拉满滑块
+			for (int i = 0; i > target.levelOffset; --i) {
+				yield return new EditorWaitForSeconds(0.1F);
+				Operation.Click(822, 880);	// 再降等级
 			}
 			yield return new EditorWaitForSeconds(0.1F);
 			
@@ -285,12 +301,13 @@ public class Gather {
 			}
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
 				Debug.Log("选择编队");
-				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择编队
+				Operation.Click(1145 + 37 * target.squadNumber, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);
 				if (!test && (!MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount <= 0) {
 					Debug.Log("出发");
 					Operation.Click(960, 470);	// 出战按钮
-					TARGET_ATTACK_COUNT_LIST[target]--;
+					--target.count;
+					TARGET_LIST[targetIndex] = target;
 					yield return new EditorWaitForSeconds(0.3F);
 				} else {
 					Debug.Log("退出按钮");
@@ -319,8 +336,8 @@ public class Gather {
 	
 	private static int RandomTarget() {
 		List<int> list = new List<int>();
-		for (int i = 0, length = TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
-			if (TARGET_ATTACK_COUNT_LIST[i] > 0) {
+		for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
+			if (TARGET_LIST[i].count > 0) {
 				list.Add(i);
 			}
 		}

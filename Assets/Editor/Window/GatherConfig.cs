@@ -34,53 +34,57 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("攻击目标");
 		if (GUILayout.Button("-")) {
-			Gather.TARGET_ATTACK_COUNT_LIST.RemoveAt(Gather.TARGET_ATTACK_COUNT_LIST.Count - 1);
+			Gather.TARGET_LIST.RemoveAt(Gather.TARGET_LIST.Count - 1);
 		}
 		if (GUILayout.Button("+")) {
-			Gather.TARGET_ATTACK_COUNT_LIST.Add(0);
+			Gather.TARGET_LIST.Add(new GatherTarget());
 		}
 		EditorGUILayout.EndHorizontal();
-		for (int i = Gather.TYPE_WILL_RESET_LIST.Count; i < Gather.TARGET_ATTACK_COUNT_LIST.Count; i++) {
-			Gather.TYPE_WILL_RESET_LIST.Add(false);
-		}
-		for (int i = 0, length = Gather.TARGET_ATTACK_COUNT_LIST.Count; i < length; ++i) {
+		for (int i = 0, length = Gather.TARGET_LIST.Count; i < length; ++i) {
+			GatherTarget target = Gather.TARGET_LIST[i];
+			EditorGUI.BeginChangeCheck();
+			
 			EditorGUILayout.BeginHorizontal();
 			EditorGUI.BeginChangeCheck();
-			int count = Gather.TARGET_ATTACK_COUNT_LIST[i];
-			int newCount = Math.Max(EditorGUILayout.IntField($"    目标{i + 1}", Math.Abs(count)), 0);
+			int newCount = Math.Max(EditorGUILayout.IntField($"    目标{i + 1}次数", Math.Abs(target.count)), 0);
 			if (EditorGUI.EndChangeCheck()) {
-				count = count < 0 ? -newCount : newCount;
-				Gather.TARGET_ATTACK_COUNT_LIST[i] = count;
+				target.count = target.count < 0 ? -newCount : newCount;
+				Gather.TARGET_LIST[i] = target;
 			}
 			EditorGUI.BeginChangeCheck();
-			EditorGUILayout.Toggle(count > 0, GUILayout.Width(16F));
+			EditorGUILayout.Toggle(target.count > 0, GUILayout.Width(16F));
 			if (EditorGUI.EndChangeCheck()) {
-				count = -count;
-				Gather.TARGET_ATTACK_COUNT_LIST[i] = count;
+				target.count = -target.count;
+				Gather.TARGET_LIST[i] = target;
 			}
-			Gather.TYPE_WILL_RESET_LIST[i] = GUILayout.Toggle(Gather.TYPE_WILL_RESET_LIST[i], "每日重置", "Button", GUILayout.Width(64F));
+			target.willReset = GUILayout.Toggle(target.willReset, "每日重置", "Button", GUILayout.Width(64F));
 			EditorGUILayout.EndHorizontal();
-		}
-		Gather.TARGET_LEVEL_OFFSET = EditorGUILayout.IntSlider("等级偏移（如果非惧星）", Gather.TARGET_LEVEL_OFFSET, -9, 0);
-		Gather.FEAR_STAR_LEVEL = EditorGUILayout.IntSlider("等级（如果是惧星）", Gather.FEAR_STAR_LEVEL, 1, 5);
-		
-		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
-		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
-		EditorGUI.DrawRect(wireRect2, Color.gray);
-		
-		EditorGUILayout.BeginHorizontal();
-		Gather.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Gather.SQUAD_NUMBER, 1, 8);
-		Gather.MUST_FULL_SOLDIER = GUILayout.Toggle(Gather.MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
-		EditorGUILayout.EndHorizontal();
-		EditorGUILayout.BeginHorizontal();
-		foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
-			bool isSelected = type == Gather.HERO_AVATAR;
-			bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
-			if (newIsSelected && !isSelected) {
-				Gather.HERO_AVATAR = type;
+
+			if (target.count > 0) {
+				target.levelOffset = EditorGUILayout.IntSlider("        相对最高级偏移", target.levelOffset, -9, 0);
+				target.squadNumber = EditorGUILayout.IntSlider("        使用编队号码", target.squadNumber, 1, 8);
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.Space(28F);
+				foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
+					bool isSelected = type == target.heroAvatar;
+					bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
+					if (newIsSelected && !isSelected) {
+						target.heroAvatar = type;
+					}
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+			
+			if (EditorGUI.EndChangeCheck()) {
+				Gather.TARGET_LIST[i] = target;
 			}
 		}
-		EditorGUILayout.EndHorizontal();
+		
+		// Rect rect2 = GUILayoutUtility.GetRect(0, 10);
+		// Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
+		// EditorGUI.DrawRect(wireRect2, Color.gray);
+		//
+		// Gather.MUST_FULL_SOLDIER = GUILayout.Toggle(Gather.MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
 		
 		Rect rect3 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect3 = new Rect(rect3.x, rect3.y + 4.5F, rect3.width, 1);
