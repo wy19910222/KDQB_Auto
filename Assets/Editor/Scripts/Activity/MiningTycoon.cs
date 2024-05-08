@@ -112,6 +112,7 @@ public class MiningTycoon {
 					Operation.Click(1060, 970);	// 挖矿按钮
 					yield return new EditorWaitForSeconds(0.2F);
 				}
+				yield return new EditorWaitForSeconds(1F);
 
 				List<int> truckTypes = Recognize.GetMiningTruckTypes();
 				Debug.Log("矿车类型：" + string.Join(",", truckTypes));
