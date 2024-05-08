@@ -114,6 +114,7 @@ public class MiningTycoon {
 				}
 
 				List<int> truckTypes = Recognize.GetMiningTruckTypes();
+				Debug.Log("矿车类型：" + string.Join(",", truckTypes));
 				int targetIndex = TRAMCAR_COUNTDOWN_NUMBER - 1;
 				if (DateTime.Now > ACTIVITY_END_DT) {
 					// 活动结束，挨个收取
