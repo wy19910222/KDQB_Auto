@@ -95,7 +95,7 @@ public class DeepSea {
 			}
 			Debug.Log("活动标签页");
 			Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
-			yield return new EditorWaitForSeconds(0.1F);
+			yield return new EditorWaitForSeconds(0.5F);
 
 			if (Recognize.IsDeepSea) {
 				Debug.Log("点击探测器");
