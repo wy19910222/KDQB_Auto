@@ -47,6 +47,8 @@ public class MiniMapStatus {
 					Operation.Click(27, 161 + deltaY);	// 修理按钮按钮
 				
 					Task.CurrentTask = null;
+					
+					yield return new EditorWaitForSeconds(1F);
 				}
 			}
 		}
