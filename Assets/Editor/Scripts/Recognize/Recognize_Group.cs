@@ -20,12 +20,14 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(BusyGroupCount), () => {
 				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				deltaY = IsMiniMapShowing switch {
-					true => deltaY + 155,
-					false => deltaY,
-					_ => -1
-				};
-				if (deltaY >= 0) {
+				if (deltaY != -1) {
+					deltaY = IsMiniMapShowing switch {
+						true => deltaY + 155,
+						false => deltaY,
+						_ => -1
+					};
+				}
+				if (deltaY != -1) {
 					int groupCount = 0;
 					// 返回加速等蓝色按钮中间的白色
 					Color32 targetBtnColor = new Color32(255, 255, 255, 255);
