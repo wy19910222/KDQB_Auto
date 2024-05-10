@@ -8,11 +8,10 @@
 using UnityEngine;
 
 public static partial class Recognize {
-	private static readonly Color32[,] MAIN_BTN_RED_POINT = Operation.GetFromFile("PersistentData/Textures/MainBtnRedPoint.png");
 	public static bool CanRecruitOuter {
 		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(1890, 609, 9, 9);
-			return ApproximatelyRect(realColors, MAIN_BTN_RED_POINT, 2F) > 0.8F;
+			Color32 realColor = Operation.GetColorOnScreen(1896, 611);
+			return realColor.r > realColor.g + realColor.b;
 		}
 	}
 
