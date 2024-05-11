@@ -66,11 +66,7 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 				EditorGUILayout.BeginHorizontal();
 				GUILayout.Space(28F);
 				foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
-					bool isSelected = type == target.heroAvatar;
-					bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
-					if (newIsSelected && !isSelected) {
-						target.heroAvatar = type;
-					}
+					GUILayout.Toggle(type == Global.GetLeader(target.squadNumber), Utils.GetEnumInspectorName(type), "Button");
 				}
 				EditorGUILayout.EndHorizontal();
 			}

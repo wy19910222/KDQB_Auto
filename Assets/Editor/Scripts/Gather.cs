@@ -17,7 +17,6 @@ public struct GatherTarget {
 	public bool willReset;
 	public int levelOffset;
 	public int squadNumber;
-	public Recognize.HeroType heroAvatar;
 }
 
 public class Gather {
@@ -29,9 +28,9 @@ public class Gather {
 	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	
 	public static readonly List<GatherTarget> TARGET_LIST = new() {
-		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1, heroAvatar = Recognize.HeroType.DAN},
-		new GatherTarget {count = 0, willReset = true, levelOffset = 0, squadNumber = 1, heroAvatar = Recognize.HeroType.DAN},
-		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1, heroAvatar = Recognize.HeroType.DAN},
+		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1},
+		new GatherTarget {count = 0, willReset = true, levelOffset = 0, squadNumber = 1},
+		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1},
 	};	// 攻击目标随机范围
 	
 	public static bool MUST_FULL_SOLDIER = true;	// 必须满兵
@@ -146,7 +145,7 @@ public class Gather {
 					continue;
 				}
 				// 存在目标队列英雄头像
-				if (Recognize.GetHeroGroupNumber(target.heroAvatar) >= 0) {
+				if (Recognize.GetHeroGroupNumber(Global.GetLeader(target.squadNumber)) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
@@ -158,7 +157,7 @@ public class Gather {
 					continue;
 				}
 				// 存在目标队列英雄头像
-				if (Recognize.GetHeroGroupNumber(target.heroAvatar) >= 0) {
+				if (Recognize.GetHeroGroupNumber(Global.GetLeader(target.squadNumber)) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}

@@ -81,11 +81,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
-			bool isSelected = type == Jungle.HERO_AVATAR;
-			bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
-			if (newIsSelected && !isSelected) {
-				Jungle.HERO_AVATAR = type;
-			}
+			GUILayout.Toggle(type == Global.GetLeader(Jungle.SQUAD_NUMBER), Utils.GetEnumInspectorName(type), "Button");
 		}
 		EditorGUILayout.EndHorizontal();
 		

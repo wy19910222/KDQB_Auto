@@ -56,11 +56,7 @@ public class RescueRefugeesConfig : PrefsEditorWindow<RescueRefugees> {
 		RescueRefugees.SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", RescueRefugees.SQUAD_NUMBER, 1, 8);
 		EditorGUILayout.BeginHorizontal();
 		foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
-			bool isSelected = type == RescueRefugees.HERO_AVATAR;
-			bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
-			if (newIsSelected && !isSelected) {
-				RescueRefugees.HERO_AVATAR = type;
-			}
+			GUILayout.Toggle(type == Global.GetLeader(RescueRefugees.SQUAD_NUMBER), Utils.GetEnumInspectorName(type), "Button");
 		}
 		EditorGUILayout.EndHorizontal();
 		

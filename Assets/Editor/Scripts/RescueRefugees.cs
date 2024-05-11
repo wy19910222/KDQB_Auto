@@ -22,7 +22,6 @@ public class RescueRefugees {
 	public static int ACTIVITY_ORDER = 4;	// 活动排序
 	public static int ATTACK_COUNT = 0;	// 攻击目标次数
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
-	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 集结英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
 	
 	private static EditorCoroutine s_CO;
@@ -107,7 +106,7 @@ public class RescueRefugees {
 					continue;
 				}
 				// 存在拯救难民英雄头像
-				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+				if (Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
@@ -119,7 +118,7 @@ public class RescueRefugees {
 					continue;
 				}
 				// 存在拯救难民英雄头像
-				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+				if (Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
@@ -263,7 +262,7 @@ public class RescueRefugees {
 				}
 			}
 			
-			EndOfRescueRefugees:
+			// EndOfRescueRefugees:
 			Task.CurrentTask = null;
 			
 			// 休息5秒，避免出错时一直受控不能操作

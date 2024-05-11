@@ -17,4 +17,11 @@ public class Global {
 	public static int GROUP_COUNT = 4;	// 拥有行军队列数
 	public static int ENERGY_FULL = 95;	// 体力上限
 	public static readonly List<Squad> SQUAD_LIST = new List<Squad>();	// 领队英雄
+
+	public static Recognize.HeroType GetLeader(int squadNumber) {
+		if (squadNumber > 0 && squadNumber <= SQUAD_LIST.Count) {
+			return SQUAD_LIST[squadNumber - 1].leader;
+		}
+		return Recognize.HeroType.DAN;
+	}
 }

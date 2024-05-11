@@ -26,7 +26,6 @@ public class Jungle {
 	
 	public static int SQUAD_NUMBER = 1;	// 使用编队号码
 	public static bool MUST_FULL_SOLDIER = true;	// 必须满兵
-	public static Recognize.HeroType HERO_AVATAR = Recognize.HeroType.MRX;	// 打野英雄头像
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new Dictionary<Recognize.EnergyShortcutAddingType, int>();	// 是否自动补充体力
 	
 	private static EditorCoroutine s_CO;
@@ -111,7 +110,7 @@ public class Jungle {
 					continue;
 				}
 				// 存在打野英雄头像
-				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+				if (Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
@@ -123,7 +122,7 @@ public class Jungle {
 					continue;
 				}
 				// 存在打野英雄头像
-				if (Recognize.GetHeroGroupNumber(HERO_AVATAR) >= 0) {
+				if (Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 					// Debug.Log($"存在打野英雄头像");
 					continue;
 				}
