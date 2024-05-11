@@ -5,6 +5,8 @@
  * @EditTime: 2024-05-11 15:09:39 708
  */
 
+using System;
+using UnityEngine;
 using UnityEditor;
 
 public class GlobalConfig : PrefsEditorWindow<Global> {
@@ -35,6 +37,52 @@ public class GlobalConfig : PrefsEditorWindow<Global> {
 		Global.UNATTENDED_THRESHOLD = EditorGUILayout.LongField("无人值守阈值（秒）", Global.UNATTENDED_THRESHOLD / 1000_000_0) * 1000_000_0;
 		Global.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Global.GROUP_COUNT, 0, 7);
 		Global.ENERGY_FULL = EditorGUILayout.IntField("体力上限", Global.ENERGY_FULL);
+		
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("编队");
+		if (GUILayout.Button("-")) {
+			Global.SQUAD_LIST.RemoveAt(Global.SQUAD_LIST.Count - 1);
+		}
+		if (GUILayout.Button("+")) {
+			Global.SQUAD_LIST.Add(new Squad());
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		GUILayout.Space(28F);
+		EditorGUILayout.BeginVertical();
+		for (int i = 0, length = Global.SQUAD_LIST.Count; i < length; ++i) {
+			Squad squad = Global.SQUAD_LIST[i];
+			EditorGUI.BeginChangeCheck();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField($"编队{i + 1}");
+			bool newValid = GUILayout.Toggle(squad.valid, squad.valid ? "已生效" : "未配置", "Button");
+			if (newValid != squad.valid) {
+				squad.valid = newValid;
+				if (!newValid) {
+					squad.leader = Recognize.HeroType.DAN;
+				}
+			}
+			EditorGUILayout.EndHorizontal();
+
+			if (newValid) {
+				EditorGUILayout.BeginHorizontal();
+				foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {
+					bool isSelected = type == squad.leader;
+					bool newIsSelected = GUILayout.Toggle(isSelected, Utils.GetEnumInspectorName(type), "Button");
+					if (newIsSelected && !isSelected) {
+						squad.leader = type;
+					}
+				}
+				EditorGUILayout.EndHorizontal();
+			}
+			
+			if (EditorGUI.EndChangeCheck()) {
+				Global.SQUAD_LIST[i] = squad;
+			}
+		}
+		EditorGUILayout.EndVertical();
+		EditorGUILayout.EndHorizontal();
 	}
 	
 	private void Update() {
