@@ -10,8 +10,9 @@ using UnityEngine;
 public static partial class Recognize {
 	public static bool CanRecruitOuter {
 		get {
-			Color32 realColor = Operation.GetColorOnScreen(1896, 611);
-			return realColor.r > realColor.g + realColor.b;
+			Color32 realColor1 = Operation.GetColorOnScreen(1896, 611);	// 红点红色
+			Color32 realColor2 = Operation.GetColorOnScreen(1891, 616);	// 按钮蓝色
+			return realColor1.r > realColor1.g + realColor1.b && realColor2.b > realColor2.r + realColor2.g;
 		}
 	}
 
