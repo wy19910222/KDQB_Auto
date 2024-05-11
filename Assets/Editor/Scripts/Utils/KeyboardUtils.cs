@@ -22,6 +22,14 @@ public static class KeyboardUtils {
 		F2 = 113,
 		F3 = 114,
 		F4 = 115,
+		F5,
+		F6,
+		F7,
+		F8,
+		F9,
+		F10,
+		F11,
+		F12,
 	}
 	
 	
