@@ -85,10 +85,10 @@ public class AttackMarshal {
 			}
 			Task.CurrentTask = nameof(AttackMarshal);
 
-			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
-			
-			if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
-				continue;
+			if (Recognize.CurrentScene is Recognize.Scene.OUTSIDE_FARAWAY or Recognize.Scene.OUTSIDE_NEARBY) {
+				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
+					continue;
+				}
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 
@@ -119,7 +119,8 @@ public class AttackMarshal {
 					}
 				}
 			}
-			
+
+			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
 			Debug.Log("元帅按钮");
 			Operation.Click(800, 800);	// 元帅按钮
 			yield return new EditorWaitForSeconds(0.3F);
