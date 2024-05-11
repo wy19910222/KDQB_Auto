@@ -24,6 +24,9 @@ public class ScreenShotAndApproximately : EditorWindow {
 	private string m_ApproximatelyFilename = string.Empty;
 	[SerializeField]
 	private float m_ApproximatelyThresholdMulti = 1;
+	
+	[SerializeField]
+	private Vector2Int m_LogColorPos = new Vector2Int();
 
 	private void OnGUI() {
 		const float MAX_BTN_WIDTH = 70F;
@@ -105,5 +108,17 @@ public class ScreenShotAndApproximately : EditorWindow {
 			Color32[,] realColors = Operation.GetColorsOnScreen(m_ApproximatelyRect.x, m_ApproximatelyRect.y, m_ApproximatelyRect.width, m_ApproximatelyRect.height);
 			Debug.Log(Recognize.ApproximatelyRect(realColors, targetColors, m_ApproximatelyThresholdMulti));
 		}
+		
+		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
+		EditorGUI.DrawRect(wireRect2, Color.gray);
+
+		m_LogColorPos = EditorGUILayout.Vector2IntField("像素坐标", m_LogColorPos);
+		Color32 color = Operation.GetColorOnScreen(m_LogColorPos.x, m_LogColorPos.y);
+		string colorStr = color.ToString();
+		colorStr = colorStr.Substring(5, colorStr.Length - 5 - 6);
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.ColorField($"颜色值({colorStr})", color);
+		EditorGUILayout.EndHorizontal();
 	}
 }
