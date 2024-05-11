@@ -41,7 +41,9 @@ public class GlobalConfig : PrefsEditorWindow<Global> {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("编队");
 		if (GUILayout.Button("-")) {
-			Global.SQUAD_LIST.RemoveAt(Global.SQUAD_LIST.Count - 1);
+			if (Global.SQUAD_LIST.Count > 0) {
+				Global.SQUAD_LIST.RemoveAt(Global.SQUAD_LIST.Count - 1);
+			}
 		}
 		if (GUILayout.Button("+")) {
 			Global.SQUAD_LIST.Add(new Squad());
