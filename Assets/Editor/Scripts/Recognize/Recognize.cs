@@ -39,7 +39,7 @@ public static partial class Recognize {
 				Color32[,] iconDiamondColors2 = Operation.GetColorsOnScreen(231, 111, 16, 16);
 				if (ApproximatelyRectIgnoreCovered(iconDiamondColors2, ICON_DIAMOND, 1.5F) > 0.7F) {
 					Color32[,] iconCoinColors = Operation.GetColorsOnScreen(98, 111, 16, 16);
-					if (ApproximatelyRectIgnoreCovered(iconCoinColors, ICON_COIN, 1.5F) > 0.7F) {
+					if (ApproximatelyRectIgnoreCovered(iconCoinColors, ICON_COIN, 2F) > 0.7F) {
 						return Scene.INSIDE;
 					} else {
 						return Scene.OUTSIDE_NEARBY;
