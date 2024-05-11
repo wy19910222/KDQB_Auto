@@ -83,13 +83,11 @@ public class AttackMarshal {
 				}
 				continue;
 			}
-			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
-			
 			Task.CurrentTask = nameof(AttackMarshal);
 
-			if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT ||
-					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
-					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
+			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
+			
+			if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 				continue;
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
@@ -100,22 +98,25 @@ public class AttackMarshal {
 			Debug.Log($"无窗口覆盖");
 			
 			if (!Recognize.IsMarshalExist) {
-				Debug.Log($"未检测到元帅按钮，尝试切换场景");
-				Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-				yield return new EditorWaitForSeconds(2F);
-				if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
-					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-					yield return new EditorWaitForSeconds(2F);
-				}
 				yield return new EditorWaitForSeconds(1F);
 				if (!Recognize.IsMarshalExist) {
-					Debug.Log($"切换场景后还是没有元帅");
-					yield return new EditorWaitForSeconds(MARSHAL_WAIT_SECONDS);	// 5分钟后再重新尝试
-					continue;
-				}
-				Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
-					continue;
+					Debug.Log($"未检测到元帅按钮，尝试切换场景");
+					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+					yield return new EditorWaitForSeconds(2F);
+					if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
+						Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+						yield return new EditorWaitForSeconds(2F);
+					}
+					yield return new EditorWaitForSeconds(2F);
+					if (!Recognize.IsMarshalExist) {
+						Debug.Log($"切换场景后还是没有元帅");
+						yield return new EditorWaitForSeconds(MARSHAL_WAIT_SECONDS);	// 5分钟后再重新尝试
+						continue;
+					}
+					Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
+					if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
+						continue;
+					}
 				}
 			}
 			
