@@ -17,27 +17,17 @@ public class GlobalStatusConfig : EditorWindow {
 	protected void OnEnable() {
 		GlobalStatus.Enable();
 		EditorCoroutineManager.Enable = Prefs.Get($"EditorCoroutineManager.Enable", true);
-		Recognize.GROUP_COUNT = Prefs.Get<int>($"Recognize.GROUP_COUNT");
-		Recognize.ENERGY_FULL = Prefs.Get<int>($"Recognize.ENERGY_FULL");
-		string gameRectStr = Prefs.Get<string>($"Operation.CURRENT_GAME_RECT");
-		if (!string.IsNullOrEmpty(gameRectStr)) {
-			Operation.CURRENT_GAME_RECT = Utils.StringToRect(gameRectStr);
-		}
 	}
 	protected void OnDisable() {
 		GlobalStatus.Disable();
 		Prefs.Set($"EditorCoroutineManager.Enable", EditorCoroutineManager.Enable);
-		Prefs.Set($"Recognize.GROUP_COUNT", Recognize.GROUP_COUNT);
-		Prefs.Set($"Recognize.ENERGY_FULL", Recognize.ENERGY_FULL);
-		Prefs.Set($"Operation.CURRENT_GAME_RECT", Utils.RectToString(Operation.CURRENT_GAME_RECT));
 	}
 
 	private void OnGUI() {
 		EditorCoroutineManager.Enable = GUILayout.Toggle(EditorCoroutineManager.Enable, "辅助开启", "Button");
-		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectIntField("游戏范围", Operation.CURRENT_GAME_RECT);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Toggle("无人值守", GlobalStatus.IsUnattended);
-		EditorGUILayout.LabelField($"{GlobalStatus.UnattendedDuration / 1000_000_0}/{GlobalStatus.UNATTENDED_THRESHOLD / 1000_000_0}");
+		EditorGUILayout.LabelField($"{GlobalStatus.UnattendedDuration / 1000_000_0}/{Global.UNATTENDED_THRESHOLD / 1000_000_0}");
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("当前任务", GUILayout.Width(EditorGUIUtility.labelWidth));
@@ -47,12 +37,20 @@ public class GlobalStatusConfig : EditorWindow {
 		}
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.EnumPopup("场景", Recognize.CurrentScene);
-		Recognize.GROUP_COUNT = EditorGUILayout.IntSlider("拥有行军队列", Recognize.GROUP_COUNT, 0, 7);
-		EditorGUILayout.IntField("忙碌队列", Recognize.BusyGroupCount);
+		
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.IntField("体力值", Recognize.Energy, GUILayout.Width(EditorGUIUtility.labelWidth + 30F));
-		EditorGUILayout.LabelField("/", GUILayout.Width(8F));
-		Recognize.ENERGY_FULL = EditorGUILayout.IntField(Recognize.ENERGY_FULL);
+		EditorGUILayout.LabelField("行军队列", GUILayout.Width(EditorGUIUtility.labelWidth - 1F));
+		int busyGroupCount = Recognize.BusyGroupCount;
+		if (busyGroupCount == int.MaxValue) {
+			busyGroupCount = -1;
+		}
+		EditorGUILayout.IntField(busyGroupCount, GUILayout.Width(40F - 2F));
+		EditorGUILayout.LabelField($"/ {Global.GROUP_COUNT}");
+		EditorGUILayout.EndHorizontal();
+		
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.IntField("体力值", Recognize.Energy, GUILayout.Width(EditorGUIUtility.labelWidth + 40F));
+		EditorGUILayout.LabelField($"/ {Global.ENERGY_FULL}");
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
 		// if (KeyboardUtils.IsRunning) {

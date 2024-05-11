@@ -71,13 +71,13 @@ public class AttackFlowingLightRoad {
 			}
 			Debug.Log($"剩余攻击次数：{ATTACK_TIMES - attackTimes}");
 			
-			if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT ||
+			if (Recognize.BusyGroupCount >= Global.GROUP_COUNT ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;
 			}
 			yield return new EditorWaitForSeconds(0.3F);
-			if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT ||
+			if (Recognize.BusyGroupCount >= Global.GROUP_COUNT ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
 					Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 				continue;

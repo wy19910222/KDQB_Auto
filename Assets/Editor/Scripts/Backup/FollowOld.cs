@@ -95,7 +95,7 @@ public static class FollowOld {
 					}
 					groupCount++;
 				}
-				return groupCount < Recognize.GROUP_COUNT;
+				return groupCount < Global.GROUP_COUNT;
 			}
 			return false;
 		},

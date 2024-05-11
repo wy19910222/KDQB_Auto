@@ -85,7 +85,7 @@ public class Follow {
 			
 			// 队列数量
 			int busyGroupCount = Recognize.BusyGroupCount;
-			if (busyGroupCount >= Recognize.GROUP_COUNT) {
+			if (busyGroupCount >= Global.GROUP_COUNT) {
 				continue;
 			}
 			// 如果单队列跟车

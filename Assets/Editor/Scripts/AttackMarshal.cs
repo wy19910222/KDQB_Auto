@@ -114,7 +114,7 @@ public class AttackMarshal {
 					continue;
 				}
 				Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT ||
+				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT ||
 						Recognize.GetHeroGroupNumber(Recognize.HeroType.MRX) >= 0 ||
 						Recognize.GetHeroGroupNumber(Recognize.HeroType.YLK) >= 0) {
 					continue;

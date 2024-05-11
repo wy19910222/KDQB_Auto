@@ -93,7 +93,7 @@ public class RescueRefugees {
 			} else {
 				// 体力值
 				if (USE_BOTTLE_DICT.Values.All(count => count <= 0)) {
-					if (!KEEP_ENERGY_NOT_FULL || Recognize.Energy < Recognize.ENERGY_FULL - 1) {
+					if (!KEEP_ENERGY_NOT_FULL || Recognize.Energy < Global.ENERGY_FULL - 1) {
 						int cost = DAN_EXIST ? 3 : 5;
 						if (Recognize.Energy < RESERVED_ENERGY + cost) {
 							// Debug.Log($"当前体力：{Recognize.energy}");
@@ -102,7 +102,7 @@ public class RescueRefugees {
 					}
 				}
 				// 队列数量
-				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
@@ -114,7 +114,7 @@ public class RescueRefugees {
 				// 可能处于世界场景远近景切换的动画过程中，所以等待0.2秒再判断一次
 				yield return new EditorWaitForSeconds(0.2F);
 				// 队列数量
-				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}

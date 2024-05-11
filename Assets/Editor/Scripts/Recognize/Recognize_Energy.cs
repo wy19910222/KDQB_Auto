@@ -20,7 +20,6 @@ public static partial class Recognize {
 		DIAMOND_BUY,
 	}
 	
-	private const int ENERGY_EMPTY = 0;
 	public static int ENERGY_FULL = 95;
 	
 	// private const int ENERGY_EMPTY_X = 21;
@@ -43,7 +42,7 @@ public static partial class Recognize {
 					// 最少只能判断到x=19，再继续会受到体力图标的影响
 					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
 						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F) >= 0) {
-							return Mathf.RoundToInt((float) x / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+							return Mathf.RoundToInt((float) x / width * Global.ENERGY_FULL);
 						}
 					}
 					// 10以下误差会比较大，最少只能判断到x=11
@@ -52,12 +51,12 @@ public static partial class Recognize {
 						for (int x = 20; x >= 11; --x) {
 							Color32 c = colors[x, 0];
 							if (c.r + c.g + c.b > threshold) {
-								return Mathf.RoundToInt((float) (x - 3) / width * (ENERGY_FULL - ENERGY_EMPTY) + ENERGY_EMPTY);
+								return Mathf.RoundToInt((float) (x - 3) / width * Global.ENERGY_FULL);
 							}
 						}
 					}
 				}
-				return ENERGY_EMPTY;
+				return 0;
 			});
 		}
 	}

@@ -11,9 +11,8 @@ using UnityEditor;
 using UnityEngine;
 
 public static class GlobalStatus {
-	public static bool IsUnattended => UnattendedDuration > UNATTENDED_THRESHOLD;
+	public static bool IsUnattended => UnattendedDuration > Global.UNATTENDED_THRESHOLD;
 	public static long UnattendedDuration { get; private set; }
-	public const long UNATTENDED_THRESHOLD = 30 * 1000_000_0; // 30秒
 
 	private static EditorCoroutine s_CO;
 	private static DateTime ActiveDT { get; set; } = DateTime.Now;

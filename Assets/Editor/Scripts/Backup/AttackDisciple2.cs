@@ -75,9 +75,9 @@ public static class AttackDisciple2 {
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {
-				if (Recognize.Energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < Recognize.GROUP_COUNT) {
+				if (Recognize.Energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < Global.GROUP_COUNT) {
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.Energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < Recognize.GROUP_COUNT) {
+					if (Recognize.Energy >= RESERVED_ENERGY + 10 && Recognize.BusyGroupCount < Global.GROUP_COUNT) {
 						Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 						break;
 					}

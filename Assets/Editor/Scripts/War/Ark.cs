@@ -60,9 +60,9 @@ public class Ark {
 			Task.CurrentTask = nameof(Ark);
 
 			for (int i = IsInArks.Length - 1; i >= 0; --i) {
-				if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
+				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.BusyGroupCount >= Recognize.GROUP_COUNT) {
+					if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
 						break;
 					}
 				}
