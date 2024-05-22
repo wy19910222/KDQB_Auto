@@ -39,12 +39,11 @@ public static partial class Recognize {
 					}
 				}
 				// 左上角钻石栏在无头像位置，说明处于世界远景
-				Color32[,] iconDiamondColors1 = Operation.GetColorsOnScreen(151, 111, 16, 16);
-				if (ApproximatelyRectIgnoreCovered(iconDiamondColors1, ICON_DIAMOND, 1.5F) > 0.7F) {
+				if (IsDiamondFarawayIconExist) {
 					return Scene.OUTSIDE_FARAWAY;
 				}
 				// 左上角钻石栏在有头像位置，说明处于世界近景或城内
-				if (IsDiamondIconExist) {
+				if (IsDiamondNearbyIconExist) {
 					if (IsCoinIconExist) {
 						return Scene.INSIDE;
 					} else {
@@ -62,7 +61,8 @@ public static partial class Recognize {
 		}
 	}
 	private static readonly Color32[,] ICON_DIAMOND = Operation.GetFromFile("PersistentData/Textures/IconDiamond.png");
-	private static bool IsDiamondIconExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(231, 111, 16, 16), ICON_DIAMOND, 1.5F) > 0.7F;
+	private static bool IsDiamondFarawayIconExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(151, 111, 16, 16), ICON_DIAMOND, 2.5F) > 0.7F;
+	private static bool IsDiamondNearbyIconExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(231, 111, 16, 16), ICON_DIAMOND, 2.5F) > 0.7F;
 	private static readonly Color32[,] ICON_COIN = Operation.GetFromFile("PersistentData/Textures/IconCoin.png");
 	private static bool IsCoinIconExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(98, 111, 16, 16), ICON_COIN, 2F) > 0.7F;
 
