@@ -134,7 +134,7 @@ public class Gather {
 					if (!KEEP_ENERGY_NOT_FULL || Recognize.Energy < Global.ENERGY_FULL - 1) {
 						int cost = DAN_EXIST ? 8 : 10;
 						if (Recognize.Energy < RESERVED_ENERGY + cost) {
-							// Debug.Log($"当前体力：{Recognize.energy}");
+							// Debug.Log($"当前体力：{Recognize.Energy}");
 							continue;
 						}
 					}

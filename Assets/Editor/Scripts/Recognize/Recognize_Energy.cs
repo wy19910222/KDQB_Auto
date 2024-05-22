@@ -28,10 +28,10 @@ public static partial class Recognize {
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
 	// private const int ENERGY_Y = 113;
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(197, 237, 100, 255);
-	private const int ENERGY_EMPTY_X = 22;
-	private const int ENERGY_FULL_X = 118;
-	private const int ENERGY_Y = 128;
-	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(254, 237, 64, 255);
+	private const int ENERGY_EMPTY_X = 21;
+	private const int ENERGY_FULL_X = 117;
+	private const int ENERGY_Y = 129;
+	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(253, 248, 83, 255);
 	public static int Energy {
 		get {
 			return GetCachedValueOrNew(nameof(Energy), () => {
