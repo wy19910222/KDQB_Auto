@@ -164,25 +164,25 @@ public class RescueRefugees {
 			}
 			Debug.Log("活动标签页");
 			Operation.Click(1190 + orderOffsetX, 200);	// 活动标签页
-			yield return new EditorWaitForSeconds(0.1F);
+			yield return new EditorWaitForSeconds(0.3F);
 
 			int canUseSOS = Recognize.CanUseSOS;
 			if (canUseSOS != 0) {
 				if (canUseSOS == 3) {
 					Debug.Log("前往按钮");
 					Operation.Click(1120, 956);	// 前往按钮
-					yield return new EditorWaitForSeconds(0.3F);
+					yield return new EditorWaitForSeconds(0.5F);
 					Debug.Log("第一个难民营");
 					Operation.Click(960, 300);	// 选中第一个难民营
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.3F);
 				} else {
 					Debug.Log("使用求救信按钮");
 					Operation.Click(1120, canUseSOS == 2 ? 868 : 956);	// 使用求救信按钮
-					yield return new EditorWaitForSeconds(0.2F);
+					yield return new EditorWaitForSeconds(0.5F);
 					if (Recognize.IsSOSExist) {
 						Debug.Log("使用道具按钮");
 						Operation.Click(960, 960); // 使用道具按钮
-						yield return new EditorWaitForSeconds(0.3F);
+						yield return new EditorWaitForSeconds(0.5F);
 					}
 				}
 				if (!Recognize.IsWindowCovered) {
