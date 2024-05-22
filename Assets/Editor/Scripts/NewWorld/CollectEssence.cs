@@ -50,21 +50,14 @@ public class CollectEssence {
 				continue;
 			}
 			
-			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
-				Debug.Log("处于出战界面，不执行操作");
-				continue;
-			}
-			if (Recognize.IsWindowCovered) {
-				Debug.Log("有窗口覆盖，不执行操作");
+			// 不是有活动入口的场景
+			if (!Recognize.IsSceneActivityEntranceVisible) {
 				continue;
 			}
 			
-			// 只有是世界界面近景或主城界面，才执行
-			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.UNKNOWN:
-				case Recognize.Scene.FIGHTING:
-				case Recognize.Scene.OUTSIDE_FARAWAY:
-					continue;
+			if (Recognize.IsWindowCovered) {
+				Debug.Log("有窗口覆盖，不执行操作");
+				continue;
 			}
 
 			if (Task.CurrentTask != null) {

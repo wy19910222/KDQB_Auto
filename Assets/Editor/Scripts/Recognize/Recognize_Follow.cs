@@ -130,7 +130,7 @@ public static partial class Recognize {
 
 	public static bool IsTooLateWindowExist {
 		get {
-			if (CurrentScene == Scene.FIGHTING) {
+			if (CurrentScene == Scene.FIGHTING_MARCH) {
 				// 判断出征界面是否弹出赶不上弹框
 				// 暂时判断的是指定位置是否存在红色取消按钮
 				Color32 targetColor = new Color32(211, 78, 56, 255);

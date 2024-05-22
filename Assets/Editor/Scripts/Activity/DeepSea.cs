@@ -53,8 +53,8 @@ public class DeepSea {
 			if (Recognize.IsWindowCovered) {
 				continue;
 			}
-			// 战斗场景
-			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
+			// 不是有活动入口的场景也不是世界远景
+			if (!Recognize.IsOutsideOrInsideScene) {
 				continue;
 			}
 

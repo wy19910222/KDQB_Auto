@@ -47,7 +47,7 @@ public class BlockBreak {
 				continue;
 			}
 			
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				// 战斗场景，只判断战斗阻塞
 				if ((DateTime.Now - fightingBlockDT).TotalSeconds > FIGHTING_BLOCK_SECONDS) {
 					for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {

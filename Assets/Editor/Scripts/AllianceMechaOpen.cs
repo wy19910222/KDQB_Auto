@@ -57,7 +57,8 @@ public class AllianceMechaOpen {
 				continue;
 			}
 			
-			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
+			// 非世界非主城场景
+			if (!Recognize.IsOutsideOrInsideScene) {
 				Debug.Log("处于出战界面，不执行操作");
 				continue;
 			}

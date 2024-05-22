@@ -61,8 +61,8 @@ public class AutoCastCastleAbility {
 			if (Recognize.IsWindowCovered) {
 				continue;
 			}
-			// 战斗场景
-			if (Recognize.CurrentScene is Recognize.Scene.UNKNOWN or Recognize.Scene.FIGHTING) {
+			// 非世界非主城场景
+			if (!Recognize.IsOutsideOrInsideScene) {
 				continue;
 			}
 

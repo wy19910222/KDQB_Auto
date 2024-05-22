@@ -86,7 +86,7 @@ public class Ark {
 						Debug.Log("加入战斗按钮");
 						Operation.Click(1060, 825);	// 加入战斗按钮
 						yield return new EditorWaitForSeconds(0.5F);
-						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 							Debug.Log("选择队列");
 							Operation.Click(1145 + 37 * SQUAD_NUMBERS[i], 870);	// 选择队列
 							yield return new EditorWaitForSeconds(0.2F);

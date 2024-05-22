@@ -209,7 +209,7 @@ public class Follow {
 			}
 			yield return new EditorWaitForSeconds(delay * 0.5F);
 			// 等待进入战斗界面，如果超过1秒钟没进去，说明进入失败，结束流程
-			for (int i = 0; i < 10 && Recognize.CurrentScene != Recognize.Scene.FIGHTING; ++i) {
+			for (int i = 0; i < 10 && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH; ++i) {
 				if (i == 9) {
 					goto EndOfFollow;
 				}
@@ -236,7 +236,7 @@ public class Follow {
 				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
 			}
 			// 如果还停留在出征界面，则退出
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				maybeSucceed = false;
 				Debug.Log("退出按钮");
 				Operation.Click(30, 140);	// 退出按钮
@@ -244,7 +244,7 @@ public class Follow {
 				Debug.Log("确认退出按钮");
 				Operation.Click(1064, 634);	// 确认退出按钮
 				// 等待退出战斗界面
-				for (int i = 0; i < 10 && Recognize.CurrentScene == Recognize.Scene.FIGHTING; i++) {
+				for (int i = 0; i < 10 && Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH; i++) {
 					yield return new EditorWaitForSeconds(0.1F);
 				}
 			}

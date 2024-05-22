@@ -55,12 +55,9 @@ public class FreeDiamond {
 				continue;
 			}
 
-			// 只有是世界界面近景或主城界面，才执行
-			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.UNKNOWN:
-				case Recognize.Scene.FIGHTING:
-				case Recognize.Scene.OUTSIDE_FARAWAY:
-					continue;
+			// 不是有活动入口的场景
+			if (!Recognize.IsSceneActivityEntranceVisible) {
+				continue;
 			}
 
 			if (Task.CurrentTask != null) {

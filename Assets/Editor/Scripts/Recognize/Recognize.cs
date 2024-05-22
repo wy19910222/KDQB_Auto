@@ -19,16 +19,24 @@ public static partial class Recognize {
 		OUTSIDE_FARAWAY,
 		[InspectorName("战斗")]
 		FIGHTING,
+		[InspectorName("战斗_出征")]
+		FIGHTING_MARCH,
+		[InspectorName("战斗_回放")]
+		FIGHTING_PLAYBACK,
 	}
 
-	private static readonly Color32[,] ICON_DIAMOND = Operation.GetFromFile("PersistentData/Textures/IconDiamond.png");
-	private static readonly Color32[,] ICON_COIN = Operation.GetFromFile("PersistentData/Textures/IconCoin.png");
 	public static Scene CurrentScene {
 		get {
 			return GetCachedValueOrNew(nameof(CurrentScene), () => {
 				// 左上角蓝色返回按钮存在，说明处于出战界面
-				if (ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255)) >= 0) {
-					return Scene.FIGHTING;
+				if (IsFighting) {
+					if (IsFightingMarch) {
+						return Scene.FIGHTING_MARCH;
+					} else if (!IsFightingCanSkip) {
+						return Scene.FIGHTING_PLAYBACK;
+					} else {
+						return Scene.FIGHTING;
+					}
 				}
 				// 左上角钻石栏在无头像位置，说明处于世界远景
 				Color32[,] iconDiamondColors1 = Operation.GetColorsOnScreen(151, 111, 16, 16);
@@ -36,10 +44,8 @@ public static partial class Recognize {
 					return Scene.OUTSIDE_FARAWAY;
 				}
 				// 左上角钻石栏在有头像位置，说明处于世界近景或城内
-				Color32[,] iconDiamondColors2 = Operation.GetColorsOnScreen(231, 111, 16, 16);
-				if (ApproximatelyRectIgnoreCovered(iconDiamondColors2, ICON_DIAMOND, 1.5F) > 0.7F) {
-					Color32[,] iconCoinColors = Operation.GetColorsOnScreen(98, 111, 16, 16);
-					if (ApproximatelyRectIgnoreCovered(iconCoinColors, ICON_COIN, 2F) > 0.7F) {
+				if (IsDiamondIconExist) {
+					if (IsCoinIconExist) {
 						return Scene.INSIDE;
 					} else {
 						return Scene.OUTSIDE_NEARBY;
@@ -55,6 +61,13 @@ public static partial class Recognize {
 			});
 		}
 	}
+	private static readonly Color32[,] ICON_DIAMOND = Operation.GetFromFile("PersistentData/Textures/IconDiamond.png");
+	private static bool IsDiamondIconExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(231, 111, 16, 16), ICON_DIAMOND, 1.5F) > 0.7F;
+	private static readonly Color32[,] ICON_COIN = Operation.GetFromFile("PersistentData/Textures/IconCoin.png");
+	private static bool IsCoinIconExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(98, 111, 16, 16), ICON_COIN, 2F) > 0.7F;
+
+	public static bool IsSceneActivityEntranceVisible => CurrentScene is Scene.OUTSIDE_NEARBY or Scene.INSIDE;
+	public static bool IsOutsideOrInsideScene => CurrentScene is Scene.OUTSIDE_FARAWAY or Scene.OUTSIDE_NEARBY or Scene.INSIDE;
 
 	public static bool IsOutsideFaraway => GetCachedValueOrNew(nameof(IsOutsideFaraway), () => 
 			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0);

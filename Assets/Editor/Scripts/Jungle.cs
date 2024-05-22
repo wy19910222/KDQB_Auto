@@ -217,7 +217,7 @@ public class Jungle {
 				Debug.Log("活动对象气泡里的攻击按钮");
 				Operation.Click(960, 880);	// 攻击按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH) {
 					// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
 					Operation.Click(960, 920);	// 攻击按钮
 				}
@@ -289,7 +289,7 @@ public class Jungle {
 						Debug.Log("活动对象气泡里的攻击按钮");
 						Operation.Click(960, 880);	// 攻击按钮
 						yield return new EditorWaitForSeconds(0.3F);
-						if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+						if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH) {
 							// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
 							Operation.Click(960, 920);	// 攻击按钮
 						}
@@ -306,7 +306,7 @@ public class Jungle {
 					yield return new EditorWaitForSeconds(300);
 				}
 			}
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				Debug.Log("选择编队");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);

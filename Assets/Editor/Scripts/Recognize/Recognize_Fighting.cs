@@ -8,8 +8,17 @@
 using UnityEngine;
 
 public static partial class Recognize {
-	public static bool IsFightingPlayback => GetCachedValueOrNew(nameof(IsFightingPlayback), () => 
-			Approximately(Operation.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255)));
+	// public static bool IsFightingPlayback => GetCachedValueOrNew(nameof(IsFightingPlayback), () => 
+	// 		Approximately(Operation.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255)));
+	private static bool IsFighting => ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(93, 126, 202, 255)) >= 0;
+	private static bool IsFightingMarch => ApproximatelyCoveredCount(Operation.GetColorOnScreen(71, 515), new Color32(104, 140, 247, 255)) >= 0;
+	private static bool IsFightingCanSkip => ApproximatelyCoveredCount(Operation.GetColorOnScreen(6, 248), new Color32(93, 126, 202, 255)) >= 0;
+	private static bool IsFightingPlayback => !IsFightingCanSkip && ApproximatelyCoveredCount(Operation.GetColorOnScreen(6, 195), new Color32(93, 126, 202, 255)) >= 0;
+
+	private static readonly Color32[,] BTN_ONE_KEY_BATTLE = Operation.GetFromFile("PersistentData/Textures/BtnOneKeyBattle.png");
+	private static bool IsOneKeyBattleExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(1175, 810, 70, 22), BTN_ONE_KEY_BATTLE, 1.5F) > 0.7F;
+	private static readonly Color32[,] BTN_ARMY_CHANGE = Operation.GetFromFile("PersistentData/Textures/BtnArmyChange.png");
+	private static bool IsArmyChangeExist => ApproximatelyRectIgnoreCovered(Operation.GetColorsOnScreen(1136, 842, 68, 22), BTN_ARMY_CHANGE, 1.5F) > 0.7F;
 	
 	private const int SOLDIER_EMPTY_X = 48;
 	private const int SOLDIER_FULL_X = 156;

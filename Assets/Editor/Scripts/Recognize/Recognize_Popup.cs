@@ -13,6 +13,8 @@ public static partial class Recognize {
 			return GetCachedValueOrNew(nameof(IsWindowCovered), () => {
 				switch (CurrentScene) {
 					case Scene.FIGHTING:
+					case Scene.FIGHTING_MARCH:
+					case Scene.FIGHTING_PLAYBACK:
 						// 左上角返回按钮颜色很暗
 						return !Approximately(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
 					case Scene.INSIDE:
@@ -31,6 +33,8 @@ public static partial class Recognize {
 			return GetCachedValueOrNew(nameof(WindowCoveredCount), () => {
 				switch (CurrentScene) {
 					case Scene.FIGHTING:
+					case Scene.FIGHTING_MARCH:
+					case Scene.FIGHTING_PLAYBACK:
 						// 左上角返回按钮颜色很暗
 						return ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(94, 126, 202, 255));
 					case Scene.INSIDE:

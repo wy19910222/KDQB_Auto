@@ -115,7 +115,7 @@ public class AttackChaoticMarshal {
 			Debug.Log("攻击按钮");
 			Operation.Click(1055, 835);	// 攻击按钮
 			yield return new EditorWaitForSeconds(0.3F);
-			if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+			if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH) {
 				// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
 				Debug.Log("攻击按钮");
 				Operation.Click(1055, 865);	// 攻击按钮
@@ -144,7 +144,7 @@ public class AttackChaoticMarshal {
 				Debug.Log("攻击按钮");
 				Operation.Click(1055, 835);	// 攻击按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH) {
 					// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
 					Debug.Log("攻击按钮");
 					Operation.Click(1055, 865);	// 攻击按钮
@@ -157,7 +157,7 @@ public class AttackChaoticMarshal {
 					yield return new EditorWaitForSeconds(300);
 				}
 			}
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				Debug.Log($"选择队列{SQUAD_NUMBER}");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
@@ -171,7 +171,7 @@ public class AttackChaoticMarshal {
 			}
 			yield return new EditorWaitForSeconds(0.5F);
 			// 如果还停留在出征界面(比如点出战按钮前一瞬间元帅没了)，则退出
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				Debug.Log("退出按钮");
 				Operation.Click(30, 140);	// 退出按钮
 				yield return new EditorWaitForSeconds(0.3F);

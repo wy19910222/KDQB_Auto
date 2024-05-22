@@ -245,7 +245,7 @@ public class Gather {
 				Debug.Log("惧星气泡里的集结按钮");
 				Operation.Click(870, 830);	// 集结按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING) {
+				if (!Recognize.IsEnergyShortcutAdding && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH) {
 					// 不同视角距离按钮位置会不一样，所以尝试两个不同的位置
 					Debug.Log("惧星气泡里的集结按钮");
 					Operation.Click(870, 850);	// 集结按钮
@@ -298,7 +298,7 @@ public class Gather {
 					yield return new EditorWaitForSeconds(300);
 				}
 			}
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				Debug.Log("选择编队");
 				Operation.Click(1145 + 37 * target.squadNumber, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);

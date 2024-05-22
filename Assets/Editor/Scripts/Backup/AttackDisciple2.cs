@@ -64,14 +64,9 @@ public static class AttackDisciple2 {
 
 	private static IEnumerator Update() {
 		while (true) {
-			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.FIGHTING:
-					Debug.Log("可能是卡在出战界面了，执行返回");
-					Operation.Click(30, 140);	// 左上角返回按钮
-					break;
-				// case Recognize.Scene.INSIDE:
-				// 	Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-				// 	break;
+			// 不是有活动入口的场景
+			if (!Recognize.IsSceneActivityEntranceVisible) {
+				continue;
 			}
 			Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
 			while (true) {

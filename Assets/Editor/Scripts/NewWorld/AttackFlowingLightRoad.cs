@@ -86,12 +86,8 @@ public class AttackFlowingLightRoad {
 			Debug.Log($"无窗口覆盖");
 			
 			// 只有是世界界面近景，才执行
-			switch (Recognize.CurrentScene) {
-				case Recognize.Scene.UNKNOWN:
-				case Recognize.Scene.FIGHTING:
-				case Recognize.Scene.OUTSIDE_FARAWAY:
-				case Recognize.Scene.INSIDE:
-					continue;
+			if (Recognize.CurrentScene != Recognize.Scene.OUTSIDE_NEARBY) {
+				continue;
 			}
 			
 			if (Task.CurrentTask != null) {
@@ -167,7 +163,7 @@ public class AttackFlowingLightRoad {
 					yield return new EditorWaitForSeconds(ENERGY_WAIT_SECONDS);
 				}
 			}
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				Debug.Log($"选择队列{SQUAD_NUMBER}");
 				Operation.Click(1145 + 37 * SQUAD_NUMBER, 870);	// 选择队列
 				yield return new EditorWaitForSeconds(0.2F);
@@ -181,7 +177,7 @@ public class AttackFlowingLightRoad {
 			}
 			yield return new EditorWaitForSeconds(0.5F);
 			// 如果还停留在出征界面(比如点出战按钮前一瞬间目标没了)，则退出
-			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING) {
+			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
 				Debug.Log("退出按钮");
 				Operation.Click(30, 140);	// 退出按钮
 				yield return new EditorWaitForSeconds(0.3F);
