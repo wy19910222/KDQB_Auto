@@ -106,7 +106,7 @@ public class Jungle {
 				}
 				// 队列数量
 				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
-					Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
+					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
 				// 存在打野英雄头像
