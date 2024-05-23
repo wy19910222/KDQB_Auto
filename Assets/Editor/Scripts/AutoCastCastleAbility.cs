@@ -128,8 +128,10 @@ public class AutoCastCastleAbility {
 					ABILITIES.Add(ability);
 				}
 				yield return new EditorWaitForSeconds(0.2F);
-				Debug.Log("关闭按钮");
-				Operation.Click(1171, 190);	// 关闭按钮
+				if (Recognize.IsWindowCovered) {
+					Debug.Log("关闭按钮");
+					Operation.Click(1171, 190);	// 关闭按钮
+				}
 			}
 			
 			Task.CurrentTask = null;
