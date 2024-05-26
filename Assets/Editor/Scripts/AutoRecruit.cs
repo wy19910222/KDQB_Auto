@@ -33,6 +33,10 @@ public class AutoRecruit {
 		while (true) {
 			yield return null;
 
+			if (Recognize.IsWindowCovered) {
+				continue;
+			}
+
 			if (!Recognize.CanRecruitOuter) {
 				continue;
 			}
