@@ -7,6 +7,7 @@
 
 using System;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
@@ -14,7 +15,21 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 	private static void Open() {
 		GetWindow<RuinsPropsConfig>("遗迹道具").Show();
 	}
-	
+
+	private ReorderableList m_List;
+
+	protected override void OnEnable() {
+		base.OnEnable();
+		m_List = new ReorderableList(RuinsProps.RUIN_PROP_PRIORITY, typeof(Recognize.RuinPropType)) {
+			drawHeaderCallback = rect => {
+				EditorGUI.LabelField(rect, "道具优先级");
+			},
+			drawElementCallback = (rect, index, active, focused) => {
+				RuinsProps.RUIN_PROP_PRIORITY[index] = (Recognize.RuinPropType) EditorGUI.EnumPopup(rect, RuinsProps.RUIN_PROP_PRIORITY[index]);
+			}
+		};
+	}
+
 	private void OnGUI() {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("排序列表");
@@ -43,6 +58,12 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 			RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
 		}
 		EditorGUILayout.EndHorizontal();
+
+		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
+		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
+		EditorGUI.DrawRect(wireRect1, Color.gray);
+		
+		m_List.DoLayoutList();
 		
 		EditorGUILayout.BeginHorizontal();
 		GUILayout.Space(5F);

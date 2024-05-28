@@ -16,6 +16,14 @@ public class RuinsProps {
 	public static DateTime LAST_REFRESH_TIME;
 	public static DateTime LAST_TIME;
 	public static TimeSpan INTERVAL = new(49, 0, 0);
+	public static readonly List<Recognize.RuinPropType> RUIN_PROP_PRIORITY = new() {
+		Recognize.RuinPropType.CLASS_PROP,
+		Recognize.RuinPropType.BIG_ENERGY,
+		Recognize.RuinPropType.GREEN_MATERIAL,
+		Recognize.RuinPropType.STRENGTHEN_PART,
+		Recognize.RuinPropType.SKILL_TICKET,
+		Recognize.RuinPropType.PURPLE_HERO_CHIP
+	};
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -67,6 +75,7 @@ public class RuinsProps {
 			Task.CurrentTask = nameof(RuinsProps);
 
 			// 尝试领取遗迹道具
+			bool failed = false;
 			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.3F);
@@ -83,7 +92,7 @@ public class RuinsProps {
 						Operation.Click(957, 243);	// 2级遗迹标签
 						yield return new EditorWaitForSeconds(0.2F);
 
-						int succeeded = 0;
+						int gotCount = 0;
 						const int ITEM_HEIGHT = 116;
 						const int OFFSET_Y_MAX = 206;
 						int offsetY = 0;
@@ -120,26 +129,13 @@ public class RuinsProps {
 							}
 							propTypes[4] = Recognize.GetRuinPropType(772, 813, 44, 44);
 							// 找职业道具
-							int targetIndex = Array.IndexOf(propTypes, Recognize.RuinPropType.CLASS_PROP);
-							if (targetIndex == -1) {
-								// 找大体
-								targetIndex = Array.IndexOf(propTypes, Recognize.RuinPropType.BIG_ENERGY);
-							}
-							if (targetIndex == -1) {
-								// 找绿色材料
-								targetIndex = Array.IndexOf(propTypes, Recognize.RuinPropType.GREEN_MATERIAL);
-							}
-							if (targetIndex == -1) {
-								// 找强化部件
-								targetIndex = Array.IndexOf(propTypes, Recognize.RuinPropType.STRENGTHEN_PART);
-							}
-							if (targetIndex == -1) {
-								// 找技能抽卡券
-								targetIndex = Array.IndexOf(propTypes, Recognize.RuinPropType.SKILL_TICKET);
-							}
-							if (targetIndex == -1) {
-								// 找紫色英雄碎片
-								targetIndex = Array.IndexOf(propTypes, Recognize.RuinPropType.PURPLE_HERO_CHIP);
+							int targetIndex = -1;
+							foreach (Recognize.RuinPropType propType in RUIN_PROP_PRIORITY) {
+								// 按优先级找对应类型的道具
+								targetIndex = Array.IndexOf(propTypes, propType);
+								if (targetIndex != -1) {
+									break;
+								}
 							}
 							if (targetIndex != -1) {
 								Vector2Int btnPos = new Vector2Int(1085, targetIndex == 0 ? 495 : 426 + targetIndex * 102);
@@ -150,7 +146,7 @@ public class RuinsProps {
 									yield return new EditorWaitForSeconds(0.3F);
 									Debug.Log("确定按钮");
 									Operation.Click(960, 700);	// 确定按钮
-									succeeded++;
+									gotCount++;
 									yield return new EditorWaitForSeconds(0.3F);
 									Debug.Log("点外面关闭");
 									Operation.Click(960, 200);	// 点外面关闭
@@ -163,11 +159,14 @@ public class RuinsProps {
 							Operation.Click(1170, 204);	// 关闭按钮
 							yield return new EditorWaitForSeconds(0.3F);
 						}
-						if (succeeded >= RUIN_ORDERS.Count) {
-							LAST_TIME = DateTime.Now;
+						if (gotCount < RUIN_ORDERS.Count) {
+							failed = true;
 						}
 					}
 				}
+			}
+			if (!failed) {
+				LAST_TIME = DateTime.Now;
 			}
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
@@ -176,6 +175,11 @@ public class RuinsProps {
 			}
 			
 			Task.CurrentTask = null;
+			
+			if (failed) {
+				// 如果失败，则一分钟后重试
+				yield return new EditorWaitForSeconds(60F);
+			}
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
@@ -191,7 +195,7 @@ public class RuinsProps {
 			yield break;
 		}
 		DateTime prevLastTime = LAST_TIME;
-		LAST_TIME = default;
+		LAST_TIME = DateTime.Now.Date - new TimeSpan(0, 1, 0);
 		do {
 			yield return null;
 		} while (Task.CurrentTask != null);
