@@ -44,6 +44,23 @@ public static partial class Recognize {
 		CAN_CHALLENGE = 4,
 	}
 	
+	public enum RuinPropType {
+		[InspectorName("其他")]
+		OTHER = 0,
+		[InspectorName("职业道具")]
+		CLASS_PROP = 1,
+		[InspectorName("大体力瓶")]
+		BIG_ENERGY = 2,
+		[InspectorName("绿色材料")]
+		GREEN_MATERIAL = 3,
+		[InspectorName("强化部件")]
+		STRENGTHEN_PART = 4,
+		[InspectorName("技能抽卡券")]
+		SKILL_TICKET = 5,
+		[InspectorName("紫色英雄碎片")]
+		PURPLE_HERO_CHIP = 6,
+	}
+	
 	private static readonly Color32[,] ALLIANCE_ACTIVITY_MECHA = Operation.GetFromFile("PersistentData/Textures/AllianceActivityMecha.png");
 	private static readonly Color32[,] ALLIANCE_ACTIVITY_DEFENCE = Operation.GetFromFile("PersistentData/Textures/AllianceActivityDefence.png");
 	public static AllianceActivityType[] AllianceActivityTypes {
@@ -232,6 +249,52 @@ public static partial class Recognize {
 				Color32[,] realColors = Operation.GetColorsOnScreen(1066, 883, 22, 30);
 				return ApproximatelyRect(realColors, ALLIANCE_HELP_COMPLETE) > 0.8F;
 			});
+		}
+	}
+	
+	public static bool AllianceTerritoryIsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(939, 497);
+			return realColor.r > realColor.g + realColor.g + realColor.b + realColor.b;
+		}
+	}
+	
+	public static bool AllianceRuinIsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(1197, 177);
+			return realColor.r > realColor.g + realColor.g + realColor.b + realColor.b;
+		}
+	}
+	
+	public static bool AllianceRuinLv2IsNew {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(1035, 228);
+			return realColor.r > realColor.g + realColor.g + realColor.b + realColor.b;
+		}
+	}
+	
+	private static readonly Color32[,] RUIN_PROP_CLASS_PROP = Operation.GetFromFile("PersistentData/Textures/RuinPropClassProp.png");
+	private static readonly Color32[,] RUIN_PROP_BIG_ENERGY = Operation.GetFromFile("PersistentData/Textures/RuinPropBigEnergy.png");
+	private static readonly Color32[,] RUIN_PROP_GREEN_MATERIAL = Operation.GetFromFile("PersistentData/Textures/RuinPropGreenMaterial.png");
+	private static readonly Color32[,] RUIN_PROP_STRENGTHEN_PART = Operation.GetFromFile("PersistentData/Textures/RuinPropStrengthenPart.png");
+	private static readonly Color32[,] RUIN_PROP_SKILL_TICKET = Operation.GetFromFile("PersistentData/Textures/RuinPropSkillTicket.png");
+	private static readonly Color32[,] RUIN_PROP_PURPLE_HERO_CHIP = Operation.GetFromFile("PersistentData/Textures/RuinPropPurpleHeroChip.png");
+	public static RuinPropType GetRuinPropType(int x, int y, int width, int height) {
+		Color32[,] realColors = Operation.GetColorsOnScreen(x, y, width, height);
+		if (ApproximatelyRect(realColors, RUIN_PROP_CLASS_PROP) > 0.5F) {
+			return RuinPropType.CLASS_PROP;
+		} else if (ApproximatelyRect(realColors, RUIN_PROP_BIG_ENERGY) > 0.5F) {
+			return RuinPropType.BIG_ENERGY;
+		} else if (ApproximatelyRect(realColors, RUIN_PROP_GREEN_MATERIAL) > 0.5F) {
+			return RuinPropType.GREEN_MATERIAL;
+		} else if (ApproximatelyRect(realColors, RUIN_PROP_STRENGTHEN_PART) > 0.5F) {
+			return RuinPropType.STRENGTHEN_PART;
+		} else if (ApproximatelyRect(realColors, RUIN_PROP_SKILL_TICKET) > 0.5F) {
+			return RuinPropType.SKILL_TICKET;
+		} else if (ApproximatelyRect(realColors, RUIN_PROP_PURPLE_HERO_CHIP) > 0.5F) {
+			return RuinPropType.PURPLE_HERO_CHIP;
+		} else {
+			return RuinPropType.OTHER;
 		}
 	}
 }
