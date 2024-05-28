@@ -28,25 +28,33 @@ public static partial class Recognize {
 	public static Scene CurrentScene {
 		get {
 			return GetCachedValueOrNew(nameof(CurrentScene), () => {
-				// 左上角蓝色返回按钮存在，说明处于出战界面
+				// 左上角蓝色返回按钮存在，说明处于战斗界面
 				if (IsFighting) {
+					// 左边军阵选择或者保存阵容按钮存在，说明处于战斗-出征界面
 					if (IsFightingMarch) {
 						return Scene.FIGHTING_MARCH;
-					} else if (!IsFightingCanSkip) {
+					}
+					// 左上角跳过按钮不存在，说明处于战斗-回放界面
+					else if (!IsFightingCanSkip) {
 						return Scene.FIGHTING_PLAYBACK;
-					} else {
+					}
+					// 其他情况，视为战斗界面
+					else {
 						return Scene.FIGHTING;
 					}
 				}
-				// 左上角钻石栏在无头像位置，说明处于世界远景
+				// 左上角钻石栏在无头像位置，说明处于世界-远景
 				if (IsDiamondFarawayIconExist) {
 					return Scene.OUTSIDE_FARAWAY;
 				}
 				// 左上角钻石栏在有头像位置，说明处于世界近景或城内
 				if (IsDiamondNearbyIconExist) {
+					// 金币栏图标存在，说明处于城内
 					if (IsCoinIconExist) {
 						return Scene.INSIDE;
-					} else {
+					}
+					// 剩下情况，视为世界-近景
+					else {
 						return Scene.OUTSIDE_NEARBY;
 					}
 				}

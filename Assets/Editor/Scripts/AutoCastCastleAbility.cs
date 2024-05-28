@@ -93,7 +93,7 @@ public class AutoCastCastleAbility {
 				int orderOffsetY = (ability.order - 4) * ITEM_HEIGHT;
 				while (orderOffsetY > 0) {
 					const int dragDistance = ITEM_HEIGHT * 4;
-					// 往左拖动
+					// 往上拖动
 					var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
 					while (ie.MoveNext()) {
 						yield return ie.Current;
