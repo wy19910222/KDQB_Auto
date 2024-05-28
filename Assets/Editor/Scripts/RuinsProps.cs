@@ -8,15 +8,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
 public class RuinsProps {
-	public static readonly List<int> RUIN_ORDERS = new List<int>() {1, 8};
-	public static DateTime LAST_REFRESH_TIME = default;
-	public static DateTime LAST_TIME = default;
-	public static TimeSpan INTERVAL = new TimeSpan(49, 0, 0);
+	public static readonly List<int> RUIN_ORDERS = new() {1, 8};
+	public static DateTime LAST_REFRESH_TIME;
+	public static DateTime LAST_TIME;
+	public static TimeSpan INTERVAL = new(49, 0, 0);
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
