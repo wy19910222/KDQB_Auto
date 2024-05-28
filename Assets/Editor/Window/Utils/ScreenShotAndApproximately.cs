@@ -27,6 +27,8 @@ public class ScreenShotAndApproximately : EditorWindow {
 	
 	[SerializeField]
 	private Vector2Int m_LogColorPos = new Vector2Int();
+	[SerializeField]
+	private bool m_LogMousePosColor;
 
 	private void OnGUI() {
 		const float MAX_BTN_WIDTH = 70F;
@@ -113,12 +115,25 @@ public class ScreenShotAndApproximately : EditorWindow {
 		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
 		EditorGUI.DrawRect(wireRect2, Color.gray);
 
-		m_LogColorPos = EditorGUILayout.Vector2IntField("像素坐标", m_LogColorPos);
+		Vector2Int mousePos = Operation.GetMousePos();
+		EditorGUI.BeginDisabledGroup(true);
+		EditorGUILayout.Vector2IntField("鼠标坐标", mousePos);
+		EditorGUI.EndDisabledGroup();
+		EditorGUILayout.BeginHorizontal();
+		GUILayout.Space(spaceWidth);
+		m_LogMousePosColor = GUILayout.Toggle(m_LogMousePosColor, "鼠标位置", "Button", GUILayout.Width(btnWidth));
+		EditorGUILayout.EndHorizontal();
+		GUILayout.Space(-singleLineHeight - 2F);
+		m_LogColorPos = EditorGUILayout.Vector2IntField("像素坐标", m_LogMousePosColor ? mousePos : m_LogColorPos);
 		Color32 color = Operation.GetColorOnScreen(m_LogColorPos.x, m_LogColorPos.y);
 		string colorStr = color.ToString();
 		colorStr = colorStr.Substring(5, colorStr.Length - 5 - 6);
-		EditorGUILayout.BeginHorizontal();
+		EditorGUI.BeginDisabledGroup(true);
 		EditorGUILayout.ColorField($"颜色值({colorStr})", color);
-		EditorGUILayout.EndHorizontal();
+		EditorGUI.EndDisabledGroup();
+	}
+
+	private void Update() {
+		Repaint();
 	}
 }
