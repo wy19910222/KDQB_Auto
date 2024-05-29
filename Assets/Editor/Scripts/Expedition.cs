@@ -75,9 +75,11 @@ public class Expedition {
 			Operation.Click(733, 867);	// 活动按钮
 			yield return new EditorWaitForSeconds(0.2F);
 
+			int orderOffsetY = 0;
 			if (!wildSucceed) {
 				Debug.Log("拖动以显示荒野行动");
-				int orderOffsetY1 = (WILD_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT;
+				int orderOffsetY1 = (WILD_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT - orderOffsetY;
+				orderOffsetY += orderOffsetY1;
 				while (orderOffsetY1 > 0) {
 					int dragDistance = ITEM_HEIGHT * 4;
 					// 往左拖动
@@ -88,6 +90,7 @@ public class Expedition {
 					yield return new EditorWaitForSeconds(0.1F);
 					orderOffsetY1 -= dragDistance;
 				}
+				orderOffsetY -= orderOffsetY1;
 				yield return new EditorWaitForSeconds(0.2F);
 				Debug.Log("前往按钮");
 				Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY1);	// 前往按钮
@@ -118,7 +121,8 @@ public class Expedition {
 
 			if (!expeditionSucceed) {
 				Debug.Log("拖动以显示远征行动");
-				int orderOffsetY2 = (Expedition_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT;
+				int orderOffsetY2 = (Expedition_ORDER - ITEM_VISIBLE_COUNT) * ITEM_HEIGHT - orderOffsetY;
+				orderOffsetY += orderOffsetY2;
 				while (orderOffsetY2 > 0) {
 					int dragDistance = ITEM_HEIGHT * 3;
 					// 往左拖动
@@ -129,6 +133,7 @@ public class Expedition {
 					yield return new EditorWaitForSeconds(0.1F);
 					orderOffsetY2 -= dragDistance;
 				}
+				orderOffsetY -= orderOffsetY2;
 				Debug.Log("前往按钮");
 				Operation.Click(1092, 318 + ITEM_VISIBLE_COUNT * ITEM_HEIGHT + orderOffsetY2);	// 前往按钮
 				yield return new EditorWaitForSeconds(0.3F);
