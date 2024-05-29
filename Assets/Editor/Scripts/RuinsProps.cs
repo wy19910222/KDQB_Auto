@@ -12,6 +12,8 @@ using UnityEditor;
 using UnityEngine;
 
 public class RuinsProps {
+	public static bool Test { get; set; } // 测试模式
+	
 	public static readonly List<int> RUIN_ORDERS = new() {1, 8};
 	public static DateTime LAST_REFRESH_TIME;
 	public static DateTime LAST_TIME;
@@ -79,15 +81,15 @@ public class RuinsProps {
 			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.3F);
-			if (Recognize.AllianceTerritoryIsNew) {
+			if (Test || Recognize.AllianceTerritoryIsNew) {
 				Debug.Log("联盟领地按钮");
 				Operation.Click(835, 525);	// 联盟领地按钮
 				yield return new EditorWaitForSeconds(0.5F);
-				if (Recognize.AllianceRuinIsNew) {
+				if (Test || Recognize.AllianceRuinIsNew) {
 					Debug.Log("遗迹标签");
 					Operation.Click(1124, 196);	// 遗迹标签
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Recognize.AllianceRuinLv2IsNew) {
+					if (Test || Recognize.AllianceRuinLv2IsNew) {
 						Debug.Log("2级遗迹标签");
 						Operation.Click(957, 243);	// 2级遗迹标签
 						yield return new EditorWaitForSeconds(0.2F);
@@ -138,7 +140,20 @@ public class RuinsProps {
 								}
 							}
 							if (targetIndex != -1) {
-								Vector2Int btnPos = new Vector2Int(1085, targetIndex == 0 ? 495 : 426 + targetIndex * 102);
+								string[] propNames = Array.ConvertAll(propTypes, t => Utils.GetEnumInspectorName(t));
+								Debug.Log($"排序{order}道具有[{string.Join(",", propNames)}]，选择{propNames[targetIndex]}");
+								Vector2Int btnPos;
+								if (targetIndex == 0) {
+									// 往下拖动
+									var ie = Operation.NoInertiaDrag(960, 600, 960, 600 + 68, 0.5F);
+									while (ie.MoveNext()) {
+										yield return ie.Current;
+									}
+									yield return new EditorWaitForSeconds(0.1F);
+									btnPos = new Vector2Int(1085, 495);
+								} else {
+									btnPos = new Vector2Int(1085, 426 + targetIndex * 102);
+								}
 								Color32 btnColor = Operation.GetColorOnScreen(btnPos.x, btnPos.y);
 								if (btnColor.g > btnColor.r + btnColor.b) {
 									Debug.Log("领取按钮");

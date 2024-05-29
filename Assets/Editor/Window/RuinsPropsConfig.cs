@@ -65,8 +65,9 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 		
 		m_List.DoLayoutList();
 		
-		EditorGUILayout.BeginHorizontal();
 		GUILayout.Space(5F);
+		EditorGUILayout.BeginHorizontal();
+		RuinsProps.Test = GUILayout.Toggle(RuinsProps.Test, "测试模式", "Button", GUILayout.Width(60F));
 		if (RuinsProps.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
