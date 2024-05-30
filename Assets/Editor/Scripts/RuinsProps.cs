@@ -98,13 +98,14 @@ public class RuinsProps {
 						int gotCount = 0;
 						const int ITEM_HEIGHT = 116;
 						const int OFFSET_Y_MAX = 206;
+						const int VISIBLE_ITEMS_COUNT = 6;
 						int offsetY = 0;
 						foreach (int order in RUIN_ORDERS) {
-							int orderOffsetY = Mathf.Clamp((order - 6) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+							int orderOffsetY = Mathf.Clamp((order - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
 							int deltaOffsetY = orderOffsetY - offsetY;
 							offsetY = orderOffsetY;
 							while (deltaOffsetY > 0) {
-								int dragDistance = Mathf.Min(ITEM_HEIGHT * 6, deltaOffsetY);
+								int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
 								// 往上拖动
 								var ie = Operation.NoInertiaDrag(960, 900, 960, 900 - dragDistance, 0.5F);
 								while (ie.MoveNext()) {
