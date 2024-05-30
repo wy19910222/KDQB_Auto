@@ -125,4 +125,28 @@ public static partial class Recognize {
 			return Approximately(realColor, new Color32(104, 232, 254, 255));
 		}
 	}
+	
+	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickBtn.png");
+	public static bool IsExpeditionQuickBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1105, 923, 60, 60);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_BTN) > 0.7F;
+		}
+	}
+	
+	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_FREE_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickFreeBtn.png");
+	public static bool IsExpeditionQuickFreeBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(895, 714, 130, 50);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_FREE_BTN) > 0.8F;
+		}
+	}
+	
+	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_BY_50_DIAMOND_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickBy50DiamondBtn.png");
+	public static bool IsExpeditionQuickBy50DiamondBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(895, 714, 130, 50);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_BY_50_DIAMOND_BTN) > 0.8F;
+		}
+	}
 }

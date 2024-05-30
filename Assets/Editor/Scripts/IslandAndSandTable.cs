@@ -15,10 +15,13 @@ public class IslandAndSandTable {
 	
 	public static int SAND_TABLE_ORDER = 4;
 	public static int SAND_TABLE_TAB = 1;	// 1-陆军，2-海军，3-空军
+	public static int EXPEDITION_ORDER = 5;
+	public static bool EXPEDITION_QUICK_BY_50_DIAMOND = true;
 	public static int ISLAND_ORDER = 10;
 	public static TimeSpan DAILY_TIME = new TimeSpan(1, 0, 0);	// 每天几点执行
 	
 	public static DateTime LAST_SAND_TABLE_TIME;
+	public static DateTime LAST_EXPEDITION_TIME;
 	public static DateTime LAST_ISLAND_TIME;
 	
 	private static EditorCoroutine s_CO;
@@ -52,8 +55,9 @@ public class IslandAndSandTable {
 			
 			bool test = Test;
 			bool sandTableSucceed = LAST_SAND_TABLE_TIME > date;
+			bool expeditionSucceed = LAST_EXPEDITION_TIME > date;
 			bool islandSucceed = LAST_ISLAND_TIME > date;
-			if ((sandTableSucceed && islandSucceed || DateTime.Now.TimeOfDay < DAILY_TIME) && !test) {
+			if ((sandTableSucceed && islandSucceed && expeditionSucceed || DateTime.Now.TimeOfDay < DAILY_TIME) && !test) {
 				continue;
 			}
 
@@ -134,6 +138,71 @@ public class IslandAndSandTable {
 						yield return new EditorWaitForSeconds(0.2F);
 					}
 					LAST_SAND_TABLE_TIME = DateTime.Now;
+				}
+				Debug.Log("左上角返回按钮");
+				Operation.Click(720, 128);	// 左上角返回按钮
+				yield return new EditorWaitForSeconds(0.2F);
+			}
+			
+			if (!expeditionSucceed) {
+				Debug.Log("拖动以显示远征行动");
+				int orderOffsetY = Mathf.Clamp((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int deltaOffsetY = orderOffsetY - offsetY;
+				while (deltaOffsetY > 0) {
+					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
+					// 往左拖动
+					var ie = Operation.NoInertiaDrag(960, 960, 960, 960 - dragDistance, 0.5F);
+					while (ie.MoveNext()) {
+						yield return ie.Current;
+					}
+					yield return new EditorWaitForSeconds(0.1F);
+					deltaOffsetY -= dragDistance;
+				}
+				offsetY = orderOffsetY;
+				yield return new EditorWaitForSeconds(0.2F);
+				
+				Debug.Log("前往按钮");
+				Operation.Click(1092, 320 + (EXPEDITION_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
+				yield return new EditorWaitForSeconds(0.5F);
+				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
+					for (int i = 0; i < 5 && Recognize.IsExpeditionQuickBtn; i++) {
+						Debug.Log("快速战斗按钮");
+						Operation.Click(1135, 953);	// 快速战斗按钮
+						yield return new EditorWaitForSeconds(0.3F);
+						if (Recognize.IsExpeditionQuickFreeBtn) {
+							Debug.Log("快速战斗按钮");
+							Operation.Click(960, 740);	// 快速战斗按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							Debug.Log("跳过动画按钮");
+							Operation.Click(1135, 888);	// 跳过动画按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							if (Recognize.IsExpeditionGetBtn) {
+								Debug.Log("领取按钮");
+								Operation.Click(960, 900);	// 领取按钮
+								yield return new EditorWaitForSeconds(0.3F);
+							}
+						} else if (Recognize.IsExpeditionQuickBy50DiamondBtn && EXPEDITION_QUICK_BY_50_DIAMOND) {
+							Debug.Log("快速战斗按钮");
+							Operation.Click(960, 740);	// 快速战斗按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							Debug.Log("确定按钮");
+							Operation.Click(960, 700);	// 确定按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							Debug.Log("跳过动画按钮");
+							Operation.Click(1135, 888);	// 跳过动画按钮
+							yield return new EditorWaitForSeconds(0.5F);
+							if (Recognize.IsExpeditionGetBtn) {
+								Debug.Log("领取按钮");
+								Operation.Click(960, 900);	// 领取按钮
+								yield return new EditorWaitForSeconds(0.3F);
+							}
+						} else {
+							Debug.Log("关闭按钮");
+							Operation.Click(1169, 397);	// 关闭按钮
+							yield return new EditorWaitForSeconds(0.3F);
+						}
+					}
+					LAST_EXPEDITION_TIME = DateTime.Now;
 				}
 				Debug.Log("左上角返回按钮");
 				Operation.Click(720, 128);	// 左上角返回按钮

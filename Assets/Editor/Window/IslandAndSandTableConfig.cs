@@ -38,6 +38,31 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
+		
+		EditorGUILayout.BeginHorizontal();
+		IslandAndSandTable.EXPEDITION_ORDER = EditorGUILayout.IntSlider("远征排序", IslandAndSandTable.EXPEDITION_ORDER, 4, 6);
+		bool expeditionSucceed = IslandAndSandTable.LAST_EXPEDITION_TIME > date;
+		bool newExpeditionSucceed = GUILayout.Toggle(expeditionSucceed, "已完成", "Button", GUILayout.Width(60F));
+		if (newExpeditionSucceed != expeditionSucceed) {
+			IslandAndSandTable.LAST_EXPEDITION_TIME = newExpeditionSucceed ? now : now - new TimeSpan(24, 0, 0);
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("花费钻石", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+		IslandAndSandTable.EXPEDITION_QUICK_BY_50_DIAMOND = GUILayout.Toggle(IslandAndSandTable.EXPEDITION_QUICK_BY_50_DIAMOND, "花费50钻", "Button");
+		EditorGUILayout.EndHorizontal();
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
 		
 		EditorGUILayout.BeginHorizontal();
 		IslandAndSandTable.ISLAND_ORDER = EditorGUILayout.IntSlider("岛屿排序", IslandAndSandTable.ISLAND_ORDER, 9, 11);
@@ -47,6 +72,12 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 			IslandAndSandTable.LAST_ISLAND_TIME = newIslandSucceed ? now : now - new TimeSpan(24, 0, 0);
 		}
 		EditorGUILayout.EndHorizontal();
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
