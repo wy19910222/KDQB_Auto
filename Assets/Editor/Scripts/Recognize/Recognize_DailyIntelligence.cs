@@ -56,24 +56,60 @@ public static partial class Recognize {
 		}
 	}
 	
-	private static readonly Color32[,] DAILY_INTELLIGENCE_GET_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceGetBtn.png");
-	private static readonly Color32[,] DAILY_INTELLIGENCE_BACK_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceBackBtn.png");
+	private static readonly Color32[,] DAILY_INTELLIGENCE_WINDOW_GET_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceWindowGetBtn.png");
+	private static readonly Color32[,] DAILY_INTELLIGENCE_WINDOW_BACK_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceWindowBackBtn.png");
 	public static bool IsWildGetBtn {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(934, 823, 52, 27);
-			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_GET_BTN) > 0.7F;
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_WINDOW_GET_BTN) > 0.7F;
 		}
 	}
 	public static bool IsWildBackBtn {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(934, 823, 52, 27);
-			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_BACK_BTN) > 0.7F;
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_WINDOW_BACK_BTN) > 0.7F;
 		}
 	}
 	public static bool IsExpeditionGetBtn {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(934, 896, 52, 27);
-			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_GET_BTN) > 0.7F;
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_WINDOW_GET_BTN) > 0.7F;
+		}
+	}
+	
+	private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_EXIT_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandExitBtn.png");
+	public static bool IsIslandExitBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(930, 616, 60, 30);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_EXIT_BTN) > 0.7F;
+		}
+	}
+	private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_RESET_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandResetBtn.png");
+	public static bool IsIslandResetBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1043, 616, 60, 30);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_RESET_BTN) > 0.7F;
+		}
+	}
+	private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_MOP_UP_ICON_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandMopUpIconBtn.png");
+	public static bool IsIslandMopUpIconBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(714, 916, 56, 60);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_MOP_UP_ICON_BTN) > 0.7F;
+		}
+	}
+	private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_MOP_UP_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandMopUpBtn.png");
+	public static bool IsIslandMopUpBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(930, 834, 60, 30);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_MOP_UP_BTN) > 0.7F;
+		}
+	}
+	private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_CONFIRM_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandConfirmBtn.png");
+	public static bool IsIslandConfirmBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(930, 852, 60, 30);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_CONFIRM_BTN) > 0.7F;
 		}
 	}
 }
