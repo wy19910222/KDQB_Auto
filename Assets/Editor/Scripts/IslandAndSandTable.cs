@@ -14,6 +14,7 @@ public class IslandAndSandTable {
 	public static bool Test { get; set; } // 测试模式
 	
 	public static int SAND_TABLE_ORDER = 4;
+	public static int SAND_TABLE_TAB = 1;	// 1-陆军，2-海军，3-空军
 	public static int ISLAND_ORDER = 10;
 	public static TimeSpan DAILY_TIME = new TimeSpan(1, 0, 0);	// 每天几点执行
 	
@@ -104,6 +105,34 @@ public class IslandAndSandTable {
 				Operation.Click(1092, 320 + (SAND_TABLE_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
 				yield return new EditorWaitForSeconds(0.5F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.SAND_TABLE && !test) {
+					Debug.Log("军种标签");
+					Operation.Click(660 + SAND_TABLE_TAB * 150, 190);	// 军种标签
+					yield return new EditorWaitForSeconds(0.2F);
+					for (int i = 0; i < 10 && Recognize.IsSandTableCanChallenge; i++) {
+						Debug.Log("挑战按钮");
+						Operation.Click(960, 960);	// 挑战按钮
+						yield return new EditorWaitForSeconds(0.3F);
+						if (!Recognize.IsSandTableUsingPhalanx) {
+							Debug.Log("军阵按钮");
+							Operation.Click(103, 515);	// 军阵按钮
+							yield return new EditorWaitForSeconds(0.3F);
+							Debug.Log("狂鲨军阵");
+							Operation.Click(780, 710);	// 狂鲨军阵
+							yield return new EditorWaitForSeconds(0.2F);
+							Debug.Log("应用按钮");
+							Operation.Click(960, 820);	// 应用按钮
+							yield return new EditorWaitForSeconds(0.3F);
+						}
+						Debug.Log("战斗按钮");
+						Operation.Click(960, 476);	// 战斗按钮
+						yield return new EditorWaitForSeconds(1.5F);
+						Debug.Log("跳过按钮");
+						Operation.Click(30, 250);	// 跳过按钮
+						yield return new EditorWaitForSeconds(1.5F);
+						Debug.Log("返回按钮");
+						Operation.Click(960, 906);	// 返回按钮
+						yield return new EditorWaitForSeconds(0.2F);
+					}
 					LAST_SAND_TABLE_TIME = DateTime.Now;
 				}
 				Debug.Log("左上角返回按钮");
@@ -132,6 +161,7 @@ public class IslandAndSandTable {
 				Operation.Click(1092, 320 + (ISLAND_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
 				yield return new EditorWaitForSeconds(0.5F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.ISLAND && !test) {
+					yield return new EditorWaitForSeconds(0.5F);
 					for (int i = 0; i < 10; i++) {
 						if (Recognize.IsIslandExitBtn) {
 							Debug.Log("岛屿作战已完成");
@@ -141,7 +171,7 @@ public class IslandAndSandTable {
 						if (Recognize.IsIslandResetBtn) {
 							Debug.Log("重置按钮");
 							Operation.Click(1073, 631);	// 重置按钮
-							yield return new EditorWaitForSeconds(1F);
+							yield return new EditorWaitForSeconds(1.5F);
 						}
 						if (Recognize.IsIslandMopUpIconBtn) {
 							Debug.Log("扫荡图标按钮");

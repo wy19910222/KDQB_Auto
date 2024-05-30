@@ -112,4 +112,17 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_CONFIRM_BTN) > 0.7F;
 		}
 	}
+	
+	public static bool IsSandTableCanChallenge {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(920, 940);
+			return Approximately(realColor, new Color32(104, 146, 248, 255));
+		}
+	}
+	public static bool IsSandTableUsingPhalanx {
+		get {
+			Color32 realColor = Operation.GetColorOnScreen(103, 501);
+			return Approximately(realColor, new Color32(104, 232, 254, 255));
+		}
+	}
 }

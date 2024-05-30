@@ -14,6 +14,8 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 	private static void Open() {
 		GetWindow<IslandAndSandTableConfig>("岛屿作战/沙盘演习").Show();
 	}
+
+	private readonly string[] SAND_TABLE_TAB_NAMES = {"陆军", "海军", "空军"};
 	
 	private void OnGUI() {
 		DateTime now = DateTime.Now;
@@ -26,6 +28,17 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 			IslandAndSandTable.LAST_SAND_TABLE_TIME = newSandTableSucceed ? now : now - new TimeSpan(24, 0, 0);
 		}
 		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("挑战军种", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+		for (int i = 0, length = SAND_TABLE_TAB_NAMES.Length; i < length; i++) {
+			bool isSelected = i + 1 == IslandAndSandTable.SAND_TABLE_TAB;
+			bool newIsSelected = GUILayout.Toggle(isSelected, SAND_TABLE_TAB_NAMES[i], "Button");
+			if (newIsSelected && !isSelected) {
+				IslandAndSandTable.SAND_TABLE_TAB = i + 1;
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+		
 		EditorGUILayout.BeginHorizontal();
 		IslandAndSandTable.ISLAND_ORDER = EditorGUILayout.IntSlider("岛屿排序", IslandAndSandTable.ISLAND_ORDER, 9, 11);
 		bool islandSucceed = IslandAndSandTable.LAST_ISLAND_TIME > date;
