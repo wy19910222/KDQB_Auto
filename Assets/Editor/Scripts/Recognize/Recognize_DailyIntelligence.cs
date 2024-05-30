@@ -138,7 +138,7 @@ public static partial class Recognize {
 	public static bool IsExpeditionQuickFreeBtn {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(895, 714, 130, 50);
-			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_FREE_BTN) > 0.8F;
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_FREE_BTN) > 0.95F;
 		}
 	}
 	
@@ -146,7 +146,7 @@ public static partial class Recognize {
 	public static bool IsExpeditionQuickBy50DiamondBtn {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(895, 714, 130, 50);
-			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_BY_50_DIAMOND_BTN) > 0.8F;
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_BY_50_DIAMOND_BTN) > 0.95F;
 		}
 	}
 }
