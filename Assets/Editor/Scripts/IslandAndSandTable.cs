@@ -184,7 +184,7 @@ public class IslandAndSandTable {
 								if (Recognize.IsIslandConfirmBtn) {
 									Debug.Log("确定按钮");
 									Operation.Click(960, 867);	// 确定按钮
-									yield return new EditorWaitForSeconds(1F);
+									yield return new EditorWaitForSeconds(1.5F);
 								}
 							}
 						}
