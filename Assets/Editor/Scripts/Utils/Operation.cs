@@ -18,6 +18,13 @@ public static class Operation {
 	private static int frameCount;
 	private static Color32[,] colors;
 
+	public static Vector2Int GetMousePos() {
+		Vector2Int pos = MouseUtils.GetMousePos();
+		pos.x = Mathf.RoundToInt(((float) pos.x - CURRENT_GAME_RECT.x) / CURRENT_GAME_RECT.width * BASED_GAME_RECT.width + BASED_GAME_RECT.x);
+		pos.y = Mathf.RoundToInt(((float) pos.y - CURRENT_GAME_RECT.y) / CURRENT_GAME_RECT.height * BASED_GAME_RECT.height + BASED_GAME_RECT.y);
+		return pos;
+	}
+
 	public static void Click(int x, int y) {
 		x = Mathf.RoundToInt(((float) x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
 		y = Mathf.RoundToInt(((float) y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
@@ -32,7 +39,7 @@ public static class Operation {
 		MouseUtils.SetMousePos(oldPos.x, oldPos.y);
 	}
 	
-	public static void MouseMove(int x, int y) {
+	public static void SetMousePos(int x, int y) {
 		x = Mathf.RoundToInt(((float) x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
 		y = Mathf.RoundToInt(((float) y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		MouseUtils.SetMousePos(x, y);
@@ -184,12 +191,5 @@ public static class Operation {
 		width = Mathf.RoundToInt((float) width / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width);
 		height = Mathf.RoundToInt((float) height / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height);
 		return ScreenshotUtils.Screenshot(x, y, width, height);
-	}
-
-	public static Vector2Int GetMousePos() {
-		Vector2Int pos = MouseUtils.GetMousePos();
-		pos.x = Mathf.RoundToInt(((float) pos.x - CURRENT_GAME_RECT.x) / CURRENT_GAME_RECT.width * BASED_GAME_RECT.width + BASED_GAME_RECT.x);
-		pos.y = Mathf.RoundToInt(((float) pos.y - CURRENT_GAME_RECT.y) / CURRENT_GAME_RECT.height * BASED_GAME_RECT.height + BASED_GAME_RECT.y);
-		return pos;
 	}
 }
