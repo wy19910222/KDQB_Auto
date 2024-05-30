@@ -109,6 +109,7 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 		GUILayout.Space(5F);
 		
 		EditorGUILayout.BeginHorizontal();
+		Gather.Test = GUILayout.Toggle(Gather.Test, "测试模式", "Button", GUILayout.Width(60F));
 		if (Gather.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -118,7 +119,6 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 				IsRunning = true;
 			}
 		}
-		Gather.Test = GUILayout.Toggle(Gather.Test, "测试", "Button", GUILayout.Width(60F));
 		EditorGUILayout.EndHorizontal();
 	}
 }

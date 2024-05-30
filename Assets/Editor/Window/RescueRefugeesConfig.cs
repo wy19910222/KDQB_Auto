@@ -87,6 +87,7 @@ public class RescueRefugeesConfig : PrefsEditorWindow<RescueRefugees> {
 		GUILayout.Space(5F);
 		
 		EditorGUILayout.BeginHorizontal();
+		RescueRefugees.Test = GUILayout.Toggle(RescueRefugees.Test, "测试模式", "Button", GUILayout.Width(60F));
 		if (RescueRefugees.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -96,7 +97,6 @@ public class RescueRefugeesConfig : PrefsEditorWindow<RescueRefugees> {
 				IsRunning = true;
 			}
 		}
-		RescueRefugees.Test = GUILayout.Toggle(RescueRefugees.Test, "测试", "Button", GUILayout.Width(60F));
 		EditorGUILayout.EndHorizontal();
 	}
 }

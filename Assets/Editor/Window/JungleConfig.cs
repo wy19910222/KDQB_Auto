@@ -112,6 +112,7 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		GUILayout.Space(5F);
 		
 		EditorGUILayout.BeginHorizontal();
+		Jungle.Test = GUILayout.Toggle(Jungle.Test, "测试模式", "Button", GUILayout.Width(60F));
 		if (Jungle.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -121,7 +122,6 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 				IsRunning = true;
 			}
 		}
-		Jungle.Test = GUILayout.Toggle(Jungle.Test, "测试", "Button", GUILayout.Width(60F));
 		EditorGUILayout.EndHorizontal();
 	}
 }

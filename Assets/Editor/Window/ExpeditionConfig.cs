@@ -37,6 +37,7 @@ public class ExpeditionConfig : PrefsEditorWindow<Expedition> {
 		GUILayout.Space(5F);
 		
 		EditorGUILayout.BeginHorizontal();
+		Expedition.Test = GUILayout.Toggle(Expedition.Test, "测试模式", "Button", GUILayout.Width(60F));
 		if (Expedition.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
@@ -46,7 +47,6 @@ public class ExpeditionConfig : PrefsEditorWindow<Expedition> {
 				IsRunning = true;
 			}
 		}
-		Expedition.Test = GUILayout.Toggle(Expedition.Test, "测试", "Button", GUILayout.Width(60F));
 		EditorGUILayout.EndHorizontal();
 	}
 	
