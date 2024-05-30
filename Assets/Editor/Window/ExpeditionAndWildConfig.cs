@@ -9,19 +9,19 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-public class ExpeditionConfig : PrefsEditorWindow<Expedition> {
-	[MenuItem("Tools_Window/Default/Expedition")]
+public class ExpeditionAndWildConfig : PrefsEditorWindow<ExpeditionAndWild> {
+	[MenuItem("Tools_Window/Default/ExpeditionAndWild")]
 	private static void Open() {
-		GetWindow<ExpeditionConfig>("远征/荒野行动").Show();
+		GetWindow<ExpeditionAndWildConfig>("远征/荒野行动").Show();
 	}
 	
 	private void OnGUI() {
-		Expedition.WILD_ORDER = EditorGUILayout.IntSlider("荒野排序", Expedition.WILD_ORDER, 0, 2);
-		Expedition.Expedition_ORDER = EditorGUILayout.IntSlider("远征排序", Expedition.Expedition_ORDER, 4, 6);
-		Expedition.INTERVAL_HOURS = EditorGUILayout.IntSlider("收取间隔（小时）", Expedition.INTERVAL_HOURS, 1, 12);
+		ExpeditionAndWild.WILD_ORDER = EditorGUILayout.IntSlider("荒野排序", ExpeditionAndWild.WILD_ORDER, 1, 3);
+		ExpeditionAndWild.Expedition_ORDER = EditorGUILayout.IntSlider("远征排序", ExpeditionAndWild.Expedition_ORDER, 4, 6);
+		ExpeditionAndWild.INTERVAL_HOURS = EditorGUILayout.IntSlider("收取间隔（小时）", ExpeditionAndWild.INTERVAL_HOURS, 1, 12);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
-		TimeSpan ts = Expedition.TargetDT - DateTime.Now;
+		TimeSpan ts = ExpeditionAndWild.TargetDT - DateTime.Now;
 		float prevLabelWidth = EditorGUIUtility.labelWidth;
 		EditorGUIUtility.labelWidth = 20F;
 		int hours = EditorGUILayout.IntField(" ", ts.Hours);
@@ -30,15 +30,15 @@ public class ExpeditionConfig : PrefsEditorWindow<Expedition> {
 		int seconds = EditorGUILayout.IntField(":", ts.Seconds);
 		EditorGUIUtility.labelWidth = prevLabelWidth;
 		if (EditorGUI.EndChangeCheck()) {
-			Expedition.TargetDT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
+			ExpeditionAndWild.TargetDT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
 		EditorGUILayout.EndHorizontal();
 		
 		GUILayout.Space(5F);
 		
 		EditorGUILayout.BeginHorizontal();
-		Expedition.Test = GUILayout.Toggle(Expedition.Test, "测试模式", "Button", GUILayout.Width(60F));
-		if (Expedition.IsRunning) {
+		ExpeditionAndWild.Test = GUILayout.Toggle(ExpeditionAndWild.Test, "测试模式", "Button", GUILayout.Width(60F));
+		if (ExpeditionAndWild.IsRunning) {
 			if (GUILayout.Button("关闭")) {
 				IsRunning = false;
 			}

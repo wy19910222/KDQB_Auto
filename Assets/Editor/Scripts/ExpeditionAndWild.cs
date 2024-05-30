@@ -10,28 +10,29 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
-public class Expedition {
+public class ExpeditionAndWild {
 	public static bool Test { get; set; } // 测试模式
 	
-	public static int WILD_ORDER = 0;
-	public static int Expedition_ORDER = 4;
+	public static int WILD_ORDER = 1;
+	public static int Expedition_ORDER = 5;
 	public static int INTERVAL_HOURS = 6;
 	public static DateTime TargetDT;	// 倒计时
 	
-	public static int ITEM_HEIGHT = 187;
-	public static int ITEM_VISIBLE_ORDER_MAX = 3;
-	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
+	
+	private const int ITEM_HEIGHT = 187;
+	private const int OFFSET_Y_MAX = 1061;
+	private const int VISIBLE_ITEMS_COUNT = 4;
 
-	[MenuItem("Tools_Task/StartExpedition", priority = -1)]
+	[MenuItem("Tools_Task/StartExpeditionAndWild", priority = -1)]
 	private static void Enable() {
 		Disable();
 		Debug.Log($"远征/荒野行动自动收取已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
-	[MenuItem("Tools_Task/StopExpedition", priority = -1)]
+	[MenuItem("Tools_Task/StopExpeditionAndWild", priority = -1)]
 	private static void Disable() {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
@@ -61,39 +62,40 @@ public class Expedition {
 			if (Task.CurrentTask != null) {
 				continue;
 			}
-			Task.CurrentTask = nameof(Expedition);
+			Task.CurrentTask = nameof(ExpeditionAndWild);
 
 			// 如果是世界界面远景，则没有每日军情按钮，需要先切换到近景
 			for (int i = 0; i < 50 && Recognize.CurrentScene == Recognize.Scene.OUTSIDE_FARAWAY; i++) {
-				Vector2Int oldPos = MouseUtils.GetMousePos();
-				MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
-				MouseUtils.ScrollWheel(1);
-				MouseUtils.SetMousePos(oldPos.x, oldPos.y);
+				// 鼠标移动到屏幕中央并滚动滚轮
+				Operation.SetMousePosTemporarily(960, 540, () => {
+					MouseUtils.ScrollWheel(1);
+				});
 				yield return new EditorWaitForSeconds(0.1F);
 			}
 			Debug.Log("每日军情按钮");
 			Operation.Click(733, 867);	// 活动按钮
 			yield return new EditorWaitForSeconds(0.2F);
 
-			int orderOffsetY = 0;
+			int offsetY = 0;
 			if (!wildSucceed) {
 				Debug.Log("拖动以显示荒野行动");
-				int orderOffsetY1 = (WILD_ORDER - ITEM_VISIBLE_ORDER_MAX) * ITEM_HEIGHT - orderOffsetY;
-				orderOffsetY += orderOffsetY1;
-				while (orderOffsetY1 > 0) {
-					int dragDistance = ITEM_HEIGHT * 4;
+				int orderOffsetY = Mathf.Clamp((WILD_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int deltaOffsetY = orderOffsetY - offsetY;
+				while (deltaOffsetY > 0) {
+					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
 					// 往左拖动
-					var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
+					var ie = Operation.NoInertiaDrag(960, 960, 960, 960 - dragDistance, 0.5F);
 					while (ie.MoveNext()) {
 						yield return ie.Current;
 					}
 					yield return new EditorWaitForSeconds(0.1F);
-					orderOffsetY1 -= dragDistance;
+					deltaOffsetY -= dragDistance;
 				}
-				orderOffsetY -= orderOffsetY1;
+				offsetY = orderOffsetY;
 				yield return new EditorWaitForSeconds(0.2F);
+				
 				Debug.Log("前往按钮");
-				Operation.Click(1092, 318 + ITEM_VISIBLE_ORDER_MAX * ITEM_HEIGHT + orderOffsetY1);	// 前往按钮
+				Operation.Click(1092, 320 + (WILD_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.WILD && !test) {
 					Debug.Log("宝箱按钮");
@@ -121,21 +123,23 @@ public class Expedition {
 
 			if (!expeditionSucceed) {
 				Debug.Log("拖动以显示远征行动");
-				int orderOffsetY2 = (Expedition_ORDER - ITEM_VISIBLE_ORDER_MAX) * ITEM_HEIGHT - orderOffsetY;
-				orderOffsetY += orderOffsetY2;
-				while (orderOffsetY2 > 0) {
-					int dragDistance = ITEM_HEIGHT * 3;
+				int orderOffsetY = Mathf.Clamp((Expedition_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int deltaOffsetY = orderOffsetY - offsetY;
+				while (deltaOffsetY > 0) {
+					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
 					// 往左拖动
 					var ie = Operation.NoInertiaDrag(960, 810, 960, 810 - dragDistance, 0.5F);
 					while (ie.MoveNext()) {
 						yield return ie.Current;
 					}
 					yield return new EditorWaitForSeconds(0.1F);
-					orderOffsetY2 -= dragDistance;
+					deltaOffsetY -= dragDistance;
 				}
-				orderOffsetY -= orderOffsetY2;
+				offsetY = orderOffsetY;
+				yield return new EditorWaitForSeconds(0.2F);
+				
 				Debug.Log("前往按钮");
-				Operation.Click(1092, 318 + ITEM_VISIBLE_ORDER_MAX * ITEM_HEIGHT + orderOffsetY2);	// 前往按钮
+				Operation.Click(1092, 320 + (Expedition_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
 				yield return new EditorWaitForSeconds(0.3F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
 					Debug.Log("运输车");
