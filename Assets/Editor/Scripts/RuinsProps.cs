@@ -81,15 +81,16 @@ public class RuinsProps {
 			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.3F);
-			if (Test || Recognize.AllianceTerritoryIsNew) {
+			bool test = Test;
+			if (test || Recognize.AllianceTerritoryIsNew) {
 				Debug.Log("联盟领地按钮");
 				Operation.Click(835, 525);	// 联盟领地按钮
 				yield return new EditorWaitForSeconds(0.5F);
-				if (Test || Recognize.AllianceRuinIsNew) {
+				if (test || Recognize.AllianceRuinIsNew) {
 					Debug.Log("遗迹标签");
 					Operation.Click(1124, 196);	// 遗迹标签
 					yield return new EditorWaitForSeconds(0.2F);
-					if (Test || Recognize.AllianceRuinLv2IsNew) {
+					if (test || Recognize.AllianceRuinLv2IsNew) {
 						Debug.Log("2级遗迹标签");
 						Operation.Click(957, 243);	// 2级遗迹标签
 						yield return new EditorWaitForSeconds(0.2F);
@@ -159,13 +160,15 @@ public class RuinsProps {
 									Debug.Log("领取按钮");
 									Operation.Click(btnPos.x, btnPos.y);	// 领取按钮
 									yield return new EditorWaitForSeconds(0.3F);
-									Debug.Log("确定按钮");
-									Operation.Click(960, 700);	// 确定按钮
-									gotCount++;
-									yield return new EditorWaitForSeconds(0.3F);
-									Debug.Log("点外面关闭");
-									Operation.Click(960, 200);	// 点外面关闭
-									yield return new EditorWaitForSeconds(0.1F);
+									if (!test) {
+										Debug.Log("确定按钮");
+										Operation.Click(960, 700);	// 确定按钮
+										gotCount++;
+										yield return new EditorWaitForSeconds(0.3F);
+										Debug.Log("点外面关闭");
+										Operation.Click(960, 200);	// 点外面关闭
+										yield return new EditorWaitForSeconds(0.1F);
+									}
 									Operation.Click(960, 200);	// 点外面关闭
 									yield return new EditorWaitForSeconds(0.3F);
 								}
