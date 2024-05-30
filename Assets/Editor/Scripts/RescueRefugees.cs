@@ -132,10 +132,10 @@ public class RescueRefugees {
 			// 开始拯救难民
 			// 如果是世界界面远景，则没有显示活动按钮，需要先切换到近景
 			for (int i = 0; i < 50 && Recognize.IsOutsideFaraway; i++) {
-				Vector2Int oldPos = MouseUtils.GetMousePos();
-				MouseUtils.SetMousePos(960, 540);	// 鼠标移动到屏幕中央
-				MouseUtils.ScrollWheel(1);
-				MouseUtils.SetMousePos(oldPos.x, oldPos.y);
+				// 鼠标移动到屏幕中央并滚动滚轮
+				Operation.SetMousePosTemporarily(960, 540, () => {
+					MouseUtils.ScrollWheel(1);
+				});
 				yield return new EditorWaitForSeconds(0.1F);
 			}
 			Debug.Log("常规活动入口");

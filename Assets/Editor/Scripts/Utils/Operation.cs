@@ -44,6 +44,17 @@ public static class Operation {
 		y = Mathf.RoundToInt(((float) y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
 		MouseUtils.SetMousePos(x, y);
 	}
+	
+	public static void SetMousePosTemporarily(int x, int y, Action onSet) {
+		if (onSet != null) {
+			Vector2Int oldPos = MouseUtils.GetMousePos();
+			x = Mathf.RoundToInt(((float) x - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
+			y = Mathf.RoundToInt(((float) y - BASED_GAME_RECT.y) / BASED_GAME_RECT.height * CURRENT_GAME_RECT.height + CURRENT_GAME_RECT.y);
+			MouseUtils.SetMousePos(x, y);
+			onSet();
+			MouseUtils.SetMousePos(oldPos.x, oldPos.y);
+		}
+	}
 
 	public static IEnumerator Drag(int x1, int y1, int x2, int y2, float duration = 0.4F) {
 		x1 = Mathf.RoundToInt(((float) x1 - BASED_GAME_RECT.x) / BASED_GAME_RECT.width * CURRENT_GAME_RECT.width + CURRENT_GAME_RECT.x);
