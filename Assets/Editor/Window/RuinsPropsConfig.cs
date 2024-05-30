@@ -48,14 +48,30 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
 		TimeSpan refreshCountdown = RuinsProps.LAST_REFRESH_TIME + RuinsProps.INTERVAL - DateTime.Now;
+		float prevLFieldWidth = EditorGUIUtility.fieldWidth;
+		EditorGUIUtility.fieldWidth = 20F;
 		int hours = EditorGUILayout.DelayedIntField("刷新倒计时", (int) refreshCountdown.TotalHours);
 		float prevLabelWidth = EditorGUIUtility.labelWidth;
 		EditorGUIUtility.labelWidth = 8F;
 		int minutes = EditorGUILayout.DelayedIntField(":", refreshCountdown.Minutes);
 		int seconds = EditorGUILayout.DelayedIntField(":", refreshCountdown.Seconds);
 		EditorGUIUtility.labelWidth = prevLabelWidth;
+		EditorGUIUtility.fieldWidth = prevLFieldWidth;
 		if (EditorGUI.EndChangeCheck()) {
 			RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
+		}
+		EditorGUILayout.EndHorizontal();
+		
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.LabelField("状态", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
+		bool isGot = RuinsProps.LAST_TIME > DateTime.Now.Date && RuinsProps.LAST_TIME > RuinsProps.LAST_REFRESH_TIME;
+		if (isGot) {
+			EditorGUILayout.LabelField("已领取", GUILayout.MinWidth(0));
+			if (GUILayout.Button("重置", GUILayout.Width(60F))) {
+				RuinsProps.LAST_TIME = DateTime.Now - new TimeSpan(24, 0, 0);
+			}
+		} else {
+			EditorGUILayout.LabelField("未领取");
 		}
 		EditorGUILayout.EndHorizontal();
 
