@@ -14,9 +14,15 @@ using UnityEngine;
 using UnityEditor;
 
 public class PrefsEditorWindow<T> : EditorWindow {
+	private Texture2D m_TexRed;
+	private Texture2D m_TexGreen;
+	
 	protected bool m_Debug;
 
 	protected virtual void OnEnable() {
+		m_TexRed = EditorGUIUtility.Load("d_redLight") as Texture2D;
+		m_TexGreen = EditorGUIUtility.Load("d_greenLight") as Texture2D;
+		
 		DoLoadOptions();
 		IsRunning = Prefs.Get<bool>($"{typeof(T).Name}Window.IsRunning");
 	}
@@ -52,6 +58,7 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		set {
 			m_IsRunning = value;
 			EditorApplication.ExecuteMenuItem(value ? StartMenuName : StopMenuName);
+			titleContent.image = m_IsRunning ? m_TexGreen : m_TexRed;
 		}
 	}
 
