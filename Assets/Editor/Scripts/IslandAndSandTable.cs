@@ -180,6 +180,10 @@ public class IslandAndSandTable {
 								Debug.Log("领取按钮");
 								Operation.Click(960, 900);	// 领取按钮
 								yield return new EditorWaitForSeconds(0.3F);
+								if (!EXPEDITION_QUICK_BY_50_DIAMOND) {
+									LAST_EXPEDITION_TIME = DateTime.Now;
+									break;
+								}
 							}
 						} else if (Recognize.IsExpeditionQuickBy50DiamondBtn && EXPEDITION_QUICK_BY_50_DIAMOND) {
 							Debug.Log("快速战斗按钮");
@@ -196,6 +200,8 @@ public class IslandAndSandTable {
 									Debug.Log("领取按钮");
 									Operation.Click(960, 900);	// 领取按钮
 									yield return new EditorWaitForSeconds(0.3F);
+									LAST_EXPEDITION_TIME = DateTime.Now;
+									break;
 								}
 							}
 						} else {
@@ -204,7 +210,6 @@ public class IslandAndSandTable {
 							yield return new EditorWaitForSeconds(0.3F);
 						}
 					}
-					LAST_EXPEDITION_TIME = DateTime.Now;
 				}
 				Debug.Log("左上角返回按钮");
 				Operation.Click(720, 128);	// 左上角返回按钮
