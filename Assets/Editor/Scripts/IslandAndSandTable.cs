@@ -135,7 +135,7 @@ public class IslandAndSandTable {
 						yield return new EditorWaitForSeconds(1.5F);
 						Debug.Log("返回按钮");
 						Operation.Click(960, 906);	// 返回按钮
-						yield return new EditorWaitForSeconds(0.2F);
+						yield return new EditorWaitForSeconds(0.5F);
 					}
 					LAST_SAND_TABLE_TIME = DateTime.Now;
 				}
@@ -175,7 +175,7 @@ public class IslandAndSandTable {
 							yield return new EditorWaitForSeconds(0.3F);
 							Debug.Log("跳过动画按钮");
 							Operation.Click(1135, 888);	// 跳过动画按钮
-							yield return new EditorWaitForSeconds(0.3F);
+							yield return new EditorWaitForSeconds(0.5F);
 							if (Recognize.IsExpeditionGetBtn) {
 								Debug.Log("领取按钮");
 								Operation.Click(960, 900);	// 领取按钮
