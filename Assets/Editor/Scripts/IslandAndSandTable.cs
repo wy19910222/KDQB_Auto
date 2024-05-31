@@ -184,17 +184,19 @@ public class IslandAndSandTable {
 						} else if (Recognize.IsExpeditionQuickBy50DiamondBtn && EXPEDITION_QUICK_BY_50_DIAMOND) {
 							Debug.Log("快速战斗按钮");
 							Operation.Click(960, 740);	// 快速战斗按钮
-							yield return new EditorWaitForSeconds(0.3F);
-							Debug.Log("确定按钮");
-							Operation.Click(960, 700);	// 确定按钮
-							yield return new EditorWaitForSeconds(0.3F);
-							Debug.Log("跳过动画按钮");
-							Operation.Click(1135, 888);	// 跳过动画按钮
 							yield return new EditorWaitForSeconds(0.5F);
-							if (Recognize.IsExpeditionGetBtn) {
-								Debug.Log("领取按钮");
-								Operation.Click(960, 900);	// 领取按钮
-								yield return new EditorWaitForSeconds(0.3F);
+							if (Recognize.IsExpeditionQuickConfirmBtn) {
+								Debug.Log("确定按钮");
+								Operation.Click(960, 700);	// 确定按钮
+								yield return new EditorWaitForSeconds(0.5F);
+								Debug.Log("跳过动画按钮");
+								Operation.Click(1135, 888);	// 跳过动画按钮
+								yield return new EditorWaitForSeconds(0.5F);
+								if (Recognize.IsExpeditionGetBtn) {
+									Debug.Log("领取按钮");
+									Operation.Click(960, 900);	// 领取按钮
+									yield return new EditorWaitForSeconds(0.3F);
+								}
 							}
 						} else {
 							Debug.Log("关闭按钮");

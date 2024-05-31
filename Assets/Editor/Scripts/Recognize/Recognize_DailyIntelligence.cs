@@ -133,7 +133,6 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_BTN) > 0.7F;
 		}
 	}
-	
 	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_FREE_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickFreeBtn.png");
 	public static bool IsExpeditionQuickFreeBtn {
 		get {
@@ -141,12 +140,18 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_FREE_BTN) > 0.95F;
 		}
 	}
-	
 	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_BY_50_DIAMOND_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickBy50DiamondBtn.png");
 	public static bool IsExpeditionQuickBy50DiamondBtn {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(895, 714, 130, 50);
 			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_BY_50_DIAMOND_BTN) > 0.95F;
+		}
+	}
+	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_CONFIRM_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickConfirmBtn.png");
+	public static bool IsExpeditionQuickConfirmBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(938, 687, 44, 22);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_CONFIRM_BTN) > 0.95F;
 		}
 	}
 }
