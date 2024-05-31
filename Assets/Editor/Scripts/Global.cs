@@ -5,6 +5,7 @@
  * @EditTime: 2024-05-11 15:09:39 708
  */
 
+using System;
 using System.Collections.Generic;
 
 public struct Squad {
@@ -14,9 +15,23 @@ public struct Squad {
 
 public class Global {
 	public static long UNATTENDED_THRESHOLD = 30 * 1000_000_0; // 30秒
-	public static int GROUP_COUNT = 4;	// 拥有行军队列数
+	public static int PERSISTENT_GROUP_COUNT = 4;	// 拥有行军队列数
+	public static readonly List<DateTime> TEMPORARY_GROUP_COUNTDOWN = new List<DateTime>();	// 拥有行军队列数
 	public static int ENERGY_FULL = 95;	// 体力上限
 	public static readonly List<Squad> SQUAD_LIST = new List<Squad>();	// 领队英雄
+	
+	public static int GROUP_COUNT {
+		get {
+			int count = PERSISTENT_GROUP_COUNT;
+			DateTime now = DateTime.Now;
+			foreach (DateTime time in TEMPORARY_GROUP_COUNTDOWN) {
+				if (time > now) {
+					++count;
+				}
+			}
+			return count;
+		}
+	}
 
 	public static Recognize.HeroType GetLeader(int squadNumber) {
 		if (squadNumber > 0 && squadNumber <= SQUAD_LIST.Count) {
