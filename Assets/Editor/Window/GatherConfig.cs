@@ -62,7 +62,10 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 
 			if (target.count > 0) {
 				target.levelOffset = EditorGUILayout.IntSlider("        相对最高级偏移", target.levelOffset, -9, 0);
+				EditorGUILayout.BeginHorizontal();
 				target.squadNumber = EditorGUILayout.IntSlider("        使用编队号码", target.squadNumber, 1, 8);
+				target.mustFullSoldiers = GUILayout.Toggle(target.mustFullSoldiers, "必须满兵", "Button", GUILayout.Width(64F));
+				EditorGUILayout.EndHorizontal();
 				EditorGUILayout.BeginHorizontal();
 				GUILayout.Space(28F);
 				foreach (Recognize.HeroType type in Enum.GetValues(typeof(Recognize.HeroType))) {

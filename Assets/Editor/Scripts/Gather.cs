@@ -17,6 +17,7 @@ public struct GatherTarget {
 	public bool willReset;
 	public int levelOffset;
 	public int squadNumber;
+	public bool mustFullSoldiers;
 }
 
 public class Gather {
@@ -33,7 +34,6 @@ public class Gather {
 		new GatherTarget {count = 0, willReset = false, levelOffset = 0, squadNumber = 1},
 	};	// 攻击目标随机范围
 	
-	public static bool MUST_FULL_SOLDIER = true;	// 必须满兵
 	public static readonly Dictionary<Recognize.EnergyShortcutAddingType, int> USE_BOTTLE_DICT = new ();	// 是否自动补充体力
 	
 	public static DateTime LAST_RESET_TIME;	// 上次重置时间
@@ -302,7 +302,7 @@ public class Gather {
 				Debug.Log("选择编队");
 				Operation.Click(1145 + 37 * target.squadNumber, 870);	// 选择编队
 				yield return new EditorWaitForSeconds(0.2F);
-				if (!test && (!MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount <= 0) {
+				if (!test && (!target.mustFullSoldiers || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount <= 0) {
 					Debug.Log("出发");
 					Operation.Click(960, 470);	// 出战按钮
 					--target.count;
