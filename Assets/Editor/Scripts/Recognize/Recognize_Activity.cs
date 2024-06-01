@@ -86,4 +86,20 @@ public static partial class Recognize {
 		}
 		return list;
 	}
+	
+	// 从1开始
+	public static int CurrentCapsuleToyStar {
+		get {
+			int level = 7;
+			while (level >= 0) {
+				Color32 realColor = Operation.GetColorOnScreen(Mathf.RoundToInt(879.1F + level * 20.167F), 823);
+				float value = (float) (realColor.r + realColor.g) / realColor.b;
+				if (value > 4F) {
+					return level;
+				}
+				--level;
+			}
+			return -1;
+		}
+	}
 }
