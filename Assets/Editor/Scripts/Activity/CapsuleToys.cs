@@ -46,10 +46,8 @@ public class CapsuleToys {
 	private static void OnKeyUp(int vkCode) {
 		KeyboardUtils.VKCode key = (KeyboardUtils.VKCode) vkCode;
 		if (key == KEY_START) {
-			Debug.Log($"开始自动扭蛋");
 			StartCapsuleToys();
 		} else if (key == KEY_STOP) {
-			Debug.Log($"终止自动扭蛋");
 			StopCapsuleToys();
 		}
 	}
@@ -57,13 +55,21 @@ public class CapsuleToys {
 	private static EditorCoroutine s_Co;
 	private static void StopCapsuleToys() {
 		if (s_Co != null) {
+			Debug.Log($"终止自动扭蛋");
 			EditorCoroutineManager.StopCoroutine(s_Co);
+			if (Task.CurrentTask == nameof(CapsuleToys)) {
+				Task.CurrentTask = null;
+			}
 		}
 	}
 
 	private static void StartCapsuleToys() {
 		StopCapsuleToys();
-		s_Co = EditorCoroutineManager.StartCoroutine(IECapsuleToys());
+		if (Task.CurrentTask == null) {
+			Task.CurrentTask = nameof(CapsuleToys);
+			Debug.Log($"开始自动扭蛋");
+			s_Co = EditorCoroutineManager.StartCoroutine(IECapsuleToys());
+		}
 	}
 	
 	private static IEnumerator IECapsuleToys() {
