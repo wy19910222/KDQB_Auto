@@ -26,6 +26,7 @@ public class RuinsProps {
 		Recognize.RuinPropType.SKILL_TICKET,
 		Recognize.RuinPropType.PURPLE_HERO_CHIP
 	};
+	public static DateTime NEXT_TRY_TIME;
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -59,6 +60,10 @@ public class RuinsProps {
 			DateTime date = now.Date;
 			if (LAST_TIME > date && LAST_TIME > LAST_REFRESH_TIME) {
 				// 今天领过了 && 最后一次刷新后领过了
+				continue;
+			}
+			if (now < NEXT_TRY_TIME) {
+				// 重试冷却
 				continue;
 			}
 			
@@ -169,6 +174,10 @@ public class RuinsProps {
 										Debug.Log("点外面关闭");
 										Operation.Click(960, 200);	// 点外面关闭
 										yield return new EditorWaitForSeconds(0.1F);
+									} else {
+										Debug.Log("关闭按钮");
+										Operation.Click(1155, 408);	// 关闭按钮
+										yield return new EditorWaitForSeconds(0.3F);
 									}
 									Operation.Click(960, 200);	// 点外面关闭
 									yield return new EditorWaitForSeconds(0.3F);
@@ -197,7 +206,7 @@ public class RuinsProps {
 			
 			if (failed) {
 				// 如果失败，则一分钟后重试
-				yield return new EditorWaitForSeconds(60F);
+				NEXT_TRY_TIME = DateTime.Now + new TimeSpan(0, 0, 60);
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns

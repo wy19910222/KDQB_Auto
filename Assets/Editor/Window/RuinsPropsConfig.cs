@@ -46,19 +46,21 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 		}
 		
 		EditorGUILayout.BeginHorizontal();
-		EditorGUI.BeginChangeCheck();
-		TimeSpan refreshCountdown = RuinsProps.LAST_REFRESH_TIME + RuinsProps.INTERVAL - DateTime.Now;
-		float prevLFieldWidth = EditorGUIUtility.fieldWidth;
-		EditorGUIUtility.fieldWidth = 20F;
-		int hours = EditorGUILayout.DelayedIntField("刷新倒计时", (int) refreshCountdown.TotalHours);
-		float prevLabelWidth = EditorGUIUtility.labelWidth;
-		EditorGUIUtility.labelWidth = 8F;
-		int minutes = EditorGUILayout.DelayedIntField(":", refreshCountdown.Minutes);
-		int seconds = EditorGUILayout.DelayedIntField(":", refreshCountdown.Seconds);
-		EditorGUIUtility.labelWidth = prevLabelWidth;
-		EditorGUIUtility.fieldWidth = prevLFieldWidth;
-		if (EditorGUI.EndChangeCheck()) {
-			RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
+		{
+			EditorGUI.BeginChangeCheck();
+			TimeSpan refreshCountdown = RuinsProps.LAST_REFRESH_TIME + RuinsProps.INTERVAL - DateTime.Now;
+			float prevLFieldWidth = EditorGUIUtility.fieldWidth;
+			EditorGUIUtility.fieldWidth = 20F;
+			int hours = EditorGUILayout.DelayedIntField("刷新倒计时", (int) refreshCountdown.TotalHours);
+			float prevLabelWidth = EditorGUIUtility.labelWidth;
+			EditorGUIUtility.labelWidth = 8F;
+			int minutes = EditorGUILayout.DelayedIntField(":", refreshCountdown.Minutes);
+			int seconds = EditorGUILayout.DelayedIntField(":", refreshCountdown.Seconds);
+			EditorGUIUtility.labelWidth = prevLabelWidth;
+			EditorGUIUtility.fieldWidth = prevLFieldWidth;
+			if (EditorGUI.EndChangeCheck()) {
+				RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
+			}
 		}
 		EditorGUILayout.EndHorizontal();
 		
@@ -74,6 +76,24 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 			EditorGUILayout.LabelField("未领取");
 		}
 		EditorGUILayout.EndHorizontal();
+		if (!isGot) {
+			EditorGUILayout.BeginHorizontal();
+			EditorGUI.BeginChangeCheck();
+			TimeSpan tryCountdown = RuinsProps.NEXT_TRY_TIME - DateTime.Now;
+			float prevLFieldWidth = EditorGUIUtility.fieldWidth;
+			EditorGUIUtility.fieldWidth = 20F;
+			int hours = EditorGUILayout.DelayedIntField("重试倒计时", (int) tryCountdown.TotalHours);
+			float prevLabelWidth = EditorGUIUtility.labelWidth;
+			EditorGUIUtility.labelWidth = 8F;
+			int minutes = EditorGUILayout.DelayedIntField(":", tryCountdown.Minutes);
+			int seconds = EditorGUILayout.DelayedIntField(":", tryCountdown.Seconds);
+			EditorGUIUtility.labelWidth = prevLabelWidth;
+			EditorGUIUtility.fieldWidth = prevLFieldWidth;
+			if (EditorGUI.EndChangeCheck()) {
+				RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
+			}
+			EditorGUILayout.EndHorizontal();
+		}
 
 		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
 		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
