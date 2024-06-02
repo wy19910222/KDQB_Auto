@@ -107,8 +107,9 @@ public class IslandAndSandTable {
 				
 				Debug.Log("前往按钮");
 				Operation.Click(1092, 320 + (SAND_TABLE_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
-				yield return new EditorWaitForSeconds(0.5F);
+				yield return new EditorWaitForSeconds(1F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.SAND_TABLE && !test) {
+					yield return new EditorWaitForSeconds(0.5F);
 					Debug.Log("军种标签");
 					Operation.Click(660 + SAND_TABLE_TAB * 150, 190);	// 军种标签
 					yield return new EditorWaitForSeconds(0.2F);
@@ -163,8 +164,9 @@ public class IslandAndSandTable {
 				
 				Debug.Log("前往按钮");
 				Operation.Click(1092, 320 + (EXPEDITION_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
-				yield return new EditorWaitForSeconds(0.5F);
+				yield return new EditorWaitForSeconds(1F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
+					yield return new EditorWaitForSeconds(0.5F);
 					for (int i = 0; i < 5 && Recognize.IsExpeditionQuickBtn; i++) {
 						Debug.Log("快速战斗按钮");
 						Operation.Click(1135, 953);	// 快速战斗按钮
@@ -235,7 +237,7 @@ public class IslandAndSandTable {
 				
 				Debug.Log("前往按钮");
 				Operation.Click(1092, 320 + (ISLAND_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
-				yield return new EditorWaitForSeconds(0.5F);
+				yield return new EditorWaitForSeconds(1F);
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.ISLAND && !test) {
 					yield return new EditorWaitForSeconds(0.5F);
 					for (int i = 0; i < 10; i++) {
@@ -279,7 +281,7 @@ public class IslandAndSandTable {
 			
 			Task.CurrentTask = null;
 			
-			yield return new EditorWaitForSeconds(30F);
+			yield return new EditorWaitForSeconds(5F);
 		}
 		// ReSharper disable once IteratorNeverReturns
 	}
