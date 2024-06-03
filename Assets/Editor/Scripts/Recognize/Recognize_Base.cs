@@ -67,7 +67,7 @@ public static partial class Recognize {
 		return averageColors;
 	}
 	
-	public static float ApproximatelyRect(Color32[,] realColors, Color32[,] targetColors, float thresholdMulti = 1) {
+	public static float ApproximatelyRect(Color32[,] realColors, Color32[,] targetColors, float thresholdMulti = 1, Func<int, int, bool> match = null) {
 		int realWidth = realColors.GetLength(0);
 		int targetWidth = targetColors.GetLength(0);
 		if (realWidth != targetWidth) {
@@ -78,18 +78,22 @@ public static partial class Recognize {
 		if (realHeight != targetHeight) {
 			return 0;
 		}
+		int totalCount = 0;
 		int approximatelyCount = 0;
 		for (int y = 0; y < realHeight; ++y) {
 			for (int x = 0; x < realWidth; ++x) {
-				if (Approximately(realColors[x, y], targetColors[x, y], thresholdMulti)) {
-					++approximatelyCount;
+				if (match == null || match(x, y)) {
+					++totalCount;
+					if (Approximately(realColors[x, y], targetColors[x, y], thresholdMulti)) {
+						++approximatelyCount;
+					}
 				}
 			}
 		}
-		return (float) approximatelyCount / (realWidth * realHeight);
+		return (float) approximatelyCount / totalCount;
 	}
 	
-	public static float ApproximatelyRectIgnoreCovered(Color32[,] realColors, Color32[,] targetColors, float thresholdMulti = 1) {
+	public static float ApproximatelyRectIgnoreCovered(Color32[,] realColors, Color32[,] targetColors, float thresholdMulti = 1, Func<int, int, bool> match = null) {
 		int realWidth = realColors.GetLength(0);
 		int targetWidth = targetColors.GetLength(0);
 		if (realWidth != targetWidth) {
@@ -100,15 +104,19 @@ public static partial class Recognize {
 		if (realHeight != targetHeight) {
 			return 0;
 		}
+		int totalCount = 0;
 		int approximatelyCount = 0;
 		for (int y = 0; y < realHeight; ++y) {
 			for (int x = 0; x < realWidth; ++x) {
-				if (ApproximatelyCoveredCount(realColors[x, y], targetColors[x, y], thresholdMulti) >= 0) {
-					++approximatelyCount;
+				if (match == null || match(x, y)) {
+					++totalCount;
+					if (ApproximatelyCoveredCount(realColors[x, y], targetColors[x, y], thresholdMulti) >= 0) {
+						++approximatelyCount;
+					}
 				}
 			}
 		}
-		return (float) approximatelyCount / (realWidth * realHeight);
+		return (float) approximatelyCount / totalCount;
 	}
 	
 	public static bool Approximately(Color32 realColor, Color32 targetColor, float thresholdMulti = 1) {
