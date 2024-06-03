@@ -82,7 +82,7 @@ public class CapsuleToys {
 			if (willGet) {
 				Operation.Click(990, 860);	// 领取奖励
 				yield return new EditorWaitForSeconds(0.3F);
-				Operation.Click(1060, 730);	// 领取奖励
+				Operation.Click(1010, 730);	// 领取奖励
 				yield return new EditorWaitForSeconds(0.5F);
 				Operation.Click(960, 970);	// 点击继续
 				yield return new EditorWaitForSeconds(0.2F);
