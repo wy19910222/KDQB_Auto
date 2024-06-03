@@ -60,7 +60,7 @@ public class GlobalStatusConfig : EditorWindow {
 		EditorGUILayout.LabelField("体力值", GUILayout.Width(EditorGUIUtility.labelWidth - 1F));
 		int deltaEnergy = Global.ENERGY_FULL - Recognize.Energy;
 		string energyColor = deltaEnergy > 52 ? "cyan" : deltaEnergy > 2 ? "orange" : "red";
-		EditorGUILayout.LabelField($"<color={energyColor}>{Recognize.Energy}</color><color=white> / {Global.GROUP_COUNT}</color>", m_RichTextStyle);
+		EditorGUILayout.LabelField($"<color={energyColor}>{Recognize.Energy}</color><color=white> / {Global.ENERGY_FULL}</color>", m_RichTextStyle);
 		EditorGUILayout.EndHorizontal();
 		// EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
 		// if (KeyboardUtils.IsRunning) {
