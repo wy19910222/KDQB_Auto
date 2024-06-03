@@ -84,14 +84,13 @@ public class Follow {
 			}
 			
 			// 队列数量
-			int busyGroupCount = Recognize.BusyGroupCount;
-			if (busyGroupCount >= Global.GROUP_COUNT) {
+			if (!Recognize.IsAnyGroupIdle) {
 				continue;
 			}
 			// 如果单队列跟车
 			if (SINGLE_GROUP) {
 				bool gatherExist = false;
-				for (int i = 0; i < busyGroupCount; ++i) {
+				for (int i = 0; i < Recognize.BusyGroupCount; ++i) {
 					if (Recognize.GetGroupState(i) == Recognize.GROUP_STATE_GATHER) {
 						gatherExist = true;
 						break;
@@ -197,7 +196,7 @@ public class Follow {
 			}
 			Debug.Log("决定跟车");
 			bool maybeSucceed = false;
-			busyGroupCount = Recognize.BusyGroupCount;
+			int busyGroupCount = Recognize.BusyGroupCount;
 			s_CachedOwnerName = ownerName;	// 记录车主
 			float delay = UnityEngine.Random.Range(FOLLOW_DELAY_MIN, FOLLOW_DELAY_MAX);	// 额外随机延迟量
 			Debug.Log("加入按钮");

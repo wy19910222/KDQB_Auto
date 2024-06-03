@@ -105,7 +105,7 @@ public class Jungle {
 					}
 				}
 				// 队列数量
-				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
+				if (!Recognize.IsAnyGroupIdle) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}
@@ -117,7 +117,7 @@ public class Jungle {
 				// 可能处于世界场景远近景切换的动画过程中，所以等待0.2秒再判断一次
 				yield return new EditorWaitForSeconds(0.2F);
 				// 队列数量
-				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT) {
+				if (!Recognize.IsAnyGroupIdle) {
 					// Debug.Log($"忙碌队列：{Recognize.BusyGroupCount}");
 					continue;
 				}

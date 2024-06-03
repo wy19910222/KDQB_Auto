@@ -75,30 +75,7 @@ public static class FollowOld {
 	// };
 	
 	private static readonly List<Func<bool>> s_ConditionalList = new List<Func<bool>>() {
-		() => {
-			int deltaY = -1;
-			if (Approximately(ScreenshotUtils.GetColorOnScreen(170, 240), new Color32(17, 37, 61, 255), 10)) {
-				// 世界界面（近）
-				deltaY = 76;
-			} else if (Approximately(ScreenshotUtils.GetColorOnScreen(170, 164), new Color32(17, 37, 61, 255), 10)) {
-				// 世界界面（远）
-				deltaY = 0;
-			}
-			if (deltaY >= 0) {
-				// 获取出征状态的行军队列数量
-				int groupCount = 0;
-				Color32 targetColor = new Color32(29, 40, 68, 255);
-				while (groupCount < 8) {
-					Color32 realColor = ScreenshotUtils.GetColorOnScreen(145, 438 + deltaY + groupCount * 50);
-					if (!Approximately(realColor, targetColor, 10)) {
-						break;
-					}
-					groupCount++;
-				}
-				return groupCount < Global.GROUP_COUNT;
-			}
-			return false;
-		},
+		() => Recognize.IsAnyGroupIdle,
 		() => {
 			Color32 targetColor1 = new Color32(148, 148, 155, 255);
 			Color32 realColor1 = ScreenshotUtils.GetColorOnScreen(965, 305);

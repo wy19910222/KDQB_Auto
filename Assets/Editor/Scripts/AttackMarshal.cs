@@ -86,7 +86,7 @@ public class AttackMarshal {
 			Task.CurrentTask = nameof(AttackMarshal);
 
 			if (Recognize.CurrentScene is Recognize.Scene.OUTSIDE_FARAWAY or Recognize.Scene.OUTSIDE_NEARBY) {
-				if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
+				if (!Recognize.IsAnyGroupIdle || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 					continue;
 				}
 			}
@@ -114,7 +114,7 @@ public class AttackMarshal {
 						continue;
 					}
 					Debug.Log("当前忙碌队列数量: " + Recognize.BusyGroupCount);
-					if (Recognize.BusyGroupCount >= Global.GROUP_COUNT || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
+					if (!Recognize.IsAnyGroupIdle || Recognize.GetHeroGroupNumber(Global.GetLeader(SQUAD_NUMBER)) >= 0) {
 						continue;
 					}
 				}
