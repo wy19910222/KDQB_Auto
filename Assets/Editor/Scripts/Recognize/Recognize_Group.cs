@@ -74,7 +74,33 @@ public static partial class Recognize {
 			});
 		}
 	}
-	
+
+	public static bool IsAnyGroupIdle {
+		get {
+			return GetCachedValueOrNew(nameof(IsAnyGroupIdle), () => {
+				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+				if (deltaY != -1) {
+					deltaY = IsMiniMapShowing switch {
+						true => deltaY + 155,
+						false => deltaY,
+						_ => -1
+					};
+				}
+				if (deltaY != -1) {
+					Color32[,] busyCount = Operation.GetColorsOnScreen(145, 231 + deltaY, 10, 13);
+					Color32[,] totalCount = Operation.GetColorsOnScreen(160, 231 + deltaY, 10, 13);
+					return ApproximatelyRect(busyCount, totalCount, 1, (x, y) => {
+						Color32 busyCountColor = busyCount[x, y];
+						Color32 totalCountColor = totalCount[x, y];
+						return busyCountColor.r == busyCountColor.g && busyCountColor.r == busyCountColor.b ||
+								totalCountColor.r == totalCountColor.g && totalCountColor.r == totalCountColor.b;
+					}) < 0.9F;
+				}
+				return false;
+			});
+		}
+	}
+
 	public const string GROUP_STATE_GATHER = "Gather";
 	public const string GROUP_STATE_COLLECT = "Collect";
 	public static readonly Dictionary<string, Color32[,]> GROUP_STATE_DICT_NEARBY = LoadGroupStateDict("GroupStateDictNearby");
