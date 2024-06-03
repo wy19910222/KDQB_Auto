@@ -77,12 +77,13 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 		}
 		EditorGUILayout.EndHorizontal();
 		if (!isGot) {
+			RuinsProps.RETRY_DELAY = EditorGUILayout.IntSlider("    重试延迟（秒）", RuinsProps.RETRY_DELAY, 120, 600);
 			EditorGUILayout.BeginHorizontal();
 			EditorGUI.BeginChangeCheck();
 			TimeSpan tryCountdown = RuinsProps.NEXT_TRY_TIME - DateTime.Now;
 			float prevLFieldWidth = EditorGUIUtility.fieldWidth;
 			EditorGUIUtility.fieldWidth = 20F;
-			int hours = EditorGUILayout.DelayedIntField("重试倒计时", (int) tryCountdown.TotalHours);
+			int hours = EditorGUILayout.DelayedIntField("    重试倒计时", (int) tryCountdown.TotalHours);
 			float prevLabelWidth = EditorGUIUtility.labelWidth;
 			EditorGUIUtility.labelWidth = 8F;
 			int minutes = EditorGUILayout.DelayedIntField(":", tryCountdown.Minutes);

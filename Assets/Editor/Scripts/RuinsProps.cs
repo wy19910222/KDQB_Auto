@@ -26,6 +26,7 @@ public class RuinsProps {
 		Recognize.RuinPropType.SKILL_TICKET,
 		Recognize.RuinPropType.PURPLE_HERO_CHIP
 	};
+	public static int RETRY_DELAY = 300;
 	public static DateTime NEXT_TRY_TIME;
 	
 	private static EditorCoroutine s_CO;
@@ -82,7 +83,7 @@ public class RuinsProps {
 			Task.CurrentTask = nameof(RuinsProps);
 
 			// 尝试领取遗迹道具
-			bool failed = false;
+			bool succeeded = false;
 			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.3F);
@@ -187,13 +188,13 @@ public class RuinsProps {
 							Operation.Click(1170, 204);	// 关闭按钮
 							yield return new EditorWaitForSeconds(0.3F);
 						}
-						if (gotCount < RUIN_ORDERS.Count) {
-							failed = true;
+						if (gotCount >= RUIN_ORDERS.Count) {
+							succeeded = true;
 						}
 					}
 				}
 			}
-			if (!failed) {
+			if (succeeded) {
 				LAST_TIME = DateTime.Now;
 			}
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
@@ -204,9 +205,9 @@ public class RuinsProps {
 			
 			Task.CurrentTask = null;
 			
-			if (failed) {
-				// 如果失败，则一分钟后重试
-				NEXT_TRY_TIME = DateTime.Now + new TimeSpan(0, 0, 60);
+			if (!succeeded) {
+				// 如果失败，则等待一段时间后重试
+				NEXT_TRY_TIME = DateTime.Now + new TimeSpan(0, 0, RETRY_DELAY);
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
