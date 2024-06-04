@@ -91,7 +91,7 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 			EditorGUIUtility.labelWidth = prevLabelWidth;
 			EditorGUIUtility.fieldWidth = prevLFieldWidth;
 			if (EditorGUI.EndChangeCheck()) {
-				RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
+				RuinsProps.NEXT_TRY_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 			}
 			EditorGUILayout.EndHorizontal();
 		}
