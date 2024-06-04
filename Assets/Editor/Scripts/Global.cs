@@ -15,10 +15,11 @@ public struct Squad {
 
 public class Global {
 	public static long UNATTENDED_THRESHOLD = 30 * 1000_000_0; // 30秒
-	public static int PERSISTENT_GROUP_COUNT = 4;	// 拥有行军队列数
-	public static readonly List<DateTime> TEMPORARY_GROUP_COUNTDOWN = new List<DateTime>();	// 拥有行军队列数
 	public static int ENERGY_FULL = 95;	// 体力上限
-	public static readonly List<Squad> SQUAD_LIST = new List<Squad>();	// 领队英雄
+	public static bool DAN_EXIST = true;	// 是否有戴安娜
+	public static int PERSISTENT_GROUP_COUNT = 4;	// 拥有永久行军队列数
+	public static readonly List<DateTime> TEMPORARY_GROUP_COUNTDOWN = new List<DateTime>();	// 拥有临时行军队列数
+	public static readonly List<Squad> SQUAD_LIST = new List<Squad>();	// 各编队领队英雄
 	
 	public static int GROUP_COUNT {
 		get {

@@ -35,7 +35,10 @@ public class GlobalConfig : PrefsEditorWindow<Global> {
 	private void OnGUI() {
 		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectIntField("游戏范围", Operation.CURRENT_GAME_RECT);
 		Global.UNATTENDED_THRESHOLD = EditorGUILayout.LongField("无人值守阈值（秒）", Global.UNATTENDED_THRESHOLD / 1000_000_0) * 1000_000_0;
+		EditorGUILayout.BeginHorizontal();
 		Global.ENERGY_FULL = EditorGUILayout.IntField("体力上限", Global.ENERGY_FULL);
+		Global.DAN_EXIST = GUILayout.Toggle(Global.DAN_EXIST, "有戴安娜", "Button");
+		EditorGUILayout.EndHorizontal();
 		
 		Global.PERSISTENT_GROUP_COUNT = EditorGUILayout.IntSlider("永久行军队列", Global.PERSISTENT_GROUP_COUNT, 0, 7);
 		EditorGUILayout.BeginHorizontal();

@@ -16,7 +16,6 @@ public class Jungle {
 
 	public static int RESERVED_ENERGY = 59;	// 保留体力值
 	public static bool KEEP_ENERGY_NOT_FULL = true;	// 保持体力不满状态
-	public static bool DAN_EXIST = true;	// 是否有戴安娜
 	public static float UNATTENDED_DURATION = 5;	// 等待无操作时长
 	public static float COOLDOWN = 5;	// 打野间隔
 	
@@ -97,7 +96,7 @@ public class Jungle {
 				// 体力值
 				if (USE_BOTTLE_DICT.Values.All(count => count <= 0)) {
 					if (!KEEP_ENERGY_NOT_FULL || Recognize.Energy < Global.ENERGY_FULL - 1) {
-						int cost = REPEAT_5 ? DAN_EXIST ? 15 : 25 : 10;
+						int cost = REPEAT_5 ? Global.DAN_EXIST ? 15 : 25 : 10;
 						if (Recognize.Energy < RESERVED_ENERGY + cost) {
 							// Debug.Log($"当前体力：{Recognize.energy}");
 							continue;

@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -43,9 +44,24 @@ public class JungleConfig : PrefsEditorWindow<Jungle> {
 		bool useBottle = Jungle.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {
 			EditorGUILayout.BeginHorizontal();
+			float prevFieldWidth = EditorGUIUtility.fieldWidth;
+			EditorGUIUtility.fieldWidth = 40;
 			Jungle.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", Jungle.RESERVED_ENERGY);
+			EditorGUIUtility.fieldWidth = prevFieldWidth;
 			// Jungle.KEEP_ENERGY_NOT_FULL = GUILayout.Toggle(Jungle.KEEP_ENERGY_NOT_FULL, "保持不满", "Button");
-			Jungle.DAN_EXIST = GUILayout.Toggle(Jungle.DAN_EXIST, "有戴安娜", "Button");
+			List<int> reservedEnergy = new List<int>() { 0, 25 };
+			int onceCost = Global.DAN_EXIST ? 15 : 25;
+			int fearStarCost = Global.DAN_EXIST ? 80 : 100;
+			if (onceCost + fearStarCost < Global.ENERGY_FULL) {
+				reservedEnergy.Add(fearStarCost);
+			}
+			reservedEnergy.Add(Global.ENERGY_FULL - 50 - 2);
+			reservedEnergy.Add(Global.ENERGY_FULL - onceCost - 2);
+			foreach (int energy in reservedEnergy) {
+				if (GUILayout.Button(energy.ToString())) {
+					Jungle.RESERVED_ENERGY = energy;
+				}
+			}
 			EditorGUILayout.EndHorizontal();
 		}
 		

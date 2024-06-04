@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -21,9 +22,24 @@ public class RescueRefugeesConfig : PrefsEditorWindow<RescueRefugees> {
 		bool useBottle = RescueRefugees.USE_BOTTLE_DICT.Values.ToList().Exists(count => count > 0);
 		if (!useBottle) {
 			EditorGUILayout.BeginHorizontal();
+			float prevFieldWidth = EditorGUIUtility.fieldWidth;
+			EditorGUIUtility.fieldWidth = 40;
 			RescueRefugees.RESERVED_ENERGY = EditorGUILayout.IntField("保留体力值", RescueRefugees.RESERVED_ENERGY);
+			EditorGUIUtility.fieldWidth = prevFieldWidth;
 			// RescueRefugees.KEEP_ENERGY_NOT_FULL = GUILayout.Toggle(RescueRefugees.KEEP_ENERGY_NOT_FULL, "保持不满", "Button");
-			RescueRefugees.DAN_EXIST = GUILayout.Toggle(RescueRefugees.DAN_EXIST, "有戴安娜", "Button");
+			List<int> reservedEnergy = new List<int>() { 0, 25 };
+			int onceCost = Global.DAN_EXIST ? 3 : 5;
+			int fearStarCost = Global.DAN_EXIST ? 80 : 100;
+			if (onceCost + fearStarCost < Global.ENERGY_FULL) {
+				reservedEnergy.Add(fearStarCost);
+			}
+			reservedEnergy.Add(Global.ENERGY_FULL - 50 - 2);
+			reservedEnergy.Add(Global.ENERGY_FULL - onceCost - 2);
+			foreach (int energy in reservedEnergy) {
+				if (GUILayout.Button(energy.ToString())) {
+					RescueRefugees.RESERVED_ENERGY = energy;
+				}
+			}
 			EditorGUILayout.EndHorizontal();
 		}
 
