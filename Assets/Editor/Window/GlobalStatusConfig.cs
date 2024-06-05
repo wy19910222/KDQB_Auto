@@ -5,6 +5,7 @@
  * @EditTime: 2023-12-28 12:59:39 971
  */
 
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,14 +16,13 @@ public class GlobalStatusConfig : EditorWindow {
 	}
 	
 	private GUIStyle m_RichTextStyle;
+	private GUIStyle RichTextStyle => m_RichTextStyle ??= new GUIStyle(GUI.skin.label) {
+		richText = true
+	};
 
 	protected void OnEnable() {
 		GlobalStatus.Enable();
 		EditorCoroutineManager.Enable = Prefs.Get($"EditorCoroutineManager.Enable", true);
-		
-		m_RichTextStyle ??= new GUIStyle(GUI.skin.label) {
-			richText = true
-		};
 	}
 	protected void OnDisable() {
 		GlobalStatus.Disable();
@@ -52,7 +52,7 @@ public class GlobalStatusConfig : EditorWindow {
 		}
 		// EditorGUILayout.IntField(busyGroupCount, GUILayout.Width(40F - 2F));
 		string groupTag = $"<color={(Recognize.IsAnyGroupIdle ? "cyan>存在闲置" : "orange>全部忙碌")}</color>";
-		EditorGUILayout.LabelField($"<color=white>{busyGroupCount} / {Global.GROUP_COUNT}</color>    {groupTag}", m_RichTextStyle);
+		EditorGUILayout.LabelField($"<color=white>{busyGroupCount} / {Global.GROUP_COUNT}</color>    {groupTag}", RichTextStyle);
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
 		// EditorGUILayout.IntField("体力值", Recognize.Energy, GUILayout.Width(EditorGUIUtility.labelWidth + 40F));
@@ -60,7 +60,7 @@ public class GlobalStatusConfig : EditorWindow {
 		EditorGUILayout.LabelField("体力值", GUILayout.Width(EditorGUIUtility.labelWidth - 1F));
 		int deltaEnergy = Global.ENERGY_FULL - Recognize.Energy;
 		string energyColor = deltaEnergy > 52 ? "cyan" : deltaEnergy > 2 ? "orange" : "red";
-		EditorGUILayout.LabelField($"<color={energyColor}>{Recognize.Energy}</color><color=white> / {Global.ENERGY_FULL}</color>", m_RichTextStyle);
+		EditorGUILayout.LabelField($"<color={energyColor}>{Recognize.Energy}</color><color=white> / {Global.ENERGY_FULL}</color>", RichTextStyle);
 		EditorGUILayout.EndHorizontal();
 		// EditorGUILayout.FloatField("窗口覆盖", Recognize.WindowCoveredCount);
 		// if (KeyboardUtils.IsRunning) {
