@@ -61,6 +61,7 @@ public static partial class Recognize {
 		}
 	}
 
+	private static readonly Color32[,] MINING_TRUCK_0 = Operation.GetFromFile("PersistentData/Textures/MiningTruck0.png");
 	private static readonly Color32[,] MINING_TRUCK_1 = Operation.GetFromFile("PersistentData/Textures/MiningTruck1.png");
 	private static readonly Color32[,] MINING_TRUCK_4 = Operation.GetFromFile("PersistentData/Textures/MiningTruck4.png");
 	private static readonly Color32[,] MINING_TRUCK_8 = Operation.GetFromFile("PersistentData/Textures/MiningTruck8.png");
@@ -75,6 +76,8 @@ public static partial class Recognize {
 			return 8;
 		} else if (ApproximatelyRect(realColors, MINING_TRUCK_24) > 0.6F) {
 			return 24;
+		} else if (ApproximatelyRect(realColors, MINING_TRUCK_0) > 0.6F) {
+			return 0;
 		} else {
 			return -1;
 		}
