@@ -18,7 +18,14 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
-		MiningTycoon.ORDER_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", MiningTycoon.ORDER_RADIUS, 1, 6);
+		MiningTycoon.ORDER_TRY_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", MiningTycoon.ORDER_TRY_RADIUS, 1, 6);
+		MiningTycoon.ORDER_RETRY_INTERVAL = EditorGUILayout.IntSlider("寻找标签重试间隔（秒）", MiningTycoon.ORDER_RETRY_INTERVAL, 60, 600);
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("收取矿车编号", GUILayout.Width(EditorGUIUtility.labelWidth - 2F));
@@ -65,8 +72,6 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 			}
 		}
 		EditorGUILayout.EndHorizontal();
-		
-		MiningTycoon.CLICK_INTERVAL = EditorGUILayout.IntSlider("失败点击间隔（秒）", MiningTycoon.CLICK_INTERVAL, 300, 3600);
 		
 		GUILayout.Space(5F);
 		if (MiningTycoon.IsRunning) {

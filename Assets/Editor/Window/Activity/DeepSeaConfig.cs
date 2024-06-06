@@ -17,9 +17,17 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 	
 	private void OnGUI() {
 		DeepSea.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", DeepSea.ACTIVITY_ORDER, 1, 20);
-		DeepSea.ORDER_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", DeepSea.ORDER_RADIUS, 1, 6);
+		DeepSea.ORDER_TRY_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", DeepSea.ORDER_TRY_RADIUS, 1, 6);
+		DeepSea.ORDER_RETRY_INTERVAL = EditorGUILayout.IntSlider("寻找标签重试间隔（秒）", DeepSea.ORDER_RETRY_INTERVAL, 60, 600);
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
+		
 		DeepSea.DETECTOR_COUNT = EditorGUILayout.IntSlider("拥有探测器", DeepSea.DETECTOR_COUNT, 1, 3);
-		DeepSea.TRY_COUNT = EditorGUILayout.IntSlider("尝试次数", DeepSea.TRY_COUNT, 4, 10);
+		DeepSea.TRY_COUNT = EditorGUILayout.IntSlider("探测器点击次数", DeepSea.TRY_COUNT, 4, 10);
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("倒计时");
