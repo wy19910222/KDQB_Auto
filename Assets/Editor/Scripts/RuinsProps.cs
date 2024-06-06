@@ -109,7 +109,6 @@ public class RuinsProps {
 						foreach (int order in RUIN_ORDERS) {
 							int orderOffsetY = Mathf.Clamp((order - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
 							int deltaOffsetY = orderOffsetY - offsetY;
-							offsetY = orderOffsetY;
 							while (deltaOffsetY > 0) {
 								int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
 								// 往上拖动
@@ -120,6 +119,8 @@ public class RuinsProps {
 								yield return new EditorWaitForSeconds(0.1F);
 								deltaOffsetY -= dragDistance;
 							}
+							offsetY = orderOffsetY;
+							
 							Debug.Log("遗迹道具按钮");
 							Operation.Click(1147, 355 + (order - 1) * ITEM_HEIGHT - offsetY);	// 遗迹道具按钮
 							yield return new EditorWaitForSeconds(0.3F);
