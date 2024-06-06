@@ -158,7 +158,7 @@ public class MiningTycoon {
 					nearbyOrders.Clear();
 				}
 				ACTIVITY_ORDER = activityOrder;
-				NEAREST_DT = DateTime.Now + new TimeSpan(Mathf.Abs(truckTypes[targetIndex]), 0, 0);
+				NEAREST_DT = DateTime.Now + new TimeSpan(Mathf.Max(truckTypes[targetIndex], 1), 0, 0);
 			} else {
 				// 失败，更新倒计时
 				if (GlobalStatus.IsUnattended) {
