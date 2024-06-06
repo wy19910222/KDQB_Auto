@@ -42,20 +42,16 @@ public class RainbowPartyGift {
 			if (now < NEXT_TIME) {
 				continue;
 			}
-			Debug.LogError("--------------1-------------------------");
 			
 			// 有窗口打开着
 			if (Recognize.IsWindowCovered) {
 				continue;
 			}
-			Debug.LogError("---------------2------------------------");
 
 			// 不是有活动入口的场景也不是世界远景
 			if (!Recognize.IsOutsideOrInsideScene) {
 				continue;
 			}
-
-			Debug.LogError("--------------3-------------------------");
 
 			if (Task.CurrentTask != null) {
 				continue;
