@@ -76,10 +76,13 @@ public static partial class Recognize {
 			return 8;
 		} else if (ApproximatelyRect(realColors, MINING_TRUCK_24) > 0.6F) {
 			return 24;
-		} else if (ApproximatelyRect(realColors, MINING_TRUCK_0) > 0.6F) {
-			return 0;
 		} else {
-			return -1;
+			Color32[,] realColors1 = Operation.GetColorsOnScreen(766 + shortcutIndex * 118, 820, 40, 40);
+			if (ApproximatelyRect(realColors1, MINING_TRUCK_0, 1.5F) > 0.6F) {
+				return 0;
+			} else {
+				return -1;
+			}
 		}
 	}
 	public static List<int> GetMiningTruckTypes() {
