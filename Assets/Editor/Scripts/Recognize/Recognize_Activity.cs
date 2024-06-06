@@ -108,4 +108,12 @@ public static partial class Recognize {
 			return -1;
 		}
 	}
+
+	private static readonly Color32[,] RAINBOW_PARTY_GIFT_GET_BTN = Operation.GetFromFile("PersistentData/Textures/RainbowPartyGiftGetBtn.png");
+	public static bool IsRainbowPartyGiftCanGet {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(940, 40, 434, 20);
+			return ApproximatelyRectIgnoreCovered(realColors, RAINBOW_PARTY_GIFT_GET_BTN) > 0.9F;
+		}
+	}
 }
