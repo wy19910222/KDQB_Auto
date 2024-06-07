@@ -88,15 +88,18 @@ public class RuinsProps {
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.3F);
 			bool test = Test;
-			if (test || Recognize.AllianceTerritoryIsNew) {
+			// if (test || Recognize.AllianceTerritoryIsNew) {
+			{
 				Debug.Log("联盟领地按钮");
 				Operation.Click(835, 525);	// 联盟领地按钮
 				yield return new EditorWaitForSeconds(0.5F);
-				if (test || Recognize.AllianceRuinIsNew) {
+				// if (test || Recognize.AllianceRuinIsNew) {
+				{
 					Debug.Log("遗迹标签");
 					Operation.Click(1124, 196);	// 遗迹标签
 					yield return new EditorWaitForSeconds(0.2F);
-					if (test || Recognize.AllianceRuinLv2IsNew) {
+					// if (test || Recognize.AllianceRuinLv2IsNew) {
+					{
 						Debug.Log("2级遗迹标签");
 						Operation.Click(957, 243);	// 2级遗迹标签
 						yield return new EditorWaitForSeconds(0.2F);
