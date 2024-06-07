@@ -15,9 +15,14 @@ public class IslandAndSandTable {
 	
 	public static int SAND_TABLE_ORDER = 4;
 	public static int SAND_TABLE_TAB = 1;	// 1-陆军，2-海军，3-空军
+	public static int SAND_SQUAD_NUMBER = 1;	// 使用编队号码
+	public static bool SAND_MUST_FULL_SOLDIER = true;	// 必须满兵
+	
 	public static int EXPEDITION_ORDER = 5;
 	public static bool EXPEDITION_QUICK_BY_50_DIAMOND = true;
+	
 	public static int ISLAND_ORDER = 10;
+	
 	public static TimeSpan DAILY_TIME = new TimeSpan(1, 0, 0);	// 每天几点执行
 	
 	public static DateTime LAST_SAND_TABLE_TIME;
@@ -117,26 +122,40 @@ public class IslandAndSandTable {
 						Debug.Log("挑战按钮");
 						Operation.Click(960, 960);	// 挑战按钮
 						yield return new EditorWaitForSeconds(0.3F);
-						if (!Recognize.IsSandTableUsingPhalanx) {
-							Debug.Log("军阵按钮");
-							Operation.Click(103, 515);	// 军阵按钮
-							yield return new EditorWaitForSeconds(0.3F);
-							Debug.Log("狂鲨军阵");
-							Operation.Click(780, 710);	// 狂鲨军阵
+						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
+							Debug.Log("选择编队");
+							Operation.Click(1145 + 37 * SAND_SQUAD_NUMBER, 870);	// 选择编队
 							yield return new EditorWaitForSeconds(0.2F);
-							Debug.Log("应用按钮");
-							Operation.Click(960, 820);	// 应用按钮
-							yield return new EditorWaitForSeconds(0.3F);
+							// if (!Recognize.IsSandTableUsingPhalanx) {
+							// 	Debug.Log("军阵按钮");
+							// 	Operation.Click(52, 515);	// 军阵按钮
+							// 	yield return new EditorWaitForSeconds(0.3F);
+							// 	Debug.Log("狂鲨军阵");
+							// 	Operation.Click(780, 710);	// 狂鲨军阵
+							// 	yield return new EditorWaitForSeconds(0.2F);
+							// 	Debug.Log("应用按钮");
+							// 	Operation.Click(960, 820);	// 应用按钮
+							// 	yield return new EditorWaitForSeconds(0.3F);
+							// }
+							if (!SAND_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
+								Debug.Log("战斗按钮");
+								Operation.Click(960, 476);	// 战斗按钮
+								yield return new EditorWaitForSeconds(1.5F);
+								Debug.Log("跳过按钮");
+								Operation.Click(30, 250);	// 跳过按钮
+								yield return new EditorWaitForSeconds(1.5F);
+								Debug.Log("返回按钮");
+								Operation.Click(960, 906);	// 返回按钮
+								yield return new EditorWaitForSeconds(0.5F);
+							} else {
+								Debug.Log("退出按钮");
+								Operation.Click(30, 140);	// 退出按钮
+								yield return new EditorWaitForSeconds(0.2F);
+								Debug.Log("确认退出按钮");
+								Operation.Click(1064, 634);	// 确认退出按钮
+								yield return new EditorWaitForSeconds(2);
+							}
 						}
-						Debug.Log("战斗按钮");
-						Operation.Click(960, 476);	// 战斗按钮
-						yield return new EditorWaitForSeconds(1.5F);
-						Debug.Log("跳过按钮");
-						Operation.Click(30, 250);	// 跳过按钮
-						yield return new EditorWaitForSeconds(1.5F);
-						Debug.Log("返回按钮");
-						Operation.Click(960, 906);	// 返回按钮
-						yield return new EditorWaitForSeconds(0.5F);
 					}
 					LAST_SAND_TABLE_TIME = DateTime.Now;
 				}

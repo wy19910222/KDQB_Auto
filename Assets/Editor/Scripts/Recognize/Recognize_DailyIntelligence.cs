@@ -119,12 +119,12 @@ public static partial class Recognize {
 			return Approximately(realColor, new Color32(104, 146, 248, 255));
 		}
 	}
-	public static bool IsSandTableUsingPhalanx {
-		get {
-			Color32 realColor = Operation.GetColorOnScreen(103, 501);
-			return Approximately(realColor, new Color32(104, 232, 254, 255));
-		}
-	}
+	// public static bool IsSandTableUsingPhalanx {
+	// 	get {
+	// 		Color32 realColor = Operation.GetColorOnScreen(52, 502);
+	// 		return Approximately(realColor, new Color32(105, 232, 254, 255));
+	// 	}
+	// }
 	
 	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickBtn.png");
 	public static bool IsExpeditionQuickBtn {

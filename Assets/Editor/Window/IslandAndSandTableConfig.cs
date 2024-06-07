@@ -38,6 +38,10 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 			}
 		}
 		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		IslandAndSandTable.SAND_SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", IslandAndSandTable.SAND_SQUAD_NUMBER, 1, 8);
+		IslandAndSandTable.SAND_MUST_FULL_SOLDIER = GUILayout.Toggle(IslandAndSandTable.SAND_MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
 
 		{
 			Rect rect = GUILayoutUtility.GetRect(0, 10);
