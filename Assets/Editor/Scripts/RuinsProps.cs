@@ -49,6 +49,7 @@ public class RuinsProps {
 	}
 
 	private static IEnumerator Update() {
+		int gotCount = 0;
 		while (true) {
 			yield return null;
 			
@@ -83,7 +84,6 @@ public class RuinsProps {
 			Task.CurrentTask = nameof(RuinsProps);
 
 			// 尝试领取遗迹道具
-			bool succeeded = false;
 			Debug.Log("联盟按钮");
 			Operation.Click(1870, 710);	// 联盟按钮
 			yield return new EditorWaitForSeconds(0.3F);
@@ -101,7 +101,6 @@ public class RuinsProps {
 						Operation.Click(957, 243);	// 2级遗迹标签
 						yield return new EditorWaitForSeconds(0.2F);
 
-						int gotCount = 0;
 						const int ITEM_HEIGHT = 116;
 						const int OFFSET_Y_MAX = 206;
 						const int VISIBLE_ITEMS_COUNT = 6;
@@ -189,14 +188,8 @@ public class RuinsProps {
 							Operation.Click(1170, 204);	// 关闭按钮
 							yield return new EditorWaitForSeconds(0.3F);
 						}
-						if (gotCount >= RUIN_ORDERS.Count) {
-							succeeded = true;
-						}
 					}
 				}
-			}
-			if (succeeded) {
-				LAST_TIME = DateTime.Now;
 			}
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
@@ -206,7 +199,11 @@ public class RuinsProps {
 			
 			Task.CurrentTask = null;
 			
-			if (!succeeded) {
+			if (gotCount >= RUIN_ORDERS.Count) {
+				// 如果成功，更新领取时间，重置领取数量
+				LAST_TIME = DateTime.Now;
+				gotCount = 0;
+			} else {
 				// 如果失败，则等待一段时间后重试
 				NEXT_TRY_TIME = DateTime.Now + new TimeSpan(0, 0, RETRY_DELAY);
 			}
