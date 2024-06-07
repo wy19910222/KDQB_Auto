@@ -10,9 +10,13 @@ using UnityEngine;
 public static partial class Recognize {
 	// public static bool IsFightingPlayback => GetCachedValueOrNew(nameof(IsFightingPlayback), () => 
 	// 		Approximately(Operation.GetColorOnScreen(30, 185), new Color32(94, 126, 202, 255)));
+	// 通过左上角返回按钮判断是否战斗界面
 	private static bool IsFighting => ApproximatelyCoveredCount(Operation.GetColorOnScreen(50, 130), new Color32(93, 126, 202, 255)) >= 0;
+	// 通过军阵按钮判断是否出征界面
 	private static bool IsFightingMarch => ApproximatelyCoveredCount(Operation.GetColorOnScreen(71, 515), new Color32(104, 140, 247, 255)) >= 0;
+	// 通过跳过按钮判断是否战斗实时界面
 	private static bool IsFightingCanSkip => ApproximatelyCoveredCount(Operation.GetColorOnScreen(6, 248), new Color32(93, 126, 202, 255)) >= 0;
+	// 通过快进按钮判断是否战斗回放界面
 	private static bool IsFightingPlayback => !IsFightingCanSkip && ApproximatelyCoveredCount(Operation.GetColorOnScreen(6, 195), new Color32(93, 126, 202, 255)) >= 0;
 
 	private static readonly Color32[,] BTN_ONE_KEY_BATTLE = Operation.GetFromFile("PersistentData/Textures/BtnOneKeyBattle.png");
