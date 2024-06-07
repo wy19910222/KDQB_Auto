@@ -71,9 +71,14 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 			EditorGUILayout.LabelField("已领取", GUILayout.MinWidth(0));
 			if (GUILayout.Button("重置", GUILayout.Width(60F))) {
 				RuinsProps.LAST_TIME = DateTime.Now - new TimeSpan(24, 0, 0);
+				RuinsProps.GOT_COUNT = 0;
 			}
 		} else {
 			EditorGUILayout.LabelField("未领取");
+			if (GUILayout.Button("设为已领取", GUILayout.Width(60F))) {
+				RuinsProps.LAST_TIME = DateTime.Now;
+				RuinsProps.GOT_COUNT = 0;
+			}
 		}
 		EditorGUILayout.EndHorizontal();
 		if (!isGot) {

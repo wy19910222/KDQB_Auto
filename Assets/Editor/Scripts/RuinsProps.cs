@@ -17,6 +17,7 @@ public class RuinsProps {
 	public static readonly List<int> RUIN_ORDERS = new() {1, 8};
 	public static DateTime LAST_REFRESH_TIME;
 	public static DateTime LAST_TIME;
+	public static int GOT_COUNT;
 	public static TimeSpan INTERVAL = new(49, 0, 0);
 	public static readonly List<Recognize.RuinPropType> RUIN_PROP_PRIORITY = new() {
 		Recognize.RuinPropType.CLASS_PROP,
@@ -49,7 +50,6 @@ public class RuinsProps {
 	}
 
 	private static IEnumerator Update() {
-		int gotCount = 0;
 		while (true) {
 			yield return null;
 			
@@ -170,7 +170,7 @@ public class RuinsProps {
 									if (!test) {
 										Debug.Log("确定按钮");
 										Operation.Click(960, 700);	// 确定按钮
-										gotCount++;
+										GOT_COUNT++;
 										yield return new EditorWaitForSeconds(0.3F);
 										Debug.Log("点外面关闭");
 										Operation.Click(960, 200);	// 点外面关闭
@@ -199,10 +199,10 @@ public class RuinsProps {
 			
 			Task.CurrentTask = null;
 			
-			if (gotCount >= RUIN_ORDERS.Count) {
+			if (GOT_COUNT >= RUIN_ORDERS.Count) {
 				// 如果成功，更新领取时间，重置领取数量
 				LAST_TIME = DateTime.Now;
-				gotCount = 0;
+				GOT_COUNT = 0;
 			} else {
 				// 如果失败，则等待一段时间后重试
 				NEXT_TRY_TIME = DateTime.Now + new TimeSpan(0, 0, RETRY_DELAY);
