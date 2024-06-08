@@ -197,14 +197,16 @@ public class IslandAndSandTable {
 							Debug.Log("跳过动画按钮");
 							Operation.Click(1135, 888);	// 跳过动画按钮
 							yield return new EditorWaitForSeconds(0.5F);
-							if (Recognize.IsExpeditionGetBtn) {
+							bool isSucceeded = false;
+							for (int j = 0; j < 10 && Recognize.IsExpeditionGetBtn; j++) {
 								Debug.Log("领取按钮");
 								Operation.Click(960, 900);	// 领取按钮
 								yield return new EditorWaitForSeconds(0.3F);
-								if (!EXPEDITION_QUICK_BY_50_DIAMOND) {
-									LAST_EXPEDITION_TIME = DateTime.Now;
-									break;
-								}
+								isSucceeded = true;
+							}
+							if (isSucceeded && !EXPEDITION_QUICK_BY_50_DIAMOND) {
+								LAST_EXPEDITION_TIME = DateTime.Now;
+								break;
 							}
 						} else if (Recognize.IsExpeditionQuickBy50DiamondBtn && EXPEDITION_QUICK_BY_50_DIAMOND) {
 							Debug.Log("快速战斗按钮");
@@ -217,10 +219,14 @@ public class IslandAndSandTable {
 								Debug.Log("跳过动画按钮");
 								Operation.Click(1135, 888);	// 跳过动画按钮
 								yield return new EditorWaitForSeconds(0.5F);
-								if (Recognize.IsExpeditionGetBtn) {
+								bool isSucceeded = false;
+								for (int j = 0; j < 10 && Recognize.IsExpeditionGetBtn; j++) {
 									Debug.Log("领取按钮");
 									Operation.Click(960, 900);	// 领取按钮
 									yield return new EditorWaitForSeconds(0.3F);
+									isSucceeded = true;
+								}
+								if (isSucceeded) {
 									LAST_EXPEDITION_TIME = DateTime.Now;
 									break;
 								}
