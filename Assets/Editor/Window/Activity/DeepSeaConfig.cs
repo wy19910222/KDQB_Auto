@@ -17,7 +17,6 @@ public class DeepSeaConfig : PrefsEditorWindow<DeepSea> {
 	
 	private void OnGUI() {
 		DeepSea.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", DeepSea.ACTIVITY_ORDER, 1, 20);
-		DeepSea.ORDER_TRY_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", DeepSea.ORDER_TRY_RADIUS, 1, 6);
 		DeepSea.ORDER_RETRY_INTERVAL = EditorGUILayout.IntSlider("寻找标签重试间隔（秒）", DeepSea.ORDER_RETRY_INTERVAL, 60, 600);
 
 		{

@@ -14,8 +14,9 @@ using UnityEngine;
 
 public class MiningTycoon {
 	public static int ACTIVITY_ORDER = 7;	// 活动排序
-	public static int ORDER_TRY_RADIUS = 5;	// 寻找标签半径
 	public static int ORDER_RETRY_INTERVAL = 1800;	// 失败点击间隔（秒）
+	public const int ORDER_TRY_RADIUS = 5; // 寻找标签半径
+	public const int ORDER_TRY_MAX = 20; // 最大标签数
 	
 	public static bool SMART_COLLECT;	// 智能收取
 	public static int TRAMCAR_COUNTDOWN_NUMBER = 3;	// 收取矿车编号
@@ -196,7 +197,11 @@ public class MiningTycoon {
 					Debug.Log($"标签{order}错误，继续尝试标签页: " + nearbyOrders[orderIndex + 1]);
 				} else {
 					Debug.LogError($"标签{string.Join(",", nearbyOrders)}全部错误，稍后重新尝试更大范围");
-					orderTryRadius += orderTryRadius;
+					if (nearbyOrders[1] <= 1 && order >= ORDER_TRY_MAX) {
+						orderTryRadius = ORDER_TRY_RADIUS;
+					} else {
+						orderTryRadius += ORDER_TRY_RADIUS;
+					}
 					NEAREST_DT = DateTime.Now + new TimeSpan(0, 0, ORDER_RETRY_INTERVAL);
 				}
 			}

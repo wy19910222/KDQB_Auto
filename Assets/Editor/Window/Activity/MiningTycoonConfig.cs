@@ -18,7 +18,6 @@ public class MiningTycoonConfig : PrefsEditorWindow<MiningTycoon> {
 	
 	private void OnGUI() {
 		MiningTycoon.ACTIVITY_ORDER = EditorGUILayout.IntSlider("活动排序（活动排在第几个）", MiningTycoon.ACTIVITY_ORDER, 1, 20);
-		MiningTycoon.ORDER_TRY_RADIUS = EditorGUILayout.IntSlider("寻找标签半径", MiningTycoon.ORDER_TRY_RADIUS, 1, 6);
 		MiningTycoon.ORDER_RETRY_INTERVAL = EditorGUILayout.IntSlider("寻找标签重试间隔（秒）", MiningTycoon.ORDER_RETRY_INTERVAL, 60, 600);
 
 		{
