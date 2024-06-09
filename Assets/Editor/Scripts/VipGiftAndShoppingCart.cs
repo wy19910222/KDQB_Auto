@@ -13,7 +13,7 @@ using UnityEngine;
 public class VipGiftAndShoppingCart {
 	public static bool Test { get; set; } // 测试模式
 	
-	public static int SHOPPING_CART_ORDER = 4;
+	public static int SHOPPING_CART_ORDER = 2;
 	public static TimeSpan DAILY_TIME = new TimeSpan(1, 0, 0);	// 每天几点执行
 	
 	public static DateTime LAST_VIP_GIFT_TIME;
