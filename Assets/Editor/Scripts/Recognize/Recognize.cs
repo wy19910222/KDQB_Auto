@@ -211,4 +211,12 @@ public static partial class Recognize {
 	// 	new Vector2Int(20, 65),	// 右下角有数量显示，不能作为判断依据
 	// 	new Vector2Int(12, 73), // 用于判断背景是什么颜色
 	// };
+
+	private static readonly Color32[,] SHOPPING_CART_EXCHANGE_BTN = Operation.GetFromFile("PersistentData/Textures/ShoppingCartExchangeBtn.png");
+	public static bool IsShoppingCartExchangeBtn {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1095, 949, 96, 26);
+			return ApproximatelyRectIgnoreCovered(realColors, SHOPPING_CART_EXCHANGE_BTN) > 0.9F;
+		}
+	}
 }
