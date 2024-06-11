@@ -140,7 +140,7 @@ public class IslandAndSandTable {
 							if (!SAND_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
 								Debug.Log("战斗按钮");
 								Operation.Click(960, 476);	// 战斗按钮
-								yield return new EditorWaitForSeconds(1.5F);
+								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("跳过按钮");
 								Operation.Click(30, 250);	// 跳过按钮
 								yield return new EditorWaitForSeconds(1.5F);
