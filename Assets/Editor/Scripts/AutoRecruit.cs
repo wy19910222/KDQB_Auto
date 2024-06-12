@@ -143,6 +143,34 @@ public class AutoRecruit {
 						yield return new EditorWaitForSeconds(0.2F);
 						Operation.Click(1060, 640);	// 空白处
 						yield return new EditorWaitForSeconds(0.2F);
+						DateTime now = DateTime.Now;
+						switch (i) {
+							case 0:
+								s_SeniorRecruitTime = now;
+								break;
+							case 1: {
+								DateTime date = now.Date;
+								for (int _i = s_GeneralRecruitTimeList.Count - 1; _i >= 0; --_i) {
+									DateTime dt = s_GeneralRecruitTimeList[_i];
+									if (dt < date) {
+										s_GeneralRecruitTimeList.RemoveAt(_i);
+									}
+								}
+								s_GeneralRecruitTimeList.Add(now);
+								break;
+							}
+							case 2: {
+								DateTime date = now.Date;
+								for (int _i = s_SkillRecruitTimeList.Count - 1; _i >= 0; --_i) {
+									DateTime dt = s_SkillRecruitTimeList[_i];
+									if (dt < date) {
+										s_SkillRecruitTimeList.RemoveAt(_i);
+									}
+								}
+								s_SkillRecruitTimeList.Add(now);
+								break;
+							}
+						}
 					}
 					if (Recognize.CanRecruitExtra) {
 						Debug.Log("额外招募按钮");
