@@ -90,7 +90,7 @@ public class AutoRecruit {
 			}
 
 			// 不是有英雄按钮的场景
-			if (Recognize.IsOutsideOrInsideScene) {
+			if (!Recognize.IsOutsideOrInsideScene) {
 				continue;
 			}
 
