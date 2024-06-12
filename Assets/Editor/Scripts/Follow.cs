@@ -62,7 +62,7 @@ public class Follow {
 	public static int GetDefaultCount(Recognize.FollowType type) {
 		return type switch {
 			Recognize.FollowType.UNKNOWN => 50,
-			Recognize.FollowType.WAR_HAMMER => 80,
+			Recognize.FollowType.WAR_HAMMER => 50,
 			Recognize.FollowType.REFUGEE_CAMP => 10,
 			Recognize.FollowType.FEAR_STAR => 10,
 			Recognize.FollowType.STRONGHOLD => 50,
@@ -286,7 +286,9 @@ public class Follow {
 			if (maybeSucceed && Recognize.BusyGroupCount > busyGroupCount) {
 				Debug.Log("跟车成功");
 				// 跟车次数减1
-				TypeCountDict[type] = count - 1;
+				if (count > 0) {
+					TypeCountDict[type] = count - 1;
+				}
 			} else {
 				Debug.LogError("跟车失败");
 			}
