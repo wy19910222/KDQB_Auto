@@ -30,10 +30,12 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		EditorGUILayout.EndHorizontal();
 		Follow.FOLLOW_COOLDOWN = EditorGUILayout.FloatField("同一人跟车冷却", Follow.FOLLOW_COOLDOWN);
 		
-		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
-		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
-		EditorGUI.DrawRect(wireRect1, Color.gray);
-		
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
+
 		EditorGUILayout.BeginHorizontal();
 		Follow.KEEP_NO_WINDOW = GUILayout.Toggle(Follow.KEEP_NO_WINDOW, "在外面跟车", "Button");
 		Follow.FEAR_STAR_FIRST = GUILayout.Toggle(Follow.FEAR_STAR_FIRST, "惧星优先", "Button");
@@ -46,9 +48,36 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 		EditorGUILayout.EndHorizontal();
 		
-		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
-		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
-		EditorGUI.DrawRect(wireRect2, Color.gray);
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
+		
+		EditorGUILayout.BeginHorizontal();
+		Follow.FEAR_STAR_HELP_ENABLED = GUILayout.Toggle(Follow.FEAR_STAR_HELP_ENABLED, "帮打惧星", "Button", GUILayout.Width(80F - 4F));
+		EditorGUI.BeginDisabledGroup(!Follow.FEAR_STAR_HELP_ENABLED);
+		bool ownerExist = Follow.OwnerNameDict.TryGetValue(Follow.FEAR_STAR_HELP_OWNER, out Color32[,] targetColors) && targetColors != null;
+		Follow.FEAR_STAR_HELP_OWNER = EditorGUILayout.TextField(Follow.FEAR_STAR_HELP_OWNER);
+		EditorGUILayout.LabelField("的惧星", GUILayout.Width(EditorGUIUtility.fieldWidth));
+		if (GUILayout.Button(ownerExist ? "更新车主" : "记录车主", GUILayout.Width(60F))) {
+			Follow.RecordFollowOwnerName(Follow.FEAR_STAR_HELP_OWNER);
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
+		float prevLabelWidth = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 80F;
+		Follow.FEAR_STAR_HELP_SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Follow.FEAR_STAR_HELP_SQUAD_NUMBER, 1, 8);
+		EditorGUIUtility.labelWidth = prevLabelWidth;
+		Follow.FEAR_STAR_HELP_MUST_FULL_SOLDIER = GUILayout.Toggle(Follow.FEAR_STAR_HELP_MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
+		EditorGUI.EndDisabledGroup();
+		
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
 
 		CustomField(Recognize.FollowType.UNKNOWN);
 		if (EditorGUIUtility.currentViewWidth > 460) {

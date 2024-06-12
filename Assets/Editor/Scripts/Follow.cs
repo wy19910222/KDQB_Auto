@@ -22,6 +22,11 @@ public class Follow {
 	public static bool RESET_DAILY = true;	// 每日重置次数
 	public static DateTime LAST_RESET_TIME;	// 上次重置时间
 	
+	public static bool FEAR_STAR_HELP_ENABLED;	// 帮打惧星开关
+	public static string FEAR_STAR_HELP_OWNER = null;	// 帮打惧星跟车的车主
+	public static int FEAR_STAR_HELP_SQUAD_NUMBER = 1;	// 帮打惧星编队号码
+	public static bool FEAR_STAR_HELP_MUST_FULL_SOLDIER = true;	// 帮打惧星必须满兵
+	
 	public static readonly Dictionary<Recognize.FollowType, int> TypeCountDict = new Dictionary<Recognize.FollowType, int>(); // 各类型次数
 	public static readonly Dictionary<Recognize.FollowType, bool> TypeWillResetDict = new Dictionary<Recognize.FollowType, bool>(); // 各类型每日是否重置次数
 	public static readonly Dictionary<Recognize.FollowType, bool> TypeCanOuterDict = new Dictionary<Recognize.FollowType, bool>(); // 各类型是否支持在外面跟车
@@ -57,7 +62,7 @@ public class Follow {
 	public static int GetDefaultCount(Recognize.FollowType type) {
 		return type switch {
 			Recognize.FollowType.UNKNOWN => 50,
-			Recognize.FollowType.WAR_HAMMER => 50,
+			Recognize.FollowType.WAR_HAMMER => 80,
 			Recognize.FollowType.REFUGEE_CAMP => 10,
 			Recognize.FollowType.FEAR_STAR => 10,
 			Recognize.FollowType.STRONGHOLD => 50,
@@ -154,6 +159,7 @@ public class Follow {
 			Debug.Log("未加入");
 			Recognize.FollowType type = Recognize.GetFollowType();
 			int fearStarCount = TypeCountDict[Recognize.FollowType.FEAR_STAR];
+			bool isFearStarNeedHelp = false;
 			int count = 0;
 			switch (type) {
 				case Recognize.FollowType.NONE:
@@ -173,12 +179,16 @@ public class Follow {
 					break;
 				case Recognize.FollowType.FEAR_STAR:
 					count = fearStarCount;
-					if (count <= 0) {
-						Debug.Log($"不跟{type}");
-						goto EndOfFollow;
-					} else if (!IsFollowOwnerEnabled()) {
-						Debug.Log($"不跟该车主的{type}");
-						goto EndOfFollow;
+					isFearStarNeedHelp = IsFearStarNeedHelp();
+					if (!isFearStarNeedHelp) {
+						if (count <= 0) {
+							Debug.Log($"不跟{type}");
+							goto EndOfFollow;
+						}
+						if (!IsFollowOwnerEnabled()) {
+							Debug.Log($"不跟该车主的{type}");
+							goto EndOfFollow;
+						}
 					}
 					break;
 			}
@@ -206,7 +216,6 @@ public class Follow {
 				Debug.Log("确定加入按钮");
 				Operation.Click(960, 670);	// 确定按钮
 			}
-			yield return new EditorWaitForSeconds(delay * 0.5F);
 			// 等待进入战斗界面，如果超过1秒钟没进去，说明进入失败，结束流程
 			for (int i = 0; i < 10 && Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH; ++i) {
 				if (i == 9) {
@@ -214,25 +223,51 @@ public class Follow {
 				}
 				yield return new EditorWaitForSeconds(0.1F);
 			}
-			Debug.Log("士兵卡片");
-			Operation.Click(1160, 962);	// 士兵卡片
-			yield return new EditorWaitForSeconds(0.1F);
-			yield return new EditorWaitForSeconds(delay * 0.5F);
-			Debug.Log("出征按钮");
-			Operation.Click(961, 476);	// 出征按钮
-			yield return new EditorWaitForSeconds(0.2F);
-			// 如果出现赶不上弹框，则取消出征
-			if (Recognize.IsTooLateWindowExist) {
-				maybeSucceed = false;
-				Debug.Log("取消按钮");
-				Operation.Click(900, 657);	// 取消按钮
-				// 车主变化前不再上车
-				cooldownTime = long.MaxValue;
-				yield return new EditorWaitForSeconds(0.5F);
+			if (isFearStarNeedHelp) {
+				Debug.Log("选择编队");
+				Operation.Click(1145 + 37 * FEAR_STAR_HELP_SQUAD_NUMBER, 870);	// 选择编队
+				yield return new EditorWaitForSeconds(0.2F);
+				if ((!FEAR_STAR_HELP_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount == 0) {
+					Debug.Log("出征按钮");
+					Operation.Click(960, 470);	// 出征按钮
+					yield return new EditorWaitForSeconds(0.2F);
+					// 如果出现赶不上弹框，则取消出征
+					if (Recognize.IsTooLateWindowExist) {
+						maybeSucceed = false;
+						Debug.Log("取消按钮");
+						Operation.Click(900, 657);	// 取消按钮
+						yield return new EditorWaitForSeconds(0.5F);
+					} else {
+						maybeSucceed = true;
+					}
+				} else {
+					Debug.Log("退出按钮");
+					Operation.Click(30, 140);	// 退出按钮
+					yield return new EditorWaitForSeconds(0.2F);
+					Debug.Log("确认退出按钮");
+					Operation.Click(1064, 634);	// 确认退出按钮
+					yield return new EditorWaitForSeconds(0.5F);
+				}
 			} else {
-				maybeSucceed = true;
-				// 跟车冷却
-				cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
+				Debug.Log("士兵卡片");
+				Operation.Click(1160, 962);	// 士兵卡片
+				yield return new EditorWaitForSeconds(Mathf.Max(delay, 0.1F));
+				Debug.Log("出征按钮");
+				Operation.Click(961, 476);	// 出征按钮
+				yield return new EditorWaitForSeconds(0.2F);
+				// 如果出现赶不上弹框，则取消出征
+				if (Recognize.IsTooLateWindowExist) {
+					maybeSucceed = false;
+					Debug.Log("取消按钮");
+					Operation.Click(900, 657);	// 取消按钮
+					// 车主变化前不再上车
+					cooldownTime = long.MaxValue;
+					yield return new EditorWaitForSeconds(0.5F);
+				} else {
+					maybeSucceed = true;
+					// 跟车冷却
+					cooldownTime = DateTime.Now.Ticks + Mathf.RoundToInt(FOLLOW_COOLDOWN * 10000000);
+				}
 			}
 			// 如果还停留在出征界面，则退出
 			if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
@@ -309,6 +344,19 @@ public class Follow {
 			if (OwnerEnabledDict.TryGetValue(ownerName, out bool enabled) && enabled) {
 				// 判断是否是该车主
 				Color32[,] targetColors = OwnerNameDict[ownerName] ?? new Color32[0, 0];
+				if (Recognize.ApproximatelyRect(realColors, targetColors) > 0.99F) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public static bool IsFearStarNeedHelp() {
+		// 判断是否开启帮打
+		if (FEAR_STAR_HELP_ENABLED) {
+			// 判断是否是帮打车主
+			Color32[,] realColors = Operation.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
+			if (OwnerNameDict.TryGetValue(FEAR_STAR_HELP_OWNER, out Color32[,] targetColors) && targetColors != null) {
 				if (Recognize.ApproximatelyRect(realColors, targetColors) > 0.99F) {
 					return true;
 				}
