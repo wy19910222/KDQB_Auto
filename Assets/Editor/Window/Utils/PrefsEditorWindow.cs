@@ -13,12 +13,14 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEditor;
 
-public class PrefsEditorWindow<T> : EditorWindow {
+public class PrefsEditorWindow : EditorWindow {
 	private static Texture2D m_TexRed;
-	private static Texture2D TexRed => m_TexRed ??= EditorGUIUtility.Load("d_redLight") as Texture2D;
+	protected static Texture2D TexRed => m_TexRed ??= EditorGUIUtility.Load("d_redLight") as Texture2D;
 	private static Texture2D m_TexGreen;
-	private static Texture2D TexGreen => m_TexGreen ??= EditorGUIUtility.Load("d_greenLight") as Texture2D;
-	
+	protected static Texture2D TexGreen => m_TexGreen ??= EditorGUIUtility.Load("d_greenLight") as Texture2D;
+}
+
+public class PrefsEditorWindow<T> : PrefsEditorWindow {
 	protected bool m_Debug;
 
 	protected virtual void OnEnable() {
@@ -34,7 +36,7 @@ public class PrefsEditorWindow<T> : EditorWindow {
 		IsRunning = false;
 	}
 
-	protected bool m_LoadComplexDataFromBackup = false;
+	protected bool m_LoadComplexDataFromBackup;
 	private void DoLoadOptions() {
 		LoadOptions();
 		if (m_LoadComplexDataFromBackup) {
@@ -53,7 +55,14 @@ public class PrefsEditorWindow<T> : EditorWindow {
 	protected string StopMenuName => $"Tools_Task/Stop{typeof(T).Name}";
 	protected bool m_IsRunning;
 	protected virtual bool IsRunning {
-		get => m_IsRunning;
+		get {
+			PropertyInfo pi = typeof(T).GetProperty("IsRunning", BindingFlags.Static | BindingFlags.Public);
+			if (pi != null) {
+				m_IsRunning = pi.GetValue(null) is true;
+			}
+			titleContent.image = m_IsRunning ? TexGreen : TexRed;
+			return m_IsRunning;
+		}
 		set {
 			m_IsRunning = value;
 			EditorApplication.ExecuteMenuItem(value ? StartMenuName : StopMenuName);
@@ -76,6 +85,18 @@ public class PrefsEditorWindow<T> : EditorWindow {
 			GenericMenu menu = new GenericMenu();
 			OnMenu(menu);
 			menu.ShowAsContext();
+		}
+	}
+
+	protected void ShowRunningButton(string openText = null, string closeText = null) {
+		if (IsRunning) {
+			if (GUILayout.Button(closeText ?? "停止")) {
+				IsRunning = false;
+			}
+		} else {
+			if (GUILayout.Button(openText ?? "开启")) {
+				IsRunning = true;
+			}
 		}
 	}
 
