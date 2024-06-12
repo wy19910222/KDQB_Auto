@@ -126,7 +126,8 @@ public class RuinsProps {
 							Debug.Log("遗迹道具按钮");
 							Operation.Click(1147, 355 + (order - 1) * ITEM_HEIGHT - offsetY);	// 遗迹道具按钮
 							yield return new EditorWaitForSeconds(0.3F);
-
+							
+							yield return new EditorWaitForSeconds(2F);	// 多等一会儿，避免道具列表还没刷新
 							Recognize.RuinPropType[] propTypes = new Recognize.RuinPropType[5];
 							for (int i = 0; i < 4; ++i) {
 								int y = Mathf.RoundToInt(472.2F + i * 102.2F);
