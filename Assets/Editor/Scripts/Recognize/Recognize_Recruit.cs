@@ -16,6 +16,7 @@ public static partial class Recognize {
 		}
 	}
 
+	// 中层界面的英雄招募按钮红点
 	public static bool CanRecruitMiddle {
 		get {
 			Color32 realColor1 = Operation.GetColorOnScreen(1204, 933);
@@ -25,6 +26,7 @@ public static partial class Recognize {
 		}
 	}
 
+	// 内层界面的普通招募红点
 	public static bool CanGeneralRecruit {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(765, 926);
@@ -33,6 +35,7 @@ public static partial class Recognize {
 		}
 	}
 
+	// 内层界面的技能招募红点
 	public static bool CanSkillRecruit {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(1193, 926);
@@ -41,6 +44,7 @@ public static partial class Recognize {
 		}
 	}
 
+	// 内层界面的招募按钮红点
 	public static bool CanRecruitInner {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(938, 780);
@@ -49,6 +53,7 @@ public static partial class Recognize {
 		}
 	}
 
+	// 内层界面的额外招募红点
 	public static bool CanRecruitExtra {
 		get {
 			Color32 realColor = Operation.GetColorOnScreen(787, 711);
