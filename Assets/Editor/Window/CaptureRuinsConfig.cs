@@ -21,15 +21,7 @@ public class CaptureRuinsConfig : PrefsEditorWindow<CaptureRuins> {
 		EditorGUILayout.EndHorizontal();
 		
 		GUILayout.Space(5F);
-		
-		if (CaptureRuins.IsRunning) {
-			if (GUILayout.Button("取消截图")) {
-				IsRunning = false;
-			}
-		} else {
-			if (GUILayout.Button("开始截图")) {
-				IsRunning = true;
-			}
-		}
+
+		ShowRunningButton("开始截图", "取消截图");
 	}
 }

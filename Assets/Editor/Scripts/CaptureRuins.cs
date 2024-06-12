@@ -96,7 +96,7 @@ public class CaptureRuins {
 		Color32[,][,] colorsBlocks = new Color32[column,row][,];
 		for (int i = 0; i < row; ++i) {
 			for (int j = 0; j < column; ++j) {
-				colorsBlocks[j, i] = ScreenshotUtils.GetColorsOnScreen((screenWidth - width) / 2, (screenHeight - height) / 2 - 20, width, height);
+				colorsBlocks[j, i] = Operation.GetColorsOnScreen((screenWidth - width) / 2, (screenHeight - height) / 2 - 20, width, height);
 				if (j < column - 1) {
 					// 往右拖动
 					var ie = Operation.NoInertiaDrag((screenWidth + width) / 2, 540, (screenWidth - width) / 2, 540, 1F);
