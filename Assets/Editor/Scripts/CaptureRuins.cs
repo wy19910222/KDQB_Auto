@@ -84,7 +84,7 @@ public class CaptureRuins {
 		yield return new EditorWaitForSeconds(0.2F);
 		for (int i = 0; i < 2; i++) {
 			// 往左上拖动
-			var ie = Operation.NoInertiaDrag(960 - offset.x / 2, 540 - offset.y / 2, 960 + offset.x / 2, 540 + offset.y / 2, 0.5F);
+			var ie = Operation.NoInertiaDrag(960 - offset.x / 2, 540 - offset.y / 2, 960 + offset.x / 2, 540 + offset.y / 2, 1F);
 			while (ie.MoveNext()) {
 				yield return ie.Current;
 			}
