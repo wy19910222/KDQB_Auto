@@ -45,14 +45,10 @@ public class AllianceHelpConfig : PrefsEditorWindow<AllianceHelp> {
 			
 			EditorGUILayout.BeginHorizontal();
 			AllianceHelp.REQUEST_COIN = EditorGUILayout.Toggle("请求一次金币帮助", AllianceHelp.REQUEST_COIN);
-			if (AllianceHelp.s_RequestCoinTime >= DateTime.Now.Date) {
-				if (GUILayout.Button("取消已请求")) {
-					AllianceHelp.s_RequestCoinTime = default;
-				}
-			} else {
-				if (GUILayout.Button("设为已请求")) {
-					AllianceHelp.s_RequestCoinTime = DateTime.Now;
-				}
+			bool coinHelpRequested = AllianceHelp.s_RequestCoinTime >= DateTime.Now.Date;
+			bool newCoinHelpRequested = GUILayout.Toggle(coinHelpRequested, coinHelpRequested ? "已请求" : "未请求", "Button");
+			if (newCoinHelpRequested != coinHelpRequested) {
+				AllianceHelp.s_RequestCoinTime = newCoinHelpRequested ? DateTime.Now : default;
 			}
 			EditorGUILayout.EndHorizontal();
 			AllianceHelp.INTO_HELPS_TIMES = EditorGUILayout.IntSlider("在里面帮助检查次数", AllianceHelp.INTO_HELPS_TIMES, 0, 10);
