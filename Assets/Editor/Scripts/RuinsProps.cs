@@ -226,10 +226,16 @@ public class RuinsProps {
 			yield break;
 		}
 		DateTime prevLastTime = LAST_TIME;
+		DateTime prevNextTryTime = NEXT_TRY_TIME;
 		LAST_TIME = DateTime.Now.Date - new TimeSpan(0, 1, 0);
-		do {
+		NEXT_TRY_TIME = DateTime.Now;
+		for (int i = 0; i < 10 && Task.CurrentTask != nameof(RuinsProps); i++) {
 			yield return null;
-		} while (Task.CurrentTask != null);
+		}
+		while (Task.CurrentTask != null) {
+			yield return null;
+		}
 		LAST_TIME = prevLastTime;
+		NEXT_TRY_TIME = prevNextTryTime;
 	}
 }
