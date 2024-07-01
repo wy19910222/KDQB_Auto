@@ -105,11 +105,11 @@ public class RuinsProps {
 						yield return new EditorWaitForSeconds(0.2F);
 
 						const int ITEM_HEIGHT = 116;
-						const int OFFSET_Y_MAX = 206;
+						const int OFFSET_Y = -26;
 						const int VISIBLE_ITEMS_COUNT = 6;
 						int offsetY = 0;
 						foreach (int order in RUIN_ORDERS) {
-							int orderOffsetY = Mathf.Clamp((order - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+							int orderOffsetY = Mathf.Max((order - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 							int deltaOffsetY = orderOffsetY - offsetY;
 							while (deltaOffsetY > 0) {
 								int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);

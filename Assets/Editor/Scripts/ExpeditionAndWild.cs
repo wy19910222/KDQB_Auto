@@ -22,7 +22,7 @@ public class ExpeditionAndWild {
 	public static bool IsRunning => s_CO != null;
 	
 	private const int ITEM_HEIGHT = 187;
-	private const int OFFSET_Y_MAX = 1061;
+	private const int OFFSET_Y = -61;
 	private const int VISIBLE_ITEMS_COUNT = 4;
 
 	[MenuItem("Tools_Task/StartExpeditionAndWild", priority = -1)]
@@ -79,7 +79,7 @@ public class ExpeditionAndWild {
 			int offsetY = 0;
 			if (!wildSucceed) {
 				Debug.Log("拖动以显示荒野行动");
-				int orderOffsetY = Mathf.Clamp((WILD_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int orderOffsetY = Mathf.Max((WILD_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
 					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
@@ -123,7 +123,7 @@ public class ExpeditionAndWild {
 
 			if (!expeditionSucceed) {
 				Debug.Log("拖动以显示远征行动");
-				int orderOffsetY = Mathf.Clamp((Expedition_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int orderOffsetY = Mathf.Max((Expedition_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
 					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);

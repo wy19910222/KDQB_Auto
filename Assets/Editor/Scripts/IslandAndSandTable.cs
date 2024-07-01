@@ -33,7 +33,7 @@ public class IslandAndSandTable {
 	public static bool IsRunning => s_CO != null;
 	
 	private const int ITEM_HEIGHT = 187;
-	private const int OFFSET_Y_MAX = 1061;
+	private const int OFFSET_Y = -61;
 	private const int VISIBLE_ITEMS_COUNT = 4;
 
 	[MenuItem("Tools_Task/StartIslandAndSandTable", priority = -1)]
@@ -95,7 +95,7 @@ public class IslandAndSandTable {
 			int offsetY = 0;
 			if (!sandTableSucceed) {
 				Debug.Log("拖动以显示沙盘演习");
-				int orderOffsetY = Mathf.Clamp((SAND_TABLE_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int orderOffsetY = Mathf.Max((SAND_TABLE_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
 					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
@@ -166,7 +166,7 @@ public class IslandAndSandTable {
 			
 			if (!expeditionSucceed) {
 				Debug.Log("拖动以显示远征行动");
-				int orderOffsetY = Mathf.Clamp((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int orderOffsetY = Mathf.Max((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
 					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
@@ -245,7 +245,7 @@ public class IslandAndSandTable {
 
 			if (!islandSucceed) {
 				Debug.Log("拖动以显示岛屿作战");
-				int orderOffsetY = Mathf.Clamp((ISLAND_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT, 0, OFFSET_Y_MAX);
+				int orderOffsetY = Mathf.Max((ISLAND_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
 					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
