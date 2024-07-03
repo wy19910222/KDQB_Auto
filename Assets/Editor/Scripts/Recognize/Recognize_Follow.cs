@@ -29,20 +29,40 @@ public static partial class Recognize {
 	
 	public static bool IsFollowOuterJoinBtnExist {
 		get {
-			if (CurrentScene is Scene.OUTSIDE_NEARBY or Scene.OUTSIDE_FARAWAY) {
-				// 三个条件都满足才是绿色加入按钮
-				Color32[,] realColors = Operation.GetColorsOnScreen(1740, 700, 60, 11);
-				Color32 targetColor1 = new Color32(106, 212, 98, 255);
-				Color32 realColor1 = realColors[31, 0];
-				Color32 targetColor2 = new Color32(94, 203, 91, 255);
-				Color32 realColor2 = realColors[6, 10];
-				Color32 targetColor3 = new Color32(94, 203, 91, 255);
-				Color32 realColor3 = realColors[56, 10];
-				return ApproximatelyCoveredCount(realColor1, targetColor1) >= 0 &&
-						ApproximatelyCoveredCount(realColor2, targetColor2) >= 0 &&
-						ApproximatelyCoveredCount(realColor3, targetColor3) >= 0;
+			return GetCachedValueOrNew(nameof(IsFollowOuterJoinBtnExist), () => {
+				if (CurrentScene is Scene.OUTSIDE_NEARBY or Scene.OUTSIDE_FARAWAY) {
+					// 三个条件都满足才是绿色加入按钮
+					Color32[,] realColors = Operation.GetColorsOnScreen(1740, 700, 60, 11);
+					Color32 targetColor1 = new Color32(106, 212, 98, 255);
+					Color32 realColor1 = realColors[31, 0];
+					Color32 targetColor2 = new Color32(94, 203, 91, 255);
+					Color32 realColor2 = realColors[6, 10];
+					Color32 targetColor3 = new Color32(94, 203, 91, 255);
+					Color32 realColor3 = realColors[56, 10];
+					return ApproximatelyCoveredCount(realColor1, targetColor1) >= 0 &&
+							ApproximatelyCoveredCount(realColor2, targetColor2) >= 0 &&
+							ApproximatelyCoveredCount(realColor3, targetColor3) >= 0;
+				}
+				return false;
+			});
+		}
+	}
+	
+	public static string FollowOuterJoinBtnText {
+		get {
+			if (IsFollowOuterJoinBtnExist) {
+				return Operation.GetTextOnScreen(1579, 696, 157, 20) + Operation.GetTextOnScreen(1579, 716, 157, 20);
 			}
-			return false;
+			return "None";
+		}
+	}
+	
+	public static string FollowOuterJoinBtnTextNew {
+		get {
+			if (IsFollowOuterJoinBtnExist) {
+				return Operation.GetTextOnScreenNew(1617, 696, 119, 20) + Operation.GetTextOnScreenNew(1579, 716, 157, 20);
+			}
+			return "None";
 		}
 	}
 
@@ -116,6 +136,24 @@ public static partial class Recognize {
 			return FollowType.HEART_PANG;
 		}
 		// Operation.Screenshot(988, 182, 213, 167, Application.dataPath + $"/Follow/Test{System.DateTime.Now:yyyy-MM-dd_HH.mm.ss.fff}.png");
+		return FollowType.UNKNOWN;
+	}
+
+	public static FollowType GetFollowTypeOuter() {
+		string text = FollowOuterJoinBtnTextNew;
+		if (text.Contains("战")) {
+			return FollowType.WAR_HAMMER;
+		} else if (text.Contains("民")) {
+			return FollowType.REFUGEE_CAMP;
+		} else if (text.Contains("星")) {
+			return FollowType.FEAR_STAR;
+		} else if (text.Contains("军") || text.Contains("团") || text.Contains("据")) {
+			return FollowType.STRONGHOLD;
+		} else if (text.Contains("精") || text.Contains("卫")) {
+			return FollowType.ELITE_GUARD;
+		} else if (text.Contains("心") || text.Contains("年") || text.Contains("砰")) {
+			return FollowType.HEART_PANG;
+		}
 		return FollowType.UNKNOWN;
 	}
 
