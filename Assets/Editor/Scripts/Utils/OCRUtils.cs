@@ -6,6 +6,7 @@
  */
 
 using System.Runtime.InteropServices;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -73,5 +74,37 @@ public static class OCRUtils {
 
 	public static string Recognize(int width, int height, byte[] bytes) {
 		return ocr_image(width, height, bytes, 1024);
+	}
+	
+	private static TesseractDriver s_TesseractDriver = new TesseractDriver();
+	private static bool s_IsTesseractInit;
+	public static string RecognizeNew(Color32[,] colors) {
+		if (!s_IsTesseractInit) {
+			s_IsTesseractInit = s_TesseractDriver.Setup();
+		}
+		if (s_IsTesseractInit) {
+			const int SCALE = 2;
+			int width = colors.GetLength(0);
+			int height = colors.GetLength(1);
+			int scaledWidth = width * SCALE;
+			int scaledHeight = height * SCALE;
+			Color32[] _colors = new Color32[scaledWidth * scaledHeight];
+			for (int _y = 0; _y < height; _y++) {
+				for (int _x = 0; _x < width; _x++) {
+					for (int i = 0; i < SCALE; i++) {
+						for (int j = 0; j < SCALE; j++) {
+							_colors[(_y * SCALE + i) * scaledWidth + _x * SCALE + j] = colors[_x, height - 1 - _y];
+						}
+					}
+				}
+			}
+			(string, int)[] results = s_TesseractDriver.Recognize(_colors, scaledWidth, scaledHeight);
+			StringBuilder sb = new StringBuilder();
+			foreach ((string word, int _) in results) {
+				sb.Append(word);
+			}
+			return string.Intern(sb.ToString());
+		}
+		return string.Empty;
 	}
 }
