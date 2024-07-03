@@ -132,6 +132,27 @@ public class Follow {
 				if (!anyoneCanOuter) {
 					continue;
 				}
+
+				bool willNotFollow = true;
+				Recognize.FollowType typeOuter = Recognize.GetFollowTypeOuter();
+				switch (typeOuter) {
+					case Recognize.FollowType.UNKNOWN:
+					case Recognize.FollowType.WAR_HAMMER:
+					case Recognize.FollowType.REFUGEE_CAMP:
+					case Recognize.FollowType.STRONGHOLD:
+					case Recognize.FollowType.ELITE_GUARD:
+					case Recognize.FollowType.HEART_PANG:
+						if (TypeCountDict[typeOuter] > 0 && TypeCanOuterDict[typeOuter]) {
+							willNotFollow = false;
+						}
+						break;
+					case Recognize.FollowType.FEAR_STAR:
+						willNotFollow = false;
+						break;
+				}
+				if (willNotFollow) {
+					continue;
+				}
 				
 				followWindowOpened = true;
 			}
