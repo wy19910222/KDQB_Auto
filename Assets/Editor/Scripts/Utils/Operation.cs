@@ -175,6 +175,11 @@ public static class Operation {
 		byte[] bytes = ScreenshotUtils.GetPixelsRGBOnScreen(x, y, width, height);
 		return OCRUtils.Recognize(width, height, bytes);
 	}
+
+	public static string GetTextOnScreenNew(int x, int y, int width, int height) {
+		Color32[,] colors = GetColorsOnScreen(x, y, width, height);
+		return OCRUtils.RecognizeNew(colors);
+	}
 	
 	public static Color32[,] GetFromFile(string filePath) {
 		return ScreenshotUtils.GetColorsFromFile(filePath);
