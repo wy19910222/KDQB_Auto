@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class TesseractDriver {
 	private TesseractWrapper m_Tesseract;
+
+	public Texture2D HighlightedTexture => m_Tesseract?.HighlightedTexture;
 
 	public string CheckTessVersion() {
 		m_Tesseract = new TesseractWrapper();

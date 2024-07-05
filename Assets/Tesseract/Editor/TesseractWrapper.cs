@@ -133,7 +133,7 @@ public class TesseractWrapper : IDisposable {
 			for (int index = 0; index < boxes.Length; index++) {
 				if (confidence[index] >= MinimumConfidence) {
 					Box box = boxes[index];
-					Rect boundingRect = new Rect(box.x, HighlightedTexture.height - box.y - box.h, box.w, box.h);
+					RectInt boundingRect = new RectInt(box.x, height - 1 - (box.y + box.h - 1), box.w, box.h);
 					DrawLines(highlightColors, width, boundingRect, Color.green);
 				}
 			}
@@ -176,21 +176,22 @@ public class TesseractWrapper : IDisposable {
 		}
 	}
 
-	private static void DrawLines(IList<Color32> colors, int width, Rect boundingRect, Color32 color, int thickness = 3) {
-		int x1 = (int) boundingRect.x;
-		int x2 = (int) (boundingRect.x + boundingRect.width);
-		int y1 = (int) boundingRect.y;
-		int y2 = (int) (boundingRect.y + boundingRect.height);
-		for (int x = x1; x <= x2; x++) {
+	private static void DrawLines(IList<Color32> colors, int width, RectInt boundingRect, Color32 color, int thickness = 3) {
+		int xMin = boundingRect.xMin;
+		int xMax = boundingRect.xMax - 1;
+		int yMin = boundingRect.y;
+		int yMax = boundingRect.yMax - 1;
+		
+		for (int x = xMin; x <= xMax; x++) {
 			for (int i = 0; i < thickness; i++) {
-				colors[(y1 + i) * width + x] = color;
-				colors[(y2 - i) * width + x] = color;
+				colors[(yMin + i) * width + x] = color;
+				colors[(yMax - i) * width + x] = color;
 			}
 		}
-		for (int y = y1; y <= y2; y++) {
+		for (int y = yMin; y <= yMax; y++) {
 			for (int i = 0; i < thickness; i++) {
-				colors[y * width + x1 + i] = color;
-				colors[y * width + x2 - i] = color;
+				colors[y * width + xMin + i] = color;
+				colors[y * width + xMax - i] = color;
 			}
 		}
 	}
