@@ -177,8 +177,8 @@ public static class Operation {
 	}
 
 	public static string GetTextOnScreenNew(int x, int y, int width, int height) {
-		Color32[,] colors = GetColorsOnScreen(x, y, width, height);
-		return OCRUtils.RecognizeNew(colors);
+		Color32[,] _colors = GetColorsOnScreen(x, y, width, height);
+		return OCRUtils.RecognizeNew(_colors);
 	}
 	
 	public static Color32[,] GetFromFile(string filePath) {

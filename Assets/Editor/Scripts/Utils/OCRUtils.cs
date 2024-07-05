@@ -78,22 +78,21 @@ public static class OCRUtils {
 	
 	private static TesseractDriver s_TesseractDriver = new TesseractDriver();
 	private static bool s_IsTesseractInit;
-	public static string RecognizeNew(Color32[,] colors) {
+	public static string RecognizeNew(Color32[,] colors, int scale = 2) {
 		if (!s_IsTesseractInit) {
 			s_IsTesseractInit = s_TesseractDriver.Setup();
 		}
 		if (s_IsTesseractInit) {
-			const int SCALE = 2;
 			int width = colors.GetLength(0);
 			int height = colors.GetLength(1);
-			int scaledWidth = width * SCALE;
-			int scaledHeight = height * SCALE;
+			int scaledWidth = width * scale;
+			int scaledHeight = height * scale;
 			Color32[] _colors = new Color32[scaledWidth * scaledHeight];
 			for (int _y = 0; _y < height; _y++) {
 				for (int _x = 0; _x < width; _x++) {
-					for (int i = 0; i < SCALE; i++) {
-						for (int j = 0; j < SCALE; j++) {
-							_colors[(_y * SCALE + i) * scaledWidth + _x * SCALE + j] = colors[_x, height - 1 - _y];
+					for (int i = 0; i < scale; i++) {
+						for (int j = 0; j < scale; j++) {
+							_colors[(_y * scale + i) * scaledWidth + _x * scale + j] = colors[_x, height - 1 - _y];
 						}
 					}
 				}
