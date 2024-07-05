@@ -5,6 +5,7 @@
  * @EditTime: 2023-10-18 01:59:04 232
  */
 
+using System.Text;
 using UnityEngine;
 
 public static partial class Recognize {
@@ -60,7 +61,13 @@ public static partial class Recognize {
 	public static string FollowOuterJoinBtnTextNew {
 		get {
 			if (IsFollowOuterJoinBtnExist) {
-				return Operation.GetTextOnScreenNew(1617, 696, 119, 20) + Operation.GetTextOnScreenNew(1579, 716, 157, 20);
+				string multiLineText = Operation.GetTextOnScreenNew(1579, 696, 38, 20) + 
+						Operation.GetTextOnScreenNew(1617, 696, 119, 20) + 
+						Operation.GetTextOnScreenNew(1579, 716, 157, 20);
+				if (Encoding.UTF8.GetBytes(multiLineText).Length < 25) {
+					multiLineText = Operation.GetTextOnScreenNew(1579, 706, 157, 20);
+				}
+				return multiLineText;
 			}
 			return "None";
 		}
