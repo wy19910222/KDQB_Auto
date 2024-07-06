@@ -150,7 +150,7 @@ public static partial class Recognize {
 		string text = FollowOuterJoinBtnTextNew;
 		if (text.Contains("战")) {
 			return FollowType.WAR_HAMMER;
-		} else if (text.Contains("民")) {
+		} else if (text.Contains("难") || text.Contains("民")) {
 			return FollowType.REFUGEE_CAMP;
 		} else if (text.Contains("星")) {
 			return FollowType.FEAR_STAR;
@@ -161,6 +161,7 @@ public static partial class Recognize {
 		} else if (text.Contains("心") || text.Contains("年") || text.Contains("砰")) {
 			return FollowType.HEART_PANG;
 		}
+		Debug.LogWarning(text);
 		return FollowType.UNKNOWN;
 	}
 
