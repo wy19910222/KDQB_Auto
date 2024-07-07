@@ -152,7 +152,7 @@ public static partial class Recognize {
 			return FollowType.WAR_HAMMER;
 		} else if (text.Contains("难") || text.Contains("民")) {
 			return FollowType.REFUGEE_CAMP;
-		} else if (text.Contains("星")) {
+		} else if (text.Contains("星") || text.Contains("昌")) {
 			return FollowType.FEAR_STAR;
 		} else if (text.Contains("军") || text.Contains("团") || text.Contains("据")) {
 			return FollowType.STRONGHOLD;
