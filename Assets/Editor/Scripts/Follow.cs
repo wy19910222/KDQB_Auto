@@ -147,7 +147,9 @@ public class Follow {
 						}
 						break;
 					case Recognize.FollowType.FEAR_STAR:
-						willNotFollow = false;
+						if (FEAR_STAR_HELP_ENABLED || TypeCountDict[typeOuter] > 0 && TypeCanOuterDict[typeOuter]) {
+							willNotFollow = false;
+						}
 						break;
 				}
 				if (willNotFollow) {
