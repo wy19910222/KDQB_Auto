@@ -77,7 +77,7 @@ public class AutoCastCastleAbility {
 			yield return new EditorWaitForSeconds(1F);
 			if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
 				Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-				yield return new EditorWaitForSeconds(1F);
+				yield return new EditorWaitForSeconds(2F);
 			}
 			Debug.Log("自己城堡");
 			Operation.Click(960, 500);	// 自己城堡
