@@ -41,7 +41,7 @@ public static partial class Recognize {
 					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
 					// 最少只能判断到x=19，再继续会受到体力图标的影响
 					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
-						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR, 0.5F) >= 0) {
+						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR) >= 0) {
 							return Mathf.RoundToInt((float) x / width * Global.ENERGY_FULL);
 						}
 					}
