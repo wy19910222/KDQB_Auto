@@ -55,17 +55,25 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 		
 		EditorGUILayout.BeginHorizontal();
-		Follow.FEAR_STAR_HELP_ENABLED = GUILayout.Toggle(Follow.FEAR_STAR_HELP_ENABLED, "帮打惧星", "Button", GUILayout.Width(80F - 4F));
-		EditorGUI.BeginDisabledGroup(!Follow.FEAR_STAR_HELP_ENABLED);
+		bool fearStarHelpEnabled = Follow.FEAR_STAR_HELP_COUNT > 0;
+		bool newFearStarHelpEnabled = GUILayout.Toggle(Follow.FEAR_STAR_HELP_COUNT > 0, "帮打", "Button", GUILayout.Width(40F - 4F));
+		if (newFearStarHelpEnabled != fearStarHelpEnabled) {
+			Follow.FEAR_STAR_HELP_COUNT = newFearStarHelpEnabled ? Follow.GetDefaultCount(Recognize.FollowType.FEAR_STAR) : 0;
+		}
+		EditorGUI.BeginDisabledGroup(!newFearStarHelpEnabled);
 		bool ownerExist = Follow.OwnerNameDict.TryGetValue(Follow.FEAR_STAR_HELP_OWNER, out Color32[,] targetColors) && targetColors != null;
 		Follow.FEAR_STAR_HELP_OWNER = EditorGUILayout.TextField(Follow.FEAR_STAR_HELP_OWNER);
-		EditorGUILayout.LabelField("的惧星", GUILayout.Width(EditorGUIUtility.fieldWidth));
+		GUILayout.Space(-4F);
+		float prevLabelWidth = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 36F;
+		Follow.FEAR_STAR_HELP_COUNT = EditorGUILayout.IntField("的惧星", Follow.FEAR_STAR_HELP_COUNT, GUILayout.Width(58F));
+		GUILayout.Space(-4F);
+		EditorGUILayout.LabelField("次", GUILayout.Width(14F));
 		if (GUILayout.Button(ownerExist ? "更新车主" : "记录车主", GUILayout.Width(60F))) {
 			Follow.RecordFollowOwnerName(Follow.FEAR_STAR_HELP_OWNER);
 		}
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
-		float prevLabelWidth = EditorGUIUtility.labelWidth;
 		EditorGUIUtility.labelWidth = 80F;
 		Follow.FEAR_STAR_HELP_SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", Follow.FEAR_STAR_HELP_SQUAD_NUMBER, 1, 8);
 		EditorGUIUtility.labelWidth = prevLabelWidth;

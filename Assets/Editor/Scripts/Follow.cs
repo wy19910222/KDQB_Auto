@@ -22,7 +22,7 @@ public class Follow {
 	public static bool RESET_DAILY = true;	// 每日重置次数
 	public static DateTime LAST_RESET_TIME;	// 上次重置时间
 	
-	public static bool FEAR_STAR_HELP_ENABLED;	// 帮打惧星开关
+	public static int FEAR_STAR_HELP_COUNT;	// 帮打惧星次数
 	public static string FEAR_STAR_HELP_OWNER = null;	// 帮打惧星跟车的车主
 	public static int FEAR_STAR_HELP_SQUAD_NUMBER = 1;	// 帮打惧星编队号码
 	public static bool FEAR_STAR_HELP_MUST_FULL_SOLDIER = true;	// 帮打惧星必须满兵
@@ -84,6 +84,7 @@ public class Follow {
 							TypeCountDict[followType] = GetDefaultCount(followType);
 						}
 					}
+					// FEAR_STAR_HELP_COUNT = GetDefaultCount(Recognize.FollowType.FEAR_STAR);
 					LAST_RESET_TIME = date;
 				}
 			}
@@ -121,17 +122,17 @@ public class Follow {
 				if (Recognize.IsWindowCovered) {
 					continue;
 				}
-				// 如果所有支持在外面跟车的类别都没次数了
-				bool anyoneCanOuter = false;
-				foreach (var (followType, canOuter) in TypeCanOuterDict) {
-					if (canOuter && TypeCountDict[followType] > 0) {
-						anyoneCanOuter = true;
-						break;
-					}
-				}
-				if (!anyoneCanOuter) {
-					continue;
-				}
+				// // 如果所有支持在外面跟车的类别都没次数了
+				// bool anyoneCanOuter = false;
+				// foreach (var (followType, canOuter) in TypeCanOuterDict) {
+				// 	if (canOuter && TypeCountDict[followType] > 0) {
+				// 		anyoneCanOuter = true;
+				// 		break;
+				// 	}
+				// }
+				// if (!anyoneCanOuter) {
+				// 	continue;
+				// }
 
 				bool willNotFollow = true;
 				Recognize.FollowType typeOuter = Recognize.GetFollowTypeOuter();
@@ -147,7 +148,8 @@ public class Follow {
 						}
 						break;
 					case Recognize.FollowType.FEAR_STAR:
-						if (FEAR_STAR_HELP_ENABLED || TypeCountDict[typeOuter] > 0 && TypeCanOuterDict[typeOuter]) {
+						if (FEAR_STAR_HELP_COUNT > 0 || TypeCountDict[typeOuter] > 0 && TypeCanOuterDict[typeOuter]) {
+							Debug.LogError(willNotFollow);
 							willNotFollow = false;
 						}
 						break;
@@ -379,7 +381,7 @@ public class Follow {
 	}
 	public static bool IsFearStarNeedHelp() {
 		// 判断是否开启帮打
-		if (FEAR_STAR_HELP_ENABLED) {
+		if (FEAR_STAR_HELP_COUNT > 0) {
 			// 判断是否是帮打车主
 			Color32[,] realColors = Operation.GetColorsOnScreen(OWNER_NAME_RECT.x, OWNER_NAME_RECT.y, OWNER_NAME_RECT.width, OWNER_NAME_RECT.height);
 			if (OwnerNameDict.TryGetValue(FEAR_STAR_HELP_OWNER, out Color32[,] targetColors) && targetColors != null) {
