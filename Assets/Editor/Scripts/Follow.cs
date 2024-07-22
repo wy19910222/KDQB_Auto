@@ -149,7 +149,6 @@ public class Follow {
 						break;
 					case Recognize.FollowType.FEAR_STAR:
 						if (FEAR_STAR_HELP_COUNT > 0 || TypeCountDict[typeOuter] > 0 && TypeCanOuterDict[typeOuter]) {
-							Debug.LogError(willNotFollow);
 							willNotFollow = false;
 						}
 						break;
