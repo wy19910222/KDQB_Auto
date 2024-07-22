@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,11 +16,16 @@ public class IslandAndSandTable {
 	
 	public static int SAND_TABLE_ORDER = 4;
 	public static int SAND_TABLE_TAB = 1;	// 1-陆军，2-海军，3-空军
-	public static int SAND_SQUAD_NUMBER = 1;	// 使用编队号码
+	public static int SAND_SQUAD_NUMBER = 1;	// 沙盘使用编队号码
 	public static bool SAND_MUST_FULL_SOLDIER = true;	// 必须满兵
 	
 	public static int EXPEDITION_ORDER = 5;
 	public static bool EXPEDITION_QUICK_BY_50_DIAMOND = true;
+	
+	public static int TRANSNATIONAL_ORDER = 6;
+	public static List<int> TRANSNATIONAL_TARGET_WEIGHTS = new List<int>() { 0, 0, 0, 0, 1 };	// 跨战区目标随机权重
+	public static int TRANSNATIONAL_SQUAD_NUMBER = 1;	// 跨战区使用编队号码
+	public static bool TRANSNATIONAL_MUST_FULL_SOLDIER = true;	// 必须满兵
 	
 	public static int ISLAND_ORDER = 10;
 	
@@ -28,6 +34,7 @@ public class IslandAndSandTable {
 	public static DateTime LAST_SAND_TABLE_TIME;
 	public static DateTime LAST_EXPEDITION_TIME;
 	public static DateTime LAST_ISLAND_TIME;
+	public static DateTime LAST_TRANSNATIONAL_TIME;
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
@@ -61,8 +68,9 @@ public class IslandAndSandTable {
 			bool test = Test;
 			bool sandTableSucceed = LAST_SAND_TABLE_TIME > date;
 			bool expeditionSucceed = LAST_EXPEDITION_TIME > date;
+			bool transnationalSucceed = LAST_TRANSNATIONAL_TIME > date;
 			bool islandSucceed = LAST_ISLAND_TIME > date;
-			if ((sandTableSucceed && islandSucceed && expeditionSucceed || DateTime.Now.TimeOfDay < DAILY_TIME) && !test) {
+			if ((sandTableSucceed && expeditionSucceed && transnationalSucceed && islandSucceed || DateTime.Now.TimeOfDay < DAILY_TIME) && !test) {
 				continue;
 			}
 
@@ -165,7 +173,7 @@ public class IslandAndSandTable {
 			}
 			
 			if (!expeditionSucceed) {
-				Debug.Log("拖动以显示远征行动");
+				Debug.Log("拖动以显示跨战区演习");
 				int orderOffsetY = Mathf.Max((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
@@ -242,6 +250,77 @@ public class IslandAndSandTable {
 				Operation.Click(720, 128);	// 左上角返回按钮
 				yield return new EditorWaitForSeconds(0.2F);
 			}
+			
+			if (!transnationalSucceed) {
+				Debug.Log("拖动以显示跨战区演习");
+				int orderOffsetY = Mathf.Max((TRANSNATIONAL_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
+				int deltaOffsetY = orderOffsetY - offsetY;
+				while (deltaOffsetY > 0) {
+					int dragDistance = Mathf.Min(ITEM_HEIGHT * VISIBLE_ITEMS_COUNT, deltaOffsetY);
+					// 往左拖动
+					var ie = Operation.NoInertiaDrag(960, 960, 960, 960 - dragDistance, 0.5F);
+					while (ie.MoveNext()) {
+						yield return ie.Current;
+					}
+					yield return new EditorWaitForSeconds(0.1F);
+					deltaOffsetY -= dragDistance;
+				}
+				offsetY = orderOffsetY;
+				yield return new EditorWaitForSeconds(0.2F);
+				
+				Debug.Log("前往按钮");
+				Operation.Click(1092, 320 + (TRANSNATIONAL_ORDER - 1) * ITEM_HEIGHT - offsetY);	// 前往按钮
+				yield return new EditorWaitForSeconds(1F);
+				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.TRANSNATIONAL && !test) {
+					yield return new EditorWaitForSeconds(0.5F);
+					for (int i = 0; i < 10 && !Recognize.IsTransnationalTargetList; i++) {
+						Debug.Log("挑战按钮");
+						Operation.Click(960, 960);	// 挑战按钮
+						yield return new EditorWaitForSeconds(0.2F);
+					}
+					for (int i = 0; i < 20 && !Recognize.IsTransnationalTimesEmpty; i++) {
+						Debug.Log("选择目标");
+						int targetIndex = RandomTransnationalTarget();
+						Operation.Click(1110, 420 + 100 * targetIndex);	// 选择目标
+						yield return new EditorWaitForSeconds(0.3F);
+						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
+							Debug.Log("选择编队");
+							Operation.Click(1145 + 37 * TRANSNATIONAL_SQUAD_NUMBER, 870);	// 选择编队
+							yield return new EditorWaitForSeconds(0.2F);
+							if (!TRANSNATIONAL_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
+								Debug.Log("战斗按钮");
+								Operation.Click(960, 476);	// 战斗按钮
+								yield return new EditorWaitForSeconds(2F);
+								Debug.Log("跳过按钮");
+								Operation.Click(30, 250);	// 跳过按钮
+								yield return new EditorWaitForSeconds(1.5F);
+								Debug.Log("返回按钮");
+								Operation.Click(960, 906);	// 返回按钮
+								yield return new EditorWaitForSeconds(0.5F);
+							} else {
+								Debug.Log("退出按钮");
+								Operation.Click(30, 140);	// 退出按钮
+								yield return new EditorWaitForSeconds(0.2F);
+								Debug.Log("确认退出按钮");
+								Operation.Click(1064, 634);	// 确认退出按钮
+								yield return new EditorWaitForSeconds(2);
+							}
+						} else {
+							yield return new EditorWaitForSeconds(0.3F);
+							Debug.Log("右上角叉叉");
+							Operation.Click(1168, 352);	// 右上角叉叉
+							yield return new EditorWaitForSeconds(0.3F);
+						}
+					}
+					LAST_TRANSNATIONAL_TIME = DateTime.Now;
+				}
+				Debug.Log("右上角叉叉");
+				Operation.Click(1170, 248);	// 右上角叉叉
+				yield return new EditorWaitForSeconds(0.3F);
+				Debug.Log("左上角返回按钮");
+				Operation.Click(720, 128);	// 左上角返回按钮
+				yield return new EditorWaitForSeconds(0.2F);
+			}
 
 			if (!islandSucceed) {
 				Debug.Log("拖动以显示岛屿作战");
@@ -309,5 +388,29 @@ public class IslandAndSandTable {
 			yield return new EditorWaitForSeconds(5F);
 		}
 		// ReSharper disable once IteratorNeverReturns
+	}
+	
+	private static int RandomTransnationalTarget() {
+		int totalWeight = 0;
+		int length = TRANSNATIONAL_TARGET_WEIGHTS.Count;
+		for (int i = 0; i < length; ++i) {
+			int weight = TRANSNATIONAL_TARGET_WEIGHTS[i];
+			if (weight > 0) {
+				totalWeight += weight;
+			}
+		}
+		if (totalWeight > 0) {
+			int random = UnityEngine.Random.Range(0, totalWeight);
+			for (int i = 0; i < length; ++i) {
+				int weight = TRANSNATIONAL_TARGET_WEIGHTS[i];
+				if (weight > 0) {
+					random -= weight;
+					if (random < 0) {
+						return i;
+					}
+				}
+			}
+		}
+		return UnityEngine.Random.Range(0, length);
 	}
 }

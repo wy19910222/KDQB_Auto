@@ -17,6 +17,8 @@ public static partial class Recognize {
 		EXPEDITION,
 		[InspectorName("沙盘演习")]
 		SAND_TABLE,
+		[InspectorName("跨战区演习")]
+		TRANSNATIONAL,
 		[InspectorName("岛屿作战")]
 		ISLAND,
 	}
@@ -32,6 +34,7 @@ public static partial class Recognize {
 	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_WILD = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleWild.png");
 	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_EXPEDITION = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleExpedition.png");
 	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_SAND_TABLE = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleSandTable.png");
+	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_TRANSNATIONAL = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleTransnational.png");
 	public static DailyIntelligenceType DailyIntelligenceCurrentType {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(896, 112, 131, 30);
@@ -43,6 +46,9 @@ public static partial class Recognize {
 			}
 			else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_SAND_TABLE) > 0.9F) {
 				return DailyIntelligenceType.SAND_TABLE;
+			}
+			else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_TRANSNATIONAL) > 0.9F) {
+				return DailyIntelligenceType.TRANSNATIONAL;
 			}
 			return IsIsland ? DailyIntelligenceType.ISLAND : DailyIntelligenceType.UNKNOWN;
 		}
@@ -152,6 +158,21 @@ public static partial class Recognize {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(938, 687, 44, 22);
 			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_EXPEDITION_QUICK_CONFIRM_BTN) > 0.95F;
+		}
+	}
+	
+	private static readonly Color32[,] DAILY_INTELLIGENCE_TRANSNATIONAL_TARGET_LIST = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTransnationalTargetList.png");
+	public static bool IsTransnationalTargetList {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(910, 230, 100, 30);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_TRANSNATIONAL_TARGET_LIST) > 0.95F;
+		}
+	}
+	private static readonly Color32[,] DAILY_INTELLIGENCE_TRANSNATIONAL_TIMES_EMPTY = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTransnationalTimesEmpty.png");
+	public static bool IsTransnationalTimesEmpty {
+		get {
+			Color32[,] realColors = Operation.GetColorsOnScreen(1020, 297, 22, 16);
+			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_TRANSNATIONAL_TIMES_EMPTY) > 0.95F;
 		}
 	}
 }

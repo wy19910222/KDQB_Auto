@@ -69,6 +69,44 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 		}
 		
 		EditorGUILayout.BeginHorizontal();
+		IslandAndSandTable.TRANSNATIONAL_ORDER = EditorGUILayout.IntSlider("跨战区排序", IslandAndSandTable.TRANSNATIONAL_ORDER, 5, 7);
+		bool transnationalSucceed = IslandAndSandTable.LAST_TRANSNATIONAL_TIME > date;
+		bool newTransnationalSucceed = GUILayout.Toggle(transnationalSucceed, "已完成", "Button", GUILayout.Width(60F));
+		if (newTransnationalSucceed != transnationalSucceed) {
+			IslandAndSandTable.LAST_TRANSNATIONAL_TIME = newTransnationalSucceed ? now : now - new TimeSpan(24, 0, 0);
+		}
+		EditorGUILayout.EndHorizontal();
+		for (int i = 0, length = IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS.Count; i < length; ++i) {
+			int weight = IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS[i];
+			EditorGUI.BeginChangeCheck();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUI.BeginChangeCheck();
+			int newWeight = Math.Max(EditorGUILayout.IntField($"    目标{i + 1}权重", Math.Abs(weight)), 0);
+			if (EditorGUI.EndChangeCheck()) {
+				weight = weight < 0 ? -newWeight : newWeight;
+				IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS[i] = weight;
+			}
+			EditorGUI.BeginChangeCheck();
+			EditorGUILayout.Toggle(weight > 0, GUILayout.Width(16F));
+			if (EditorGUI.EndChangeCheck()) {
+				weight = -weight;
+				IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS[i] = weight;
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+		EditorGUILayout.BeginHorizontal();
+		IslandAndSandTable.TRANSNATIONAL_SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", IslandAndSandTable.TRANSNATIONAL_SQUAD_NUMBER, 1, 8);
+		IslandAndSandTable.TRANSNATIONAL_MUST_FULL_SOLDIER = GUILayout.Toggle(IslandAndSandTable.TRANSNATIONAL_MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));
+		EditorGUILayout.EndHorizontal();
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
+		
+		EditorGUILayout.BeginHorizontal();
 		IslandAndSandTable.ISLAND_ORDER = EditorGUILayout.IntSlider("岛屿排序", IslandAndSandTable.ISLAND_ORDER, 9, 11);
 		bool islandSucceed = IslandAndSandTable.LAST_ISLAND_TIME > date;
 		bool newIslandSucceed = GUILayout.Toggle(islandSucceed, "已完成", "Button", GUILayout.Width(60F));
