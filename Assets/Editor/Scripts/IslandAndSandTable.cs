@@ -131,7 +131,7 @@ public class IslandAndSandTable {
 						Operation.Click(960, 960);	// 挑战按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
-							Debug.Log("选择编队");
+							Debug.Log("选择编队" + SAND_SQUAD_NUMBER);
 							Operation.Click(1145 + 37 * SAND_SQUAD_NUMBER, 870);	// 选择编队
 							yield return new EditorWaitForSeconds(0.2F);
 							// if (!Recognize.IsSandTableUsingPhalanx) {
@@ -284,7 +284,7 @@ public class IslandAndSandTable {
 						Operation.Click(1110, 420 + 100 * targetIndex);	// 选择目标
 						yield return new EditorWaitForSeconds(0.3F);
 						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
-							Debug.Log("选择编队");
+							Debug.Log("选择编队" + TRANSNATIONAL_SQUAD_NUMBER);
 							Operation.Click(1145 + 37 * TRANSNATIONAL_SQUAD_NUMBER, 870);	// 选择编队
 							yield return new EditorWaitForSeconds(0.2F);
 							if (!TRANSNATIONAL_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
