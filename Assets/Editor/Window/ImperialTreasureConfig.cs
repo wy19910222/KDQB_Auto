@@ -17,7 +17,7 @@ public class ImperialTreasureConfig : PrefsEditorWindow<ImperialTreasure> {
 	
 	private void OnGUI() {
 		ImperialTreasure.UNATTENDED_DURATION = EditorGUILayout.Slider("等待无操作（秒）", ImperialTreasure.UNATTENDED_DURATION, 0, 20);
-		ImperialTreasure.INTERVAL = EditorGUILayout.IntSlider("冷却（小时）", ImperialTreasure.INTERVAL, 10, 12);
+		ImperialTreasure.INTERVAL = EditorGUILayout.IntSlider("冷却（小时）", ImperialTreasure.INTERVAL, 1, 12);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUI.BeginChangeCheck();
 		TimeSpan tryCountdown = ImperialTreasure.NEXT_DT - DateTime.Now;
@@ -33,6 +33,11 @@ public class ImperialTreasureConfig : PrefsEditorWindow<ImperialTreasure> {
 		if (EditorGUI.EndChangeCheck()) {
 			ImperialTreasure.NEXT_DT = DateTime.Now + new TimeSpan(hours, minutes, seconds);
 		}
+		EditorGUI.BeginDisabledGroup(tryCountdown.Ticks < 0);
+		if (GUILayout.Button($"-{ImperialTreasure.INTERVAL}H", GUILayout.Width(EditorGUIUtility.fieldWidth))) {
+			ImperialTreasure.NEXT_DT -= new TimeSpan(0, ImperialTreasure.INTERVAL, 0, 0);
+		}
+		EditorGUI.EndDisabledGroup();
 		EditorGUILayout.EndHorizontal();
 
 		{
