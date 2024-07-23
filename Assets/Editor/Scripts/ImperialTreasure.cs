@@ -19,7 +19,7 @@ public struct ImperialTreasureTarget {
 }
 
 public class ImperialTreasure {
-	public static string[] TARGET_NAMES = new[] { "陆军", "海军", "空军" };
+	public static readonly string[] TARGET_NAMES = new[] { "陆军", "海军", "空军" };
 	
 	public static bool Test { get; set; } // 测试模式
 	
