@@ -72,13 +72,22 @@ public class AutoCastCastleAbility {
 			Task.CurrentTask = nameof(AutoCastCastleAbility);
 
 			// 开始自动施放城堡技能
-			Debug.Log("切换场景以定位");
-			Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-			yield return new EditorWaitForSeconds(1F);
-			if (Recognize.CurrentScene == Recognize.Scene.INSIDE) {
-				Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
-				yield return new EditorWaitForSeconds(2F);
+			switch (Recognize.CurrentScene) {
+				case Recognize.Scene.INSIDE:
+					Debug.Log("切换场景");
+					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+					break;
+				case Recognize.Scene.OUTSIDE_NEARBY:
+				case Recognize.Scene.OUTSIDE_FARAWAY:
+					Debug.Log("切换场景以定位");
+					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+					yield return new EditorWaitForSeconds(1F);
+					Operation.Click(1170, 970);	// 右下角主城与世界切换按钮
+					break;
+				default:
+					goto EndOfAutoCastCastleAbility;
 			}
+			yield return new EditorWaitForSeconds(2F);
 			Debug.Log("自己城堡");
 			Operation.Click(960, 500);	// 自己城堡
 			yield return new EditorWaitForSeconds(0.2F);
@@ -134,6 +143,7 @@ public class AutoCastCastleAbility {
 				}
 			}
 			
+			EndOfAutoCastCastleAbility:
 			Task.CurrentTask = null;
 		}
 		// ReSharper disable once IteratorNeverReturns
