@@ -60,16 +60,18 @@ public static partial class Recognize {
 	
 	public static string FollowOuterJoinBtnTextNew {
 		get {
-			if (IsFollowOuterJoinBtnExist) {
-				string multiLineText = Operation.GetTextOnScreenNew(1579, 696, 38, 20) + 
-						Operation.GetTextOnScreenNew(1617, 696, 119, 20) + 
-						Operation.GetTextOnScreenNew(1579, 716, 157, 20);
-				if (Encoding.UTF8.GetBytes(multiLineText).Length < 25) {
-					multiLineText = Operation.GetTextOnScreenNew(1579, 706, 157, 20);
+			return GetCachedValueOrNew(nameof(FollowOuterJoinBtnTextNew), () => {
+				if (IsFollowOuterJoinBtnExist) {
+					string multiLineText = Operation.GetTextOnScreenNew(1579, 696, 38, 20) + 
+							Operation.GetTextOnScreenNew(1617, 696, 119, 20) + 
+							Operation.GetTextOnScreenNew(1579, 716, 157, 20);
+					if (Encoding.UTF8.GetBytes(multiLineText).Length < 25) {
+						multiLineText = Operation.GetTextOnScreenNew(1579, 706, 157, 20);
+					}
+					return multiLineText;
 				}
-				return multiLineText;
-			}
-			return "None";
+				return "None";
+			});
 		}
 	}
 
