@@ -314,6 +314,9 @@ public class Follow {
 				if (count > 0) {
 					TypeCountDict[type] = count - 1;
 				}
+				if (isFearStarNeedHelp) {
+					FEAR_STAR_HELP_COUNT--;
+				}
 			} else {
 				Debug.LogError("跟车失败");
 			}
