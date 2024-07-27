@@ -13,6 +13,7 @@ using UnityEngine;
 public class FollowConfig : PrefsEditorWindow<Follow> {
 	private string m_TempJXOwnerName;
 	private Vector2 m_ScrollPos;
+	private bool m_FearStarHelpOwnerCustom;
 	
 	[MenuItem("Tools_Window/Default/Follow", false, 0)]
 	private static void Open() {
@@ -62,7 +63,15 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 		}
 		EditorGUI.BeginDisabledGroup(!newFearStarHelpEnabled);
 		bool ownerExist = Follow.OwnerNameDict.TryGetValue(Follow.FEAR_STAR_HELP_OWNER, out Color32[,] targetColors) && targetColors != null;
-		Follow.FEAR_STAR_HELP_OWNER = EditorGUILayout.TextField(Follow.FEAR_STAR_HELP_OWNER);
+		List<string> ownerNames = new List<string>(Follow.OwnerNameDict.Keys);
+		ownerNames.Insert(0, "自定义");
+		int index = m_FearStarHelpOwnerCustom ? 0 : ownerNames.IndexOf(Follow.FEAR_STAR_HELP_OWNER);
+		int newIndex = EditorGUILayout.Popup(index, ownerNames.ToArray(), index <= 0 ? GUILayout.Width(56F) : GUILayout.ExpandWidth(true));
+		if (newIndex != index) {
+			index = newIndex;
+			m_FearStarHelpOwnerCustom = index == 0;
+		}
+		Follow.FEAR_STAR_HELP_OWNER = m_FearStarHelpOwnerCustom ? EditorGUILayout.TextField(Follow.FEAR_STAR_HELP_OWNER) : ownerNames[index];
 		GUILayout.Space(-4F);
 		float prevLabelWidth = EditorGUIUtility.labelWidth;
 		EditorGUIUtility.labelWidth = 36F;
