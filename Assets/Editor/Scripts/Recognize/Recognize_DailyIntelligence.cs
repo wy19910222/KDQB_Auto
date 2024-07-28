@@ -5,6 +5,7 @@
  * @EditTime: 2023-09-27 01:41:06 799
  */
 
+using System;
 using UnityEngine;
 
 public static partial class Recognize {
@@ -19,7 +20,7 @@ public static partial class Recognize {
 		SAND_TABLE,
 		[InspectorName("跨战区演习")]
 		TRANSNATIONAL,
-		[InspectorName("岛屿作战")]
+		[InspectorName("岛屿大作战")]
 		ISLAND,
 	}
 	
@@ -31,34 +32,54 @@ public static partial class Recognize {
 		}
 	}
 
-	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_WILD = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleWild.png");
-	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_EXPEDITION = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleExpedition.png");
-	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_SAND_TABLE = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleSandTable.png");
-	private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_TRANSNATIONAL = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleTransnational.png");
+	// private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_WILD = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleWild.png");
+	// private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_EXPEDITION = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleExpedition.png");
+	// private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_SAND_TABLE = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleSandTable.png");
+	// private static readonly Color32[,] DAILY_INTELLIGENCE_TITLE_TRANSNATIONAL = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTitleTransnational.png");
+	// public static DailyIntelligenceType DailyIntelligenceCurrentType {
+	// 	get {
+	// 		Color32[,] realColors = Operation.GetColorsOnScreen(896, 112, 131, 30);
+	// 		if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_WILD) > 0.9F) {
+	// 			return DailyIntelligenceType.WILD;
+	// 		}
+	// 		else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_EXPEDITION) > 0.9F) {
+	// 			return DailyIntelligenceType.EXPEDITION;
+	// 		}
+	// 		else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_SAND_TABLE) > 0.9F) {
+	// 			return DailyIntelligenceType.SAND_TABLE;
+	// 		}
+	// 		else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_TRANSNATIONAL) > 0.9F) {
+	// 			return DailyIntelligenceType.TRANSNATIONAL;
+	// 		}
+	// 		return IsIsland ? DailyIntelligenceType.ISLAND : DailyIntelligenceType.UNKNOWN;
+	// 	}
+	// }
+	// private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_RESET_TIMES_LABEL = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandResetTimesLabel.png");
+	// private static bool IsIsland {
+	// 	get {
+	// 		Color32[,] realColors = Operation.GetColorsOnScreen(714, 983, 80, 20);
+	// 		return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_RESET_TIMES_LABEL) > 0.7F;
+	// 	}
+	// }
+	public static string DailyIntelligenceCurrentTitle => Operation.GetTextOnScreenNew(850, 110, 220, 36, color => color.r > 240 && color.g > 240 && color.b > 240);
 	public static DailyIntelligenceType DailyIntelligenceCurrentType {
 		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(896, 112, 131, 30);
-			if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_WILD) > 0.9F) {
-				return DailyIntelligenceType.WILD;
+			string title = DailyIntelligenceCurrentTitle;
+			foreach (DailyIntelligenceType type in Enum.GetValues(typeof(DailyIntelligenceType))) {
+				string typeName = Utils.GetEnumInspectorName(type);
+				string[] words = typeName.Split("");
+				int length = words.Length;
+				int count = 0;
+				for (int i = 0; i < length; i++) {
+					if (title.Contains(words[i])) {
+						count++;
+					}
+				}
+				if (count > length * 0.5F) {
+					return type;
+				}
 			}
-			else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_EXPEDITION) > 0.9F) {
-				return DailyIntelligenceType.EXPEDITION;
-			}
-			else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_SAND_TABLE) > 0.9F) {
-				return DailyIntelligenceType.SAND_TABLE;
-			}
-			else if (ApproximatelyRectIgnoreCovered(realColors, DAILY_INTELLIGENCE_TITLE_TRANSNATIONAL) > 0.9F) {
-				return DailyIntelligenceType.TRANSNATIONAL;
-			}
-			return IsIsland ? DailyIntelligenceType.ISLAND : DailyIntelligenceType.UNKNOWN;
-		}
-	}
-	
-	private static readonly Color32[,] DAILY_INTELLIGENCE_ISLAND_RESET_TIMES_LABEL = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceIslandResetTimesLabel.png");
-	private static bool IsIsland {
-		get {
-			Color32[,] realColors = Operation.GetColorsOnScreen(714, 983, 80, 20);
-			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_RESET_TIMES_LABEL) > 0.7F;
+			return DailyIntelligenceType.UNKNOWN;
 		}
 	}
 	
