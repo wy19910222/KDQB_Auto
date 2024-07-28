@@ -176,8 +176,21 @@ public static class Operation {
 		return OCRUtils.Recognize(width, height, bytes);
 	}
 
-	public static string GetTextOnScreenNew(int x, int y, int width, int height) {
+	public static string GetTextOnScreenNew(int x, int y, int width, int height, Func<Color32, bool> matchPixels = null) {
 		Color32[,] _colors = GetColorsOnScreen(x, y, width, height);
+		if (matchPixels != null) {
+			int length0 = _colors.GetLength(0);
+			int length1 = _colors.GetLength(1);
+			Color32[,] _newColors = new Color32[length0, length1];
+			for (int _x = 0; _x < length0; ++_x) {
+				for (int _y = 0; _y < length1; ++_y) {
+					if (!matchPixels(_colors[_x, _y])) {
+						_newColors[_x, _y] = Color.white;
+					}
+				}
+			}
+			_colors = _newColors;
+		}
 		return OCRUtils.RecognizeNew(_colors);
 	}
 	
