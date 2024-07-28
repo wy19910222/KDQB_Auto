@@ -178,7 +178,7 @@ public static partial class Recognize {
 	public static bool IsGatherFearStar {
 		get {
 			Color32[,] realColors = Operation.GetColorsOnScreen(901, 810, 51, 22);
-			return ApproximatelyRectIgnoreCovered(realColors, GATHER_FEAR_STAR, 1.2F) > 0.9F;
+			return ApproximatelyRectIgnoreCovered(realColors, GATHER_FEAR_STAR, 1.5F) > 0.9F;
 		}
 	}
 
