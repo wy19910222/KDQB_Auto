@@ -176,8 +176,22 @@ public static class Operation {
 		return OCRUtils.Recognize(width, height, bytes);
 	}
 
-	public static string GetTextOnScreenNew(int x, int y, int width, int height, Func<Color32, bool> matchPixels = null) {
+	public static string GetTextOnScreenNew(int x, int y, int width, int height, bool gray = false, int scale = 1, Func<Color32, bool> matchPixels = null) {
 		Color32[,] _colors = GetColorsOnScreen(x, y, width, height);
+		if (gray) {
+			int length0 = _colors.GetLength(0);
+			int length1 = _colors.GetLength(1);
+			for (int _x = 0; _x < length0; ++_x) {
+				for (int _y = 0; _y < length1; ++_y) {
+					Color32 color = _colors[_x, _y];
+					byte average = (byte) Mathf.FloorToInt(color.r * 0.299F + color.g * 0.587F + color.b * 0.114F);
+					color.r = average;
+					color.g = average;
+					color.b = average;
+					_colors[_x, _y] = color;
+				}
+			}
+		}
 		if (matchPixels != null) {
 			int length0 = _colors.GetLength(0);
 			int length1 = _colors.GetLength(1);
@@ -190,8 +204,21 @@ public static class Operation {
 				}
 			}
 			_colors = _newColors;
+			// if (test) {
+			// 	Color[] colors = new Color[length0 * length1];
+			// 	for (int _x = 0; _x < length0; ++_x) {
+			// 		for (int _y = 0; _y < length1; ++_y) {
+			// 			colors[_x + (length1 - 1 - _y) * length0] = _colors[_x, _y];
+			// 		}
+			// 	}
+			// 	Texture2D _texture = new Texture2D(length0, length1);
+			// 	_texture.SetPixels(colors);
+			// 	_texture.Apply();
+			// 	byte[] bytes = _texture.EncodeToPNG();
+			// 	File.WriteAllBytes($"Assets/TestOCR_Last.png", bytes);
+			// }
 		}
-		return OCRUtils.RecognizeNew(_colors);
+		return OCRUtils.RecognizeNew(_colors, scale);
 	}
 	
 	public static Color32[,] GetFromFile(string filePath) {

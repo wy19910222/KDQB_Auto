@@ -98,7 +98,7 @@ public static partial class Recognize {
 			return GetCachedValueOrNew(nameof(EnergyOCR), () => {
 				int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
 				if (deltaX >= 0) {
-					string str = Operation.GetTextOnScreen(60 + deltaX, 111, 39, 20);
+					string str = Operation.GetTextOnScreenNew(60 + deltaX, 111, 39, 20, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
 					if (int.TryParse(str, out int result)) {
 						return result;
 					}

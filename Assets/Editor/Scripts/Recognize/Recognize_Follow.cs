@@ -62,11 +62,11 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(FollowOuterJoinBtnTextNew), () => {
 				if (IsFollowOuterJoinBtnExist) {
-					string multiLineText = Operation.GetTextOnScreenNew(1579, 696, 38, 20) + 
-							Operation.GetTextOnScreenNew(1617, 696, 119, 20) + 
-							Operation.GetTextOnScreenNew(1579, 716, 157, 20);
+					string multiLineText = Operation.GetTextOnScreenNew(1579, 697, 38, 18, false, 2) + 
+							Operation.GetTextOnScreenNew(1617, 697, 119, 18, false, 2) + 
+							Operation.GetTextOnScreenNew(1579, 717, 157, 18, false, 2);
 					if (Encoding.UTF8.GetBytes(multiLineText).Length < 25) {
-						multiLineText = Operation.GetTextOnScreenNew(1579, 706, 157, 20);
+						multiLineText = Operation.GetTextOnScreenNew(1579, 707, 157, 18, false, 2);
 					}
 					return multiLineText;
 				}
