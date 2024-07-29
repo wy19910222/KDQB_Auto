@@ -151,7 +151,7 @@ public class IslandAndSandTable {
 								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("跳过按钮");
 								Operation.Click(30, 250);	// 跳过按钮
-								yield return new EditorWaitForSeconds(1.5F);
+								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("返回按钮");
 								Operation.Click(960, 906);	// 返回按钮
 								yield return new EditorWaitForSeconds(0.5F);
@@ -173,7 +173,7 @@ public class IslandAndSandTable {
 			}
 			
 			if (!expeditionSucceed) {
-				Debug.Log("拖动以显示跨战区演习");
+				Debug.Log("拖动以显示远征行动");
 				int orderOffsetY = Mathf.Max((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
 				while (deltaOffsetY > 0) {
