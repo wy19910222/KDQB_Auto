@@ -176,7 +176,7 @@ public static class Operation {
 		return OCRUtils.Recognize(width, height, bytes);
 	}
 
-	public static string GetTextOnScreenNew(int x, int y, int width, int height, bool gray = false, int scale = 1, Func<Color32, bool> matchPixels = null) {
+	public static string GetTextOnScreenNew(int x, int y, int width, int height, bool gray = false, int scale = 1, Func<Color32, bool> matchPixels = null, bool debug = false) {
 		Color32[,] _colors = GetColorsOnScreen(x, y, width, height);
 		if (gray) {
 			int length0 = _colors.GetLength(0);
@@ -204,19 +204,19 @@ public static class Operation {
 				}
 			}
 			_colors = _newColors;
-			// if (test) {
-			// 	Color[] colors = new Color[length0 * length1];
-			// 	for (int _x = 0; _x < length0; ++_x) {
-			// 		for (int _y = 0; _y < length1; ++_y) {
-			// 			colors[_x + (length1 - 1 - _y) * length0] = _colors[_x, _y];
-			// 		}
-			// 	}
-			// 	Texture2D _texture = new Texture2D(length0, length1);
-			// 	_texture.SetPixels(colors);
-			// 	_texture.Apply();
-			// 	byte[] bytes = _texture.EncodeToPNG();
-			// 	File.WriteAllBytes($"Assets/TestOCR_Last.png", bytes);
-			// }
+			if (debug) {
+				Color[] colors = new Color[length0 * length1];
+				for (int _x = 0; _x < length0; ++_x) {
+					for (int _y = 0; _y < length1; ++_y) {
+						colors[_x + (length1 - 1 - _y) * length0] = _colors[_x, _y];
+					}
+				}
+				Texture2D _texture = new Texture2D(length0, length1);
+				_texture.SetPixels(colors);
+				_texture.Apply();
+				byte[] bytes = _texture.EncodeToPNG();
+				File.WriteAllBytes($"Assets/TestOCR_Last.png", bytes);
+			}
 		}
 		return OCRUtils.RecognizeNew(_colors, scale);
 	}
