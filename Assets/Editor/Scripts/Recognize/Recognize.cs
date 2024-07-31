@@ -221,32 +221,35 @@ public static partial class Recognize {
 	}
 	
 	private const int FULL_WINDOW_OCR_THRESHOLD = 240;
-	public static string FullWindowTitle => Operation.GetTextOnScreenNew(
+	public static string FullWindowTitle => GetCachedValueOrNew(nameof(FullWindowTitle), () => {
+		return Operation.GetTextOnScreenNew(
 			850, 110, 220, 36, false, 1,
 			color => color.r > FULL_WINDOW_OCR_THRESHOLD && color.g > FULL_WINDOW_OCR_THRESHOLD && color.b > FULL_WINDOW_OCR_THRESHOLD
-	);
+		);
+	});
 	
 	private const int BIG_WINDOW_OCR_THRESHOLD = 215;
-	public static string BigWindowTitle => Operation.GetTextOnScreenNew(
+	public static string BigWindowTitle => GetCachedValueOrNew(nameof(BigWindowTitle), () => {
+		return Operation.GetTextOnScreenNew(
 			850, 186, 220, 36, false, 1, 
 			color => color.r > BIG_WINDOW_OCR_THRESHOLD && color.g > BIG_WINDOW_OCR_THRESHOLD && color.b > BIG_WINDOW_OCR_THRESHOLD
-	);
+		);
+	});
+	
 	private const int MAYBE_WINDOW_OCR_THRESHOLD = 215;
-	public static string MaybeWindowTitle {
-		get {
-			Color32 targetColor = new Color32(51, 54, 81, 255);
-			int offsetY = 0;
-			while (offsetY < 250) {
-				Color32 color = Operation.GetColorOnScreen(960, 156 + offsetY);
-				if (Approximately(color, targetColor)) {
-					return Operation.GetTextOnScreenNew(
-							850, 156 + offsetY + 8, 220, 32, false, 1, 
-							c => c.r > MAYBE_WINDOW_OCR_THRESHOLD && c.g > MAYBE_WINDOW_OCR_THRESHOLD && c.b > MAYBE_WINDOW_OCR_THRESHOLD
-					);
-				}
-				offsetY++;
+	public static string MaybeWindowTitle => GetCachedValueOrNew(nameof(MaybeWindowTitle), () => {
+		Color32 targetColor = new Color32(51, 54, 81, 255);
+		int offsetY = 0;
+		while (offsetY < 250) {
+			Color32 color = Operation.GetColorOnScreen(960, 156 + offsetY);
+			if (Approximately(color, targetColor)) {
+				return Operation.GetTextOnScreenNew(
+						850, 156 + offsetY + 8, 220, 32, false, 1, 
+						c => c.r > MAYBE_WINDOW_OCR_THRESHOLD && c.g > MAYBE_WINDOW_OCR_THRESHOLD && c.b > MAYBE_WINDOW_OCR_THRESHOLD
+				);
 			}
-			return string.Empty;
+			offsetY++;
 		}
-	}
+		return string.Empty;
+	});
 }
