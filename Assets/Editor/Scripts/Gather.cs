@@ -213,10 +213,14 @@ public class Gather {
 			// 	}
 			// }
 			Debug.Log("等级滑块");
-			Operation.Click(1062, 880);	// 先拉满滑块
-			for (int i = 0; i > target.levelOffset; --i) {
-				yield return new EditorWaitForSeconds(0.1F);
-				Operation.Click(822, 880);	// 再降等级
+			if (target.levelOffset > 0) {
+				Operation.Click(UnityEngine.Random.Range(858, 1062), 878);	// 随机滑块
+			} else {
+				Operation.Click(1062, 878);	// 先拉满滑块
+				for (int i = 0; i > target.levelOffset; --i) {
+					yield return new EditorWaitForSeconds(0.1F);
+					Operation.Click(822, 878);	// 再降等级
+				}
 			}
 			yield return new EditorWaitForSeconds(0.1F);
 			

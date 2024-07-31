@@ -77,7 +77,22 @@ public class GatherConfig : PrefsEditorWindow<Gather> {
 			EditorGUILayout.EndHorizontal();
 
 			if (target.count > 0) {
-				target.levelOffset = EditorGUILayout.IntSlider("        相对最高级偏移", target.levelOffset, -9, 0);
+				EditorGUILayout.BeginHorizontal();
+				bool randomLevel = target.levelOffset > 0;
+				int levelOffset = randomLevel ? -target.levelOffset + 100 : target.levelOffset;
+				EditorGUILayout.LabelField("        相对最高级偏移", GUILayout.Width(EditorGUIUtility.labelWidth - 1F));
+				EditorGUI.BeginDisabledGroup(randomLevel);
+				int newLevelOffset = EditorGUILayout.IntSlider(levelOffset, -9, 0);
+				if (newLevelOffset != levelOffset) {
+					target.levelOffset = newLevelOffset;
+				}
+				EditorGUI.EndDisabledGroup();
+				bool newRandomLevel = GUILayout.Toggle(randomLevel, "随机", "Button", GUILayout.Width(64F));
+				if (newRandomLevel != randomLevel) {
+					target.levelOffset = -target.levelOffset + 100;
+				}
+				EditorGUILayout.EndHorizontal();
+
 				EditorGUILayout.BeginHorizontal();
 				target.squadNumber = EditorGUILayout.IntSlider("        使用编队号码", target.squadNumber, 1, 8);
 				target.mustFullSoldiers = GUILayout.Toggle(target.mustFullSoldiers, "必须满兵", "Button", GUILayout.Width(64F));
