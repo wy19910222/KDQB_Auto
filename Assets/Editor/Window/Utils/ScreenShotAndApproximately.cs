@@ -14,21 +14,43 @@ public class ScreenShotAndApproximately : EditorWindow {
 		GetWindow<ScreenShotAndApproximately>("截取和对比").Show();
 	}
 
+	private const float PREVIEW_HEIGHT = 200F;
+
 	[SerializeField]
-	private RectInt m_Rect = new RectInt();
+	private RectInt m_CaptureRect = new RectInt();
 	[SerializeField]
-	private string m_Filename = string.Empty;
+	private string m_CaptureFilename = string.Empty;
+	[SerializeField]
+	private bool m_IsCapturePreview = false;
+	[SerializeField]
+	private Texture2D m_CapturePreviewTex;
+	private Color32[] m_CapturePreviewColors;
+
 	[SerializeField]
 	private RectInt m_ApproximatelyRect = new RectInt();
 	[SerializeField]
 	private string m_ApproximatelyFilename = string.Empty;
 	[SerializeField]
 	private float m_ApproximatelyThresholdMulti = 1;
-	
+	[SerializeField]
+	private bool m_IsApproximatelyPreview = false;
+	[SerializeField]
+	private Texture2D m_ApproximatelyPreviewTex;
+	private Color32[] m_ApproximatelyPreviewColors;
+
 	[SerializeField]
 	private Vector2Int m_LogColorPos = new Vector2Int();
 	[SerializeField]
 	private bool m_LogMousePosColor;
+	[SerializeField]
+	private bool m_IsMousePreview = false;
+	[SerializeField]
+	private Texture2D m_MousePreviewTex;
+	private Color32[] m_MousePreviewColors;
+
+	private void Update() {
+		Repaint();
+	}
 
 	private void OnGUI() {
 		const float MAX_BTN_WIDTH = 70F;
@@ -37,48 +59,57 @@ public class ScreenShotAndApproximately : EditorWindow {
 		float labelWidth = EditorGUIUtility.labelWidth;
 		float spaceWidth = Mathf.Max(labelWidth - MAX_BTN_WIDTH, MIN_SPACE_WIDTH);
 		float btnWidth = labelWidth - spaceWidth;
-		
+
+		EditorGUILayout.BeginHorizontal();
+		EditorGUILayout.BeginVertical(GUILayout.Width(position.width / 2F - 5F - 2F));
 		EditorGUILayout.BeginHorizontal();
 		GUILayout.Space(spaceWidth);
 		if (GUILayout.Button("与对比相同", GUILayout.Width(btnWidth))) {
-			m_Rect = m_ApproximatelyRect;
+			m_CaptureRect = m_ApproximatelyRect;
 		}
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(-singleLineHeight - 2F);
 		EditorGUI.BeginChangeCheck();
-		RectInt newRect = EditorGUILayout.RectIntField("截取范围", m_Rect);
+		RectInt newRect = EditorGUILayout.RectIntField("截取范围", m_CaptureRect);
 		if (EditorGUI.EndChangeCheck()) {
 			Undo.RecordObject(this, "Rect");
-			m_Rect = newRect;
+			m_CaptureRect = newRect;
 		}
 		EditorGUILayout.BeginHorizontal();
 		GUILayout.Space(spaceWidth);
 		if (GUILayout.Button("与对比相同", GUILayout.Width(btnWidth))) {
-			m_Filename = m_ApproximatelyFilename;
+			m_CaptureFilename = m_ApproximatelyFilename;
 		}
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(-singleLineHeight - 2F);
-		string newFilename = EditorGUILayout.TextField("保存文件名", m_Filename);
-		if (newFilename != m_Filename) {
+		string newFilename = EditorGUILayout.TextField("保存文件名", m_CaptureFilename);
+		if (newFilename != m_CaptureFilename) {
 			Undo.RecordObject(this, "Filename");
-			m_Filename = newFilename;
+			m_CaptureFilename = newFilename;
 		}
+		EditorGUILayout.BeginHorizontal();
 		if (GUILayout.Button("截取")) {
-			if (!string.IsNullOrEmpty(m_Filename)) {
-				Operation.Screenshot(m_Rect.x, m_Rect.y, m_Rect.width, m_Rect.height, $"PersistentData/Textures/{m_Filename}.png");
+			if (!string.IsNullOrEmpty(m_CaptureFilename)) {
+				Operation.Screenshot(m_CaptureRect.x, m_CaptureRect.y, m_CaptureRect.width, m_CaptureRect.height, $"PersistentData/Textures/{m_CaptureFilename}.png");
 			} else {
 				Debug.LogError("Filename is empty!");
 			}
 		}
-		
-		Rect rect1 = GUILayoutUtility.GetRect(0, 10);
-		Rect wireRect1 = new Rect(rect1.x, rect1.y + 4.5F, rect1.width, 1);
-		EditorGUI.DrawRect(wireRect1, Color.gray);
+		bool newIsCapturePreview = GUILayout.Toggle(m_IsCapturePreview, "预览", "Button");
+		if (newIsCapturePreview != m_IsCapturePreview) {
+			Undo.RecordObject(this, "IsCapturePreview");
+			m_IsCapturePreview = newIsCapturePreview;
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.EndVertical();
 
+		GUILayout.Space(10F);
+
+		EditorGUILayout.BeginVertical(GUILayout.Width(position.width / 2F - 5F - 2F));
 		EditorGUILayout.BeginHorizontal();
 		GUILayout.Space(spaceWidth);
 		if (GUILayout.Button("与截取相同", GUILayout.Width(btnWidth))) {
-			m_ApproximatelyRect = m_Rect;
+			m_ApproximatelyRect = m_CaptureRect;
 		}
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(-singleLineHeight - 2F);
@@ -91,30 +122,64 @@ public class ScreenShotAndApproximately : EditorWindow {
 		EditorGUILayout.BeginHorizontal();
 		GUILayout.Space(spaceWidth);
 		if (GUILayout.Button("与截取相同", GUILayout.Width(btnWidth))) {
-			m_ApproximatelyFilename = m_Filename;
+			m_ApproximatelyFilename = m_CaptureFilename;
 		}
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(-singleLineHeight - 2F);
+		EditorGUILayout.BeginHorizontal();
 		string newApproximatelyFilename = EditorGUILayout.TextField("对比文件名", m_ApproximatelyFilename);
 		if (newApproximatelyFilename != m_ApproximatelyFilename) {
 			Undo.RecordObject(this, "ApproximatelyFilename");
 			m_ApproximatelyFilename = newApproximatelyFilename;
 		}
-		float newApproximatelyThresholdMulti = EditorGUILayout.FloatField("对比阈值缩放", m_ApproximatelyThresholdMulti);
+		float prevLabelWidth = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 50F;
+		float newApproximatelyThresholdMulti = EditorGUILayout.FloatField("阈值缩放", m_ApproximatelyThresholdMulti, GUILayout.Width(100F));
 		if (!Mathf.Approximately(newApproximatelyThresholdMulti, m_ApproximatelyThresholdMulti)) {
 			Undo.RecordObject(this, "ApproximatelyThresholdMulti");
 			m_ApproximatelyThresholdMulti = newApproximatelyThresholdMulti;
 		}
+		EditorGUIUtility.labelWidth = prevLabelWidth;
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.BeginHorizontal();
 		if (GUILayout.Button("对比")) {
 			Color32[,] targetColors = Operation.GetFromFile($"PersistentData/Textures/{m_ApproximatelyFilename}.png");
 			Color32[,] realColors = Operation.GetColorsOnScreen(m_ApproximatelyRect.x, m_ApproximatelyRect.y, m_ApproximatelyRect.width, m_ApproximatelyRect.height);
 			Debug.Log(Recognize.ApproximatelyRect(realColors, targetColors, m_ApproximatelyThresholdMulti));
 		}
-		
-		Rect rect2 = GUILayoutUtility.GetRect(0, 10);
-		Rect wireRect2 = new Rect(rect2.x, rect2.y + 4.5F, rect2.width, 1);
-		EditorGUI.DrawRect(wireRect2, Color.gray);
+		bool newIsApproximatelyPreview = GUILayout.Toggle(m_IsApproximatelyPreview, "预览", "Button");
+		if (newIsApproximatelyPreview != m_IsApproximatelyPreview) {
+			Undo.RecordObject(this, "IsApproximatelyPreview");
+			m_IsApproximatelyPreview = newIsApproximatelyPreview;
+		}
+		EditorGUILayout.EndHorizontal();
+		EditorGUILayout.EndVertical();
+		EditorGUILayout.EndHorizontal();
 
+		if (m_IsCapturePreview || m_IsApproximatelyPreview) {
+			Rect rect = GUILayoutUtility.GetRect(position.width, PREVIEW_HEIGHT);
+			if (m_IsCapturePreview) {
+				ApplyPreviewTexture(m_CaptureRect, ref m_CapturePreviewTex, ref m_CapturePreviewColors);
+				Rect capturePreviewRect = rect;
+				capturePreviewRect.width = position.width / 2 - 5;
+				GUI.DrawTexture(capturePreviewRect, m_CapturePreviewTex, ScaleMode.ScaleToFit);
+			}
+			if (m_IsApproximatelyPreview) {
+				ApplyPreviewTexture(m_ApproximatelyRect, ref m_ApproximatelyPreviewTex, ref m_ApproximatelyPreviewColors);
+				Rect approximatelyPreviewRect = rect;
+				approximatelyPreviewRect.xMin += position.width / 2 + 5;
+				GUI.DrawTexture(approximatelyPreviewRect, m_ApproximatelyPreviewTex, ScaleMode.ScaleToFit);
+			}
+		}
+
+		{
+			Rect rect = GUILayoutUtility.GetRect(0, 10);
+			Rect wireRect = new Rect(rect.x, rect.y + 4.5F, rect.width, 1);
+			EditorGUI.DrawRect(wireRect, Color.gray);
+		}
+
+		EditorGUILayout.BeginHorizontal();
+		Rect tempRect = EditorGUILayout.BeginVertical();
 		Vector2Int mousePos = Operation.GetMousePos();
 		EditorGUI.BeginDisabledGroup(true);
 		EditorGUILayout.Vector2IntField("鼠标坐标", mousePos);
@@ -131,9 +196,55 @@ public class ScreenShotAndApproximately : EditorWindow {
 		EditorGUI.BeginDisabledGroup(true);
 		EditorGUILayout.ColorField($"颜色值({colorStr})", color);
 		EditorGUI.EndDisabledGroup();
+		EditorGUILayout.EndVertical();
+		
+		GUILayout.Space(position.width / 2 + 5);
+		
+		if (Event.current.type == EventType.Repaint) {
+			int dpi = 10;
+			Rect rect = tempRect;
+			rect.x += rect.width + 12;
+			rect.width = position.width - rect.x;
+			int width = Mathf.FloorToInt((rect.width / dpi - 1) / 2) * 2 + 1;
+			int height = Mathf.FloorToInt((rect.height / dpi - 1) / 2) * 2 + 1;
+			RectInt captureRect = new RectInt(mousePos.x - width / 2, mousePos.y - height / 2, width, height);
+			ApplyPreviewTexture(captureRect, ref m_CapturePreviewTex, ref m_CapturePreviewColors);
+			Vector2 center = rect.center;
+			rect.size = new Vector2(dpi * width, dpi * height);
+			rect.center = center;
+			GUI.DrawTexture(rect, m_CapturePreviewTex, ScaleMode.ScaleToFit);
+			EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, dpi, rect.height), Color.white * 0.5F);
+			EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, dpi), Color.white * 0.5F);
+		}
+		EditorGUILayout.EndVertical();
+		
+		EditorGUILayout.EndHorizontal();
 	}
-
-	private void Update() {
-		Repaint();
+	
+	private static void ApplyPreviewTexture(RectInt rect, ref Texture2D tex, ref Color32[] colors) {
+		Color32[,] _colors = Operation.GetColorsOnScreen(rect.x, rect.y, rect.width, rect.height);
+		int width = _colors.GetLength(0);
+		int height = _colors.GetLength(1);
+		if (!tex) {
+			tex = new Texture2D(width, height, TextureFormat.RGB24, false) {
+				filterMode = FilterMode.Point
+			};
+		}
+		if (colors == null) {
+			colors = new Color32[width * height];
+		}
+		if (tex.width != width || tex.height != height) {
+			tex.Reinitialize(width, height);
+		}
+		if (colors.Length != width * height) {
+			colors = new Color32[width * height];
+		}
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				colors[(height - 1 - y) * width + x] = _colors[x, y];
+			}
+		}
+		tex.SetPixels32(colors);
+		tex.Apply();
 	}
 }
