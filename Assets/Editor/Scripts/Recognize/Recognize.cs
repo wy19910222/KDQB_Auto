@@ -219,4 +219,16 @@ public static partial class Recognize {
 			return ApproximatelyRectIgnoreCovered(realColors, SHOPPING_CART_EXCHANGE_BTN) > 0.9F;
 		}
 	}
+	
+	private const int FULL_WINDOW_OCR_THRESHOLD = 240;
+	public static string FullWindowTitle => Operation.GetTextOnScreenNew(
+			850, 110, 220, 36, false, 1,
+			color => color.r > FULL_WINDOW_OCR_THRESHOLD && color.g > FULL_WINDOW_OCR_THRESHOLD && color.b > FULL_WINDOW_OCR_THRESHOLD
+	);
+	
+	private const int BIG_WINDOW_OCR_THRESHOLD = 215;
+	public static string BigWindowTitle => Operation.GetTextOnScreenNew(
+			850, 186, 220, 36, false, 1, 
+			color => color.r > BIG_WINDOW_OCR_THRESHOLD && color.g > BIG_WINDOW_OCR_THRESHOLD && color.b > BIG_WINDOW_OCR_THRESHOLD
+	);
 }

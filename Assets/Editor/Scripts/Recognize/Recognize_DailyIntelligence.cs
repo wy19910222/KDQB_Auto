@@ -61,10 +61,9 @@ public static partial class Recognize {
 	// 		return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_ISLAND_RESET_TIMES_LABEL) > 0.7F;
 	// 	}
 	// }
-	public static string DailyIntelligenceCurrentTitle => Operation.GetTextOnScreenNew(850, 110, 220, 36, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
 	public static DailyIntelligenceType DailyIntelligenceCurrentType {
 		get {
-			string title = DailyIntelligenceCurrentTitle;
+			string title = FullWindowTitle;
 			foreach (DailyIntelligenceType type in Enum.GetValues(typeof(DailyIntelligenceType))) {
 				string typeName = Utils.GetEnumInspectorName(type);
 				string[] words = typeName.Split("");
