@@ -216,8 +216,6 @@ public class ScreenShotAndApproximately : EditorWindow {
 			EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, dpi, rect.height), Color.white * 0.5F);
 			EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, dpi), Color.white * 0.5F);
 		}
-		EditorGUILayout.EndVertical();
-		
 		EditorGUILayout.EndHorizontal();
 	}
 	
