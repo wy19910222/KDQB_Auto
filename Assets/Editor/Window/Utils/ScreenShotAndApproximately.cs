@@ -21,7 +21,7 @@ public class ScreenShotAndApproximately : EditorWindow {
 	[SerializeField]
 	private string m_CaptureFilename = string.Empty;
 	[SerializeField]
-	private bool m_IsCapturePreview = false;
+	private bool m_IsCapturePreview;
 	[SerializeField]
 	private Texture2D m_CapturePreviewTex;
 	private Color32[] m_CapturePreviewColors;
@@ -33,7 +33,7 @@ public class ScreenShotAndApproximately : EditorWindow {
 	[SerializeField]
 	private float m_ApproximatelyThresholdMulti = 1;
 	[SerializeField]
-	private bool m_IsApproximatelyPreview = false;
+	private bool m_IsApproximatelyPreview;
 	[SerializeField]
 	private Texture2D m_ApproximatelyPreviewTex;
 	private Color32[] m_ApproximatelyPreviewColors;
@@ -43,7 +43,7 @@ public class ScreenShotAndApproximately : EditorWindow {
 	[SerializeField]
 	private bool m_LogMousePosColor;
 	[SerializeField]
-	private bool m_IsMousePreview = false;
+	private bool m_IsCrosshairShow;
 	[SerializeField]
 	private Texture2D m_MousePreviewTex;
 	private Color32[] m_MousePreviewColors;
@@ -196,6 +196,11 @@ public class ScreenShotAndApproximately : EditorWindow {
 		EditorGUI.BeginDisabledGroup(true);
 		EditorGUILayout.ColorField($"颜色值({colorStr})", color);
 		EditorGUI.EndDisabledGroup();
+		bool newIsCrosshairShow = GUILayout.Toggle(m_IsCrosshairShow, "十字架", "Button");
+		if (newIsCrosshairShow != m_IsCrosshairShow) {
+			Undo.RecordObject(this, "IsCrosshairShow");
+			m_IsCrosshairShow = newIsCrosshairShow;
+		}
 		EditorGUILayout.EndVertical();
 		
 		GUILayout.Space(position.width / 2 + 5);
@@ -208,13 +213,15 @@ public class ScreenShotAndApproximately : EditorWindow {
 			int width = Mathf.FloorToInt((rect.width / dpi - 1) / 2) * 2 + 1;
 			int height = Mathf.FloorToInt((rect.height / dpi - 1) / 2) * 2 + 1;
 			RectInt captureRect = new RectInt(mousePos.x - width / 2, mousePos.y - height / 2, width, height);
-			ApplyPreviewTexture(captureRect, ref m_CapturePreviewTex, ref m_CapturePreviewColors);
+			ApplyPreviewTexture(captureRect, ref m_MousePreviewTex, ref m_CapturePreviewColors);
 			Vector2 center = rect.center;
 			rect.size = new Vector2(dpi * width, dpi * height);
 			rect.center = center;
-			GUI.DrawTexture(rect, m_CapturePreviewTex, ScaleMode.ScaleToFit);
-			EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, dpi, rect.height), Color.white * 0.5F);
-			EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, dpi), Color.white * 0.5F);
+			GUI.DrawTexture(rect, m_MousePreviewTex, ScaleMode.ScaleToFit);
+			if (newIsCrosshairShow) {
+				EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, dpi, rect.height), Color.white * 0.5F);
+				EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, dpi), Color.white * 0.5F);
+			}
 		}
 		EditorGUILayout.EndHorizontal();
 	}
