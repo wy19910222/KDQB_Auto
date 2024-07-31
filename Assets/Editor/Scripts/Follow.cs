@@ -109,7 +109,7 @@ public class Follow {
 			}
 			bool followWindowOpened = false;
 			// 是否有加入按钮
-			if (!Recognize.IsFollowJoinBtnExist) {
+			if (!Recognize.IsWindowCovered) {
 				// 是否在非跟车界面跟车
 				if (!KEEP_NO_WINDOW) {
 					// 如果不在跟车界面，但要在跟车界面跟车，则不符合跟车条件
@@ -159,6 +159,12 @@ public class Follow {
 				}
 				
 				followWindowOpened = true;
+			} else if (Recognize.FullWindowTitle != "集结") {
+				// 有窗口覆盖，但不是集结
+				continue;
+			} else if (!Recognize.IsFollowJoinBtnExist) {
+				// 是集结窗口，但没有加入按钮
+				continue;
 			}
 
 			if (Task.CurrentTask != null) {
