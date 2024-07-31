@@ -231,4 +231,22 @@ public static partial class Recognize {
 			850, 186, 220, 36, false, 1, 
 			color => color.r > BIG_WINDOW_OCR_THRESHOLD && color.g > BIG_WINDOW_OCR_THRESHOLD && color.b > BIG_WINDOW_OCR_THRESHOLD
 	);
+	private const int MAYBE_WINDOW_OCR_THRESHOLD = 215;
+	public static string MaybeWindowTitle {
+		get {
+			Color32 targetColor = new Color32(51, 54, 81, 255);
+			int offsetY = 0;
+			while (offsetY < 250) {
+				Color32 color = Operation.GetColorOnScreen(960, 156 + offsetY);
+				if (Approximately(color, targetColor)) {
+					return Operation.GetTextOnScreenNew(
+							850, 156 + offsetY + 8, 220, 32, false, 1, 
+							c => c.r > MAYBE_WINDOW_OCR_THRESHOLD && c.g > MAYBE_WINDOW_OCR_THRESHOLD && c.b > MAYBE_WINDOW_OCR_THRESHOLD
+					);
+				}
+				offsetY++;
+			}
+			return string.Empty;
+		}
+	}
 }
