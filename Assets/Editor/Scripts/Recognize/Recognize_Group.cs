@@ -20,8 +20,8 @@ public static partial class Recognize {
 				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
 				if (deltaY != -1) {
 					deltaY = IsMiniMapShowing switch {
-						true => deltaY + 155,
-						false => deltaY,
+						true => deltaY + 155,	// 231 or 155
+						false => deltaY,	// 76 or 0
 						_ => -1
 					};
 				}
@@ -71,6 +71,69 @@ public static partial class Recognize {
 					return groupCount;
 				}
 				return int.MaxValue;
+			});
+		}
+	}
+
+	public static string GroupCountTitle {
+		get {
+			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
+				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+				if (deltaY != -1) {
+					deltaY = IsMiniMapShowing switch {
+						true => deltaY + 155,	// 231 or 155
+						false => deltaY,	// 76 or 0
+						_ => -1
+					};
+				}
+				if (deltaY != -1) {
+					return Operation.GetTextOnScreenNew(43, 227 + deltaY, 37, 20, false, 1, color => color.r > 200 && color.g > 200 && color.b > 200, true);
+				}
+				return "None";
+			});
+		}
+	}
+
+	public static int TotalGroupCountOCR {
+		get {
+			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
+				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+				if (deltaY != -1) {
+					deltaY = IsMiniMapShowing switch {
+						true => deltaY + 155,	// 231 or 155
+						false => deltaY,	// 76 or 0
+						_ => -1
+					};
+				}
+				if (deltaY != -1) {
+					string str = Operation.GetTextOnScreenNew(159, 229 + deltaY, 12, 16, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
+					if (int.TryParse(str, out int result)) {
+						return result;
+					}
+				}
+				return -1;
+			});
+		}
+	}
+
+	public static int BusyGroupCountOCR {
+		get {
+			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
+				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
+				if (deltaY != -1) {
+					deltaY = IsMiniMapShowing switch {
+						true => deltaY + 155,	// 231 or 155
+						false => deltaY,	// 76 or 0
+						_ => -1
+					};
+				}
+				if (deltaY != -1) {
+					string str = Operation.GetTextOnScreenNew(141, 229 + deltaY, 14, 16, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
+					if (int.TryParse(str, out int result)) {
+						return result;
+					}
+				}
+				return -1;
 			});
 		}
 	}
