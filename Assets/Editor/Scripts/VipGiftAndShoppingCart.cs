@@ -90,7 +90,7 @@ public class VipGiftAndShoppingCart {
 				LAST_VIP_GIFT_TIME = DateTime.Now;
 			}
 
-			if (!shoppingCartSucceed) {
+			if (!shoppingCartSucceed && Recognize.FullWindowTitle == "金融中心") {
 				Debug.Log("军级商店按钮");
 				Operation.Click(815, 345);	// 军级商店按钮
 				yield return new EditorWaitForSeconds(0.3F);

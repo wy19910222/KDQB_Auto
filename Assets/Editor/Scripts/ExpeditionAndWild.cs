@@ -77,7 +77,7 @@ public class ExpeditionAndWild {
 			yield return new EditorWaitForSeconds(0.2F);
 
 			int offsetY = 0;
-			if (!wildSucceed) {
+			if (!wildSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示荒野行动");
 				int orderOffsetY = Mathf.Max((WILD_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
@@ -121,7 +121,7 @@ public class ExpeditionAndWild {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 
-			if (!expeditionSucceed) {
+			if (!expeditionSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示远征行动");
 				int orderOffsetY = Mathf.Max((Expedition_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;

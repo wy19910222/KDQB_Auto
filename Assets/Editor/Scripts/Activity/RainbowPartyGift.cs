@@ -22,7 +22,7 @@ public class RainbowPartyGift {
 	[MenuItem("Tools_Task/StartRainbowPartyGift", priority = -1)]
 	private static void Enable() {
 		Disable();
-		Debug.Log($"彩虹排队自动领奖已开启");
+		Debug.Log($"彩虹派对自动领奖已开启");
 		s_CO = EditorCoroutineManager.StartCoroutine(Update());
 	}
 
@@ -31,7 +31,7 @@ public class RainbowPartyGift {
 		if (s_CO != null) {
 			EditorCoroutineManager.StopCoroutine(s_CO);
 			s_CO = null;
-			Debug.Log("彩虹排队自动领奖已关闭");
+			Debug.Log("彩虹派对自动领奖已关闭");
 		}
 	}
 

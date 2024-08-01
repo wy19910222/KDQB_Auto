@@ -75,8 +75,8 @@ public class DeepSea {
 			Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 280 : 290);	// 活动按钮
 			// Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 280 : 350);	// 活动按钮（被新世界图标挤到下一格了）
 			yield return new EditorWaitForSeconds(0.5F);
+
 			Debug.Log("拖动以显示活动标签页");
-			
 			List<int> nearbyOrders = new List<int>() { ACTIVITY_ORDER };
 			for (int i = -orderTryRadius; i <= orderTryRadius; i++) {
 				if (i != 0) {
@@ -90,75 +90,80 @@ public class DeepSea {
 			const int VISIBLE_ITEMS_COUNT = 4;
 			int offsetX = 0;
 			for (int orderIndex = 0, orderCount = nearbyOrders.Count; orderIndex < orderCount; orderIndex++) {
-				int order = nearbyOrders[orderIndex];
-				int orderOffsetX = Mathf.Max((order - VISIBLE_ITEMS_COUNT) * TAB_WIDTH, 0);
-				int deltaOffsetX = orderOffsetX - offsetX;
-				if (deltaOffsetX > 0) {
-					while (deltaOffsetX > 0) {
-						int dragDistance = Mathf.Min(TAB_WIDTH * VISIBLE_ITEMS_COUNT, deltaOffsetX);
-						// 往左拖动
-						var ie = Operation.NoInertiaDrag(1190, 190, 1190 - dragDistance, 190, 0.5F);
-						while (ie.MoveNext()) {
-							yield return ie.Current;
+				if (Recognize.FullWindowTitle == "超值活动") {
+					int order = nearbyOrders[orderIndex];
+					int orderOffsetX = Mathf.Max((order - VISIBLE_ITEMS_COUNT) * TAB_WIDTH, 0);
+					int deltaOffsetX = orderOffsetX - offsetX;
+					if (deltaOffsetX > 0) {
+						while (deltaOffsetX > 0) {
+							int dragDistance = Mathf.Min(TAB_WIDTH * VISIBLE_ITEMS_COUNT, deltaOffsetX);
+							// 往左拖动
+							var ie = Operation.NoInertiaDrag(1190, 190, 1190 - dragDistance, 190, 0.5F);
+							while (ie.MoveNext()) {
+								yield return ie.Current;
+							}
+							yield return new EditorWaitForSeconds(0.1F);
+							deltaOffsetX -= dragDistance;
 						}
-						yield return new EditorWaitForSeconds(0.1F);
-						deltaOffsetX -= dragDistance;
-					}
-				} else {
-					deltaOffsetX = -deltaOffsetX;
-					while (deltaOffsetX > 0) {
-						int dragDistance = Mathf.Min(TAB_WIDTH * VISIBLE_ITEMS_COUNT, deltaOffsetX);
-						// 往右拖动
-						var ie = Operation.NoInertiaDrag(750, 190, 750 + dragDistance, 190, 0.5F);
-						while (ie.MoveNext()) {
-							yield return ie.Current;
-						}
-						yield return new EditorWaitForSeconds(0.1F);
-						deltaOffsetX -= dragDistance;
-					}
-				}
-				offsetX = orderOffsetX;
-				
-				Debug.Log($"活动标签页{order}");
-				Operation.Click(750 + (order - 1) * TAB_WIDTH - offsetX, 190);	// 活动标签页
-				yield return new EditorWaitForSeconds(0.5F);
-				
-				if (Recognize.IsDeepSea) {
-					Debug.Log("点击探测器");
-					for (int i = 0; i < DETECTOR_COUNT; ++i) {
-						Debug.Log($"点击探测器{i + 1}");
-						for (int tryCount = 0; tryCount < TRY_COUNT; ++tryCount) {
-							Operation.Click(808 + 153 * i, 870);	// 探测器
-							yield return new EditorWaitForSeconds(0.2F);
-						}
-					}
-					// 成功，更新倒计时并放至列表末尾
-					TargetDTs.RemoveAt(0);
-					TargetDTs.Add(DateTime.Now + DEFAULT_COUNTDOWN);
-					if (order != ACTIVITY_ORDER) {
-						ACTIVITY_ORDER = order;
-						Debug.Log($"活动排序改为：{order}");
-					}
-					orderTryRadius = ORDER_TRY_RADIUS;
-					break;
-				}
-				
-				if (orderIndex == 0) {
-					Debug.Log($"标签{order}错误，尝试相邻标签页: {string.Join(",", nearbyOrders.Skip(1))}");
-				} else if (orderIndex < orderCount - 1) {
-					Debug.Log($"标签{order}错误，继续尝试标签页: " + nearbyOrders[orderIndex + 1]);
-				} else {
-					Debug.LogError($"标签{string.Join(",", nearbyOrders)}全部错误，稍后重新尝试更大范围");
-					if (nearbyOrders[1] <= 1 && order >= ORDER_TRY_MAX) {
-						orderTryRadius = ORDER_TRY_RADIUS;
 					} else {
-						orderTryRadius += ORDER_TRY_RADIUS;
+						deltaOffsetX = -deltaOffsetX;
+						while (deltaOffsetX > 0) {
+							int dragDistance = Mathf.Min(TAB_WIDTH * VISIBLE_ITEMS_COUNT, deltaOffsetX);
+							// 往右拖动
+							var ie = Operation.NoInertiaDrag(750, 190, 750 + dragDistance, 190, 0.5F);
+							while (ie.MoveNext()) {
+								yield return ie.Current;
+							}
+							yield return new EditorWaitForSeconds(0.1F);
+							deltaOffsetX -= dragDistance;
+						}
 					}
-					TargetDTs.RemoveAt(0);
-					TargetDTs.Add(DateTime.Now + new TimeSpan(0, 0, ORDER_RETRY_INTERVAL));
+					offsetX = orderOffsetX;
+
+					Debug.Log($"活动标签页{order}");
+					Operation.Click(750 + (order - 1) * TAB_WIDTH - offsetX, 190); // 活动标签页
+					yield return new EditorWaitForSeconds(0.5F);
+
+					if (Recognize.IsDeepSea) {
+						Debug.Log("点击探测器");
+						for (int i = 0; i < DETECTOR_COUNT; ++i) {
+							Debug.Log($"点击探测器{i + 1}");
+							for (int tryCount = 0; tryCount < TRY_COUNT; ++tryCount) {
+								Operation.Click(808 + 153 * i, 870); // 探测器
+								yield return new EditorWaitForSeconds(0.2F);
+							}
+						}
+						// 成功，更新倒计时并放至列表末尾
+						TargetDTs.RemoveAt(0);
+						TargetDTs.Add(DateTime.Now + DEFAULT_COUNTDOWN);
+						if (order != ACTIVITY_ORDER) {
+							ACTIVITY_ORDER = order;
+							Debug.Log($"活动排序改为：{order}");
+						}
+						orderTryRadius = ORDER_TRY_RADIUS;
+						break;
+					}
+
+					if (orderIndex == 0) {
+						Debug.Log($"标签{order}错误，尝试相邻标签页: {string.Join(",", nearbyOrders.Skip(1))}");
+					} else if (orderIndex < orderCount - 1) {
+						Debug.Log($"标签{order}错误，继续尝试标签页: " + nearbyOrders[orderIndex + 1]);
+					} else {
+						Debug.LogError($"标签{string.Join(",", nearbyOrders)}全部错误，稍后重新尝试更大范围");
+						if (nearbyOrders[1] <= 1 && order >= ORDER_TRY_MAX) {
+							orderTryRadius = ORDER_TRY_RADIUS;
+						} else {
+							orderTryRadius += ORDER_TRY_RADIUS;
+						}
+						TargetDTs.RemoveAt(0);
+						TargetDTs.Add(DateTime.Now + new TimeSpan(0, 0, ORDER_RETRY_INTERVAL));
+					}
+				} else {
+					Debug.LogWarning($"窗口未打开或异常关闭，稍后重试。");
+					TargetDTs[0] = DateTime.Now + new TimeSpan(0, 0, ORDER_RETRY_INTERVAL);
 				}
 			}
-				
+
 			for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {	// 如果有窗口，多点几次返回按钮
 				Debug.Log("关闭窗口");
 				Operation.Click(720, 128);	// 左上角返回按钮

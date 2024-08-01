@@ -101,7 +101,7 @@ public class IslandAndSandTable {
 			yield return new EditorWaitForSeconds(0.2F);
 
 			int offsetY = 0;
-			if (!sandTableSucceed) {
+			if (!sandTableSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示沙盘演习");
 				int orderOffsetY = Mathf.Max((SAND_TABLE_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
@@ -172,7 +172,7 @@ public class IslandAndSandTable {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
-			if (!expeditionSucceed) {
+			if (!expeditionSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示远征行动");
 				int orderOffsetY = Mathf.Max((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
@@ -251,7 +251,7 @@ public class IslandAndSandTable {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
-			if (!transnationalSucceed) {
+			if (!transnationalSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示跨战区演习");
 				int orderOffsetY = Mathf.Max((TRANSNATIONAL_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
@@ -322,7 +322,7 @@ public class IslandAndSandTable {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 
-			if (!islandSucceed) {
+			if (!islandSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示岛屿作战");
 				int orderOffsetY = Mathf.Max((ISLAND_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
 				int deltaOffsetY = orderOffsetY - offsetY;
