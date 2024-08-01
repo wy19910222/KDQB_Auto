@@ -106,4 +106,12 @@ public static class OCRUtils {
 		}
 		return string.Empty;
 	}
+	
+	public static float GrayScale(this Color32 color) {
+		return 0.29899999499321F * color.r + 0.587000012397766F * color.g + 57F / 500F * color.b;
+	}
+	public static Color32 ToGray(this Color32 color) {
+		byte grayScale = (byte) GrayScale(color);
+		return new Color32(grayScale, grayScale, grayScale, color.a);
+	}
 }

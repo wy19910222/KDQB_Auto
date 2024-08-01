@@ -183,12 +183,7 @@ public static class Operation {
 			int length1 = _colors.GetLength(1);
 			for (int _x = 0; _x < length0; ++_x) {
 				for (int _y = 0; _y < length1; ++_y) {
-					Color32 color = _colors[_x, _y];
-					byte average = (byte) Mathf.FloorToInt(color.r * 0.299F + color.g * 0.587F + color.b * 0.114F);
-					color.r = average;
-					color.g = average;
-					color.b = average;
-					_colors[_x, _y] = color;
+					_colors[_x, _y] = _colors[_x, _y].ToGray();
 				}
 			}
 		}
