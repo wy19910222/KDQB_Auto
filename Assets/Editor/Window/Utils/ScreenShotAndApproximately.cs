@@ -190,11 +190,13 @@ public class ScreenShotAndApproximately : EditorWindow {
 		EditorGUILayout.EndHorizontal();
 		GUILayout.Space(-singleLineHeight - 2F);
 		m_LogColorPos = EditorGUILayout.Vector2IntField("像素坐标", m_LogMousePosColor ? mousePos : m_LogColorPos);
+		EditorGUI.BeginDisabledGroup(true);
 		Color32 color = Operation.GetColorOnScreen(m_LogColorPos.x, m_LogColorPos.y);
 		string colorStr = color.ToString();
 		colorStr = colorStr.Substring(5, colorStr.Length - 5 - 6);
-		EditorGUI.BeginDisabledGroup(true);
 		EditorGUILayout.ColorField($"颜色值({colorStr})", color);
+		Color32 grayColor = color.ToGray();
+		EditorGUILayout.ColorField($"灰度值({grayColor.r})", grayColor);
 		EditorGUI.EndDisabledGroup();
 		bool newIsCrosshairShow = GUILayout.Toggle(m_IsCrosshairShow, "十字架", "Button");
 		if (newIsCrosshairShow != m_IsCrosshairShow) {
@@ -219,8 +221,14 @@ public class ScreenShotAndApproximately : EditorWindow {
 			rect.center = center;
 			GUI.DrawTexture(rect, m_MousePreviewTex, ScaleMode.ScaleToFit);
 			if (newIsCrosshairShow) {
-				EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, dpi, rect.height), Color.white * 0.5F);
-				EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, dpi), Color.white * 0.5F);
+				EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, 1, rect.height), Color.cyan * 0.5F);
+				EditorGUI.DrawRect(new Rect(center.x + dpi / 2F, rect.y, -1, rect.height), Color.cyan * 0.5F);
+				EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, 1), Color.cyan * 0.5F);
+				EditorGUI.DrawRect(new Rect(rect.x, center.y + dpi / 2F, rect.width, -1), Color.cyan * 0.5F);
+				EditorGUI.DrawRect(new Rect(center.x - dpi / 2F, rect.y, -1, rect.height), Color.white * 0.5F);
+				EditorGUI.DrawRect(new Rect(center.x + dpi / 2F, rect.y, 1, rect.height), Color.white * 0.5F);
+				EditorGUI.DrawRect(new Rect(rect.x, center.y - dpi / 2F, rect.width, -1), Color.white * 0.5F);
+				EditorGUI.DrawRect(new Rect(rect.x, center.y + dpi / 2F, rect.width, 1), Color.white * 0.5F);
 			}
 		}
 		EditorGUILayout.EndHorizontal();
