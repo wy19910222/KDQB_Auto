@@ -222,33 +222,35 @@ public static partial class Recognize {
 	
 	private const int FULL_WINDOW_OCR_THRESHOLD = 240;
 	public static string FullWindowTitle => GetCachedValueOrNew(nameof(FullWindowTitle), () => {
-		return Operation.GetTextOnScreenNew(
-			850, 110, 220, 36, false, 1,
-			color => color.r > FULL_WINDOW_OCR_THRESHOLD && color.g > FULL_WINDOW_OCR_THRESHOLD && color.b > FULL_WINDOW_OCR_THRESHOLD
-		);
+		return Operation.GetTextOnScreenNew(850, 110, 220, 36, false, 1, color => color.GrayScale() > FULL_WINDOW_OCR_THRESHOLD);
 	});
 	
-	private const int BIG_WINDOW_OCR_THRESHOLD = 215;
+	private const int BIG_WINDOW_OCR_THRESHOLD = 215;	// 遗迹道具 < 215
 	public static string BigWindowTitle => GetCachedValueOrNew(nameof(BigWindowTitle), () => {
-		return Operation.GetTextOnScreenNew(
-			850, 186, 220, 36, false, 1, 
-			color => color.r > BIG_WINDOW_OCR_THRESHOLD && color.g > BIG_WINDOW_OCR_THRESHOLD && color.b > BIG_WINDOW_OCR_THRESHOLD
-		);
+		return Operation.GetTextOnScreenNew(850, 186, 220, 36, false, 1, color => color.GrayScale() > BIG_WINDOW_OCR_THRESHOLD);
 	});
 	
-	private const int MAYBE_WINDOW_OCR_THRESHOLD = 215;
+	private const int MAYBE_WINDOW_OCR_THRESHOLD = 205;	// 遗迹道具 < 215，挑战列表 < 205 | > 225
+	private const int MAYBE_WINDOW_OCR_CHECK_HEIGHT = 250;
+	private static readonly float[] s_GrayTemp = new float[MAYBE_WINDOW_OCR_CHECK_HEIGHT];
 	public static string MaybeWindowTitle => GetCachedValueOrNew(nameof(MaybeWindowTitle), () => {
 		Color32 targetColor = new Color32(51, 54, 81, 255);
-		int offsetY = 0;
-		while (offsetY < 250) {
+		for (int offsetY = 1; offsetY < MAYBE_WINDOW_OCR_CHECK_HEIGHT; offsetY++) {
 			Color32 color = Operation.GetColorOnScreen(960, 156 + offsetY);
-			if (Approximately(color, targetColor)) {
-				return Operation.GetTextOnScreenNew(
-						850, 156 + offsetY + 8, 220, 32, false, 1, 
-						c => c.r > MAYBE_WINDOW_OCR_THRESHOLD && c.g > MAYBE_WINDOW_OCR_THRESHOLD && c.b > MAYBE_WINDOW_OCR_THRESHOLD
-				);
+			s_GrayTemp[offsetY] = color.GrayScale();
+			if (s_GrayTemp[offsetY] > 100F && s_GrayTemp[offsetY] > s_GrayTemp[offsetY - 1] * 1.8F && color.r < color.g && color.g < color.b) {
+				for (int _offsetY = 0; _offsetY < 5; _offsetY++) {
+					Color32 _color = Operation.GetColorOnScreen(960, 156 + offsetY + _offsetY);
+					if (Approximately(_color, targetColor, 2)) {
+						return Operation.GetTextOnScreenNew(
+								850, 156 + offsetY + _offsetY + 4, 220, 36, false, 1, 
+								c => c.GrayScale() > MAYBE_WINDOW_OCR_THRESHOLD, true
+						);
+					}
+				}
+				offsetY += 5 - 1;
+				
 			}
-			offsetY++;
 		}
 		return string.Empty;
 	});
