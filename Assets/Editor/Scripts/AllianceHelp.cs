@@ -95,77 +95,79 @@ public class AllianceHelp {
 				Debug.Log("联盟帮助按钮");
 				Operation.Click(1080, 620);	// 联盟帮助按钮
 				yield return new EditorWaitForSeconds(0.5F);
-				Debug.Log($"IsAllianceHelpAwardIntuitive: {Recognize.IsAllianceHelpAwardIntuitive}");
-				if (Recognize.IsAllianceHelpAwardIntuitive) {
-					Debug.Log("领取奖励按钮");
-					Operation.Click(1115, 895);	// 领取奖励按钮
-					yield return new EditorWaitForSeconds(1F);
-					Debug.Log("点空白处关闭恭喜获得界面");
-					Operation.Click(960, 895);	// 点空白处关闭恭喜获得界面
-					yield return new EditorWaitForSeconds(0.2F);
-				}
-				Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
-				if (Recognize.CanAllianceHelpRequest) {
-					bool success = false;
-					if (REQUEST_COIN && s_RequestCoinTime <= DateTime.Now.Date) {
-						Debug.Log("先请求一次金币帮助");
-						Debug.Log("请求帮助按钮");
-						Operation.Click(1115, 895);	// 请求帮助按钮
-						yield return new EditorWaitForSeconds(0.7F);
-						Debug.Log("选择金币帮助");
-						Operation.Click(905, 600);	// 选择金币帮助
-						yield return new EditorWaitForSeconds(0.3F);
-						Debug.Log("请求帮助按钮");
-						Operation.Click(960, 750);	// 请求帮助按钮
+				if (Recognize.MaybeWindowTitle == "联盟帮助") {
+					Debug.Log($"IsAllianceHelpAwardIntuitive: {Recognize.IsAllianceHelpAwardIntuitive}");
+					if (Recognize.IsAllianceHelpAwardIntuitive) {
+						Debug.Log("领取奖励按钮");
+						Operation.Click(1115, 895);	// 领取奖励按钮
 						yield return new EditorWaitForSeconds(1F);
-						Debug.Log("取消帮助按钮");
-						Operation.Click(1115, 895);	// 取消帮助按钮
-						yield return new EditorWaitForSeconds(0.7F);
-						Debug.Log("确定按钮");
-						Operation.Click(1060, 700);	// 确定按钮
-						yield return new EditorWaitForSeconds(1F);
-						
-						s_RequestCoinTime = DateTime.Now;
+						Debug.Log("点空白处关闭恭喜获得界面");
+						Operation.Click(960, 895);	// 点空白处关闭恭喜获得界面
+						yield return new EditorWaitForSeconds(0.2F);
 					}
-					int target = RandomTarget();
-					Debug.Log($"确定帮助物品:{target}");
-					if (target != -1) {
-						for (int i = 0; i < 5; i++) {
+					Debug.Log($"CanAllianceHelpRequest: {Recognize.CanAllianceHelpRequest}");
+					if (Recognize.CanAllianceHelpRequest) {
+						bool success = false;
+						if (REQUEST_COIN && s_RequestCoinTime <= DateTime.Now.Date) {
+							Debug.Log("先请求一次金币帮助");
 							Debug.Log("请求帮助按钮");
 							Operation.Click(1115, 895);	// 请求帮助按钮
 							yield return new EditorWaitForSeconds(0.7F);
-							Debug.Log("选择帮助物品");
-							Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
+							Debug.Log("选择金币帮助");
+							Operation.Click(905, 600);	// 选择金币帮助
 							yield return new EditorWaitForSeconds(0.3F);
 							Debug.Log("请求帮助按钮");
 							Operation.Click(960, 750);	// 请求帮助按钮
 							yield return new EditorWaitForSeconds(1F);
-							if (Recognize.CanAllianceHelpCancel) {
-								success = true;
-								break;
+							Debug.Log("取消帮助按钮");
+							Operation.Click(1115, 895);	// 取消帮助按钮
+							yield return new EditorWaitForSeconds(0.7F);
+							Debug.Log("确定按钮");
+							Operation.Click(1060, 700);	// 确定按钮
+							yield return new EditorWaitForSeconds(1F);
+							
+							s_RequestCoinTime = DateTime.Now;
+						}
+						int target = RandomTarget();
+						Debug.Log($"确定帮助物品:{target}");
+						if (target != -1) {
+							for (int i = 0; i < 5; i++) {
+								Debug.Log("请求帮助按钮");
+								Operation.Click(1115, 895);	// 请求帮助按钮
+								yield return new EditorWaitForSeconds(0.7F);
+								Debug.Log("选择帮助物品");
+								Operation.Click(795 + 109 * target, 410);	// 选择帮助物品
+								yield return new EditorWaitForSeconds(0.3F);
+								Debug.Log("请求帮助按钮");
+								Operation.Click(960, 750);	// 请求帮助按钮
+								yield return new EditorWaitForSeconds(1F);
+								if (Recognize.CanAllianceHelpCancel) {
+									success = true;
+									break;
+								}
 							}
 						}
-					}
-					if (success) {
-						if (TARGET_LIST[target] < 999) {
-							--TARGET_LIST[target];
+						if (success) {
+							if (TARGET_LIST[target] < 999) {
+								--TARGET_LIST[target];
+							}
+							if (!started) {
+								s_StartTime = DateTime.Now;
+							}
+						} else {
+							if (target != -1 && started) {
+								s_StartTime = default;
+							}
+							Debug.LogError("请求帮助失败！");
 						}
-						if (!started) {
-							s_StartTime = DateTime.Now;
-						}
-					} else {
-						if (target != -1 && started) {
-							s_StartTime = default;
-						}
-						Debug.LogError("请求帮助失败！");
 					}
-				}
-				for (int i = 0; i < INTO_HELPS_TIMES; ++i) {
-					if (Recognize.CanAllianceHelpOthers) {
-						Debug.Log("帮助全部按钮");
-						Operation.Click(960, 780);	// 帮助全部按钮
+					for (int i = 0; i < INTO_HELPS_TIMES; ++i) {
+						if (Recognize.CanAllianceHelpOthers) {
+							Debug.Log("帮助全部按钮");
+							Operation.Click(960, 780);	// 帮助全部按钮
+						}
+						yield return new EditorWaitForSeconds(0.2F);
 					}
-					yield return new EditorWaitForSeconds(0.2F);
 				}
 				
 				for (int i = 0; i < 10 && Recognize.IsWindowCovered; i++) {
@@ -176,7 +178,7 @@ public class AllianceHelp {
 	
 				Task.CurrentTask = null;
 				
-				yield return new EditorWaitForSeconds(5F);
+				yield return new EditorWaitForSeconds(3F);
 			}
 		}
 		// ReSharper disable once IteratorNeverReturns
