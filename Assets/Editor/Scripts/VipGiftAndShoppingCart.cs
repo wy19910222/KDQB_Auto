@@ -90,50 +90,52 @@ public class VipGiftAndShoppingCart {
 				LAST_VIP_GIFT_TIME = DateTime.Now;
 			}
 
-			if (!shoppingCartSucceed && Recognize.FullWindowTitle == "金融中心") {
+			if (!shoppingCartSucceed) {
 				Debug.Log("军级商店按钮");
 				Operation.Click(815, 345);	// 军级商店按钮
 				yield return new EditorWaitForSeconds(0.3F);
-				Debug.Log("拖动以显示购物车标签页");
-				{
-					// 先拖动到列表最开头，以便计算
-					var ie = Operation.NoInertiaDrag(760, 192, 1200, 192, 0.5F);
-					while (ie.MoveNext()) {
-						yield return ie.Current;
+				if (Recognize.FullWindowTitle == "金融中心") {
+					Debug.Log("拖动以显示购物车标签页");
+					{
+						// 先拖动到列表最开头，以便计算
+						var ie = Operation.NoInertiaDrag(760, 192, 1200, 192, 0.5F);
+						while (ie.MoveNext()) {
+							yield return ie.Current;
+						}
+						yield return new EditorWaitForSeconds(1F);
 					}
-					yield return new EditorWaitForSeconds(1F);
-				}
-				int offsetX = 0;
-				int orderOffsetX = Mathf.Max((SHOPPING_CART_ORDER - VISIBLE_TABS_COUNT) * TAB_WIDTH, 0);
-				int deltaOffsetX = orderOffsetX - offsetX;
-				while (deltaOffsetX > 0) {
-					int dragDistance = Mathf.Min(TAB_WIDTH * VISIBLE_TABS_COUNT, deltaOffsetX);
-					// 往左拖动
-					var ie = Operation.NoInertiaDrag(1180, 192, 1180 - dragDistance, 192, 0.5F);
-					while (ie.MoveNext()) {
-						yield return ie.Current;
+					int offsetX = 0;
+					int orderOffsetX = Mathf.Max((SHOPPING_CART_ORDER - VISIBLE_TABS_COUNT) * TAB_WIDTH, 0);
+					int deltaOffsetX = orderOffsetX - offsetX;
+					while (deltaOffsetX > 0) {
+						int dragDistance = Mathf.Min(TAB_WIDTH * VISIBLE_TABS_COUNT, deltaOffsetX);
+						// 往左拖动
+						var ie = Operation.NoInertiaDrag(1180, 192, 1180 - dragDistance, 192, 0.5F);
+						while (ie.MoveNext()) {
+							yield return ie.Current;
+						}
+						yield return new EditorWaitForSeconds(0.1F);
+						deltaOffsetX -= dragDistance;
 					}
-					yield return new EditorWaitForSeconds(0.1F);
-					deltaOffsetX -= dragDistance;
-				}
-				offsetX = orderOffsetX;
-				yield return new EditorWaitForSeconds(0.2F);
-				
-				Debug.Log("购物车标签页");
-				Operation.Click(760 + (SHOPPING_CART_ORDER - 1) * TAB_WIDTH - offsetX, 192);	// 购物车标签页
-				yield return new EditorWaitForSeconds(0.3F);
-
-				if (Recognize.IsShoppingCartExchangeBtn) {
-					Debug.Log("一键兑换按钮");
-					Operation.Click(1143, 962);	// 一键兑换按钮
-					yield return new EditorWaitForSeconds(0.3F);
-					Debug.Log("确定按钮");
-					Operation.Click(1072, 705);	// 确定按钮
-					yield return new EditorWaitForSeconds(0.5F);
-					Debug.Log("点外面关闭");
-					Operation.Click(960, 200);	// 点外面关闭
+					offsetX = orderOffsetX;
 					yield return new EditorWaitForSeconds(0.2F);
-					LAST_SHOPPING_CART_TIME = DateTime.Now;
+
+					Debug.Log("购物车标签页");
+					Operation.Click(760 + (SHOPPING_CART_ORDER - 1) * TAB_WIDTH - offsetX, 192);	// 购物车标签页
+					yield return new EditorWaitForSeconds(0.3F);
+
+					if (Recognize.IsShoppingCartExchangeBtn) {
+						Debug.Log("一键兑换按钮");
+						Operation.Click(1143, 962);	// 一键兑换按钮
+						yield return new EditorWaitForSeconds(0.3F);
+						Debug.Log("确定按钮");
+						Operation.Click(1072, 705);	// 确定按钮
+						yield return new EditorWaitForSeconds(0.5F);
+						Debug.Log("点外面关闭");
+						Operation.Click(960, 200);	// 点外面关闭
+						yield return new EditorWaitForSeconds(0.2F);
+						LAST_SHOPPING_CART_TIME = DateTime.Now;
+					}
 				}
 			}
 			
