@@ -96,21 +96,27 @@ public class FollowConfig : PrefsEditorWindow<Follow> {
 			EditorGUI.DrawRect(wireRect, Color.gray);
 		}
 
-		CustomField(Recognize.FollowType.UNKNOWN);
-		if (EditorGUIUtility.currentViewWidth > 460) {
+		if (EditorGUIUtility.currentViewWidth > 550) {
+			float _prevLabelWidth = EditorGUIUtility.labelWidth;
+			EditorGUIUtility.labelWidth = 50F;
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.BeginVertical();
+			EditorGUILayout.LabelField("");
 			CustomField(Recognize.FollowType.WAR_HAMMER);
 			CustomField(Recognize.FollowType.REFUGEE_CAMP);
 			CustomField(Recognize.FollowType.FEAR_STAR);
 			EditorGUILayout.EndVertical();
+			GUILayout.Space(20F);
 			EditorGUILayout.BeginVertical();
+			CustomField(Recognize.FollowType.UNKNOWN);
 			CustomField(Recognize.FollowType.STRONGHOLD);
 			CustomField(Recognize.FollowType.ELITE_GUARD);
 			CustomField(Recognize.FollowType.HEART_PANG);
 			EditorGUILayout.EndVertical();
 			EditorGUILayout.EndHorizontal();
+			EditorGUIUtility.labelWidth = _prevLabelWidth;
 		} else {
+			CustomField(Recognize.FollowType.UNKNOWN);
 			CustomField(Recognize.FollowType.STRONGHOLD);
 			CustomField(Recognize.FollowType.ELITE_GUARD);
 			CustomField(Recognize.FollowType.HEART_PANG);
