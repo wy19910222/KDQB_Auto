@@ -5,30 +5,71 @@
  * @EditTime: 2023-12-27 11:44:03 327
  */
 
+using System;
+using System.IO.MemoryMappedFiles;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
 public static class Task {
-	public static string m_CurrentTask;
+	[MenuItem("Tools_Log/LogCurrentTask", priority = -1)]
+	private static void LogCurrentTask() {
+		Debug.LogError(CurrentTask);
+	}
+	
+	private static EditorCoroutine s_CO;
+	private static string s_OldTask;
+	private static DateTime s_OldTaskDT;
 	public static string CurrentTask {
-		get => m_CurrentTask;
+		get {
+			string currentTask = GetCurrentTask();
+			if (string.IsNullOrEmpty(currentTask)) {
+				currentTask = null;
+			}
+			if (currentTask != s_OldTask) {
+				s_OldTaskDT = DateTime.Now;
+				s_OldTask = currentTask;
+			} else if (currentTask != null && DateTime.Now - s_OldTaskDT > TimeSpan.FromSeconds(60)) {
+				currentTask = null;
+			}
+			return currentTask;
+		}
 		set {
-			m_CurrentTask = value;
+			SetCurrentTask(value ?? string.Empty);
 			if (s_CO != null) {
 				EditorCoroutineManager.StopCoroutine(s_CO);
 				s_CO = null;
 			}
 			s_CO = EditorCoroutineUtil.Once(null, 60, () => {
-				m_CurrentTask = null;
+				SetCurrentTask(string.Empty);
 				s_CO = null;
 			});
 		}
 	}
-	
-	private static EditorCoroutine s_CO;
 
-	[MenuItem("Tools_Log/LogCurrentTask", priority = -1)]
-	private static void LogCurrentTask() {
-		Debug.LogError(CurrentTask);
+	private const int SHARED_TOTAL_BYTES = 1024;
+	private static readonly MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen("KDQB_Task", SHARED_TOTAL_BYTES);
+	private static readonly Mutex mutex = new Mutex(false, "KDQB_Task");
+	private static void SetCurrentTask(string currentTask) {
+		bool locked = mutex.WaitOne();
+		byte[] buffer = new byte[SHARED_TOTAL_BYTES];
+		System.Text.Encoding.UTF8.GetBytes(currentTask, 0, currentTask.Length, buffer, 0);
+		using (MemoryMappedViewAccessor writer = mmf.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
+			writer.WriteArray(0, buffer, 0, buffer.Length);
+		}
+		if (locked) {
+			mutex.ReleaseMutex();
+		}
+	}
+	private static string GetCurrentTask() {
+		bool locked = mutex.WaitOne();
+		byte[] buffer = new byte[SHARED_TOTAL_BYTES];
+		using (MemoryMappedViewAccessor reader = mmf.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
+			reader.ReadArray(0, buffer, 0, buffer.Length);
+		}
+		if (locked) {
+			mutex.ReleaseMutex();
+		}
+		return System.Text.Encoding.UTF8.GetString(buffer).Trim('\0');
 	}
 }
