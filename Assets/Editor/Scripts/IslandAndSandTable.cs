@@ -127,6 +127,7 @@ public class IslandAndSandTable {
 					Operation.Click(660 + SAND_TABLE_TAB * 150, 190);	// 军种标签
 					yield return new EditorWaitForSeconds(0.2F);
 					for (int i = 0; i < 10 && Recognize.IsSandTableCanChallenge; i++) {
+						Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
 						Debug.Log("挑战按钮");
 						Operation.Click(960, 960);	// 挑战按钮
 						yield return new EditorWaitForSeconds(0.3F);
@@ -172,6 +173,7 @@ public class IslandAndSandTable {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
+			Task.ResetExpire();	// 任务持续太久，刷新任务过期事件，避免任务过期
 			if (!expeditionSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示远征行动");
 				int orderOffsetY = Mathf.Max((EXPEDITION_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
@@ -251,6 +253,7 @@ public class IslandAndSandTable {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 			
+			Task.ResetExpire();	// 任务持续太久，刷新任务过期事件，避免任务过期
 			if (!transnationalSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示跨战区演习");
 				int orderOffsetY = Mathf.Max((TRANSNATIONAL_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
@@ -279,6 +282,7 @@ public class IslandAndSandTable {
 						yield return new EditorWaitForSeconds(0.2F);
 					}
 					for (int i = 0; i < 20 && !Recognize.IsTransnationalTimesEmpty; i++) {
+						Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
 						Debug.Log("选择目标");
 						int targetIndex = RandomTransnationalTarget();
 						Operation.Click(1110, 420 + 100 * targetIndex);	// 选择目标
@@ -293,7 +297,7 @@ public class IslandAndSandTable {
 								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("跳过按钮");
 								Operation.Click(30, 250);	// 跳过按钮
-								yield return new EditorWaitForSeconds(1.5F);
+								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("返回按钮");
 								Operation.Click(960, 906);	// 返回按钮
 								yield return new EditorWaitForSeconds(0.5F);
@@ -322,6 +326,7 @@ public class IslandAndSandTable {
 				yield return new EditorWaitForSeconds(0.2F);
 			}
 
+			Task.ResetExpire();	// 任务持续太久，刷新任务过期事件，避免任务过期
 			if (!islandSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示岛屿作战");
 				int orderOffsetY = Mathf.Max((ISLAND_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);

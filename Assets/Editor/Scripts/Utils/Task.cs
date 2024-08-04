@@ -47,4 +47,15 @@ public static class Task {
 			});
 		}
 	}
+	
+	public static void ResetExpire() {
+		s_OldTaskDT = DateTime.Now;
+		if (s_CO != null) {
+			EditorCoroutineManager.StopCoroutine(s_CO);
+			s_CO = EditorCoroutineUtil.Once(null, 60, () => {
+				s_SharedMemory.SetString(null);
+				s_CO = null;
+			});
+		}
+	}
 }
