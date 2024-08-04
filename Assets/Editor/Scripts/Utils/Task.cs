@@ -48,28 +48,31 @@ public static class Task {
 	}
 
 	private const int SHARED_TOTAL_BYTES = 1024;
-	private static readonly MemoryMappedFile mmf = MemoryMappedFile.CreateOrOpen("KDQB_Task", SHARED_TOTAL_BYTES);
-	private static readonly Mutex mutex = new Mutex(false, "KDQB_Task");
+	private static readonly MemoryMappedFile s_MMF = MemoryMappedFile.CreateOrOpen("MemoryMappedFile_KDQB_Task", SHARED_TOTAL_BYTES);
+	private static readonly Mutex s_Mutex = new Mutex(false, "Mutex_KDQB_Task");
 	private static void SetCurrentTask(string currentTask) {
-		bool locked = mutex.WaitOne();
-		byte[] buffer = new byte[SHARED_TOTAL_BYTES];
-		System.Text.Encoding.UTF8.GetBytes(currentTask, 0, currentTask.Length, buffer, 0);
-		using (MemoryMappedViewAccessor writer = mmf.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
-			writer.WriteArray(0, buffer, 0, buffer.Length);
-		}
-		if (locked) {
-			mutex.ReleaseMutex();
+		if (s_Mutex.WaitOne()) {
+			byte[] buffer = new byte[SHARED_TOTAL_BYTES];
+			System.Text.Encoding.UTF8.GetBytes(currentTask, 0, currentTask.Length, buffer, 0);
+			using (MemoryMappedViewAccessor writer = s_MMF.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
+				writer.WriteArray(0, buffer, 0, buffer.Length);
+			}
+			s_Mutex.ReleaseMutex();
+		} else {
+			Debug.LogError("获取锁失败！");
 		}
 	}
 	private static string GetCurrentTask() {
-		bool locked = mutex.WaitOne();
-		byte[] buffer = new byte[SHARED_TOTAL_BYTES];
-		using (MemoryMappedViewAccessor reader = mmf.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
-			reader.ReadArray(0, buffer, 0, buffer.Length);
+		if (s_Mutex.WaitOne()) {
+			byte[] buffer = new byte[SHARED_TOTAL_BYTES];
+			using (MemoryMappedViewAccessor reader = s_MMF.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
+				reader.ReadArray(0, buffer, 0, buffer.Length);
+			}
+			s_Mutex.ReleaseMutex();
+			return System.Text.Encoding.UTF8.GetString(buffer).Trim('\0');
+		} else {
+			Debug.LogError("获取锁失败！");
+			return null;
 		}
-		if (locked) {
-			mutex.ReleaseMutex();
-		}
-		return System.Text.Encoding.UTF8.GetString(buffer).Trim('\0');
 	}
 }
