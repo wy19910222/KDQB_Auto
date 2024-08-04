@@ -6,8 +6,6 @@
  */
 
 using System;
-using System.IO.MemoryMappedFiles;
-using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,12 +15,15 @@ public static class Task {
 		Debug.LogError(CurrentTask);
 	}
 	
-	private static EditorCoroutine s_CO;
+	private const int SHARED_TOTAL_BYTES = 128;
+	private static readonly SharedMemory s_SharedMemory = new SharedMemory("KDQB_Task", SHARED_TOTAL_BYTES);
+	
 	private static string s_OldTask;
 	private static DateTime s_OldTaskDT;
+	private static EditorCoroutine s_CO;
 	public static string CurrentTask {
 		get {
-			string currentTask = GetCurrentTask();
+			string currentTask = s_SharedMemory.GetString();
 			if (string.IsNullOrEmpty(currentTask)) {
 				currentTask = null;
 			}
@@ -35,44 +36,15 @@ public static class Task {
 			return currentTask;
 		}
 		set {
-			SetCurrentTask(value ?? string.Empty);
+			s_SharedMemory.SetString(value);
 			if (s_CO != null) {
 				EditorCoroutineManager.StopCoroutine(s_CO);
 				s_CO = null;
 			}
 			s_CO = EditorCoroutineUtil.Once(null, 60, () => {
-				SetCurrentTask(string.Empty);
+				s_SharedMemory.SetString(null);
 				s_CO = null;
 			});
-		}
-	}
-
-	private const int SHARED_TOTAL_BYTES = 1024;
-	private static readonly MemoryMappedFile s_MMF = MemoryMappedFile.CreateOrOpen("MemoryMappedFile_KDQB_Task", SHARED_TOTAL_BYTES);
-	private static readonly Mutex s_Mutex = new Mutex(false, "Mutex_KDQB_Task");
-	private static void SetCurrentTask(string currentTask) {
-		if (s_Mutex.WaitOne()) {
-			byte[] buffer = new byte[SHARED_TOTAL_BYTES];
-			System.Text.Encoding.UTF8.GetBytes(currentTask, 0, currentTask.Length, buffer, 0);
-			using (MemoryMappedViewAccessor writer = s_MMF.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
-				writer.WriteArray(0, buffer, 0, buffer.Length);
-			}
-			s_Mutex.ReleaseMutex();
-		} else {
-			Debug.LogError("获取锁失败！");
-		}
-	}
-	private static string GetCurrentTask() {
-		if (s_Mutex.WaitOne()) {
-			byte[] buffer = new byte[SHARED_TOTAL_BYTES];
-			using (MemoryMappedViewAccessor reader = s_MMF.CreateViewAccessor(0, SHARED_TOTAL_BYTES)) {
-				reader.ReadArray(0, buffer, 0, buffer.Length);
-			}
-			s_Mutex.ReleaseMutex();
-			return System.Text.Encoding.UTF8.GetString(buffer).Trim('\0');
-		} else {
-			Debug.LogError("获取锁失败！");
-			return null;
 		}
 	}
 }
