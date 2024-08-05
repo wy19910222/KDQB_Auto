@@ -100,21 +100,30 @@ public class ExpeditionAndWild {
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.WILD && !test) {
 					Debug.Log("宝箱按钮");
 					Operation.Click(751, 286);	// 宝箱按钮
-					yield return new EditorWaitForSeconds(0.5F);
-					if (Recognize.IsWildBackBtn) {
-						Debug.Log("返回按钮");
-						Operation.Click(960, 836);	// 返回按钮
-						yield return new EditorWaitForSeconds(0.2F);
-						wildSucceed = true;
-					} else if (Recognize.IsWildGetBtn) {
-						Debug.Log("领取按钮");
-						Operation.Click(960, 836);	// 领取按钮
+					yield return new EditorWaitForSeconds(1F);
+					if (Recognize.MaybeWindowTitle == "领取奖励") {
+						Debug.Log("领取或返回按钮");
+						Operation.Click(960, 836);	// 领取或返回按钮
 						yield return new EditorWaitForSeconds(0.5F);
 						Debug.Log("空白处");
 						Operation.Click(960, 836);	// 空白处
 						yield return new EditorWaitForSeconds(0.2F);
 						wildSucceed = true;
 					}
+					// if (Recognize.IsWildBackBtn) {
+					// 	Debug.Log("返回按钮");
+					// 	Operation.Click(960, 836);	// 返回按钮
+					// 	yield return new EditorWaitForSeconds(0.2F);
+					// 	wildSucceed = true;
+					// } else if (Recognize.IsWildGetBtn) {
+					// 	Debug.Log("领取按钮");
+					// 	Operation.Click(960, 836);	// 领取按钮
+					// 	yield return new EditorWaitForSeconds(0.5F);
+					// 	Debug.Log("空白处");
+					// 	Operation.Click(960, 836);	// 空白处
+					// 	yield return new EditorWaitForSeconds(0.2F);
+					// 	wildSucceed = true;
+					// }
 				}
 				Debug.Log("左上角返回按钮");
 				Operation.Click(720, 128);	// 左上角返回按钮
@@ -144,13 +153,19 @@ public class ExpeditionAndWild {
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
 					Debug.Log("运输车");
 					Operation.Click(840, 856);	// 运输车
-					yield return new EditorWaitForSeconds(0.5F);
-					if (Recognize.IsExpeditionGetBtn) {
+					yield return new EditorWaitForSeconds(1F);
+					if (Recognize.MaybeWindowTitle == "获得奖励") {
 						Debug.Log("领取按钮");
 						Operation.Click(960, 900);	// 领取按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						expeditionSucceed = true;
 					}
+					// if (Recognize.IsExpeditionGetBtn) {
+					// 	Debug.Log("领取按钮");
+					// 	Operation.Click(960, 900);	// 领取按钮
+					// 	yield return new EditorWaitForSeconds(0.3F);
+					// 	expeditionSucceed = true;
+					// }
 				}
 				Debug.Log("左上角返回按钮");
 				Operation.Click(720, 128);	// 左上角返回按钮
