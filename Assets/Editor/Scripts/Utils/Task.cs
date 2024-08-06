@@ -19,40 +19,46 @@ public static class Task {
 	private static readonly SharedMemory s_SharedMemory = new SharedMemory("KDQB_Task", SHARED_TOTAL_BYTES);
 	
 	private const int EXPIRE_SECONDS = 60;
-	private static string s_OldTask;
-	private static DateTime s_OldTaskDT;
+	private static string s_CurrentTask;
 	private static EditorCoroutine s_CO;
 	public static string CurrentTask {
 		get {
-			string currentTask = s_SharedMemory.GetString();
-			if (string.IsNullOrEmpty(currentTask)) {
-				currentTask = null;
+			string message = s_SharedMemory.GetString();
+			string[] parts = message?.Split('|');
+			if (parts?.Length > 1) {
+				string currentTask = parts[0];
+				if (currentTask == string.Empty) {
+					currentTask = null;
+				}
+				s_CurrentTask = currentTask;
+				if (long.TryParse(parts[1], out long ticks)) {
+					if (DateTime.Now.Ticks - ticks > (EXPIRE_SECONDS + 1) * 10000000L) {
+						currentTask = null;
+					}
+				}
+				return currentTask;
+			} else {
+				return s_CurrentTask = null;
 			}
-			if (currentTask != s_OldTask) {
-				s_OldTaskDT = DateTime.Now;
-				s_OldTask = currentTask;
-			} else if (currentTask != null && DateTime.Now - s_OldTaskDT > TimeSpan.FromSeconds(EXPIRE_SECONDS + 1)) {
-				currentTask = null;
-			}
-			return currentTask;
 		}
 		set {
-			s_SharedMemory.SetString(value);
+			s_SharedMemory.SetString($"{value}|{DateTime.Now.Ticks}");
 			if (s_CO != null) {
 				EditorCoroutineManager.StopCoroutine(s_CO);
 				s_CO = null;
 			}
-			s_CO = EditorCoroutineUtil.Once(null, EXPIRE_SECONDS, () => {
-				s_SharedMemory.SetString(null);
-				s_CO = null;
-			});
+			if (value != null) {
+				s_CO = EditorCoroutineUtil.Once(null, EXPIRE_SECONDS, () => {
+					s_SharedMemory.SetString(null);
+					s_CO = null;
+				});
+			}
 		}
 	}
 	
 	public static void ResetExpire() {
-		if (CurrentTask != null || s_OldTask != null) {
-			CurrentTask = null;
-			CurrentTask = s_OldTask;
+		if (CurrentTask != null || s_CurrentTask != null) {
+			CurrentTask = s_CurrentTask;
 		}
 	}
 }
