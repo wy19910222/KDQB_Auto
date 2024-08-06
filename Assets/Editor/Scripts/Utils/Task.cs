@@ -49,7 +49,7 @@ public static class Task {
 			}
 			if (value != null) {
 				s_CO = EditorCoroutineUtil.Once(null, EXPIRE_SECONDS, () => {
-					s_SharedMemory.SetString(null);
+					s_SharedMemory.SetString($"{null}|{DateTime.Now.Ticks}");
 					s_CO = null;
 				});
 			}
@@ -57,6 +57,7 @@ public static class Task {
 	}
 	
 	public static void ResetExpire() {
+		// 先判断CurrentTask是为了更新可能变了的s_CurrentTask
 		if (CurrentTask != null || s_CurrentTask != null) {
 			CurrentTask = s_CurrentTask;
 		}
