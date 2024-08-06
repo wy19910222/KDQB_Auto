@@ -18,6 +18,7 @@ public static class Task {
 	private const int SHARED_TOTAL_BYTES = 128;
 	private static readonly SharedMemory s_SharedMemory = new SharedMemory("KDQB_Task", SHARED_TOTAL_BYTES);
 	
+	private const int EXPIRE_SECONDS = 60;
 	private static string s_OldTask;
 	private static DateTime s_OldTaskDT;
 	private static EditorCoroutine s_CO;
@@ -30,7 +31,7 @@ public static class Task {
 			if (currentTask != s_OldTask) {
 				s_OldTaskDT = DateTime.Now;
 				s_OldTask = currentTask;
-			} else if (currentTask != null && DateTime.Now - s_OldTaskDT > TimeSpan.FromSeconds(60)) {
+			} else if (currentTask != null && DateTime.Now - s_OldTaskDT > TimeSpan.FromSeconds(EXPIRE_SECONDS + 1)) {
 				currentTask = null;
 			}
 			return currentTask;
@@ -41,7 +42,7 @@ public static class Task {
 				EditorCoroutineManager.StopCoroutine(s_CO);
 				s_CO = null;
 			}
-			s_CO = EditorCoroutineUtil.Once(null, 60, () => {
+			s_CO = EditorCoroutineUtil.Once(null, EXPIRE_SECONDS, () => {
 				s_SharedMemory.SetString(null);
 				s_CO = null;
 			});
