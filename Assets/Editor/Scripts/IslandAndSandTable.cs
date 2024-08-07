@@ -101,6 +101,7 @@ public class IslandAndSandTable {
 			yield return new EditorWaitForSeconds(0.2F);
 
 			int offsetY = 0;
+			Task.ResetExpire();	// 任务持续太久，刷新任务过期事件，避免任务过期
 			if (!sandTableSucceed && Recognize.FullWindowTitle == "每日军情") {
 				Debug.Log("拖动以显示沙盘演习");
 				int orderOffsetY = Mathf.Max((SAND_TABLE_ORDER - VISIBLE_ITEMS_COUNT) * ITEM_HEIGHT + OFFSET_Y, 0);
@@ -126,7 +127,6 @@ public class IslandAndSandTable {
 					Debug.Log("军种标签");
 					Operation.Click(660 + SAND_TABLE_TAB * 150, 190);	// 军种标签
 					yield return new EditorWaitForSeconds(0.2F);
-					Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
 					Debug.Log("挑战按钮");
 					Operation.Click(960, 960);	// 挑战按钮
 					yield return new EditorWaitForSeconds(0.3F);
@@ -148,19 +148,16 @@ public class IslandAndSandTable {
 						if (!SAND_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
 							Debug.Log("战斗按钮");
 							Operation.Click(960, 476);	// 战斗按钮
-							for (int i = 0; i < 10 && Recognize.IsSandTableCanChallenge; i++) {
-								yield return new EditorWaitForSeconds(2F);
+							yield return new EditorWaitForSeconds(2F);
+							for (int i = 0; i < 10 && Recognize.CurrentScene is Recognize.Scene.FIGHTING or Recognize.Scene.FIGHTING_PLAYBACK; i++) {
+								Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
 								Debug.Log("跳过按钮");
 								Operation.Click(30, 250);	// 跳过按钮
 								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("再次挑战");
-								Operation.Click(930, 910);	// 再次挑战
-								yield return new EditorWaitForSeconds(0.5F);
-								if (Recognize.CurrentScene != Recognize.Scene.FIGHTING
-										&& Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH
-										&& Recognize.CurrentScene != Recognize.Scene.FIGHTING_PLAYBACK) {
-									break;
-								}
+								Operation.Click(910, 910);	// 再次挑战
+								yield return new EditorWaitForSeconds(2F);
+								Debug.LogError(Recognize.CurrentScene);
 								// if (Recognize.IsSandTableAgainBtn) {
 								// } else {
 								// 	Debug.Log("返回按钮");
