@@ -151,6 +151,13 @@ public static partial class Recognize {
 	// 		return Approximately(realColor, new Color32(105, 232, 254, 255));
 	// 	}
 	// }
+	// private static readonly Color32[,] DAILY_INTELLIGENCE_SAND_TABLE_AGAIN_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceSandTableAgainBtn.png");
+	// public static bool IsSandTableAgainBtn {
+	// 	get {
+	// 		Color32[,] realColors = Operation.GetColorsOnScreen(823, 895, 104, 28);
+	// 		return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_SAND_TABLE_AGAIN_BTN) > 0.9F;
+	// 	}
+	// }
 	
 	private static readonly Color32[,] DAILY_INTELLIGENCE_EXPEDITION_QUICK_BTN = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceExpeditionQuickBtn.png");
 	public static bool IsExpeditionQuickBtn {
