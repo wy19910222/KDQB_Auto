@@ -136,12 +136,14 @@ public class MiningTycoon {
 							yield return new EditorWaitForSeconds(0.2F);
 						}
 
-						Debug.Log("挖矿");
-						for (int i = 0; i < 20; ++i) {
-							Operation.Click(1060, 970);	// 挖矿按钮
-							yield return new EditorWaitForSeconds(0.2F);
+						if (DateTime.Now <= ACTIVITY_END_DT) {
+							Debug.Log("挖矿");
+							for (int i = 0; i < 20; ++i) {
+								Operation.Click(1060, 970); // 挖矿按钮
+								yield return new EditorWaitForSeconds(0.2F);
+							}
+							yield return new EditorWaitForSeconds(1F);
 						}
-						yield return new EditorWaitForSeconds(1F);
 
 						List<int> truckTypes = Recognize.GetMiningTruckTypes();
 						Debug.Log("矿车类型：" + string.Join(",", truckTypes));
