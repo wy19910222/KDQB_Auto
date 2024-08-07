@@ -126,44 +126,55 @@ public class IslandAndSandTable {
 					Debug.Log("军种标签");
 					Operation.Click(660 + SAND_TABLE_TAB * 150, 190);	// 军种标签
 					yield return new EditorWaitForSeconds(0.2F);
-					for (int i = 0; i < 10 && Recognize.IsSandTableCanChallenge; i++) {
-						Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
-						Debug.Log("挑战按钮");
-						Operation.Click(960, 960);	// 挑战按钮
-						yield return new EditorWaitForSeconds(0.3F);
-						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
-							Debug.Log("选择编队" + SAND_SQUAD_NUMBER);
-							Operation.Click(1145 + 37 * SAND_SQUAD_NUMBER, 870);	// 选择编队
-							yield return new EditorWaitForSeconds(0.2F);
-							// if (!Recognize.IsSandTableUsingPhalanx) {
-							// 	Debug.Log("军阵按钮");
-							// 	Operation.Click(52, 515);	// 军阵按钮
-							// 	yield return new EditorWaitForSeconds(0.3F);
-							// 	Debug.Log("狂鲨军阵");
-							// 	Operation.Click(780, 710);	// 狂鲨军阵
-							// 	yield return new EditorWaitForSeconds(0.2F);
-							// 	Debug.Log("应用按钮");
-							// 	Operation.Click(960, 820);	// 应用按钮
-							// 	yield return new EditorWaitForSeconds(0.3F);
-							// }
-							if (!SAND_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
-								Debug.Log("战斗按钮");
-								Operation.Click(960, 476);	// 战斗按钮
+					Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
+					Debug.Log("挑战按钮");
+					Operation.Click(960, 960);	// 挑战按钮
+					yield return new EditorWaitForSeconds(0.3F);
+					if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
+						Debug.Log("选择编队" + SAND_SQUAD_NUMBER);
+						Operation.Click(1145 + 37 * SAND_SQUAD_NUMBER, 870);	// 选择编队
+						yield return new EditorWaitForSeconds(0.2F);
+						// if (!Recognize.IsSandTableUsingPhalanx) {
+						// 	Debug.Log("军阵按钮");
+						// 	Operation.Click(52, 515);	// 军阵按钮
+						// 	yield return new EditorWaitForSeconds(0.3F);
+						// 	Debug.Log("狂鲨军阵");
+						// 	Operation.Click(780, 710);	// 狂鲨军阵
+						// 	yield return new EditorWaitForSeconds(0.2F);
+						// 	Debug.Log("应用按钮");
+						// 	Operation.Click(960, 820);	// 应用按钮
+						// 	yield return new EditorWaitForSeconds(0.3F);
+						// }
+						if (!SAND_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
+							Debug.Log("战斗按钮");
+							Operation.Click(960, 476);	// 战斗按钮
+							for (int i = 0; i < 10 && Recognize.IsSandTableCanChallenge; i++) {
 								yield return new EditorWaitForSeconds(2F);
 								Debug.Log("跳过按钮");
 								Operation.Click(30, 250);	// 跳过按钮
 								yield return new EditorWaitForSeconds(2F);
-								Debug.Log("返回按钮");
-								Operation.Click(960, 906);	// 返回按钮
+								Debug.Log("再次挑战");
+								Operation.Click(930, 910);	// 再次挑战
 								yield return new EditorWaitForSeconds(0.5F);
-							} else {
-								Debug.Log("退出按钮");
-								Operation.Click(30, 140);	// 退出按钮
-								yield return new EditorWaitForSeconds(0.2F);
-								Debug.Log("确认退出按钮");
-								Operation.Click(1064, 634);	// 确认退出按钮
-								yield return new EditorWaitForSeconds(2);
+								if (Recognize.CurrentScene != Recognize.Scene.FIGHTING
+										&& Recognize.CurrentScene != Recognize.Scene.FIGHTING_MARCH
+										&& Recognize.CurrentScene != Recognize.Scene.FIGHTING_PLAYBACK) {
+									break;
+								}
+								// if (Recognize.IsSandTableAgainBtn) {
+								// } else {
+								// 	Debug.Log("返回按钮");
+								// 	Operation.Click(990, 910);	// 返回按钮
+								// 	break;
+								// }
 							}
+						} else {
+							Debug.Log("退出按钮");
+							Operation.Click(30, 140);	// 退出按钮
+							yield return new EditorWaitForSeconds(0.2F);
+							Debug.Log("确认退出按钮");
+							Operation.Click(1064, 634);	// 确认退出按钮
+							yield return new EditorWaitForSeconds(2);
 						}
 					}
 					LAST_SAND_TABLE_TIME = DateTime.Now;
