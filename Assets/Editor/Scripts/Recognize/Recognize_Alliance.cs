@@ -156,7 +156,7 @@ public static partial class Recognize {
 	public static bool IsAllianceMechaDonateInRank {
 		get {
 			// 通过判断排行列表中最后一行的底色确定自己是否在排行中
-			Color32[,] realColors = Operation.GetColorsOnScreen(780, 850, 10, 10);
+			Color32[,] realColors = Operation.GetColorsOnScreen(820, 850, 10, 10);
 			return ApproximatelyRect(realColors, ALLIANCE_MECHA_DONATE_IN_RANK) > 0.8F;
 		}
 	}
