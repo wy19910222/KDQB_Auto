@@ -37,14 +37,13 @@ public class MiniMapStatus {
 			
 			bool? isMiniMapShowing = Recognize.IsMiniMapShowing;
 			if (isMiniMapShowing != null && isMiniMapShowing != KEEP_SHOWING) {
-				int deltaY = Recognize.IsOutsideNearby ? 76 : Recognize.IsOutsideFaraway ? 0 : -1;
-				if (deltaY >= 0) {
+				if (Recognize.LeftAreaDeltaY >= 0) {
 					if (Task.CurrentTask != null) {
 						continue;
 					}
 					Task.CurrentTask = nameof(MiniMapStatus);
 					Debug.Log("小地图展开收起按钮");
-					Operation.Click(27, 161 + deltaY);	// 修理按钮按钮
+					Operation.Click(27, 161 + Recognize.LeftAreaDeltaY);	// 修理按钮按钮
 				
 					Task.CurrentTask = null;
 					

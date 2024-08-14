@@ -35,10 +35,9 @@ public static partial class Recognize {
 	public static int Energy {
 		get {
 			return GetCachedValueOrNew(nameof(Energy), () => {
-				int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
-				if (deltaX >= 0) {
+				if (EnergyAreaDeltaX >= 0) {
 					const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
-					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + deltaX, ENERGY_Y, width + 1, 1);
+					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + EnergyAreaDeltaX, ENERGY_Y, width + 1, 1);
 					// 最少只能判断到x=19，再继续会受到体力图标的影响
 					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
 						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR) >= 0) {
@@ -96,9 +95,8 @@ public static partial class Recognize {
 	public static int EnergyOCR {
 		get {
 			return GetCachedValueOrNew(nameof(EnergyOCR), () => {
-				int deltaX = IsOutsideNearby ? 80 : IsOutsideFaraway ? 0 : -1;
-				if (deltaX >= 0) {
-					string str = Operation.GetTextOnScreenNew(60 + deltaX, 111, 39, 20, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
+				if (EnergyAreaDeltaX >= 0) {
+					string str = Operation.GetTextOnScreenNew(60 + EnergyAreaDeltaX, 111, 39, 20, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
 					if (int.TryParse(str, out int result)) {
 						return result;
 					}
@@ -107,4 +105,13 @@ public static partial class Recognize {
 			});
 		}
 	}
+	
+	private static int EnergyAreaDeltaX => GetCachedValueOrNew(
+			nameof(EnergyAreaDeltaX),
+			() => CurrentScene switch {
+				Scene.OUTSIDE_NEARBY => 80,
+				Scene.OUTSIDE_FARAWAY => 0,
+				_ => -1
+			}
+	);
 }

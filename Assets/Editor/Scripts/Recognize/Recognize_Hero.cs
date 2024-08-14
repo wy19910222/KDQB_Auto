@@ -116,24 +116,15 @@ public static partial class Recognize {
 												new Color32(123, 95, 114, 255),
 	};
 	public static int GetHeroGroupNumber(IReadOnlyList<Color32> heroAvatarFaraway, IReadOnlyList<Color32> heroAvatarNearby) {
-		int deltaY = -1;
-		IReadOnlyList<Color32> heroAvatar = null;
-		if (IsOutsideNearby) {
-			deltaY = 76;
-			heroAvatar = heroAvatarNearby;
-		} else if (IsOutsideFaraway) {
-			deltaY = 0;
-			heroAvatar = heroAvatarFaraway;
-		}
-		deltaY = IsMiniMapShowing switch {
-			true => deltaY + 155,
-			false => deltaY,
-			_ => -1
+		IReadOnlyList<Color32> heroAvatar = CurrentScene switch {
+			Scene.OUTSIDE_NEARBY => heroAvatarNearby,
+			Scene.OUTSIDE_FARAWAY => heroAvatarFaraway,
+			_ => null
 		};
-		if (deltaY >= 0 && heroAvatar != null) {
+		if (GroupAreaDeltaY >= 0 && heroAvatar != null) {
 			int groupCount = 0;
 			// 返回加速等蓝色按钮中间的白色
-			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + deltaY + 50, 160, 500);
+			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + GroupAreaDeltaY + 50, 160, 500);
 			while (groupCount < BusyGroupCount) {
 				int approximatelyCount = 0;
 				int pointCount = AVATAR_SAMPLE_POINTS.Length;
@@ -149,7 +140,7 @@ public static partial class Recognize {
 					}
 					Color32 color = new Color32((byte) (r / 3), (byte) (g / 3), (byte) (b / 3), 255);
 					// Color32 color = realColors[finalPoint.x, finalPoint.y];
-					if (groupCount == 4 && deltaY == 76 + 155) {
+					if (groupCount == 4 && (GroupAreaDeltaY == 76 + 155 || GroupAreaDeltaY == 84 + 155)) {
 						Color32 coverColor = new Color32(129, 169, 203, 255);
 						float[] weight = new[] {0.1F, 0.1F, 0.1F, 0.15F, 0.15F, 0.15F, 0.2F};
 						color.r = (byte) ((color.r - coverColor.r * weight[i]) / (1 - weight[i]));
@@ -173,15 +164,9 @@ public static partial class Recognize {
 	
 	[MenuItem("Assets/LogGroupHeroAvatar", priority = -1)]
 	public static void LogGroupHeroAvatar() {
-		int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-		deltaY = IsMiniMapShowing switch {
-			true => deltaY + 155,
-			false => deltaY,
-			_ => -1
-		};
-		if (deltaY >= 0) {
+		if (GroupAreaDeltaY >= 0) {
 			int groupCount = 0;
-			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + deltaY + 50, 160, 500);
+			Color32[,] realColors = Operation.GetColorsOnScreen(0, 245 + GroupAreaDeltaY + 50, 160, 500);
 			while (groupCount < BusyGroupCount) {
 				Debug.LogError($"----------------------{groupCount}----------------------");
 				List<Color32> list = new List<Color32>();

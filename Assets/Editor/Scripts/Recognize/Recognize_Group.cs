@@ -17,14 +17,7 @@ public static partial class Recognize {
 	public static int BusyGroupCount {
 		get {
 			return GetCachedValueOrNew(nameof(BusyGroupCount), () => {
-				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				if (deltaY != -1) {
-					deltaY = IsMiniMapShowing switch {
-						true => deltaY + 155,	// 231 or 155
-						false => deltaY,	// 76 or 0
-						_ => -1
-					};
-				}
+				int deltaY = GroupAreaDeltaY;
 				if (deltaY != -1) {
 					int groupCount = 0;
 					// 返回加速等蓝色按钮中间的白色
@@ -78,16 +71,8 @@ public static partial class Recognize {
 	public static string GroupCountTitle {
 		get {
 			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
-				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				if (deltaY != -1) {
-					deltaY = IsMiniMapShowing switch {
-						true => deltaY + 155,	// 231 or 155
-						false => deltaY,	// 76 or 0
-						_ => -1
-					};
-				}
-				if (deltaY != -1) {
-					return Operation.GetTextOnScreenNew(43, 227 + deltaY, 37, 20, false, 1, color => color.r > 200 && color.g > 200 && color.b > 200, true);
+				if (GroupAreaDeltaY != -1) {
+					return Operation.GetTextOnScreenNew(43, 227 + GroupAreaDeltaY, 37, 20, false, 1, color => color.r > 200 && color.g > 200 && color.b > 200, true);
 				}
 				return "None";
 			});
@@ -97,16 +82,8 @@ public static partial class Recognize {
 	public static int TotalGroupCountOCR {
 		get {
 			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
-				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				if (deltaY != -1) {
-					deltaY = IsMiniMapShowing switch {
-						true => deltaY + 155,	// 231 or 155
-						false => deltaY,	// 76 or 0
-						_ => -1
-					};
-				}
-				if (deltaY != -1) {
-					string str = Operation.GetTextOnScreenNew(159, 229 + deltaY, 12, 16, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
+				if (GroupAreaDeltaY != -1) {
+					string str = Operation.GetTextOnScreenNew(159, 229 + GroupAreaDeltaY, 12, 16, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
 					if (int.TryParse(str, out int result)) {
 						return result;
 					}
@@ -119,16 +96,8 @@ public static partial class Recognize {
 	public static int BusyGroupCountOCR {
 		get {
 			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
-				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				if (deltaY != -1) {
-					deltaY = IsMiniMapShowing switch {
-						true => deltaY + 155,	// 231 or 155
-						false => deltaY,	// 76 or 0
-						_ => -1
-					};
-				}
-				if (deltaY != -1) {
-					string str = Operation.GetTextOnScreenNew(141, 229 + deltaY, 14, 16, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
+				if (GroupAreaDeltaY != -1) {
+					string str = Operation.GetTextOnScreenNew(141, 229 + GroupAreaDeltaY, 14, 16, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
 					if (int.TryParse(str, out int result)) {
 						return result;
 					}
@@ -141,17 +110,9 @@ public static partial class Recognize {
 	public static bool IsAnyGroupIdle {
 		get {
 			return GetCachedValueOrNew(nameof(IsAnyGroupIdle), () => {
-				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				if (deltaY != -1) {
-					deltaY = IsMiniMapShowing switch {
-						true => deltaY + 155,
-						false => deltaY,
-						_ => -1
-					};
-				}
-				if (deltaY != -1) {
-					Color32[,] busyCount = Operation.GetColorsOnScreen(145, 231 + deltaY, 10, 13);
-					Color32[,] totalCount = Operation.GetColorsOnScreen(160, 231 + deltaY, 10, 13);
+				if (GroupAreaDeltaY != -1) {
+					Color32[,] busyCount = Operation.GetColorsOnScreen(145, 231 + GroupAreaDeltaY, 10, 13);
+					Color32[,] totalCount = Operation.GetColorsOnScreen(160, 231 + GroupAreaDeltaY, 10, 13);
 					return ApproximatelyRect(busyCount, totalCount, 1, (x, y) => {
 						Color32 busyCountColor = busyCount[x, y];
 						Color32 totalCountColor = totalCount[x, y];
@@ -170,23 +131,14 @@ public static partial class Recognize {
 	public static readonly Dictionary<string, Color32[,]> GROUP_STATE_DICT_FARAWAY = LoadGroupStateDict("GroupStateDictFaraway");
 	public static string GetGroupState(int groupIndex) {
 		return GetCachedValueOrNew("GroupState_" + groupIndex, () => {
-			int deltaY = -1;
-			Dictionary<string, Color32[,]> stateDict = null;
-			if (IsOutsideNearby) {
-				deltaY = 76;
-				stateDict = GROUP_STATE_DICT_NEARBY;
-			} else if (IsOutsideFaraway) {
-				deltaY = 0;
-				stateDict = GROUP_STATE_DICT_FARAWAY;
-			}
-			deltaY = IsMiniMapShowing switch {
-				true => deltaY + 155,
-				false => deltaY,
-				_ => -1
+			Dictionary<string, Color32[,]> stateDict = CurrentScene switch {
+				Scene.OUTSIDE_NEARBY => GROUP_STATE_DICT_NEARBY,
+				Scene.OUTSIDE_FARAWAY => GROUP_STATE_DICT_FARAWAY,
+				_ => null
 			};
-			if (deltaY >= 0 && stateDict != null) {
+			if (GroupAreaDeltaY >= 0 && stateDict != null) {
 				const int width = 11, height = 9;
-				Color32[,] colors = Operation.GetColorsOnScreen(47, 286 + deltaY + groupIndex * 50 + 50, width, height);
+				Color32[,] colors = Operation.GetColorsOnScreen(47, 286 + GroupAreaDeltaY + groupIndex * 50 + 50, width, height);
 				Color32[,] averageColors = new Color32[width, height];
 				for (int y = 0; y < height; ++y) {
 					for (int x = 0; x < width; ++x) {

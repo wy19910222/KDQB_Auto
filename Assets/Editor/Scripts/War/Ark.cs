@@ -67,15 +67,9 @@ public class Ark {
 					}
 				}
 				if (!IsInArks[i]) {
-					int deltaY = Recognize.IsOutsideNearby ? 76 : Recognize.IsOutsideFaraway ? 0 : -1;
-					deltaY = Recognize.IsMiniMapShowing switch {
-						true => deltaY + 155,
-						false => deltaY,
-						_ => -1
-					};
-					if (deltaY != -1) {
+					if (Recognize.GroupAreaDeltaY != -1) {
 						Debug.Log("收藏夹按钮");
-						Operation.Click(100, 200 + deltaY);	// 收藏夹按钮
+						Operation.Click(100, 200 + Recognize.GroupAreaDeltaY);	// 收藏夹按钮
 						yield return new EditorWaitForSeconds(0.5F);
 						Debug.Log($"列表第{i + 1}个");
 						Operation.Click(960, 340 + 105 * i);	// 列表第i个

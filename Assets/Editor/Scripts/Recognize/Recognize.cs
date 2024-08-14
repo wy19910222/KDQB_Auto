@@ -76,35 +76,58 @@ public static partial class Recognize {
 
 	public static bool IsSceneActivityEntranceVisible => CurrentScene is Scene.OUTSIDE_NEARBY or Scene.INSIDE;
 	public static bool IsOutsideOrInsideScene => CurrentScene is Scene.OUTSIDE_FARAWAY or Scene.OUTSIDE_NEARBY or Scene.INSIDE;
-
-	public static bool IsOutsideFaraway => GetCachedValueOrNew(nameof(IsOutsideFaraway), () => 
-			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 164), new Color32(56, 124, 205, 255)) >= 0);
-
-	public static bool IsOutsideNearby => GetCachedValueOrNew(nameof(IsOutsideNearby), () => 
-			ApproximatelyCoveredCount(Operation.GetColorOnScreen(170, 240), new Color32(56, 124, 205, 255)) >= 0);
 	
-	public static bool? IsMiniMapShowing {
-		get {
-			return GetCachedValueOrNew<bool?>(nameof(IsMiniMapShowing), () => {
-				int deltaY = IsOutsideNearby ? 76 : IsOutsideFaraway ? 0 : -1;
-				if (deltaY != -1) {
-					Color32[,] realColors = Operation.GetColorsOnScreen(20, 150 + deltaY, 12, 20);
-					Color32 targetColor = new Color32(191, 191, 191, 255);
-					if (Approximately(realColors[2, 9], realColors[11, 9]) &&
-							ApproximatelyCoveredCount(realColors[2, 9], targetColor) >= 0 &&
-							ApproximatelyCoveredCount(realColors[11, 9], targetColor) >= 0) {
-						return true;
-					}
-					if (Approximately(realColors[10, 7], realColors[10, 16]) &&
-							ApproximatelyCoveredCount(realColors[10, 7], targetColor) >= 0 &&
-							ApproximatelyCoveredCount(realColors[10, 16], targetColor) >= 0) {
-						return false;
-					}
-				}
-				return null;
-			});
+	public static bool? IsMiniMapShowing => GetCachedValueOrNew<bool?>(nameof(IsMiniMapShowing), () => {
+		if (LeftAreaDeltaY != -1) {
+			Color32[,] realColors = Operation.GetColorsOnScreen(20, 150 + LeftAreaDeltaY, 12, 20);
+			Color32 targetColor = new Color32(191, 191, 191, 255);
+			if (Approximately(realColors[2, 9], realColors[11, 9]) &&
+					ApproximatelyCoveredCount(realColors[2, 9], targetColor) >= 0 &&
+					ApproximatelyCoveredCount(realColors[11, 9], targetColor) >= 0) {
+				return true;
+			}
+			if (Approximately(realColors[10, 7], realColors[10, 16]) &&
+					ApproximatelyCoveredCount(realColors[10, 7], targetColor) >= 0 &&
+					ApproximatelyCoveredCount(realColors[10, 16], targetColor) >= 0) {
+				return false;
+			}
 		}
-	}
+		return null;
+	});
+	
+	public static int LeftAreaDeltaY => GetCachedValueOrNew(nameof(LeftAreaDeltaY), () => {
+		int y0 = 145;
+		// 从145检查到260
+		while (y0 < 260) {
+			int y1 = 0;
+			Color32 color;
+			do {
+				color = Operation.GetColorOnScreen(140, y0 + y1++);
+				if (y1 > 20) {
+					return y0 switch {
+						< 150 => 0,	// 147
+						< 190 => 8,	// 155
+						< 228 => 76,	// 224
+						_ => 84	// 232
+					};
+				}
+			} while (color.b - color.r > 130 || color.g > color.r + color.r);
+			y0++;
+		}
+		return -1;
+	});
+	
+	public static int GroupAreaDeltaY => GetCachedValueOrNew(nameof(GroupAreaDeltaY), () => {
+		int deltaY = LeftAreaDeltaY;
+		if (deltaY != -1) {
+			deltaY = IsMiniMapShowing switch {
+				true => deltaY + 155,	// 231 or 155
+				false => deltaY,	// 76 or 0
+				_ => -1
+			};
+		}
+		return deltaY;
+	});
 
 	private static readonly Color32[,] AREA_BUFF = Operation.GetFromFile("PersistentData/Textures/AreaBuff.png");
 	public static bool IsInEightArea {
