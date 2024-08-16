@@ -148,9 +148,19 @@ public class AllianceHelp {
 							}
 						}
 						if (success) {
-							if (TARGET_LIST[target] < 999) {
-								--TARGET_LIST[target];
+							// 如果所有目标都在100以下，那所有目标都加100
+							bool allGreater100 = TARGET_LIST.TrueForAll(count => count > 100);
+							if (!allGreater100) {
+								for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
+									int count = TARGET_LIST[i];
+									if (count > 0) {
+										TARGET_LIST[i] = count + 100;
+									} else {
+										TARGET_LIST[i] = count - 100;
+									}
+								}
 							}
+							--TARGET_LIST[target];
 							if (!started) {
 								s_StartTime = DateTime.Now;
 							}
@@ -185,20 +195,17 @@ public class AllianceHelp {
 	}
 	
 	private static int RandomTarget() {
-		int totalWeight = 0;
+		// 收集目标
 		List<(int, int)> list = new List<(int, int)>();
 		for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
 			int count = TARGET_LIST[i];
 			if (count > 0) {
-				int weight = count * count;	// 更优先选择数量多的
-				totalWeight += weight;
-				list.Add((i, weight));
+				list.Add((i, count));
 			}
 		}
-		if (totalWeight <= 0) {
+		if (list.Count <= 0) {
 			if (GlobalStatus.UnattendedDuration > 300 * 1000_000_0L) {
 				for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
-					totalWeight++;
 					list.Add((i, 1));
 				}
 			} else {
@@ -206,6 +213,27 @@ public class AllianceHelp {
 				return -1;
 			}
 		}
+		// 目标数量同减到任一目标数量100以下
+		bool allGreater500 = list.TrueForAll(element => element.Item2 > 100);
+		while (allGreater500) {
+			for (int i = 0, length = list.Count; i < length; ++i) {
+				(int index, int count) = list[i];
+				count -= 100;
+				list[i] = (index, count);
+				if (allGreater500 && count <= 100) {
+					allGreater500 = false;
+				}
+			}
+		}
+		// 转成权重
+		int totalWeight = 0;
+		for (int i = 0, length = list.Count; i < length; ++i) {
+			(int index, int count) = list[i];
+			int weight = count * count;
+			totalWeight += weight;
+			list[i] = (index, weight);
+		}
+		// 随机
 		int random = UnityEngine.Random.Range(0, totalWeight);
 		for (int i = 0, length = list.Count; i < length; ++i) {
 			(int index, int weight) = list[i];
