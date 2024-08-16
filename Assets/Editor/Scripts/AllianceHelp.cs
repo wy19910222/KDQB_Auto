@@ -27,6 +27,8 @@ public class AllianceHelp {
 	
 	private static EditorCoroutine s_CO;
 	public static bool IsRunning => s_CO != null;
+	
+	private const int TARGET_MIN_COUNT = 20;
 
 	[MenuItem("Tools_Task/StartAllianceHelp", priority = -1)]
 	private static void Enable() {
@@ -148,15 +150,15 @@ public class AllianceHelp {
 							}
 						}
 						if (success) {
-							// 如果所有目标都在100以下，那所有目标都加100
-							bool allGreater100 = TARGET_LIST.TrueForAll(count => count > 100);
-							if (!allGreater100) {
+							// 如果所有目标都在TARGET_MIN_COUNT以下，那所有目标都加TARGET_MIN_COUNT
+							bool allGreater = TARGET_LIST.TrueForAll(count => count > TARGET_MIN_COUNT);
+							if (!allGreater) {
 								for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
 									int count = TARGET_LIST[i];
 									if (count > 0) {
-										TARGET_LIST[i] = count + 100;
+										TARGET_LIST[i] = count + TARGET_MIN_COUNT;
 									} else {
-										TARGET_LIST[i] = count - 100;
+										TARGET_LIST[i] = count - TARGET_MIN_COUNT;
 									}
 								}
 							}
@@ -213,17 +215,18 @@ public class AllianceHelp {
 				return -1;
 			}
 		}
-		// 目标数量同减到任一目标数量100以下
-		bool allGreater500 = list.TrueForAll(element => element.Item2 > 100);
-		while (allGreater500) {
-			for (int i = 0, length = list.Count; i < length; ++i) {
-				(int index, int count) = list[i];
-				count -= 100;
-				list[i] = (index, count);
-				if (allGreater500 && count <= 100) {
-					allGreater500 = false;
-				}
+		// 目标数量同减到最小目标数量为TARGET_MIN_COUNT
+		int min = int.MaxValue;
+		for (int i = 0, length = list.Count; i < length; ++i) {
+			int count = list[i].Item2;
+			if (count < min) {
+				min = count;
 			}
+		}
+		for (int i = 0, length = list.Count; i < length; ++i) {
+			(int index, int count) = list[i];
+			count -= min + TARGET_MIN_COUNT;
+			list[i] = (index, count);
 		}
 		// 转成权重
 		int totalWeight = 0;
