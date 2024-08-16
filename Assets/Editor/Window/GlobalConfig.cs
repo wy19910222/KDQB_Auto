@@ -33,7 +33,7 @@ public class GlobalConfig : PrefsEditorWindow<Global> {
 	}
 
 	private void OnGUI() {
-		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectIntField("游戏范围", Operation.CURRENT_GAME_RECT);
+		Operation.CURRENT_GAME_RECT = EditorGUILayout.RectIntField("游戏范围（如：[0, 1181, 1920, 915]）", Operation.CURRENT_GAME_RECT);
 		Global.UNATTENDED_THRESHOLD = EditorGUILayout.LongField("无人值守阈值（秒）", Global.UNATTENDED_THRESHOLD / 1000_000_0) * 1000_000_0;
 		EditorGUILayout.BeginHorizontal();
 		Global.ENERGY_FULL = EditorGUILayout.IntField("体力上限", Global.ENERGY_FULL);
