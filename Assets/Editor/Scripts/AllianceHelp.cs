@@ -185,22 +185,35 @@ public class AllianceHelp {
 	}
 	
 	private static int RandomTarget() {
-		List<int> list = new List<int>();
+		int totalWeight = 0;
+		List<(int, int)> list = new List<(int, int)>();
 		for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
-			if (TARGET_LIST[i] > 0) {
-				list.Add(i);
+			int count = TARGET_LIST[i];
+			if (count > 0) {
+				int weight = count * count;	// 更优先选择数量多的
+				totalWeight += weight;
+				list.Add((i, weight));
 			}
 		}
-		if (list.Count <= 0) {
+		if (totalWeight <= 0) {
 			if (GlobalStatus.UnattendedDuration > 300 * 1000_000_0L) {
 				for (int i = 0, length = TARGET_LIST.Count; i < length; ++i) {
-					list.Add(i);
+					totalWeight++;
+					list.Add((i, 1));
 				}
 			} else {
 				Debug.LogError($"没有帮助目标：[{string.Join(",", TARGET_LIST)}]");
 				return -1;
 			}
 		}
-		return list[UnityEngine.Random.Range(0, list.Count)];
+		int random = UnityEngine.Random.Range(0, totalWeight);
+		for (int i = 0, length = list.Count; i < length; ++i) {
+			(int index, int weight) = list[i];
+			if (random < weight) {
+				return index;
+			}
+			random -= weight;
+		}
+		return list[UnityEngine.Random.Range(0, list.Count)].Item1;
 	}
 }
