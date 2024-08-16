@@ -207,7 +207,7 @@ public class IslandAndSandTable {
 					for (int i = 0; i < 5 && Recognize.IsExpeditionQuickBtn; i++) {
 						Debug.Log("快速战斗按钮");
 						Operation.Click(1135, 953);	// 快速战斗按钮
-						yield return new EditorWaitForSeconds(0.3F);
+						yield return new EditorWaitForSeconds(0.5F);
 						if (Recognize.IsExpeditionQuickFreeBtn) {
 							Debug.Log("快速战斗按钮");
 							Operation.Click(960, 740);	// 快速战斗按钮
