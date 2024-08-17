@@ -154,7 +154,7 @@ public class Follow {
 						break;
 				}
 				if (willNotFollow) {
-					Debug.LogError("willNotFollow:" + typeOuter);
+					// Debug.LogError("willNotFollow:" + typeOuter);
 					continue;
 				}
 				
