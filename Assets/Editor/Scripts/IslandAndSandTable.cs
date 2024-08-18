@@ -375,7 +375,7 @@ public class IslandAndSandTable {
 							if (Recognize.IsIslandMopUpBtn) {
 								Debug.Log("扫荡按钮");
 								Operation.Click(960, 849);	// 扫荡按钮
-								yield return new EditorWaitForSeconds(0.5F);
+								yield return new EditorWaitForSeconds(0.8F);
 								if (Recognize.IsIslandConfirmBtn) {
 									Debug.Log("确定按钮");
 									Operation.Click(960, 867);	// 确定按钮
