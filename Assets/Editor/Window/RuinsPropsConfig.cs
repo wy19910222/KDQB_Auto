@@ -44,6 +44,27 @@ public class RuinsPropsConfig : PrefsEditorWindow<RuinsProps> {
 				RuinsProps.RUIN_ORDERS[i] = newOrder;
 			}
 		}
+
+		if (m_Debug) {
+			EditorGUILayout.BeginHorizontal();
+			{
+				EditorGUI.BeginChangeCheck();
+				TimeSpan interval = RuinsProps.INTERVAL;
+				float prevLFieldWidth = EditorGUIUtility.fieldWidth;
+				EditorGUIUtility.fieldWidth = 20F;
+				int hours = EditorGUILayout.DelayedIntField("冷却间隔", (int) interval.TotalHours);
+				float prevLabelWidth = EditorGUIUtility.labelWidth;
+				EditorGUIUtility.labelWidth = 8F;
+				int minutes = EditorGUILayout.DelayedIntField(":", interval.Minutes);
+				int seconds = EditorGUILayout.DelayedIntField(":", interval.Seconds);
+				EditorGUIUtility.labelWidth = prevLabelWidth;
+				EditorGUIUtility.fieldWidth = prevLFieldWidth;
+				if (EditorGUI.EndChangeCheck()) {
+					RuinsProps.LAST_REFRESH_TIME = DateTime.Now + new TimeSpan(hours, minutes, seconds) - RuinsProps.INTERVAL;
+				}
+			}
+			EditorGUILayout.EndHorizontal();
+		}
 		
 		EditorGUILayout.BeginHorizontal();
 		{
