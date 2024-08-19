@@ -57,7 +57,7 @@ public class DailySupplies {
 			
 			Debug.Log("商城按钮");
 			Operation.Click(1820, 136);	// 商城按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.5F);
 
 			bool succeed = false;
 			if (Recognize.DailySuppliesIsNew) {
