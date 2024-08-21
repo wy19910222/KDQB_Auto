@@ -149,7 +149,7 @@ public class IslandAndSandTable {
 							Debug.Log("战斗按钮");
 							Operation.Click(960, 476);	// 战斗按钮
 							yield return new EditorWaitForSeconds(2F);
-							for (int i = 0; i < 10 && Recognize.CurrentScene is Recognize.Scene.FIGHTING or Recognize.Scene.FIGHTING_PLAYBACK; i++) {
+							for (int i = 0; i < 10 && Recognize.CurrentScene is Recognize.Scene.FIGHTING; i++) {
 								Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
 								Debug.Log("跳过按钮");
 								Operation.Click(30, 250);	// 跳过按钮
@@ -157,7 +157,6 @@ public class IslandAndSandTable {
 								Debug.Log("再次挑战");
 								Operation.Click(910, 910);	// 再次挑战
 								yield return new EditorWaitForSeconds(2F);
-								Debug.LogError(Recognize.CurrentScene);
 								// if (Recognize.IsSandTableAgainBtn) {
 								// } else {
 								// 	Debug.Log("返回按钮");
