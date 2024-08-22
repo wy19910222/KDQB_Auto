@@ -76,25 +76,7 @@ public class IslandAndSandTableConfig : PrefsEditorWindow<IslandAndSandTable> {
 			IslandAndSandTable.LAST_TRANSNATIONAL_TIME = newTransnationalSucceed ? now : now - new TimeSpan(24, 0, 0);
 		}
 		EditorGUILayout.EndHorizontal();
-		for (int i = 0, length = IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS.Count; i < length; ++i) {
-			int weight = IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS[i];
-			EditorGUI.BeginChangeCheck();
-			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUI.BeginChangeCheck();
-			int newWeight = Math.Max(EditorGUILayout.IntField($"    目标{i + 1}权重", Math.Abs(weight)), 0);
-			if (EditorGUI.EndChangeCheck()) {
-				weight = weight < 0 ? -newWeight : newWeight;
-				IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS[i] = weight;
-			}
-			EditorGUI.BeginChangeCheck();
-			EditorGUILayout.Toggle(weight > 0, GUILayout.Width(16F));
-			if (EditorGUI.EndChangeCheck()) {
-				weight = -weight;
-				IslandAndSandTable.TRANSNATIONAL_TARGET_WEIGHTS[i] = weight;
-			}
-			EditorGUILayout.EndHorizontal();
-		}
+		IslandAndSandTable.TRANSNATIONAL_TARGET_TYPE = EditorGUILayout.Popup("选择目标", IslandAndSandTable.TRANSNATIONAL_TARGET_TYPE, new[] {"最低", "随机", "最高"});
 		EditorGUILayout.BeginHorizontal();
 		IslandAndSandTable.TRANSNATIONAL_SQUAD_NUMBER = EditorGUILayout.IntSlider("使用编队号码", IslandAndSandTable.TRANSNATIONAL_SQUAD_NUMBER, 1, 8);
 		IslandAndSandTable.TRANSNATIONAL_MUST_FULL_SOLDIER = GUILayout.Toggle(IslandAndSandTable.TRANSNATIONAL_MUST_FULL_SOLDIER, "必须满兵", "Button", GUILayout.Width(60F));

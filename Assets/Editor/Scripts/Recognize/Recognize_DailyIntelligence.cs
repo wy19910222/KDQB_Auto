@@ -195,6 +195,18 @@ public static partial class Recognize {
 			return ApproximatelyRect(realColors, DAILY_INTELLIGENCE_TRANSNATIONAL_TARGET_LIST) > 0.95F;
 		}
 	}
+	public static int IsTransnationalTargetListCount {
+		get {
+			Color32 targetColor = new Color32(102, 136, 242, 255);
+			for (int i = 0; i < 5; i++) {
+				Color32 realColor = Operation.GetColorOnScreen(1140, 420 + i * 100);
+				if (!Approximately(realColor, targetColor)) {
+					return i;
+				}
+			}
+			return 5;
+		}
+	}
 	private static readonly Color32[,] DAILY_INTELLIGENCE_TRANSNATIONAL_TIMES_EMPTY = Operation.GetFromFile("PersistentData/Textures/DailyIntelligenceTransnationalTimesEmpty.png");
 	public static bool IsTransnationalTimesEmpty {
 		get {

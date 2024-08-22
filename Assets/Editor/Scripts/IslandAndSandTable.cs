@@ -23,7 +23,7 @@ public class IslandAndSandTable {
 	public static bool EXPEDITION_QUICK_BY_50_DIAMOND = true;
 	
 	public static int TRANSNATIONAL_ORDER = 6;
-	public static List<int> TRANSNATIONAL_TARGET_WEIGHTS = new List<int>() { 0, 0, 0, 0, 1 };	// 跨战区目标随机权重
+	public static int TRANSNATIONAL_TARGET_TYPE = 0;	// 跨战区目标类型：0-最低，1-随机，2-最高
 	public static int TRANSNATIONAL_SQUAD_NUMBER = 1;	// 跨战区使用编队号码
 	public static bool TRANSNATIONAL_MUST_FULL_SOLDIER = true;	// 必须满兵
 	
@@ -291,36 +291,38 @@ public class IslandAndSandTable {
 					for (int i = 0; i < 20 && !Recognize.IsTransnationalTimesEmpty; i++) {
 						Task.ResetExpire();	// 演习任务持续太久，刷新任务过期事件，避免任务过期
 						Debug.Log("选择目标");
-						int targetIndex = RandomTransnationalTarget();
-						Operation.Click(1110, 420 + 100 * targetIndex);	// 选择目标
-						yield return new EditorWaitForSeconds(0.3F);
-						if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
-							Debug.Log("选择编队" + TRANSNATIONAL_SQUAD_NUMBER);
-							Operation.Click(1145 + 37 * TRANSNATIONAL_SQUAD_NUMBER, 870);	// 选择编队
-							yield return new EditorWaitForSeconds(0.2F);
-							if (!TRANSNATIONAL_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
-								Debug.Log("战斗按钮");
-								Operation.Click(960, 476);	// 战斗按钮
-								yield return new EditorWaitForSeconds(2F);
-								Debug.Log("跳过按钮");
-								Operation.Click(30, 250);	// 跳过按钮
-								yield return new EditorWaitForSeconds(2F);
-								Debug.Log("返回按钮");
-								Operation.Click(960, 906);	// 返回按钮
-								yield return new EditorWaitForSeconds(0.5F);
-							} else {
-								Debug.Log("退出按钮");
-								Operation.Click(30, 140);	// 退出按钮
+						int targetIndex = GetTransnationalTarget();
+						if (targetIndex >= 0) {
+							Operation.Click(1110, 420 + 100 * targetIndex);	// 选择目标
+							yield return new EditorWaitForSeconds(0.3F);
+							if (Recognize.CurrentScene == Recognize.Scene.FIGHTING_MARCH) {
+								Debug.Log("选择编队" + TRANSNATIONAL_SQUAD_NUMBER);
+								Operation.Click(1145 + 37 * TRANSNATIONAL_SQUAD_NUMBER, 870);	// 选择编队
 								yield return new EditorWaitForSeconds(0.2F);
-								Debug.Log("确认退出按钮");
-								Operation.Click(1064, 634);	// 确认退出按钮
-								yield return new EditorWaitForSeconds(2);
+								if (!TRANSNATIONAL_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) {
+									Debug.Log("战斗按钮");
+									Operation.Click(960, 476);	// 战斗按钮
+									yield return new EditorWaitForSeconds(2F);
+									Debug.Log("跳过按钮");
+									Operation.Click(30, 250);	// 跳过按钮
+									yield return new EditorWaitForSeconds(2F);
+									Debug.Log("返回按钮");
+									Operation.Click(960, 906);	// 返回按钮
+									yield return new EditorWaitForSeconds(0.5F);
+								} else {
+									Debug.Log("退出按钮");
+									Operation.Click(30, 140);	// 退出按钮
+									yield return new EditorWaitForSeconds(0.2F);
+									Debug.Log("确认退出按钮");
+									Operation.Click(1064, 634);	// 确认退出按钮
+									yield return new EditorWaitForSeconds(2);
+								}
+							} else {
+								yield return new EditorWaitForSeconds(0.3F);
+								Debug.Log("右上角叉叉");
+								Operation.Click(1168, 352);	// 右上角叉叉
+								yield return new EditorWaitForSeconds(0.3F);
 							}
-						} else {
-							yield return new EditorWaitForSeconds(0.3F);
-							Debug.Log("右上角叉叉");
-							Operation.Click(1168, 352);	// 右上角叉叉
-							yield return new EditorWaitForSeconds(0.3F);
 						}
 					}
 					LAST_TRANSNATIONAL_TIME = DateTime.Now;
@@ -402,27 +404,18 @@ public class IslandAndSandTable {
 		// ReSharper disable once IteratorNeverReturns
 	}
 	
-	private static int RandomTransnationalTarget() {
-		int totalWeight = 0;
-		int length = TRANSNATIONAL_TARGET_WEIGHTS.Count;
-		for (int i = 0; i < length; ++i) {
-			int weight = TRANSNATIONAL_TARGET_WEIGHTS[i];
-			if (weight > 0) {
-				totalWeight += weight;
+	private static int GetTransnationalTarget() {
+		int listCount = Recognize.IsTransnationalTargetListCount;
+		if (listCount > 0) {
+			switch (TRANSNATIONAL_TARGET_TYPE) {
+				case 0:	// 最低
+					return listCount - 1;
+				case 1:	// 随机
+					return UnityEngine.Random.Range(0, listCount);
+				case 2:	// 最高
+					return 0;
 			}
 		}
-		if (totalWeight > 0) {
-			int random = UnityEngine.Random.Range(0, totalWeight);
-			for (int i = 0; i < length; ++i) {
-				int weight = TRANSNATIONAL_TARGET_WEIGHTS[i];
-				if (weight > 0) {
-					random -= weight;
-					if (random < 0) {
-						return i;
-					}
-				}
-			}
-		}
-		return UnityEngine.Random.Range(0, length);
+		return -1;
 	}
 }
