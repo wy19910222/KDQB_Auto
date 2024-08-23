@@ -101,7 +101,7 @@ public class ExpeditionAndWild {
 					Debug.Log("宝箱按钮");
 					Operation.Click(751, 286);	// 宝箱按钮
 					yield return new EditorWaitForSeconds(1F);
-					if (Recognize.MaybeWindowTitle == "领取奖励") {
+					// if (Recognize.MaybeWindowTitle == "领取奖励") {
 						Debug.Log("领取或返回按钮");
 						Operation.Click(960, 836);	// 领取或返回按钮
 						yield return new EditorWaitForSeconds(0.5F);
@@ -109,7 +109,7 @@ public class ExpeditionAndWild {
 						Operation.Click(960, 836);	// 空白处
 						yield return new EditorWaitForSeconds(0.2F);
 						wildSucceed = true;
-					}
+					// }
 					// if (Recognize.IsWildBackBtn) {
 					// 	Debug.Log("返回按钮");
 					// 	Operation.Click(960, 836);	// 返回按钮
