@@ -199,7 +199,7 @@ public static partial class Recognize {
 		get {
 			Color32 targetColor = new Color32(102, 136, 242, 255);
 			for (int i = 0; i < 5; i++) {
-				Color32 realColor = Operation.GetColorOnScreen(1140, 420 + i * 100);
+				Color32 realColor = Operation.GetColorOnScreen(1153, 420 + i * 100);
 				if (!Approximately(realColor, targetColor)) {
 					return i;
 				}
