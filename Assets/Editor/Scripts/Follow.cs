@@ -257,7 +257,7 @@ public class Follow {
 			if (isFearStarNeedHelp) {
 				Debug.Log("选择编队");
 				Operation.Click(1145 + 37 * FEAR_STAR_HELP_SQUAD_NUMBER, 870);	// 选择编队
-				yield return new EditorWaitForSeconds(0.2F);
+				yield return new EditorWaitForSeconds(0.5F);
 				if ((!FEAR_STAR_HELP_MUST_FULL_SOLDIER || Recognize.FightingSoldierCountPercent > 0.99F) && Recognize.FightingHeroEmptyCount == 0) {
 					Debug.Log("出征按钮");
 					Operation.Click(960, 470);	// 出征按钮
