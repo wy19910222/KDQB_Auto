@@ -78,7 +78,7 @@ public class VipGiftAndShoppingCart {
 			}
 			Debug.Log("军级按钮");
 			Operation.Click(54, 192);	// 军级按钮
-			yield return new EditorWaitForSeconds(0.5F);
+			yield return new EditorWaitForSeconds(1F);
 
 			if (!vipGiftSucceed) {
 				Debug.Log("军级每日奖励");
