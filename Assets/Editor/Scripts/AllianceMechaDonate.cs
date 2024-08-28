@@ -87,6 +87,7 @@ public class AllianceMechaDonate {
 				if (Recognize.IsAllianceMechaDonateRankShowing) {
 					// 有弹出奖励排行窗口，说明已开启捐献
 					bool isInRank = Recognize.IsAllianceMechaDonateInRank;
+					Debug.Log($"Is in rank: {isInRank}");
 					Operation.Click(720, 128);	// 点击窗口外关闭窗口
 					yield return new EditorWaitForSeconds(0.1F);
 					Recognize.AllianceMechaType mechaType = Recognize.CurrentMechaType;
