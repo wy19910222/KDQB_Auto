@@ -153,13 +153,13 @@ public class ExpeditionAndWild {
 				if (Recognize.DailyIntelligenceCurrentType == Recognize.DailyIntelligenceType.EXPEDITION && !test) {
 					Debug.Log("运输车");
 					Operation.Click(840, 856);	// 运输车
-					yield return new EditorWaitForSeconds(1F);
-					if (Recognize.MaybeWindowTitle == "获得奖励") {
+					yield return new EditorWaitForSeconds(0.5F);
+					// if (Recognize.MaybeWindowTitle == "获得奖励") {
 						Debug.Log("领取按钮");
 						Operation.Click(960, 900);	// 领取按钮
 						yield return new EditorWaitForSeconds(0.3F);
 						expeditionSucceed = true;
-					}
+					// }
 					// if (Recognize.IsExpeditionGetBtn) {
 					// 	Debug.Log("领取按钮");
 					// 	Operation.Click(960, 900);	// 领取按钮
