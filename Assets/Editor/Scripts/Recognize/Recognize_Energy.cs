@@ -39,14 +39,22 @@ public static partial class Recognize {
 					const int energyWidth = ENERGY_FULL_X - ENERGY_EMPTY_X;
 					const int detectWidth = energyWidth + 1;	// 多取1个像素进行左右对比灰度
 					Color32[,] colors = Operation.GetColorsOnScreen(EnergyAreaDeltaX + ENERGY_EMPTY_X, ENERGY_Y, detectWidth, 1);
-					// 最少只能判断到x=19，再继续会受到体力图标的影响
 					if (WindowCoveredCount >= 0) {
+						// for (int x = 1; x < 40; ++x) {
+						// 	float currentGray = colors[x - 1, 0].GrayScale();
+						// 	float rightGray = colors[x, 0].GrayScale();
+						// 	Debug.LogError("------------------------------------" + x);
+						// 	Debug.LogError(currentGray / rightGray);
+						// }
 						float grayThreshold = 100 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
-						for (int x = colors.GetLength(0) - 1; x > 10; --x) {
-							float rightGray = colors[x, 0].GrayScale();
+						// 最少只能判断到x=10，再继续会受到体力图标的影响
+						for (int x = 10; x < energyWidth; ++x) {
 							float currentGray = colors[x - 1, 0].GrayScale();
-							if (currentGray > grayThreshold && currentGray / rightGray > 1.2F) {
-								return Mathf.RoundToInt((float) x / energyWidth * Global.ENERGY_FULL);
+							if (currentGray > grayThreshold) {
+								float rightGray = colors[x, 0].GrayScale();
+								if (currentGray / rightGray > 1.2F) {
+									return Mathf.RoundToInt((float) x / energyWidth * Global.ENERGY_FULL);
+								}
 							}
 						}
 					}
