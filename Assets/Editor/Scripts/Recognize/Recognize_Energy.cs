@@ -28,10 +28,10 @@ public static partial class Recognize {
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
 	// private const int ENERGY_Y = 113;
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(197, 237, 100, 255);
+	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(253, 248, 83, 255);
 	private const int ENERGY_EMPTY_X = 24;	// 包含
 	private const int ENERGY_FULL_X = 119;	// 不包含
 	private const int ENERGY_Y = 129;
-	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(253, 248, 83, 255);
 	public static int Energy {
 		get {
 			return GetCachedValueOrNew(nameof(Energy), () => {
@@ -40,11 +40,14 @@ public static partial class Recognize {
 					const int detectWidth = energyWidth + 1;	// 多取1个像素进行左右对比灰度
 					Color32[,] colors = Operation.GetColorsOnScreen(EnergyAreaDeltaX + ENERGY_EMPTY_X, ENERGY_Y, detectWidth, 1);
 					// 最少只能判断到x=19，再继续会受到体力图标的影响
-					for (int x = colors.GetLength(0) - 1; x > 0; --x) {
-						float rightGray = colors[x, 0].GrayScale();
-						float currentGray = colors[x - 1, 0].GrayScale();
-						if (currentGray / rightGray > 1.2F) {
-							return Mathf.RoundToInt((float) x / energyWidth * Global.ENERGY_FULL);
+					if (WindowCoveredCount >= 0) {
+						float grayThreshold = 100 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
+						for (int x = colors.GetLength(0) - 1; x > 10; --x) {
+							float rightGray = colors[x, 0].GrayScale();
+							float currentGray = colors[x - 1, 0].GrayScale();
+							if (currentGray > grayThreshold && currentGray / rightGray > 1.2F) {
+								return Mathf.RoundToInt((float) x / energyWidth * Global.ENERGY_FULL);
+							}
 						}
 					}
 					return EnergyOCR;
@@ -91,7 +94,7 @@ public static partial class Recognize {
 			return GetCachedValueOrNew(nameof(EnergyOCR), () => {
 				if (EnergyAreaDeltaX >= 0) {
 					string str = Operation.GetTextOnScreenNew(60 + EnergyAreaDeltaX, 111, 39, 20, false, 1, color => {
-							float threshold = 240 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
+							float threshold = WindowCoveredCount >= 0 ? 240 * COVER_COEFFICIENT_DICT[WindowCoveredCount] : 0;
 							return color.r > threshold && color.g > threshold && color.b > threshold;
 					});
 					if (int.TryParse(str, out int result)) {
