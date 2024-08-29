@@ -28,32 +28,26 @@ public static partial class Recognize {
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(194, 226, 62, 255);
 	// private const int ENERGY_Y = 113;
 	// private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(197, 237, 100, 255);
-	private const int ENERGY_EMPTY_X = 21;
-	private const int ENERGY_FULL_X = 117;
+	private const int ENERGY_EMPTY_X = 24;	// 包含
+	private const int ENERGY_FULL_X = 119;	// 不包含
 	private const int ENERGY_Y = 129;
 	private static readonly Color32 ENERGY_TARGET_COLOR = new Color32(253, 248, 83, 255);
 	public static int Energy {
 		get {
 			return GetCachedValueOrNew(nameof(Energy), () => {
 				if (EnergyAreaDeltaX >= 0) {
-					const int width = ENERGY_FULL_X - ENERGY_EMPTY_X;
-					Color32[,] colors = Operation.GetColorsOnScreen(ENERGY_EMPTY_X + EnergyAreaDeltaX, ENERGY_Y, width + 1, 1);
+					const int energyWidth = ENERGY_FULL_X - ENERGY_EMPTY_X;
+					const int detectWidth = energyWidth + 1;	// 多取1个像素进行左右对比灰度
+					Color32[,] colors = Operation.GetColorsOnScreen(EnergyAreaDeltaX + ENERGY_EMPTY_X, ENERGY_Y, detectWidth, 1);
 					// 最少只能判断到x=19，再继续会受到体力图标的影响
-					for (int x = colors.GetLength(0) - 1; x >= 0; --x) {
-						if (ApproximatelyCoveredCount(colors[x, 0], ENERGY_TARGET_COLOR) >= 0) {
-							return Mathf.RoundToInt((float) x / width * Global.ENERGY_FULL);
+					for (int x = colors.GetLength(0) - 1; x > 0; --x) {
+						float rightGray = colors[x, 0].GrayScale();
+						float currentGray = colors[x - 1, 0].GrayScale();
+						if (currentGray / rightGray > 1.2F) {
+							return Mathf.RoundToInt((float) x / energyWidth * Global.ENERGY_FULL);
 						}
 					}
-					// 10以下误差会比较大，最少只能判断到x=11
-					if (WindowCoveredCount >= 0) {
-						float threshold = 420 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
-						for (int x = 20; x >= 11; --x) {
-							Color32 c = colors[x, 0];
-							if (c.r + c.g + c.b > threshold) {
-								return Mathf.RoundToInt((float) (x - 3) / width * Global.ENERGY_FULL);
-							}
-						}
-					}
+					return EnergyOCR;
 				}
 				return 0;
 			});
@@ -96,12 +90,15 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(EnergyOCR), () => {
 				if (EnergyAreaDeltaX >= 0) {
-					string str = Operation.GetTextOnScreenNew(60 + EnergyAreaDeltaX, 111, 39, 20, false, 1, color => color.r > 240 && color.g > 240 && color.b > 240);
+					string str = Operation.GetTextOnScreenNew(60 + EnergyAreaDeltaX, 111, 39, 20, false, 1, color => {
+							float threshold = 240 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
+							return color.r > threshold && color.g > threshold && color.b > threshold;
+					});
 					if (int.TryParse(str, out int result)) {
 						return result;
 					}
 				}
-				return Energy;
+				return 0;
 			});
 		}
 	}
