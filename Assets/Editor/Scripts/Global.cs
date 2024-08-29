@@ -18,6 +18,7 @@ public class Global {
 	public static int ENERGY_FULL = 95;	// 体力上限
 	public static bool DAN_EXIST = true;	// 是否有戴安娜
 	public static int PERSISTENT_GROUP_COUNT = 4;	// 拥有永久行军队列数
+	public static bool IS_OUTSIDE_ACTIVITY_BTN_MOVED = false;	// 世界场景活动按钮是否被挤到下一格
 	public static readonly List<DateTime> TEMPORARY_GROUP_COUNTDOWN = new List<DateTime>();	// 拥有临时行军队列数
 	public static readonly List<Squad> SQUAD_LIST = new List<Squad>();	// 各编队领队英雄
 	
@@ -40,4 +41,6 @@ public class Global {
 		}
 		return Recognize.HeroType.DAN;
 	}
+	
+	public static int ACTIVITY_BTN_Y => Recognize.CurrentScene is Recognize.Scene.OUTSIDE_NEARBY && IS_OUTSIDE_ACTIVITY_BTN_MOVED ? 350 : 280;
 }

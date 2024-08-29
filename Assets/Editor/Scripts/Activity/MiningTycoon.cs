@@ -74,8 +74,7 @@ public class MiningTycoon {
 				yield return new EditorWaitForSeconds(0.1F);
 			}
 			Debug.Log("活动按钮");
-			Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 280 : 290);	// 活动按钮
-			// Operation.Click(1880, Recognize.CurrentScene == Recognize.Scene.INSIDE ? 280 : 350);	// 活动按钮（被新世界图标挤到下一格了）
+			Operation.Click(1880, Global.ACTIVITY_BTN_Y);	// 活动按钮
 			yield return new EditorWaitForSeconds(0.5F);
 
 			Debug.Log("拖动以显示活动标签页");

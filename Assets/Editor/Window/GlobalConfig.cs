@@ -72,6 +72,8 @@ public class GlobalConfig : PrefsEditorWindow<Global> {
 			}
 			EditorGUILayout.EndHorizontal();
 		}
+
+		Global.IS_OUTSIDE_ACTIVITY_BTN_MOVED = EditorGUILayout.Toggle("超值活动入口被挤", Global.IS_OUTSIDE_ACTIVITY_BTN_MOVED);
 		
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("编队");
