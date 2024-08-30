@@ -18,52 +18,52 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(BusyGroupCount), () => {
 				int deltaY = GroupAreaDeltaY;
-				if (deltaY != -1) {
-					int groupCount = 0;
-					// 返回加速等蓝色按钮中间的白色
-					Color32 targetBtnColor = new Color32(255, 255, 255, 255);
-					// 头像框底色
-					Color32 targetAvatarGrayColor = new Color32(184, 205, 220, 255);	// 无英雄
-					Color32 targetAvatarBlueColor = new Color32(88, 186, 240, 255);	// 蓝色英雄
-					Color32 targetAvatarPurpleColor = new Color32(231, 149, 252, 255);	// 紫色英雄
-					Color32 targetAvatarOrangeColor1 = new Color32(251, 200, 84, 255);	// 橙色英雄
-					Color32 targetAvatarOrangeColor2 = new Color32(253, 204, 68, 255);	// 橙色英雄
-					// 434的位置需要将小地图保持展开状态
-					Color32[,] realBtnColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
-					Color32[,] realAvatarColors = Operation.GetColorsOnScreen(23, 267 + deltaY + 50, 1, 451);
-					while (groupCount < 10) {
-						Color32 realBtnColor = realBtnColors[0, groupCount * 50];
-						Color32 realAvatarColor = realAvatarColors[0, groupCount * 50];
-						// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realBtnColor}: {realAvatarColor}");
-						if (groupCount == 4 && deltaY == 76 + 155) {
-							if (ApproximatelyCoveredCount(realBtnColor, new Color32(192, 212, 229, 255)) < 0) {
-								break;
-							}
-							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor1, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor2, 1.5F) < 0) {
-								break;
-							}
-						} else {
-							if (ApproximatelyCoveredCount(realBtnColor, targetBtnColor) < 0) {
-								break;
-							}
-							// Debug.LogError($"{{{23}, {267 + deltaY + 50 + groupCount * 50}}}: {realAvatarColor}");
-							if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor1, 1.5F) < 0
-									&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor2, 1.5F) < 0) {
-								break;
-							}
-						}
-						groupCount++;
-					}
-					return groupCount;
+				if (deltaY == -1) {
+					return int.MaxValue;
 				}
-				return int.MaxValue;
+				int groupCount = 0;
+				// 返回加速等蓝色按钮中间的白色
+				Color32 targetBtnColor = new Color32(255, 255, 255, 255);
+				// 头像框底色
+				Color32 targetAvatarGrayColor = new Color32(184, 205, 220, 255);	// 无英雄
+				Color32 targetAvatarBlueColor = new Color32(88, 186, 240, 255);	// 蓝色英雄
+				Color32 targetAvatarPurpleColor = new Color32(231, 149, 252, 255);	// 紫色英雄
+				Color32 targetAvatarOrangeColor1 = new Color32(251, 200, 84, 255);	// 橙色英雄
+				Color32 targetAvatarOrangeColor2 = new Color32(253, 204, 68, 255);	// 橙色英雄
+				// 434的位置需要将小地图保持展开状态
+				Color32[,] realBtnColors = Operation.GetColorsOnScreen(158, 279 + deltaY + 50, 1, 451);
+				Color32[,] realAvatarColors = Operation.GetColorsOnScreen(23, 267 + deltaY + 50, 1, 451);
+				while (groupCount < 10) {
+					Color32 realBtnColor = realBtnColors[0, groupCount * 50];
+					Color32 realAvatarColor = realAvatarColors[0, groupCount * 50];
+					// Debug.LogError($"{groupCount}: [158, {279 + deltaY + groupCount * 50 + 50}]: {realBtnColor}: {realAvatarColor}");
+					if (groupCount == 4 && deltaY == 76 + 155) {
+						if (ApproximatelyCoveredCount(realBtnColor, new Color32(192, 212, 229, 255)) < 0) {
+							break;
+						}
+						if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor1, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor2, 1.5F) < 0) {
+							break;
+						}
+					} else {
+						if (ApproximatelyCoveredCount(realBtnColor, targetBtnColor) < 0) {
+							break;
+						}
+						// Debug.LogError($"{{{23}, {267 + deltaY + 50 + groupCount * 50}}}: {realAvatarColor}");
+						if (ApproximatelyCoveredCount(realAvatarColor, targetAvatarGrayColor, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarBlueColor, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarPurpleColor, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor1, 1.5F) < 0
+								&& ApproximatelyCoveredCount(realAvatarColor, targetAvatarOrangeColor2, 1.5F) < 0) {
+							break;
+						}
+					}
+					groupCount++;
+				}
+				return groupCount;
 			});
 		}
 	}
@@ -113,12 +113,17 @@ public static partial class Recognize {
 				if (GroupAreaDeltaY != -1) {
 					Color32[,] busyCount = Operation.GetColorsOnScreen(145, 231 + GroupAreaDeltaY, 10, 13);
 					Color32[,] totalCount = Operation.GetColorsOnScreen(160, 231 + GroupAreaDeltaY, 10, 13);
-					return ApproximatelyRect(busyCount, totalCount, 1, (x, y) => {
+					bool isAnyGroupIdle = ApproximatelyRect(busyCount, totalCount, 1, (x, y) => {
 						Color32 busyCountColor = busyCount[x, y];
 						Color32 totalCountColor = totalCount[x, y];
 						return busyCountColor.r == busyCountColor.g && busyCountColor.r == busyCountColor.b ||
 								totalCountColor.r == totalCountColor.g && totalCountColor.r == totalCountColor.b;
 					}) < 0.9F;
+					if (!isAnyGroupIdle) {
+						// 1个队列都没在忙时，队列数量栏压根没有，可能会出现两个范围完全相同的情况，这时候需要再判断一下忙碌队列数量
+						isAnyGroupIdle = BusyGroupCount < Global.GROUP_COUNT;
+					}
+					return isAnyGroupIdle;
 				}
 				return false;
 			});
