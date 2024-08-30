@@ -225,7 +225,7 @@ public class AllianceHelp {
 		}
 		for (int i = 0, length = list.Count; i < length; ++i) {
 			(int index, int count) = list[i];
-			count -= min + TARGET_MIN_COUNT;
+			count -= min - TARGET_MIN_COUNT;
 			list[i] = (index, count);
 		}
 		// 转成权重
