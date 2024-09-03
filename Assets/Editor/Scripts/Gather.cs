@@ -173,6 +173,7 @@ public class Gather {
 				Operation.Click(750, 970);	// 搜索按钮
 				yield return new EditorWaitForSeconds(0.3F);
 			}
+			yield return new EditorWaitForSeconds(0.2F);
 			Debug.Log("集结按钮");
 			Operation.Click(1024, 512);	// 集结按钮
 			yield return new EditorWaitForSeconds(0.1F);
@@ -226,7 +227,7 @@ public class Gather {
 			
 			Debug.Log("搜索按钮");
 			Operation.Click(960, 940);	// 搜索按钮
-			yield return new EditorWaitForSeconds(0.2F);
+			yield return new EditorWaitForSeconds(0.3F);
 			// 搜索面板未消失，说明未搜索到
 			if (Recognize.IsSearching) {
 				Debug.Log("未搜到，关闭搜索面板");
