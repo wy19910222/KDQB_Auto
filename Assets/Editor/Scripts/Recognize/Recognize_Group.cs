@@ -72,7 +72,7 @@ public static partial class Recognize {
 		get {
 			return GetCachedValueOrNew(nameof(GroupCountTitle), () => {
 				if (GroupAreaDeltaY != -1) {
-					return Operation.GetTextOnScreenNew(43, 227 + GroupAreaDeltaY, 37, 20, false, 1, color => color.r > 200 && color.g > 200 && color.b > 200, true);
+					return Operation.GetTextOnScreenNew(43, 227 + GroupAreaDeltaY, 37, 20, false, 1, color => color.r > 200 && color.g > 200 && color.b > 200);
 				}
 				return "None";
 			});

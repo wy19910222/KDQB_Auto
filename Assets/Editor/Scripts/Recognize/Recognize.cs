@@ -267,7 +267,7 @@ public static partial class Recognize {
 					if (Approximately(_color, targetColor, 2)) {
 						return Operation.GetTextOnScreenNew(
 								850, 156 + offsetY + _offsetY + 4, 220, 36, false, 1, 
-								c => c.GrayScale() > MAYBE_WINDOW_OCR_THRESHOLD, true
+								c => c.GrayScale() > MAYBE_WINDOW_OCR_THRESHOLD
 						);
 					}
 				}
