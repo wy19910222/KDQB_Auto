@@ -12,6 +12,10 @@ using UnityEditor;
 using UnityEngine;
 
 public class Follow {
+	// 跟车保护，当执行完集结任务后，留有一定时间只允许执行跟车任务。
+	public const string PROTECT_TASK_NAME = "FollowTaskProtect";
+	public const float PROTECT_DURATION = 5;
+	
 	public static bool KEEP_NO_WINDOW = true;	// 是否在非跟车界面跟车
 	public static bool SINGLE_GROUP = true;	// 是否单队列跟车
 	public static float FOLLOW_DELAY_MIN = 1F;	// 跟车延迟
@@ -167,7 +171,7 @@ public class Follow {
 				continue;
 			}
 
-			if (Task.CurrentTask != null) {
+			if (Task.CurrentTask != null && Task.CurrentTask != PROTECT_TASK_NAME) {
 				continue;
 			}
 			Task.CurrentTask = nameof(Follow);

@@ -331,6 +331,8 @@ public class Gather {
 			EndOfGather:
 			Task.CurrentTask = null;
 			
+			EditorCoroutineManager.StartCoroutine(FollowTaskProtect());
+			
 			// 休息5秒，避免出错时一直受控不能操作
 			yield return new EditorWaitForSeconds(5);
 		}
@@ -362,5 +364,19 @@ public class Gather {
 			list.Add(Recognize.EnergyShortcutAddingType.DIAMOND_BUY);
 		}
 		return list.Count > 0 ? list[UnityEngine.Random.Range(0, list.Count)] : Recognize.EnergyShortcutAddingType.NONE;
+	}
+
+	private static IEnumerator FollowTaskProtect() {
+		Task.CurrentTask = Follow.PROTECT_TASK_NAME;
+		DateTime expireTime = DateTime.Now.AddSeconds(Follow.PROTECT_DURATION);
+		while (DateTime.Now < expireTime) {
+			yield return null;
+			if (Task.CurrentTask != Follow.PROTECT_TASK_NAME) {
+				yield break;
+			}
+		}
+		if (Task.CurrentTask == Follow.PROTECT_TASK_NAME) {
+			Task.CurrentTask = null;
+		}
 	}
 }
