@@ -48,7 +48,7 @@ public static partial class Recognize {
 						// }
 						float grayThreshold = 100 * COVER_COEFFICIENT_DICT[WindowCoveredCount];
 						// 最少只能判断到x=10，再继续会受到体力图标的影响
-						for (int x = 10; x < energyWidth; ++x) {
+						for (int x = 10; x <= energyWidth; ++x) {
 							float currentGray = colors[x - 1, 0].GrayScale();
 							if (currentGray > grayThreshold) {
 								float rightGray = colors[x, 0].GrayScale();
